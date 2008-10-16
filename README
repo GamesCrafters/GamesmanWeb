@@ -1,0 +1,26 @@
+GamesmanWeb is a Web-based interface to Gamesman. The main servlet is a 
+remote interface to the database and solver, supporting function calls such 
+as getMoveValue and getNextMoveValues, which return information about a 
+given position for some game and information about the child positions of 
+some position, respectively. The client-side interface is written in HTML/CSS 
+and JavaScript, allowing it to be viewed in any modern Web browser. This 
+package composed of the servlet and client interface is GamesmanWeb.
+
+Requirements
+ * Java 5 or newer
+ * Ability to compile Gamesman+-
+ * A Java application server (e.g., Tomcat, JBoss, WebSphere)
+
+The servlets are JAX-RS service providers and not traditional Java servlets; 
+i.e., they do not extend the HttpServlet class. Instead, JAX-RS allows any 
+Java class methods to be annotated with HTTP methods and URI paths, and the 
+underlying JAX-RS implementation will automatically create URI-to-method 
+mappings. The best way to learn is by example in this case; please view 
+edu.berkeley.gcweb.servlet.GamesmanServlet for an example.
+
+There is an Ant build script provided, which will compile the necessary 
+classes, organize the class files and JAR dependencies into the WAR format, 
+and then copy the WAR package to a specified directory. This WAR package 
+will be expanded by the application server (e.g., Tomcat).
+
+
