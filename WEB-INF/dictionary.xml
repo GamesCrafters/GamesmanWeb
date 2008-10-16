@@ -1,0 +1,4 @@
+<game-dictionary>
+    <game internal-name="ttt" canonical-name="Tic-Tac-Toe"/>
+    <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
+</game-dictionary>
