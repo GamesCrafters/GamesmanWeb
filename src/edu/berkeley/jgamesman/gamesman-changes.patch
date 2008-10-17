@@ -78,3 +78,39 @@ Index: src/Core/Board.c
  	}
  	return data;
  }
+Index: src/Makefile.in
+===================================================================
+--- src/Makefile.in	(revision 171)
++++ src/Makefile.in	(working copy)
+@@ -53,7 +53,8 @@
+ 	
+ srcs : $(OBJS)
+ 	cp GamesmanProperties.xml $(BINDIR)
+-	ar rcs $(LIBDIR)/libgamesman$(SLBSUFFIX) $(OBJS)
++	# The main function does not belong in libgamesman
++	# ar rcs $(LIBDIR)/libgamesman$(SLBSUFFIX) $(OBJS)
+ 
+ clean :
+ 	-rm *$(OBJSUFFIX)
+Index: configure.ac
+===================================================================
+--- configure.ac	(revision 171)
++++ configure.ac	(working copy)
+@@ -31,6 +31,7 @@
+ OUTDLLSUFFIX=".lib"
+ OUTSLLSUFFIX=".a"
+ OUTPTHREADCOMPILE="-lpthread"
++OUTTHREADSYSTEM=pthread
+ 
+ os=`uname -s`
+ version=`uname -r`
+@@ -39,6 +40,9 @@
+ proctemp=""
+ x86compat=0
+ x64compat=0
++OUTSPARC=0
++AC_C_BIGENDIAN([OUTENDIANNESS=1],[OUTENDIANNESS=0],
++	[AC_MSG_ERROR([Unable to determine endianness])])
+ 
+ case $os in
+   CYGWIN*)
