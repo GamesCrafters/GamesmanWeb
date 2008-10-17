@@ -2,12 +2,13 @@
 <project>
     <description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	<property name="src" location="src"/>
+	<property name="jgamesman" location="jgamesman"/>
 	<property name="lib" location="deploy/WEB-INF/lib"/>
 	<property name="build" location="deploy/WEB-INF/classes"/>
 	<property name="dist" location="."/>
 	<!-- <property name="dist" location="C:/Program Files/Apache Tomcat/webapps"/> -->
 
-    <target name="war" depends="clean, compile" description="Package a WAR file">
+    <target name="war" depends="clean, compile, jgamesman" description="Package a WAR file">
     	<delete file="gcweb.war"/>
         <war destfile="${dist}/gcweb.war" basedir="${basedir}" webxml="deploy/WEB-INF/web.xml"
         	 includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
@@ -19,8 +20,16 @@
             <exclude name="**/tests/*.java"/>
         </javac>
     </target>
+    <target name="jgamesman">
+        <exec executable="make" failonerror="true">
+            <arg line="-C ${src}/edu/berkeley/jgamesman jnilib OUTDIR=${dist}"/>
+        </exec>
+    </target>
 	<target name="clean" description="Clean the build directories">
 		<delete dir="${build}"/>
 		<mkdir dir="${build}"/>
+		<exec executable="make">
+			<arg line="-C ${src}/edu/berkeley/jgamesman clean OUTDIR=${dist}"/>
+		</exec>
     </target>
 </project>

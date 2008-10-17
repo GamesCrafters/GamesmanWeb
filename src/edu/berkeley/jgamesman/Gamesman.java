@@ -45,7 +45,7 @@ public class Gamesman {
 	static {
 		String cwd = System.getProperty("user.dir");
 		// For some reason, System.load requires an absolute path.
-		System.load(cwd + "/edu/berkeley/jgamesman/GamesmanJNI.jnilib");
+		System.load(cwd + "/GamesmanJNI.jnilib");
 		GamesmanC.init();
 	}
 }
