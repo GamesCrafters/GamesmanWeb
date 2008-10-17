@@ -2,14 +2,14 @@
 <project>
     <description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	<property name="src" location="src"/>
-	<property name="lib" location="WEB-INF/lib"/>
-	<property name="build" location="WEB-INF/classes"/>
+	<property name="lib" location="deploy/WEB-INF/lib"/>
+	<property name="build" location="deploy/WEB-INF/classes"/>
 	<property name="dist" location="."/>
 	<!-- <property name="dist" location="C:/Program Files/Apache Tomcat/webapps"/> -->
 
     <target name="war" depends="clean, compile" description="Package a WAR file">
     	<delete file="gcweb.war"/>
-        <war destfile="${dist}/gcweb.war" basedir="${basedir}" webxml="WEB-INF/web.xml"
+        <war destfile="${dist}/gcweb.war" basedir="${basedir}" webxml="deploy/WEB-INF/web.xml"
         	 includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
     </target>
     <target name="compile" description="Compile the GCWeb classes">
