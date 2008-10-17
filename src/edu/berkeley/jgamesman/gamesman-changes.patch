@@ -1,0 +1,80 @@
+Index: src/Makefile.in
+===================================================================
+--- src/Makefile.in	(revision 137)
++++ src/Makefile.in	(working copy)
+@@ -34,7 +34,7 @@
+ 	@$(MAKE) "CFLAGS= -pg" base
+ 
+ debug:
+-	@$(MAKE) "CFLAGS= -g -Wall" base
++	@$(MAKE) "CFLAGS= -fPIC -g -Wall" base
+ 	
+ optimized:
+ 	@$(MAKE) "CFLAGS= -O3" base
+Index: src/Core/UserInterface.c
+===================================================================
+--- src/Core/UserInterface.c	(revision 137)
++++ src/Core/UserInterface.c	(working copy)
+@@ -51,6 +51,16 @@
+ 	return result;
+ }
+ 
++ArrayList* UserInterface_getChildrenValues(struct Board *b, struct Hasher *h, struct FlatDB *fdb, ArrayList *children) {
++	//ArrayList *result = UserInterface_generateChildren(b, g);
++	ArrayList *result = ArrayList_create(children->count);
++	int i;
++	for (i = 0; i < children->count; i = i + 1){
++		ArrayList_set(result, UserInterface_getValue(ArrayList_get(children, i), h, fdb), i);
++	}
++	return result;
++}
++
+ struct Board* UserInterface_doMove(char *move, struct Board *b, Game *g){
+ 	Board_convertStringToData(b, g->bd);
+ 	void *moveresult = (*g->stringToMove)(move, g->bd);
+Index: src/Core/UserInterface.h
+===================================================================
+--- src/Core/UserInterface.h	(revision 137)
++++ src/Core/UserInterface.h	(working copy)
+@@ -24,4 +24,7 @@
+ char* UserInterface_boardToString(struct Board *b, struct BoardDefinition *bd);
+ struct Board* UserInterface_createResetBoard(Game *g);
+ 
++ArrayList* UserInterface_generateChildren(struct Board *b, Game *g);
++ArrayList* UserInterface_getChildrenValues(struct Board *b, struct Hasher *h, struct FlatDB *fdb, ArrayList *children);
++
+ #endif /* USERINTERFACE_H_ */
+Index: src/Core/Board.c
+===================================================================
+--- src/Core/Board.c	(revision 137)
++++ src/Core/Board.c	(working copy)
+@@ -34,6 +34,11 @@
+ 	struct Board *b = Board_malloc();
+ 	b->data = Board_string_toData(str, bd);
+ 	free(str);
++	
++	if (!b->data) {
++		free(b);
++		return NULL;
++	}
+ 	return b;
+ }
+ 
+@@ -84,11 +89,16 @@
+ 	int count = bd->pieces.count;
+ 	for (i = 0; i < length; i = i + 1){
+ 		for (j = 0; j < count; j = j + 1){
+-			if (((int *)bd->pieces.array)[j] == str[i]){
++			if (((intptr_t *)bd->pieces.array)[j] == str[i]){
+ 				data[i] = j;
+ 				break;
+ 			}
+ 		}
++		if (j == count) {
++			// fprintf(stderr,"Invalid character '%c' at %d,%d\n",str[i],i,j);
++			free(data);
++			return NULL;
++		}
+ 	}
+ 	return data;
+ }
