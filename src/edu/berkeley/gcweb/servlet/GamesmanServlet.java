@@ -1,5 +1,6 @@
 package edu.berkeley.gcweb.servlet;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +20,12 @@ public class GamesmanServlet {
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
         String msg = null;
+        
+        URL jni = Gamesman.class.getClassLoader().getResource("GamesmanJNI.jnilib");
+        msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
+        
         try {
-            msg = "Success: " + String.valueOf(Gamesman.getMoveValue(position));
+            msg = "Success: " + msg;
         } catch (Exception e) {
             msg = "Error: " + e.getMessage();
         }

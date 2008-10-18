@@ -48,7 +48,7 @@ public class Gamesman {
 	    URL jni = Gamesman.class.getClassLoader().getResource("GamesmanJNI.jnilib");
 	    String msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
 	    if (true) {
-	        throw new RuntimeException(msg);
+	        throw new Error(msg);
 	    }
 		String cwd = System.getProperty("user.dir");
 		// For some reason, System.load requires an absolute path.
