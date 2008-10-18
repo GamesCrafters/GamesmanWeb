@@ -26,14 +26,14 @@ public class Gamesman {
 		try {
 			System.out.println(getMoveValue("ttt",3,3,boardstr));
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 	public static int[] getNextMoveValues(String game, int width, int height, String board) throws InvalidBoardException {
 		try {
 			return GamesmanC.getNextMoveValues(board);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidBoardException(e);
+			throw new InvalidBoardException(e.getMessage(), e);
 		}
 	}
 	
@@ -41,7 +41,7 @@ public class Gamesman {
 		try {
 			return GamesmanC.getMoveValue(board);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidBoardException(e);
+			throw new InvalidBoardException(e.getMessage(), e);
 		}
 	}
 
