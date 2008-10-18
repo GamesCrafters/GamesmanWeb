@@ -29,7 +29,7 @@
 	<target name="clean" description="Clean the build directories">
 		<delete dir="${build}/*"/>
 		<exec executable="make">
-			<arg line="-C ${jgamesman} clean OUTDIR=${dist}"/>
+			<arg line="-C ${jgamesman} clean OUTDIR=${build}"/>
 		</exec>
     </target>
 </project>

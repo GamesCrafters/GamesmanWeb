@@ -62,13 +62,52 @@ JNIEXPORT void JNICALL Java_edu_berkeley_jgamesman_GamesmanC_initnative(JNIEnv *
 	// sa->processArguments(0, NULL);
 }
 
+static jobject java_new_HashMap(JNIEnv *env) {
+	jclass class_HashMap = (*env)->FindClass(env, "java/util/HashMap");
+	if (!class_HashMap) return NULL;
+	jmethodID cid = (*env)->GetMethodID(env, class_HashMap, "<init>", "()V");
+	if (!cid) return NULL;
+	jobject newInst = (*env)->NewObject(env, class_HashMap, cid);
+	return newInst;
+}
+
+static void java_Map_put(JNIEnv *env, jobject map, const char *keystr, jobject value) {
+	jobject key = (jobject) ((*env)->NewStringUTF(env, keystr));
+	if (!key) return;
+	jclass class_Map = (*env)->FindClass(env, "java/util/Map");
+	if (!class_Map) return;
+	jmethodID putID = (*env)->GetMethodID(env, class_Map, "put",
+										  "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+	if (!putID) return;
+
+	(*env)->CallObjectMethod(env, map, putID, key, value);
+}
+
+/*
+static jstring java_Map_get(JNIEnv *env, jobject map, const char *keystr, jobject value) {
+	jobject key = (*env)->NewStringUTF(env, lastfile);
+	
+	jclass class_Map = (*env)->FindClass(env, "java/util/Map");
+	jmethodID getID = (*env)->GetMethodID(env, class_Map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+
+	(*env)->CallObjectMethod(env, map, getID, key);
+	
+}
+*/
+
+
 static struct Board *javaToBoard(JNIEnv *env, jstring jBoardStr) {
 	const char *boardStr;
 	char *myBoardStr;
-	int i;
 	struct Board *b;
 	
+	if (jBoardStr == NULL) {
+		return NULL;
+	}
 	boardStr = (*env)->GetStringUTFChars(env, jBoardStr, NULL);
+	if (boardStr == NULL) {
+		return NULL;
+	}
 	if (strlen(boardStr) != sa->bd->size) {
 		fprintf(stderr,"Error with board! %s\n",boardStr);
 		(*env)->ReleaseStringUTFChars(env, jBoardStr, boardStr);
@@ -93,7 +132,7 @@ void ThrowIllegalArgument(JNIEnv *env, const char *msg) {
 }
 
 JNIEXPORT jintArray JNICALL
-Java_edu_berkeley_jgamesman_GamesmanC_getMoveValues(JNIEnv *env, jclass cls, jstring jboardStr) //jarray boardKey, jarray boardValue)
+Java_edu_berkeley_jgamesman_GamesmanC_getNextMoveValues(JNIEnv *env, jclass cls, jstring jboardStr) //jarray boardKey, jarray boardValue)
 {
 	ArrayList *children;
 	ArrayList *childrenValues;
@@ -129,20 +168,34 @@ Java_edu_berkeley_jgamesman_GamesmanC_getMoveValues(JNIEnv *env, jclass cls, jst
 #define illegal 4
 */
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jobject JNICALL
 Java_edu_berkeley_jgamesman_GamesmanC_getMoveValue(JNIEnv *env, jclass cls, jstring jboardStr) //jarray boardKey, jarray boardValue)
 {
 	struct Board * b = javaToBoard(env, jboardStr);
 	int positionValue;
+	jobject hash;
 
 	if (!b) {
 		ThrowIllegalArgument(env, "Invalid board string passed to getMoveValue");
-		return -1;
+		return NULL;
 	}
 
+	jobject map = java_new_HashMap(env);
+	if (!map) return NULL;
+	
 	positionValue = UserInterface_getValue(b, (struct Hasher*)sa->gh, sa->fdb);
+
+	hash = java_new_HashMap(env);
+	if (!hash) return NULL;
+	{
+		char mystr[100];
+		sprintf(mystr,"%d",positionValue);
+		java_Map_put(env, hash, "value", ((*env)->NewStringUTF(env, mystr)));
+		sprintf(mystr,"%d",-1);
+		java_Map_put(env, hash, "remoteness", ((*env)->NewStringUTF(env, mystr)));
+	}
 	
 	Board_free(b);
 	
-	return positionValue;
+	return hash;
 }
