@@ -9,7 +9,8 @@
 	<property name="dist" location="."/>
 	<!-- <property name="dist" location="C:/Program Files/Apache Tomcat/webapps"/> -->
 
-    <target name="war" depends="clean, compile, jgamesman" description="Package a WAR file">
+	<target name="all" depends="clean, compile, jgamesman, war"/>
+    <target name="war" depends="compile, jgamesman" description="Package a WAR file">
     	<delete file="gcweb.war"/>
         <war destfile="${dist}/gcweb.war" basedir="${deploy}" webxml="${deploy}/WEB-INF/web.xml"
              includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />

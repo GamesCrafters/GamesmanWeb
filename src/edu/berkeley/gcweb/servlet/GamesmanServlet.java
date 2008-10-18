@@ -2,9 +2,13 @@ package edu.berkeley.gcweb.servlet;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.berkeley.gcweb.InvalidBoardException;
 import edu.berkeley.jgamesman.Gamesman;
@@ -20,14 +24,21 @@ public class GamesmanServlet {
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
         
-        String msg = "An unknown error occurred while retrieving the move value for " + position + ".";
+        JSONObject json;
         try {
-            msg = "Move value for position " + position + " is " + Gamesman.getMoveValue(position);
-        } catch (InvalidBoardException e) {
-            msg = "An exception occurred while retrieving the move value for " + position + ":\n" +
-                e.getMessage();
+            Map<String, String> moveValue =
+                Gamesman.getMoveValue(game, width, height, position);
+            json = new JSONObject(moveValue);
+        } catch (Exception e) {
+            try {
+                json = new JSONObject("{status: 'error'}");
+                json.put("message", e.getMessage());
+            } catch (JSONException je) {
+                return "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
+            }
         }
-        return msg;
+        
+        return json.toString();
     }
     
     /**
@@ -59,7 +70,7 @@ public class GamesmanServlet {
             "  position = " + position + ";\n"
         );
         
-        List<String> standard = Arrays.asList(new String[]{"width", "height", "position"});
+        List<String> standard = Arrays.asList(new String[] {"width", "height", "position"});
         MultivaluedMap<String, String> params = getMatrixParameters(uri);
         for (String param : params.keySet()) {
             if (standard.contains(param)) {
