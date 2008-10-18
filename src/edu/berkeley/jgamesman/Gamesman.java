@@ -49,6 +49,6 @@ public class Gamesman {
 	    assert jniLib != null : "Cannot find JNI lib.";
 		// For some reason, System.load requires an absolute path.
 		System.load(jniLib.getPath());
-		//GamesmanC.init();
+		GamesmanC.init();
 	}
 }
