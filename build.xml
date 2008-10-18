@@ -27,8 +27,7 @@
         </exec>
     </target>
 	<target name="clean" description="Clean the build directories">
-		<delete dir="${build}"/>
-		<mkdir dir="${build}"/>
+		<delete dir="${build}/*"/>
 		<exec executable="make">
 			<arg line="-C ${jgamesman} clean OUTDIR=${dist}"/>
 		</exec>
