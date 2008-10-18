@@ -18,8 +18,13 @@ public class GamesmanServlet {
                                @MatrixParam("height") int height,
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
-        
-        return "";
+        String msg = null;
+        try {
+            msg = String.valueOf(Gamesman.getMoveValue(position));
+        } catch (Exception e) {
+            msg = e.getMessage();
+        }
+        return msg;
     }
     
     /**

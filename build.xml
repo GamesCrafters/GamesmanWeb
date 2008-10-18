@@ -2,7 +2,7 @@
 <project>
     <description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	<property name="src" location="src"/>
-        <property name="deploy" location="deploy"/>
+    <property name="deploy" location="deploy"/>
 	<property name="jgamesman" location="${src}/edu/berkeley/jgamesman"/>
 	<property name="lib" location="${deploy}/WEB-INF/lib"/>
 	<property name="build" location="${deploy}/WEB-INF/classes"/>
