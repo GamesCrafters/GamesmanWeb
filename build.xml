@@ -2,16 +2,17 @@
 <project>
     <description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	<property name="src" location="src"/>
+        <property name="deploy" location="deploy"/>
 	<property name="jgamesman" location="${src}/edu/berkeley/jgamesman"/>
-	<property name="lib" location="deploy/WEB-INF/lib"/>
-	<property name="build" location="deploy/WEB-INF/classes"/>
+	<property name="lib" location="${deploy}/WEB-INF/lib"/>
+	<property name="build" location="${deploy}/WEB-INF/classes"/>
 	<property name="dist" location="."/>
 	<!-- <property name="dist" location="C:/Program Files/Apache Tomcat/webapps"/> -->
 
     <target name="war" depends="clean, compile, jgamesman" description="Package a WAR file">
     	<delete file="gcweb.war"/>
-        <war destfile="${dist}/gcweb.war" basedir="${basedir}" webxml="deploy/WEB-INF/web.xml"
-        	 includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
+        <war destfile="${dist}/gcweb.war" basedir="${deploy}" webxml="${deploy}/WEB-INF/web.xml"
+             includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
     </target>
     <target name="compile" description="Compile the GCWeb classes">
     	<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-code-0.9-ea.jar:${lib}/jersey-server-0.9-ea.jar:${lib}/jsr311-api-0.9.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 

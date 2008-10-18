@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "jni.h"
+#include <jni.h>
 
 #include "Core/Game.h"
 #include "Core/UserInterface.h"

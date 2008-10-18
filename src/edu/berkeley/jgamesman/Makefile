@@ -69,3 +69,4 @@ $(OUTDIR)/$(JNILIB): Gamesman+- JavaInterface.c $(GMDIR)/src/Games/$(GAME).o
 .SUFFIXES: .class .java
 .PHONY: Gamesman+- all clean jnilib
 
+
