@@ -48,7 +48,7 @@ public class Gamesman {
 	    URL jniLib = Gamesman.class.getClassLoader().getResource("GamesmanJNI.jnilib");
 	    assert jniLib != null : "Cannot find JNI lib.";
 		// For some reason, System.load requires an absolute path.
-		System.load(jniLib.toExternalForm());
+		System.load(jniLib.getPath());
 		GamesmanC.init();
 	}
 }
