@@ -6,6 +6,8 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import edu.berkeley.jgamesman.Gamesman;
+
 @Path("/gamesman")
 public class GamesmanServlet {
     
@@ -16,7 +18,8 @@ public class GamesmanServlet {
                                @MatrixParam("height") int height,
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
-        return "hello";
+        
+        return "";
     }
     
     /**

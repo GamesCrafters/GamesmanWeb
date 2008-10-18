@@ -2,7 +2,7 @@
 <project>
     <description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	<property name="src" location="src"/>
-	<property name="jgamesman" location="jgamesman"/>
+	<property name="jgamesman" location="${src}/edu/berkeley/jgamesman"/>
 	<property name="lib" location="deploy/WEB-INF/lib"/>
 	<property name="build" location="deploy/WEB-INF/classes"/>
 	<property name="dist" location="."/>
@@ -22,14 +22,14 @@
     </target>
     <target name="jgamesman">
         <exec executable="make" failonerror="true">
-            <arg line="-C ${src}/edu/berkeley/jgamesman jnilib OUTDIR=${dist}"/>
+            <arg line="-C ${jgamesman} jnilib OUTDIR=${build}"/>
         </exec>
     </target>
 	<target name="clean" description="Clean the build directories">
 		<delete dir="${build}"/>
 		<mkdir dir="${build}"/>
 		<exec executable="make">
-			<arg line="-C ${src}/edu/berkeley/jgamesman clean OUTDIR=${dist}"/>
+			<arg line="-C ${jgamesman} clean OUTDIR=${dist}"/>
 		</exec>
     </target>
 </project>

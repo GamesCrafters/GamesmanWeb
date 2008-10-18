@@ -1,5 +1,7 @@
 package edu.berkeley.jgamesman;
 
+import java.net.URL;
+
 import edu.berkeley.gcweb.InvalidBoardException;
 
 class GamesmanC {
@@ -43,6 +45,12 @@ public class Gamesman {
 	}
 
 	static {
+	    URL jni = Gamesman.class.getClassLoader().getResource("GamesmanJNI.jnilib");
+	    if (jni == null) {
+	        System.out.println("can't find the jnilib");
+	    } else {
+	        System.out.println(jni.toExternalForm());
+	    }
 		String cwd = System.getProperty("user.dir");
 		// For some reason, System.load requires an absolute path.
 		System.load(cwd + "/GamesmanJNI.jnilib");
