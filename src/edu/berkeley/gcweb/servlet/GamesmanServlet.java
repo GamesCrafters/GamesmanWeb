@@ -21,7 +21,7 @@ public class GamesmanServlet {
                                @Context UriInfo uri) {
         String msg = null;
         
-        URL jni = Gamesman.class.getClassLoader().getResource("GamesmanJNI.jnilib");
+        URL jni = getClass().getClassLoader().getResource("GamesmanJNI.jnilib");
         msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
         
         try {
