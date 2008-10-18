@@ -21,12 +21,12 @@ public class GamesmanServlet {
                                @Context UriInfo uri) {
         
         String msg = "An unknown error occurred while retrieving the move value for " + position + ".";
-        try {
-            msg = "Move value for position " + position + " is " + Gamesman.getMoveValue(position);
-        } catch (InvalidBoardException e) {
-            msg = "An exception occurred while retrieving the move value for " + position + ":\n" +
-                e.getMessage();
-        }
+//        try {
+//            msg = "Move value for position " + position + " is " ;+ Gamesman.getMoveValue(position);
+//        } catch (InvalidBoardException e) {
+//            msg = "An exception occurred while retrieving the move value for " + position + ":\n" +
+//                e.getMessage();
+//        }
         return msg;
     }
     
