@@ -7,8 +7,6 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import edu.berkeley.jgamesman.Gamesman;
-
 @Path("/gamesman")
 public class GamesmanServlet {
     
@@ -19,10 +17,9 @@ public class GamesmanServlet {
                                @MatrixParam("height") int height,
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
-        String msg = null;
         
         URL jni = getClass().getClassLoader().getResource("GamesmanJNI.jnilib");
-        msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
+        String msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
         
         try {
             msg = "Success: " + msg;
