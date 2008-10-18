@@ -20,9 +20,9 @@ public class GamesmanServlet {
                                @Context UriInfo uri) {
         String msg = null;
         try {
-            msg = String.valueOf(Gamesman.getMoveValue(position));
+            msg = "Success: " + String.valueOf(Gamesman.getMoveValue(position));
         } catch (Exception e) {
-            msg = e.getMessage();
+            msg = "Error: " + e.getMessage();
         }
         return msg;
     }
