@@ -1,11 +1,13 @@
 package edu.berkeley.gcweb.servlet;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import edu.berkeley.gcweb.InvalidBoardException;
+import edu.berkeley.jgamesman.Gamesman;
 
 @Path("/gamesman")
 public class GamesmanServlet {
@@ -18,13 +20,12 @@ public class GamesmanServlet {
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
         
-        URL jni = getClass().getClassLoader().getResource("GamesmanJNI.jnilib");
-        String msg = (jni == null) ? "Can't find the jnilib." : jni.toExternalForm();
-        
+        String msg = "An unknown error occurred while retrieving the move value for " + position + ".";
         try {
-            msg = "Success: " + msg;
-        } catch (Exception e) {
-            msg = "Error: " + e.getMessage();
+            msg = "Move value for position " + position + " is " + Gamesman.getMoveValue(position);
+        } catch (InvalidBoardException e) {
+            msg = "An exception occurred while retrieving the move value for " + position + ":\n" +
+                e.getMessage();
         }
         return msg;
     }
