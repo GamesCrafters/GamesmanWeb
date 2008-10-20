@@ -1,16 +1,15 @@
 package edu.berkeley.gcweb.servlet;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.berkeley.gcweb.InvalidBoardException;
 import edu.berkeley.jgamesman.Gamesman;
 
 @Path("/gamesman")
@@ -29,6 +28,7 @@ public class GamesmanServlet {
             Map<String, String> moveValue =
                 Gamesman.getMoveValue(game, width, height, position);
             json = new JSONObject(moveValue);
+            json.put("status", "OK");
         } catch (Exception e) {
             try {
                 json = new JSONObject("{status: 'error'}");
@@ -62,34 +62,29 @@ public class GamesmanServlet {
                                     @MatrixParam("position") String position,
                                     @Context UriInfo uri) {
         
-        StringBuilder response = new StringBuilder();
-        response.append(
-            "Request {\n" +
-            "  width = " + width + ";\n" +
-            "  height = " + height + ";\n" +
-            "  position = " + position + ";\n"
-        );
-        
-        List<String> standard = Arrays.asList(new String[] {"width", "height", "position"});
-        MultivaluedMap<String, String> params = getMatrixParameters(uri);
-        for (String param : params.keySet()) {
-            if (standard.contains(param)) {
-                continue;
+        String response = null;
+        try {
+            JSONArray json = new JSONArray();
+            Map<String, String>[] nextMoveValues =
+                Gamesman.getNextMoveValues(game, width, height, position);
+            for (Map<String, String> moveValue : nextMoveValues) {
+                JSONObject jsonMoveValue = new JSONObject(moveValue);
+                jsonMoveValue.put("status", "OK");
+                json.put(jsonMoveValue);
             }
-            
-            response.append("  " + param + " = ");
-            List<String> values = params.get(param);
-            if (values.isEmpty()) {
-                response.append("<null>;\n");
-            } else if (values.size() == 1) {
-                response.append(values.get(0) + ";\n");
-            } else {
-                response.append(values.toString() + ";\n");
+            response = json.toString();
+        } catch (Exception e) {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("status", "error");
+                json.put("message", e.getMessage());
+                response = json.toString();
+            } catch (JSONException je) {
+                response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
             }
         }
         
-        response.append("}\n");
-        return response.toString();
+        return response;
     }
     
     private MultivaluedMap<String, String> getMatrixParameters(UriInfo uri) {
