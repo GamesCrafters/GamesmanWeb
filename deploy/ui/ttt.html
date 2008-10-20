@@ -13,17 +13,10 @@
     </style>
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
-    <!--<script src="http://www.google.com/jsapi" type="text/javascript"></script> 
-    <script type="text/javascript"> 
-      google.load("jquery", "1");
-      google.setOnLoadCallback(initialize);
-      
-      function initialize() {
-        
-      }
-    </script> -->
+    <link rel="stylesheet" href="styles/ttt.css">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
+    <script type="text/javascript" src="js/ttt.js"></script>
   </head> 
   <body> 
     <div class="header">
@@ -51,7 +44,26 @@
       <div id="main">
         <h1>Tic-Tac-Toe</h1>
         <div id="game">
-          Game Here
+          Current Board:<p/>
+          <table>
+            <tr id="row-0">
+              <td id="cell-0-0"></td>
+              <td id="cell-0-1"></td>
+              <td id="cell-0-2"></td>
+            </tr>
+            <tr id="row-1">
+              <td id="cell-1-0"></td>
+              <td id="cell-1-1"></td>
+              <td id="cell-1-2"></td>
+            </tr>
+            <tr id="row-2">
+              <td id="cell-2-0"></td>
+              <td id="cell-2-1"></td>
+              <td id="cell-2-2"></td>
+            </tr>
+          </table>
+          <div id="current-value">
+          </div>
         </div>
       </div> 
       <!-- sidebar --> 
