@@ -57,6 +57,7 @@ JNIEXPORT void JNICALL Java_edu_berkeley_jgamesman_GamesmanC_initnative(JNIEnv *
 		s->tierIterator = Iterator_createNumberIterator(sa->gh->bd->size, -1, -1);
 	}
 	Solver_solve(s, sa->theGame);
+	printf("\n\n");
 	
 	FlatDB_saveDB(sa->fdb);
 	// sa->processArguments(0, NULL);
@@ -71,16 +72,27 @@ static jobject java_new_HashMap(JNIEnv *env) {
 	return newInst;
 }
 
-static void java_Map_put(JNIEnv *env, jobject map, const char *keystr, jobject value) {
+static void java_Map_putstring(JNIEnv *env, jobject map, const char *keystr, const char *valstr) {
+	jobject value = NULL;
+	if (valstr) {
+		value = (jobject) ((*env)->NewStringUTF(env, valstr));
+		if (!value) return;
+	}
 	jobject key = (jobject) ((*env)->NewStringUTF(env, keystr));
 	if (!key) return;
 	jclass class_Map = (*env)->FindClass(env, "java/util/Map");
 	if (!class_Map) return;
 	jmethodID putID = (*env)->GetMethodID(env, class_Map, "put",
-										  "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+					  "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 	if (!putID) return;
 
 	(*env)->CallObjectMethod(env, map, putID, key, value);
+}
+
+static void java_Map_putint(JNIEnv *env, jobject map, const char *keystr, int val) {
+	char valstr[100];
+	sprintf(valstr,"%d",val);
+	java_Map_putstring(env, map, keystr, valstr);
 }
 
 /*
@@ -113,13 +125,25 @@ static struct Board *javaToBoard(JNIEnv *env, jstring jBoardStr) {
 		(*env)->ReleaseStringUTFChars(env, jBoardStr, boardStr);
 		return NULL;
 	}
-	fprintf(stderr,"Looking up board: %s\n",boardStr);
+	//fprintf(stderr,"Looking up board: %s\n",boardStr);
 	myBoardStr = strdup(boardStr);
 	(*env)->ReleaseStringUTFChars(env, jBoardStr, boardStr);
 	
 	b = Board_create_string(myBoardStr, sa->bd);
+	Board_convertDataToString(b, sa->bd);
 
 	return b;
+}
+
+jobject positionValue_to_hashtable(JNIEnv *env, int positionValue, char *boardstr) {
+
+	jobject hash = java_new_HashMap(env);
+	if (!hash) return NULL;
+	java_Map_putstring(env, hash, "board", boardstr); // so that javascript can match up request.
+	java_Map_putint(env, hash, "value", positionValue);
+	java_Map_putint(env, hash, "remoteness", -1);
+	
+	return hash;
 }
 
 void ThrowIllegalArgument(JNIEnv *env, const char *msg) {
@@ -131,71 +155,81 @@ void ThrowIllegalArgument(JNIEnv *env, const char *msg) {
 	}
 }
 
-JNIEXPORT jintArray JNICALL
-Java_edu_berkeley_jgamesman_GamesmanC_getNextMoveValues(JNIEnv *env, jclass cls, jstring jboardStr) //jarray boardKey, jarray boardValue)
+jobject board_to_hash(JNIEnv *env, ShellArguments *sa, struct Board *b, const char *move)
 {
-	ArrayList *children;
-	ArrayList *childrenValues;
-	struct Board * b = javaToBoard(env, jboardStr);
-
-	if (!b) {
-		ThrowIllegalArgument(env, "Invalid board string passed to getMoveValue");
-		return NULL;
-	}
-
-	children = UserInterface_generateChildren(b, sa->theGame);
-	childrenValues = UserInterface_getChildrenValues(b, (struct Hasher*)sa->gh, sa->fdb, children);
-
-	Board_free(b);
-	
-	return NULL;
-}
-
-// From GamesmanDefinitions.h
-/*
-#define NOTVISITED 0
-#define UNDECIDED 0
-#define WIN 1
-#define TIE 2
-#define LOSE 3
-#define ILLEGAL 4
-
-#define notvisited 0
-#define undecided 0
-#define win 1
-#define tie 2
-#define lose 3
-#define illegal 4
-*/
-
-JNIEXPORT jobject JNICALL
-Java_edu_berkeley_jgamesman_GamesmanC_getMoveValue(JNIEnv *env, jclass cls, jstring jboardStr) //jarray boardKey, jarray boardValue)
-{
-	struct Board * b = javaToBoard(env, jboardStr);
 	int positionValue;
 	jobject hash;
+	char *boardstr;
+	Board_convertStringToData(b, sa->bd);
+	boardstr = Board_data_toString(b, sa->bd);
+	Board_convertDataToString(b, sa->bd);
+	if (!boardstr) return NULL;
+	
+	positionValue = UserInterface_getValue(b, (struct Hasher*)sa->gh, sa->fdb);
+	
+	hash = positionValue_to_hashtable(env, positionValue, boardstr);
+	
+	if (!hash) return NULL;
+	
+	java_Map_putstring(env, hash, "move", move); // so that javascript can match up request.
+	
+	return hash;
+}
+
+JNIEXPORT jobjectArray JNICALL
+Java_edu_berkeley_jgamesman_GamesmanC_getNextMoveValues(JNIEnv *env, jclass cls, jstring jboardStr)
+{
+	ArrayList *moves;
+	int i;
+	jarray arr;
+	struct Board * b = javaToBoard(env, jboardStr);
+	
+	jclass class_Map = (*env)->FindClass(env, "java/util/Map");
+	if (!class_Map) return NULL;
 
 	if (!b) {
 		ThrowIllegalArgument(env, "Invalid board string passed to getMoveValue");
 		return NULL;
 	}
 
-	jobject map = java_new_HashMap(env);
-	if (!map) return NULL;
+	//children = UserInterface_generateChildren(b, sa->theGame);
+	moves = UserInterface_generateMoves(b, sa->theGame);
+	arr = (*env)->NewObjectArray(env, moves->count, class_Map, NULL);
 	
-	positionValue = UserInterface_getValue(b, (struct Hasher*)sa->gh, sa->fdb);
-
-	hash = java_new_HashMap(env);
-	if (!hash) return NULL;
-	{
-		char mystr[100];
-		sprintf(mystr,"%d",positionValue);
-		java_Map_put(env, hash, "value", ((*env)->NewStringUTF(env, mystr)));
-		sprintf(mystr,"%d",-1);
-		java_Map_put(env, hash, "remoteness", ((*env)->NewStringUTF(env, mystr)));
+	for (i = 0; i < moves->count; i++) {
+		char *nextMove = ArrayList_get(moves, i);
+		jobject hash;
+		struct Board *newBoard = Board_clone(b, sa->bd);
+		newBoard = UserInterface_doMove(nextMove, newBoard, sa->theGame);
+		
+		hash = board_to_hash(env, sa, newBoard, nextMove);
+		Board_free(newBoard);
+		if (!hash) {
+			break;
+		}
+		(*env)->SetObjectArrayElement(env, arr, i, hash);
+		
 	}
-	
+
+	ArrayList_free(moves);
 	Board_free(b);
 	
-	return hash;
+	return arr;
+}
+
+JNIEXPORT jobject JNICALL
+Java_edu_berkeley_jgamesman_GamesmanC_getMoveValue(JNIEnv *env, jclass cls, jstring jboardStr)
+{
+	jobject ret;
+	struct Board * b = javaToBoard(env, jboardStr);
+	if (!b) {
+		ThrowIllegalArgument(env, "Invalid board string passed to getMoveValue");
+		return NULL;
+	}
+
+	ret = board_to_hash(env, sa, b, NULL);
+
+	Board_free(b);
+	// free list of positions
+	return ret;
 }
