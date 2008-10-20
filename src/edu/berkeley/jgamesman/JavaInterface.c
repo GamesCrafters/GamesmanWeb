@@ -45,8 +45,8 @@ JNIEXPORT void JNICALL Java_edu_berkeley_jgamesman_GamesmanC_initnative(JNIEnv *
 	sa->theGame = GameSpecific_createGame();
 	sa->bd = sa->theGame->bd;
 	
-	sa->gh = GenericHash_create(sa->bd);
-	sa->fdb = FlatDB_create(sa->outputFilename, Hasher_getMaxHash(((struct Hasher*)sa->gh), sa->bd));
+	sa->gh = (struct Hasher*)GenericHash_create(sa->bd);
+	sa->fdb = FlatDB_create(sa->outputFilename, Hasher_getMaxHash(((struct Hasher*)sa->gh), sa->bd), (int)(intptr_t)Game_getProperty(sa->theGame, "Data Size"));
 	struct Solver *s = NULL;
 	if (sa->solver == 0){
 		s = Solver_createSolver(sa->fdb, (struct Hasher*)sa->gh, &Solver_Undo_solve);

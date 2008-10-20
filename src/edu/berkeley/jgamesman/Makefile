@@ -57,7 +57,7 @@ clean:
 	rm -vf $(OUTDIR)/$(JNILIB) $(JAVACLASS)
 
 $(GMDIR)/lib/libgamesman.a $(GMDIR)/src/Games/$(GAME).o:
-	make -C $(GMDIR)
+	make -C $(GMDIR) -k || true
 
 $(OUTDIR)/$(JNILIB): Gamesman+- JavaInterface.c $(GMDIR)/src/Games/$(GAME).o
 	gcc -g -Wall -L$(GMDIR)/lib -I$(GMDIR)/src $(SHAREDOPT) -o $@ \
