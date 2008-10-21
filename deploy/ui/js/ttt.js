@@ -45,7 +45,7 @@ function updateBoard(game, newBoard) {
         // set background color to new values
         for(i=0;i<json.length;i++) {
             row = height-json[i].move[1];
-            col = json[i].move[0].charCodeAt(0)-'a'.charCodeAt(0);
+            col = json[i].move.charCodeAt(0)-'a'.charCodeAt(0);
             $('#cell-'+row+'-'+col).css('background-color', moveValueColors[json[i].value]);
         }
     });
