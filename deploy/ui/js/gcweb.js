@@ -9,7 +9,7 @@ GCWeb = {
         return function(gameName, args){
             return {
                 getPositionValue: function (position, callback) {
-                    url = '/service/'+gameName+'/getMoveValue;position='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+position.replace(' ', '%20');
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
@@ -27,7 +27,7 @@ GCWeb = {
                     });
                 },
                 getNextMoveValues: function (position, callback) {
-                    url = '/service/'+gameName+'/getNextMoveValues;position='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+position.replace(' ', '%20');
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
