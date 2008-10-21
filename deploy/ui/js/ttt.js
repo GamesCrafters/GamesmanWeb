@@ -6,6 +6,7 @@ var width = 3;
 var height = 3;
 var meanings = ['','Lose','Draw','Win'];
 var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
+var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
 
 $(document).ready(function(){
     var game = GCWeb.newDartboardGame("ttt", width, height, {});
@@ -39,14 +40,14 @@ function updateBoard(game, newBoard) {
         // clear background color
         for(row=0;row<height;row++) {
             for(col=0;col<width;col++) {
-                $('#cell-'+row+'-'+col).css('background-color','');
+                $('#cell-'+row+'-'+col).removeClass();
             }
         }
         // set background color to new values
         for(i=0;i<json.length;i++) {
             row = height-json[i].move[1];
             col = json[i].move.charCodeAt(0)-'a'.charCodeAt(0);
-            $('#cell-'+row+'-'+col).css('background-color', moveValueColors[json[i].value]);
+            $('#cell-'+row+'-'+col).addClass(moveValueClasses[json[i].value]);
         }
     });
     $('#turn').text("It's "+pieces[currentPlayer]+"'s turn!");
