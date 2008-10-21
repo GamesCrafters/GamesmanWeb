@@ -8,7 +8,7 @@ var meanings = ['','Lose','Draw','Win'];
 var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 
 $(document).ready(function(){
-    var game = GCWeb.newDartboardGame("ttt", "3", "3", {});
+    var game = GCWeb.newDartboardGame("ttt", width, height, {});
     updateBoard(game, currentBoard);
     
     for(var row=0;row<height;row++) {
