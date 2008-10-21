@@ -5,10 +5,11 @@ var currentPlayer = 0;
 var width = 3;
 var height = 3;
 var meanings = ['','Lose','Draw','Win'];
+var moveValueColors = ['', 'red', 'yellow', 'green'];
 
 $(document).ready(function(){
-    game = GCWeb.newDartboardGame("ttt", "3", "3", {});
-    updateBoard(currentBoard);
+    var game = GCWeb.newDartboardGame("ttt", "3", "3", {});
+    updateBoard(game, currentBoard);
     //$('#optimalMove').text(game.getNextMoveValues(currentValue, function(){}));
     
     for(var row=0;row<height;row++) {
@@ -18,7 +19,7 @@ $(document).ready(function(){
                     if(currentBoard[row][col] == EMPTY){
                         currentBoard[row][col] = pieces[currentPlayer];
                         currentPlayer = (currentPlayer+1)%2;
-                        updateBoard(currentBoard);
+                        updateBoard(game, currentBoard);
                     }
                 }
             }(row, col));
@@ -26,7 +27,7 @@ $(document).ready(function(){
     }
 });
 
-function updateBoard(newBoard) {
+function updateBoard(game, newBoard) {
     for(row=0;row<height;row++) {
         for(col=0;col<width;col++) {
             $('#cell-'+row+'-'+col).text(newBoard[row][col]);
@@ -34,6 +35,20 @@ function updateBoard(newBoard) {
     }
     game.getPositionValue(getBoardString(newBoard), function(json){
         $('#current-value').text('Current Value: '+meanings[json.value]);
+    });
+    game.getNextMoveValues(getBoardString(newBoard), function(json){
+        // clear background color
+        for(row=0;row<height;row++) {
+            for(col=0;col<width;col++) {
+                $('#cell-'+row+'-'+col).css('background-color','');
+            }
+        }
+        // set background color to new values
+        for(i=0;i<json.length;i++) {
+            row = height-json[i].move[1];
+            col = json[i].move[0].charCodeAt(0)-'a'.charCodeAt(0);
+            $('#cell-'+row+'-'+col).css('background-color', moveValueColors[json[i].value]);
+        }
     });
     
 }

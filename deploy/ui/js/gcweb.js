@@ -27,18 +27,77 @@ GCWeb = {
                     });
                 },
                 getNextMoveValues: function (position, callback) {
-                    url = '/service/'+gameName+'/getNextMoveValues;position='+position;
+                    url = '/service/'+gameName+'/getNextMoveValues;position='+position.replace(' ', '%20');
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
-                    }                   
-                    
-                    // hack to test 1210
-                    if(position == 10)
-                        return 'Game Over';
-                    if(position % 3 == 2)
-                        return '+2';
-                    return '+1';
-                    
+                    }
+                    /*
+                    callback([
+    {
+        "board": "X        ",
+        "move": "a3",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": " X       ",
+        "move": "b3",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "  X      ",
+        "move": "c3",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "   X     ",
+        "move": "a2",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "    X    ",
+        "move": "b2",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "     X   ",
+        "move": "c2",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "      X  ",
+        "move": "a1",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "       X ",
+        "move": "b1",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    },
+    {
+        "board": "        X",
+        "move": "c1",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "2"
+    }
+]);
+return;*/
                     $.getJSON(url, {}, function (json) {
                         callback(json);
                     });
