@@ -28,6 +28,10 @@ body > .header h1 {
   font: 1em "Trebuchet MS", Calibri, "Lucida Sans", "Bitstream Vera Sans", sans-serif
 }
 
+.win-move { #0f0; }
+.tie-move { #ff0; }
+.lose-move { #8a0000; }
+
 #options { margin-left: 0.5em; list-style: none; font-size: 0.9em }
 
 #main { width: 100%; margin-left: -10em }
