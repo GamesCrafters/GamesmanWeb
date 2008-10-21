@@ -49,7 +49,7 @@ function updateBoard(game, newBoard) {
             $('#cell-'+row+'-'+col).css('background-color', moveValueColors[json[i].value]);
         }
     });
-    game.setNextPlayer(pieces[currentPlayer]);
+    $('#turn').text("It's "+pieces[currentPlayer]+"'s turn!");
 }
 
 function getBoardString(board){
