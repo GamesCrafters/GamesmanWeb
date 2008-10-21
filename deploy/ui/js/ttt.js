@@ -5,7 +5,7 @@ var currentPlayer = 0;
 var width = 3;
 var height = 3;
 var meanings = ['','Lose','Draw','Win'];
-var moveValueColors = ['', 'red', 'yellow', 'green'];
+var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 
 $(document).ready(function(){
     var game = GCWeb.newDartboardGame("ttt", "3", "3", {});
