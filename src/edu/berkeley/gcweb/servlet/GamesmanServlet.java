@@ -23,22 +23,24 @@ public class GamesmanServlet {
                                @MatrixParam("position") String position,
                                @Context UriInfo uri) {
         
-        JSONObject json;
+        String response = null;
         try {
             Map<String, String> moveValue =
                 Gamesman.getMoveValue(game, width, height, position);
+            JSONObject json = new JSONObject("{status: 'OK'}");
             json = new JSONObject(moveValue);
-            json.put("status", "OK");
+            response = json.toString(4);
         } catch (Exception e) {
             try {
-                json = new JSONObject("{status: 'error'}");
+                JSONObject json = new JSONObject("{status: 'error'}");
                 json.put("message", e.getMessage());
+                response = json.toString(4);
             } catch (JSONException je) {
-                return "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
+                response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
             }
         }
         
-        return json.toString();
+        return response;
     }
     
     /**
@@ -72,13 +74,13 @@ public class GamesmanServlet {
                 jsonMoveValue.put("status", "OK");
                 json.put(jsonMoveValue);
             }
-            response = json.toString();
+            response = json.toString(4);
         } catch (Exception e) {
             try {
                 JSONObject json = new JSONObject();
                 json.put("status", "error");
                 json.put("message", e.getMessage());
-                response = json.toString();
+                response = json.toString(4);
             } catch (JSONException je) {
                 response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
             }
