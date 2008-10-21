@@ -105,6 +105,9 @@ return;*/
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (player, remoteness) {
                     $('#prediction').text("Player "+player+" to win in "+remoteness);
+                },
+                setNextPlayer: function(player) {
+                    $('#turn').text("It's "+player+"'s turn!");
                 }
             }
         }(gameName, args);

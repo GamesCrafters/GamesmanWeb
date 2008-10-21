@@ -10,7 +10,6 @@ var moveValueColors = ['', 'red', 'yellow', 'green'];
 $(document).ready(function(){
     var game = GCWeb.newDartboardGame("ttt", "3", "3", {});
     updateBoard(game, currentBoard);
-    //$('#optimalMove').text(game.getNextMoveValues(currentValue, function(){}));
     
     for(var row=0;row<height;row++) {
         for(var col=0;col<width;col++) {
@@ -50,7 +49,7 @@ function updateBoard(game, newBoard) {
             $('#cell-'+row+'-'+col).css('background-color', moveValueColors[json[i].value]);
         }
     });
-    
+    game.setNextPlayer(pieces[currentPlayer]);
 }
 
 function getBoardString(board){
