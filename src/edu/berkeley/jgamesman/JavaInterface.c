@@ -21,7 +21,7 @@
 #include <string.h>
 #include <jni.h>
 
-#include "Core/Game.h"
+#include "Core/GamesmanObjects/Game.h"
 #include "Core/UserInterface.h"
 #include "Core/Board.h"
 #include "Core/BoardDefinition.h"

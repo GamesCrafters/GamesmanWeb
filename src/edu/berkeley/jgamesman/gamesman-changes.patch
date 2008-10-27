@@ -1,57 +1,11 @@
-Index: src/Makefile.in
-===================================================================
---- src/Makefile.in	(revision 137)
-+++ src/Makefile.in	(working copy)
-@@ -34,7 +34,7 @@
- 	@$(MAKE) "CFLAGS= -pg" base
- 
- debug:
--	@$(MAKE) "CFLAGS= -g -Wall" base
-+	@$(MAKE) "CFLAGS= -fPIC -g -Wall" base
- 	
- optimized:
- 	@$(MAKE) "CFLAGS= -O3" base
-Index: src/Core/UserInterface.c
-===================================================================
---- src/Core/UserInterface.c	(revision 137)
-+++ src/Core/UserInterface.c	(working copy)
-@@ -51,6 +51,16 @@
- 	return result;
- }
- 
-+ArrayList* UserInterface_getChildrenValues(struct Board *b, struct Hasher *h, struct FlatDB *fdb, ArrayList *children) {
-+	//ArrayList *result = UserInterface_generateChildren(b, g);
-+	ArrayList *result = ArrayList_create(children->count);
-+	int i;
-+	for (i = 0; i < children->count; i = i + 1){
-+		ArrayList_set(result, UserInterface_getValue(ArrayList_get(children, i), h, fdb), i);
-+	}
-+	return result;
-+}
-+
- struct Board* UserInterface_doMove(char *move, struct Board *b, Game *g){
- 	Board_convertStringToData(b, g->bd);
- 	void *moveresult = (*g->stringToMove)(move, g->bd);
-Index: src/Core/UserInterface.h
-===================================================================
---- src/Core/UserInterface.h	(revision 137)
-+++ src/Core/UserInterface.h	(working copy)
-@@ -24,4 +24,7 @@
- char* UserInterface_boardToString(struct Board *b, struct BoardDefinition *bd);
- struct Board* UserInterface_createResetBoard(Game *g);
- 
-+ArrayList* UserInterface_generateChildren(struct Board *b, Game *g);
-+ArrayList* UserInterface_getChildrenValues(struct Board *b, struct Hasher *h, struct FlatDB *fdb, ArrayList *children);
-+
- #endif /* USERINTERFACE_H_ */
 Index: src/Core/Board.c
 ===================================================================
---- src/Core/Board.c	(revision 137)
+--- src/Core/Board.c	(revision 283)
 +++ src/Core/Board.c	(working copy)
-@@ -34,6 +34,11 @@
+@@ -33,6 +33,11 @@
+ struct Board* Board_create_string(char *str, struct BoardDefinition *bd){
  	struct Board *b = Board_malloc();
  	b->data = Board_string_toData(str, bd);
- 	free(str);
 +	
 +	if (!b->data) {
 +		free(b);
@@ -60,7 +14,21 @@ Index: src/Core/Board.c
  	return b;
  }
  
-@@ -84,11 +89,16 @@
+@@ -70,7 +75,12 @@
+ 	char *result = (char *)malloc((1+bd->size)*sizeof(char));
+ 	int i = 0;
+ 	for (i = 0; i < bd->size; i = i + 1){
+-		result[i] = ((int*)bd->pieces.array)[(int)b->data[i]];
++		if (b->data[i] < 0 || b->data[i] >= bd->pieces.count) {
++			//fprintf(stderr,"Invalid board piece %d at %d,%d\n",b->data[i],i);
++			free(result);
++			return NULL;
++		}
++		result[i] = ((intptr_t*)bd->pieces.array)[(int)b->data[i]];
+ 	}
+ 	result[i] = 0;
+ 	return result;
+@@ -83,11 +93,16 @@
  	int count = bd->pieces.count;
  	for (i = 0; i < length; i = i + 1){
  		for (j = 0; j < count; j = j + 1){
@@ -71,46 +39,10 @@ Index: src/Core/Board.c
  			}
  		}
 +		if (j == count) {
-+			// fprintf(stderr,"Invalid character '%c' at %d,%d\n",str[i],i,j);
++			//fprintf(stderr,"Invalid character '%c' at %d,%d\n",str[i],i,j);
 +			free(data);
 +			return NULL;
 +		}
  	}
  	return data;
  }
-Index: src/Makefile.in
-===================================================================
---- src/Makefile.in	(revision 171)
-+++ src/Makefile.in	(working copy)
-@@ -53,7 +53,8 @@
- 	
- srcs : $(OBJS)
- 	cp GamesmanProperties.xml $(BINDIR)
--	ar rcs $(LIBDIR)/libgamesman$(SLBSUFFIX) $(OBJS)
-+	# The main function does not belong in libgamesman
-+	# ar rcs $(LIBDIR)/libgamesman$(SLBSUFFIX) $(OBJS)
- 
- clean :
- 	-rm *$(OBJSUFFIX)
-Index: configure.ac
-===================================================================
---- configure.ac	(revision 171)
-+++ configure.ac	(working copy)
-@@ -31,6 +31,7 @@
- OUTDLLSUFFIX=".lib"
- OUTSLLSUFFIX=".a"
- OUTPTHREADCOMPILE="-lpthread"
-+OUTTHREADSYSTEM=pthread
- 
- os=`uname -s`
- version=`uname -r`
-@@ -39,6 +40,9 @@
- proctemp=""
- x86compat=0
- x64compat=0
-+OUTSPARC=0
-+AC_C_BIGENDIAN([OUTENDIANNESS=1],[OUTENDIANNESS=0],
-+	[AC_MSG_ERROR([Unable to determine endianness])])
- 
- case $os in
-   CYGWIN*)
