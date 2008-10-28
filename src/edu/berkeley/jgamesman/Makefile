@@ -39,7 +39,7 @@ endif
 #JDKDIR=/usr/lib/java//java-jdk-1.6.0
 
 CFLAGS=-I$(JDKINCLUDE)/linux -I$(JDKINCLUDE)
-LDFLAGS=-lgamesman -lcutil -lmath -lm -lpthread -pthread -fPIC
+LDFLAGS=-lgamesman -lm -lpthread -pthread -fPIC
 JFLAGS=-classpath $(GCWEBTOP)/src
 
 # Target info 
