@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project default="dist">
+	<exec outputproperty="revision" executable="svnversion">
+		<arg line="-n"/>
+		<redirector>
+			<outputfilterchain>
+				<tokenfilter>
+					<replaceregex pattern="^(.*:)?(\d+.)$" replace="\2"/>
+				</tokenfilter>
+			</outputfilterchain>
+		</redirector>
+	</exec>
+	
+	<tstamp>
+		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
+	
+	<property name="dist" location="dist"/>
+	<target name="dist" depends="gamescubeman" description="Main distribution">
+		<echo>Finished building revision ${revision}!</echo>
+	</target>
+
+	<target name="compile" description="Compilation target">
+		<javac srcdir="." classpath="plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
+	</target>
+	
+	<target name="warnings" description="Compilation target">
+		<javac srcdir="." classpath="plugin.jar:." debug="true" debuglevel="lines,vars,source">
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+	</target>
+	
+	<target name="emptydist" description="Clears ${dist}">
+		<delete quiet="true" includeemptydirs="true">
+			<fileset dir="${dist}" includes="**"/>
+		</delete>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="gamescubeman" depends="compile, emptydist" description="Compresses CCT main executable and dependencies.">
+		<jar jarfile="${dist}/GamesCubeMan.jar">
+			<manifest>
+				<attribute name="Class-path" value="."/>
+				<attribute name="Main-Class" value="XYZCube.GamesCubeMan"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+			</manifest>
+			<fileset dir="." includes="edu/**" />
+		</jar>
+	</target>
+
+	<target name="clean" description="Clean">
+		<delete>
+			<fileset dir="." includes="**/*.class"/>
+		</delete>
+		<delete dir="${dist}"/>
+	</target>
+</project>
