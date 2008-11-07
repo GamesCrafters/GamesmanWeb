@@ -58,6 +58,13 @@ public class RotationMatrix {
 				t[i][j] = m[j][i];
 		return t;
 	}
+	public boolean isIdentity() {
+		for(int i=0; i<data.length; i++)
+			for(int j=0; j<data[i].length; j++)
+				if((i==j && data[i][j] != 1) || (i!=j && data[i][j] != 0))
+					return false;
+		return true;
+	}
 	private static final DecimalFormat df = new DecimalFormat("0.000");
 	public String toString(double[][] data) {
 		StringBuffer sb = new StringBuffer();
@@ -70,11 +77,5 @@ public class RotationMatrix {
 	}
 	public String toString() {
 		return toString(data);
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(Arrays.toString(new RotationMatrix(2, 45).multiply(new double[] { 1, 1, 1 })));
-		System.out.println(Arrays.toString(new RotationMatrix(1, 45).multiply(new double[] { 1, 1, 1 })));
-		System.out.println(Arrays.toString(new RotationMatrix(0, 45).multiply(new double[] { 1, 1, 1 })));
 	}
 }

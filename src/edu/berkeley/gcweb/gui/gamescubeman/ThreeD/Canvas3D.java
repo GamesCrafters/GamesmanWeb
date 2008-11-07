@@ -11,6 +11,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -21,11 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Canvas3D extends JComponent implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
+public class Canvas3D extends JComponent implements KeyListener, ActionListener, MouseListener, MouseMotionListener, FocusListener {
 	private static final double VIEWPORT = 1;
 	private int SCALE = 400;
 	private Timer t;
@@ -35,6 +38,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addFocusListener(this);
 		t = new Timer(10, this);
 		t.start();
 	}
@@ -44,9 +48,15 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	}
 	public void setScale(int scale) {
 		SCALE = scale;
-		repaint();
+		dirty = true;
 	}
 	
+	public void focusGained(FocusEvent e) {
+		dirty = true;
+	}
+	public void focusLost(FocusEvent e) {
+		dirty = true;
+	}
 	public void actionPerformed(ActionEvent e) {
 		int x = 0, y = 0;
 		if(keys.contains(KeyEvent.VK_LEFT))
@@ -57,10 +67,21 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			x++;
 		if(keys.contains(KeyEvent.VK_DOWN))
 			x--;
-		RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
-		for(Shape3D s : shapes)
-			s.rotate(temp);
-		repaint();
+		if(dirty || !rotationRate.isIdentity() || x != 0 || y != 0) {
+			if(!dragging) {
+				RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
+				for(Shape3D s : shapes)
+					s.rotate(temp);
+				refreshSelectedPolygon();
+			}
+			repaint();
+			dirty = false;
+		}
+	}
+	
+	private boolean dirty = false;
+	public void fireCanvasChange() {
+		dirty = true;
 	}
 
 	private RotationMatrix rotationRate = new RotationMatrix();
@@ -76,19 +97,29 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public void keyTyped(KeyEvent e) {}
 	public void mouseClicked(MouseEvent e) {
 		requestFocusInWindow();
+		if(colorEditing) {
+			Polygon3D selected = getSelectedPolygon();
+			if(selected != null) {
+				Color c = JColorChooser.showDialog(this, "Choose new sticker color", selected.getFillColor());
+				if(c != null)
+					selected.setFillColor(c);
+			}
+		}
 	}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {
 		rotationRate = new RotationMatrix();
+		dirty = true;
 	}
 	public void mouseReleased(MouseEvent e) {
 		if(System.currentTimeMillis() - lastDrag > 100)
 			mousePressed(null);
-		t.start();
+		dragging = false;
 	}
+	private boolean dragging = false;
 	public void mouseDragged(MouseEvent e) {
-		t.stop();
+		dragging = true;
 		lastDrag = System.currentTimeMillis();
 		double deltaX = e.getX() - old.x;
 		double deltaY = e.getY() - old.y;
@@ -99,36 +130,82 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		m = m.multiply(new RotationMatrix(1, deltaX).multiply(new RotationMatrix(0, -deltaY)));
 		for(Shape3D s : shapes)
 			s.rotate(m);
-		repaint();
+		dirty = true;
 	}
 	public void mouseMoved(MouseEvent e) {
 		old = e.getPoint();
+		refreshSelectedPolygon();
+	}
+	private boolean colorEditing = false;
+	public void setColorEditing(boolean editing) {
+		this.colorEditing = editing;
+		dirty = true;
+	}
+	private void refreshSelectedPolygon() {
+		if(polys == null)
+			return;
+		if(!colorEditing) {
+			for(Polygon3D rendered : polys) {
+				rendered.getOGPoly().setOpacity(1f);
+				rendered.getOGPoly().setBorderColor(Color.BLACK);
+			}
+		} else {
+			for(Polygon3D rendered : polys) {
+				rendered.getOGPoly().setOpacity(.8f);
+				rendered.getOGPoly().setBorderColor(null);
+			}
+			Polygon3D poly = getSelectedPolygon();
+			if(poly != null) {
+				poly.setOpacity(1f);
+				poly.setBorderColor(Color.BLACK);
+			}
+		}
+		dirty = true;
+	}
+	private Polygon3D getSelectedPolygon() {
+		Point p = getMousePosition();
+		if(p == null)	return null;
+		double x = -(p.x - getWidth() / 2.);
+		double y = -(p.y - getHeight() / 2.);
+		int match = -1;
+		for(int i = 0; i < polyProjection.size(); i++)
+			if(polyProjection.get(i).contains(x, y))
+				match = i;
+		if(match == -1)
+			return null;
+		return polys.get(match).getOGPoly();
 	}
 
+	//TODO - who are we kidding? this was coded w/ exactly one shape in mind
+	//it'll take a bit of work to get this to work for n shape3ds
 	private ArrayList<Shape3D> shapes = new ArrayList<Shape3D>();
 	public void addShape3D(Shape3D s) {
+		s.setCanvas(this);
 		shapes.add(s);
 	}
 
 	private boolean antialiasing = true;
 	public void setAntialiasing(boolean aa) {
 		 antialiasing = aa;
+		 dirty = true;
 	}
 	public boolean isAntialiasing() {
 		return antialiasing;
 	}
 	
+	private ArrayList<Polygon3D> polys;
+	private ArrayList<Shape> polyProjection;
 	protected void paintComponent(Graphics g) {
 		if(isOpaque()) {
 			g.setColor(getBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 		Graphics2D g2d = (Graphics2D) g;
-
 		if(!isFocusOwner()) {
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 			g2d.setComposite(ac);
 		}
+		
 		Stroke oldStroke = g2d.getStroke();
 		RenderingHints oldHints = g2d.getRenderingHints();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -138,7 +215,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		toCartesian.translate(getWidth() / 2, getHeight() / 2);
 		toCartesian.rotate(Math.toRadians(180));
 		g2d.transform(toCartesian);
-		
+
 		g2d.setColor(Color.BLUE); //draw the axis
 		g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
 		g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
@@ -146,12 +223,14 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		g2d.setColor(Color.BLACK);
 		
 		//TODO - deal with z ordering! break everything into triangles?
-		//TODO - buffer somehow?
 		for(Shape3D s : shapes) {
-			ArrayList<Polygon3D> polys = s.getPolygons();
+			polys = s.getPolygons();
 			Collections.sort(polys);
+			polyProjection = new ArrayList<Shape>();
 			for(Polygon3D poly : polys) {
+				if(!poly.isVisible()) continue;
 				Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
+				polyProjection.add(proj);
 				if(poly.getFillColor() != null) {
 					g2d.setColor(poly.getFillColor());
 					Composite oldComposite = g2d.getComposite();

@@ -5,7 +5,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.Timer;
 
@@ -23,8 +25,44 @@ public class XYZCube extends Shape3D implements ActionListener {
 		super(0, 0, 4);
 		setDimensions(dimX, dimY, dimZ);
 	}
-	public void setVoidCube(boolean voidCube) {
-		//TODO - void cube!
+	public enum CubeVariation {
+		NORMAL("Normal"), VOID_CUBE("Void"), BABYFACE("Babyface");
+		private String desc;
+		private CubeVariation(String desc) {
+			this.desc = desc;
+		}
+		public String toString() {
+			return desc;
+		}
+	}
+	private CubeVariation variation = CubeVariation.NORMAL;
+	public void setCubeVariation(CubeVariation variation) {
+		this.variation = variation;
+		for(int f = 0; f < cubeStickers.length; f++) {
+			int width = cubeStickers[f].length;
+			int height = cubeStickers[f][0].length;
+			for(int w = 0; w < width; w++)
+				for(int h = 0; h < height; h++)
+					cubeStickers[f][w][h].setVisible(true);
+			if(variation == CubeVariation.VOID_CUBE) {
+				for(int w = 1; w < width - 1; w++) {
+					for(int h = 1; h < height - 1; h++) {
+						cubeStickers[f][w][h].setVisible(false);
+					}
+				}
+			} else if(variation == CubeVariation.BABYFACE) {
+				for(int w = 0; w < width; w++) {
+					for(int h = 0; h < height; h++) {
+						if(w == 0 || w == width - 1 || h == 0 || h == height - 1)
+							cubeStickers[f][w][h].setVisible(false);
+					}
+				}
+			}
+		}
+		fireStateChanged();
+	}
+	public CubeVariation getCubeVariation() {
+		return variation;
 	}
 	public int[] getDimensions() {
 		return dimensions;
@@ -35,15 +73,15 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//spacing can range from 0->.5
 	public void setStickerGap(double spacing) {
 		this.stickerGap = spacing;
-		recompute();
+		resetCube();
 	}
-
+	
 	public void setDimensions(int dimX, int dimY, int dimZ) {
 		setDimensions(new int[] { dimX, dimY, dimZ });
 	}
 	public void setDimensions(int[] dims) {
 		dimensions = dims;
-		recompute();
+		resetCube();
 	}
 	
 	private Timer turner = new Timer(10, this);
@@ -64,9 +102,13 @@ public class XYZCube extends Shape3D implements ActionListener {
 		//cwTurns = the number of turns cw (in 90 degree increments) we want to turn a face
 		private int cwTurns; //1 -> cw; -1 -> ccw; 2 -> half turn
 		private int legalTurns; //this depends on if the face is square or rectangular
+		private Face face;
+		private int layer;
 		public FaceTurn(Face face, int layer, int amtCW) {
+			this.face = face;
+			this.layer = layer;
 			cwTurns = amtCW;
-			if(dimensions[face.widthAxis] != dimensions[face.heightAxis]) {
+			if(dimensions[face.getWidthAxis()] != dimensions[face.getHeightAxis()]) {
 				if((cwTurns & 1) == 1)
 					cwTurns = (cwTurns > 0) ? cwTurns + 1 : cwTurns - 1;
 				legalTurns = cwTurns / 2;
@@ -74,14 +116,27 @@ public class XYZCube extends Shape3D implements ActionListener {
 				legalTurns = cwTurns;
 			degreesLeft = 90*Math.abs(cwTurns);
 			//multiply by -1 because the rotation matrix expects degrees ccw
-			rotation = new RotationMatrix(face.axis, -1*(face.cw_cw ? 1 : -1)*Math.signum(amtCW)*TURNING_RATE);
+			rotation = new RotationMatrix(face.getRotationAxis(), -1*(face.isCWWithAxis() ? 1 : -1)*Math.signum(amtCW)*TURNING_RATE);
 			stickers = getLayerIndices(face, layer);
 		}
+		private boolean cubeRotation;
+		public void setCubeRotation(boolean b) {
+			cubeRotation = b;
+		}
 		//this is useful for creating cube rotations
-		private FaceTurn other;
-		public FaceTurn mergeTurn(FaceTurn other) {
-			this.other = other;
-			return this;
+		private FaceTurn otherTurn;
+		public boolean mergeTurn(FaceTurn other) {
+			//if not compatible
+			if(cubeRotation && other.cubeRotation)
+				return false;
+			boolean mergingRotation = cubeRotation || other.cubeRotation;
+			if(face.getRotationAxis() != other.face.getRotationAxis() || (!mergingRotation && face.index() == other.face.index() && layer == other.layer))
+				return false;
+			if(otherTurn == null) {
+				otherTurn = other;
+				return true;
+			}
+			return otherTurn.mergeTurn(other);
 		}
 		//this will turn the stickers, and return true when the move animation has finished
 		private boolean done = false;
@@ -97,9 +152,13 @@ public class XYZCube extends Shape3D implements ActionListener {
 					for(int[][] cycleIndices : stickers)
 						cycle(cubeStickers, cycleIndices, legalTurns);
 			}
-			if(other != null)
-				done = other.doMove() && done;
-			return done;
+			boolean bothDone;
+			if(otherTurn != null)
+				bothDone = otherTurn.doMove() && done;
+			else
+				bothDone = done;
+			fireCanvasChange();
+			return bothDone;
 		}
 	}
 
@@ -124,31 +183,6 @@ public class XYZCube extends Shape3D implements ActionListener {
 			polys[to[0]][to[1]][to[2]] = old_polys[from[0]][from[1]][from[2]];
 		}
 	}
-	private int left, right;
-	//TODO - improve hand indicators
-	private void refreshHandPositions() {
-//		for(Polygon3D[][] face : cubeStickers)
-//			for(Polygon3D[] polys: face)
-//				for(Polygon3D poly: polys)
-//					poly.setOpacity(.8f);
-//		int[][][] stickerCycles = getLayerIndices(Face.LEFT, left);
-//		for(int[][] stickerCycle : stickerCycles) {
-//			for(int[] stickers : stickerCycle) {
-//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
-//			}
-//		}
-//		stickerCycles = getLayerIndices(Face.RIGHT, right);
-//		for(int[][] stickerCycle : stickerCycles) {
-//			for(int[] stickers : stickerCycle) {
-//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
-//			}
-//		}
-	}
-	public void updateHandPositions(int left, int right) {
-		this.left = left;
-		this.right = right;
-		refreshHandPositions();
-	}
 	
 	//This returns an array of arrays of indices, where each element is an index of a sticker (represented as a 2 element array)
 	//So for the R face, an [2][][2] array faces would be returned where where faces[0] is a 4 element array of all the R face stickers,
@@ -156,9 +190,9 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//The return value is structured like this to facilitate cycling stickers as necessary
 	//TODO - would memoization be a good idea here?
 	private int[][][] getLayerIndices(Face face, int layer) {
-		int width = dimensions[face.widthAxis];
-		int height = dimensions[face.heightAxis];
-		int depth = dimensions[face.fixedAxis];
+		int width = dimensions[face.getWidthAxis()];
+		int height = dimensions[face.getHeightAxis()];
+		int depth = dimensions[face.getRotationAxis()];
 		if(layer >= depth)
 			layer = depth - 1;
 		else if(layer < 1)
@@ -190,7 +224,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 					stickers[nthCycle][1] = new int[] { face.index(), w, height - 1 - h };
 					stickers[nthCycle][2] = new int[] { face.index(), width - 1 - h, height - 1 - w };
 					stickers[nthCycle][3] = new int[] { face.index(), width - 1 - w, h };
-					if(!face.isFirstAxisClockwise)
+					if(!face.isFirstAxisClockwise())
 						Collections.reverse(Arrays.asList(stickers[nthCycle]));
 					nthCycle++;
 				}
@@ -313,110 +347,72 @@ public class XYZCube extends Shape3D implements ActionListener {
 		return stickers;
 	}
 	public void doTurn(Face face, int layer, int cw) {
-		turnQueue.add(new FaceTurn(face, layer, cw));
+		FaceTurn turn = new FaceTurn(face, layer, cw);
+		if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
+			turnQueue.add(turn);
 		turner.start();
 	}
 	public void doCubeRotation(Face face, int degrees) {
-		turnQueue.add(new FaceTurn(face, dimensions[face.axis] - 1, degrees).mergeTurn(new FaceTurn(face.getOppositeFace(), 1, -degrees)));
+		FaceTurn turn = new FaceTurn(face, dimensions[face.getRotationAxis()] - 1, degrees);
+		FaceTurn t = new FaceTurn(face.getOppositeFace(), 1, -degrees);
+		t.setCubeRotation(true);
+		turn.mergeTurn(t);
+		turn.setCubeRotation(true);
+
+		if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
+			turnQueue.add(turn);
 		turner.start();
 	}
-	public static class Face {
-		private static ArrayList<Face> faces = new ArrayList<Face>();
-		public final static Face UP = new Face(1, true, 0, 2, Color.WHITE);
-		public final static Face DOWN = new Face(UP, Color.YELLOW);
-		public final static Face LEFT = new Face(0, true, 2, 1, Color.GREEN);
-		public final static Face RIGHT = new Face(LEFT, Color.BLUE);
-		public final static Face FRONT = new Face(2, false, 0, 1, Color.RED);
-		public final static Face BACK = new Face(FRONT, Color.ORANGE);
-		private int axis;
-		//cw_cw is whether turning the face clockwise is the same as rotating clockwise about the axis
-		private boolean cw_cw;
-		//isClockwise indicates whether the first dimension is in the clockwise direction
-		private boolean isFirstAxisClockwise = true;
-		private int widthAxis, heightAxis, fixedAxis;
-		private int index;
-		private Color color;
-		private Face(int axis, boolean cw_cw, int widthAxis, int heightAxis, Color color) {
-			this.axis = axis;
-			this.cw_cw = cw_cw;
-			this.widthAxis = widthAxis;
-			this.heightAxis = heightAxis;
-			this.color = color;
-			fixedAxis = 3 - widthAxis - heightAxis; //this is the missing number from 0, 1, 2
-			index = faces.size();
-			faces.add(this);
-		}
-		private Face opposite;
-		private Face(Face opposite, Color color) {
-			this(opposite.axis, !opposite.cw_cw, opposite.widthAxis, opposite.heightAxis, color);
-			this.opposite = opposite;
-			isFirstAxisClockwise = false;
-			opposite.opposite = this;
-		}
-		public static Face[] faces() {
-			return faces.toArray(new Face[0]);
-		}
-		public int index() {
-			return index;
-		}
-		public int getWidthAxis() {
-			return widthAxis;
-		}
-		public int getHeightAxis() {
-			return heightAxis;
-		}
-		public Face getOppositeFace() {
-			return opposite;
-		}
-	}
 	
-	private Polygon3D[][][] cubeStickers;
-	private void recompute() {
+	private CubeSticker[][][] cubeStickers;
+	public void resetCube() {
+		turnQueue.clear();
+		turner.stop();
+		resetHandPositions();
 		clearPolys();
-		cubeStickers = new Polygon3D[6][][];
+		cubeStickers = new CubeSticker[6][][];
 		double[] point = new double[3];
-		Polygon3D sticker;
 		double scale = 2. / (Math.max(Math.max(dimensions[0], dimensions[1]), dimensions[2]));
 
 		for(Face f1 : Face.faces) {
-			if(f1.cw_cw) continue;
-			Face f2 = f1.opposite;
-			int height = dimensions[f1.heightAxis];
-			int width = dimensions[f1.widthAxis];
-			int depth = dimensions[f1.fixedAxis];
+			if(f1.isCWWithAxis()) continue;
+			Face f2 = f1.getOppositeFace();
+			int height = dimensions[f1.getHeightAxis()];
+			int width = dimensions[f1.getWidthAxis()];
+			int depth = dimensions[f1.getRotationAxis()];
 			double halfHeight = height / 2.;
 			double halfWidth = width / 2.;
 			double halfDepth = depth / 2.;
-			cubeStickers[f1.index()] = new Polygon3D[height][width];
-			cubeStickers[f2.index()] = new Polygon3D[height][width];
+			cubeStickers[f1.index()] = new CubeSticker[height][width];
+			cubeStickers[f2.index()] = new CubeSticker[height][width];
 			for(int h = 0; h < height; h++) {
 				for(int w = 0; w < width; w++) {
-					sticker = new Polygon3D();
+					CubeSticker sticker = new CubeSticker();
 					List<Double> spaces1 = Arrays.asList(stickerGap, 1 - stickerGap);
 					List<Double> spaces2 = new ArrayList<Double>(spaces1);
 					for(double hh : spaces1) {
 						for(double ww : spaces2) {
-							point[f1.heightAxis] = h + hh;
-							point[f1.widthAxis] = w + ww;
-							point[f1.fixedAxis] = 0;
+							point[f1.getHeightAxis()] = h + hh;
+							point[f1.getWidthAxis()] = w + ww;
+							point[f1.getRotationAxis()] = 0;
 							sticker.addPoint(point);
 						}
 						Collections.reverse(spaces2); //want to form a box, not an x
 					}
 
 					double[] translate = new double[3];
-					translate[f1.widthAxis] = -halfWidth;
-					translate[f1.heightAxis] = -halfHeight;
-					translate[f1.fixedAxis] = -halfDepth;
+					translate[f1.getWidthAxis()] = -halfWidth;
+					translate[f1.getHeightAxis()] = -halfHeight;
+					translate[f1.getRotationAxis()] = -halfDepth;
 					sticker.translate(translate).scale(scale, scale, scale);
-					sticker.setColors(f1.color, Color.BLACK);
+					sticker.setFace(f1);
 					cubeStickers[f1.index()][h][w] = sticker;
 					addPoly(sticker);
 
 					translate = new double[3];
-					translate[f1.fixedAxis] = scale*depth;
-					sticker = sticker.clone().translate(translate);
-					sticker.setColors(f2.color, Color.BLACK);
+					translate[f1.getRotationAxis()] = scale*depth;
+					sticker = (CubeSticker) sticker.clone().translate(translate);
+					sticker.setFace(f2);
 					cubeStickers[f2.index()][h][w] = sticker;
 					addPoly(sticker);
 				}
@@ -440,16 +436,85 @@ public class XYZCube extends Shape3D implements ActionListener {
 //    def initializeCubeWithStickers(self, F="FFFF", U="UUUU", R="RRRR", L="LLLL", B="BBBB", D="DDDD"):
 	public String getState() {
 		for(Polygon3D[][] face : cubeStickers) {
-			Color c = face[0][0].getFillColor();
+			Color c = null;
 			for(int i = 0; i < face.length; i++)
-				for(int j = 0; j < face[i].length; j++)
-					if(!face[i][j].getFillColor().equals(c))
+				for(int j = 0; j < face[i].length; j++) {
+					if(c == null && face[i][j].isVisible())
+						c = face[i][j].getFillColor();
+					if(face[i][j].isVisible() && !face[i][j].getFillColor().equals(c))
 						return "Not solved :-( " + System.currentTimeMillis();
+				}
 		}
 		return "Solved!";
 	}
 	private void fireStateChanged() {
 		for(CubeStateChangeListener l : stateListeners)
 			l.stateChanged(this);
+		fireCanvasChange();
+	}
+
+	private int[] handPositions = new int[Face.faces().length];
+	private void resetHandPositions() {
+		Arrays.fill(handPositions, 1);
+	}
+	//TODO - improve hand indicators
+	private void refreshHandPositions() {
+//		for(Polygon3D[][] face : cubeStickers)
+//			for(Polygon3D[] polys: face)
+//				for(Polygon3D poly: polys)
+//					poly.setOpacity(.8f);
+//		int[][][] stickerCycles = getLayerIndices(Face.LEFT, left);
+//		for(int[][] stickerCycle : stickerCycles) {
+//			for(int[] stickers : stickerCycle) {
+//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
+//			}
+//		}
+//		stickerCycles = getLayerIndices(Face.RIGHT, right);
+//		for(int[][] stickerCycle : stickerCycles) {
+//			for(int[] stickers : stickerCycle) {
+//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
+//			}
+//		}
+	}
+	private static final HashMap<String, Integer> TURN_DIRECTION = new HashMap<String, Integer>() {
+		{
+			put("", 1);
+			put("'", -1);
+			put("2", 2);
+		}
+	};
+	public void doTurn(String turn) {
+		if(turn.equals("scramble")) {
+			scramble();
+			return;
+		}
+		char ch = turn.charAt(0);
+		Face face = Face.decodeFace(ch);
+		Integer direction = TURN_DIRECTION.get(turn.substring(1));
+		if(direction == null) { //hand shift
+			int leftRightWidth = dimensions[Face.RIGHT.getRotationAxis()];
+			direction = 0;
+			if("<<".equals(turn.substring(1)))
+				direction = -1;
+			else if(">>".equals(turn.substring(1)))
+				direction = 1;
+			if(!face.isCWWithAxis()) direction = -direction;
+			handPositions[face.index()] += direction;
+			handPositions[face.index()] = Math.max(1, handPositions[face.index()]);
+			handPositions[face.index()] = Math.min(leftRightWidth - 1, handPositions[face.index()]);
+		} else if(face != null) { //n-layer face turn
+			int layer = handPositions[face.index()] + ((Character.isUpperCase(ch)) ? 0 : 1);
+			doTurn(face, layer, direction);
+		} else { //cube rotation
+			doCubeRotation(Face.decodeCubeRotation(ch), direction);
+		}
+	}
+	public void scramble() {
+		Face[] faces = Face.faces();
+		Random r = new Random();
+		for(int ch = 0; ch < 3*(dimensions[0]+dimensions[1]+dimensions[2]); ch++) {
+			Face f = faces[r.nextInt(faces.length)];
+			doTurn(f, r.nextInt(Math.max(1, dimensions[f.getRotationAxis()]-1))+1, (r.nextInt(2)+1));
+		}
 	}
 }

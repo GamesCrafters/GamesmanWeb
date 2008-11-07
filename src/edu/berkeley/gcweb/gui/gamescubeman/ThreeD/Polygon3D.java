@@ -7,19 +7,41 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 public class Polygon3D implements Comparable<Polygon3D> {
+	private Polygon3D ogPoly;
 	public Polygon3D() {
 		setColors(null, Color.BLACK);
 	}
+	private boolean visible = true;
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	public boolean isVisible() {
+		return visible;
+	}
+	public Polygon3D getOGPoly() {
+		return ogPoly;
+	}
 	private AlphaComposite ac; { setOpacity(1); }
+	private float opacity;
 	public void setOpacity(float opacity) {
+		this.opacity = opacity;
 		ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+	}
+	public float getPercentOpacity() {
+		return opacity;
 	}
 	public AlphaComposite getOpacity() {
 		return ac;
 	}
 	private Color fillColor, borderColor; //null means transparent
 	public void setColors(Color fill, Color border) {
+		setFillColor(fill);
+		setBorderColor(border);
+	}
+	public void setFillColor(Color fill) {
 		fillColor = fill;
+	}
+	public void setBorderColor(Color border) {
 		borderColor = border;
 	}
 	public Color getFillColor() {
@@ -30,12 +52,17 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	}
 	
 	public Polygon3D clone() {
-		Polygon3D poly = new Polygon3D();
-		poly.setColors(fillColor, borderColor);
-		poly.ac = this.ac;
+		Polygon3D clone = new Polygon3D();
+		copyInto(clone);
+		return clone;
+	}
+	protected void copyInto(Polygon3D clone) {
+		clone.ogPoly = this;
+		clone.setColors(fillColor, borderColor);
+		clone.ac = this.ac;
+		clone.visible = this.visible;
 		for(double[] point : points)
-			poly.addPoint(point[0], point[1], point[2]);
-		return poly;
+			clone.addPoint(point[0], point[1], point[2]);
 	}
 	
 	private ArrayList<double[]> points;

@@ -4,8 +4,16 @@ import java.util.ArrayList;
 
 public abstract class Shape3D {
 	protected double centerX, centerY, centerZ;
+	protected Canvas3D canvas;
 	public Shape3D(double x, double y, double z) {
 		setCenter(x, y, z);
+	}
+	public void setCanvas(Canvas3D canvas) {
+		this.canvas = canvas;
+	}
+	protected void fireCanvasChange() {
+		if(canvas != null)
+			canvas.fireCanvasChange();
 	}
 	public double[] getCenter() {
 		return new double[] { centerX, centerY, centerZ };
@@ -14,6 +22,7 @@ public abstract class Shape3D {
 		centerX = x;
 		centerY = y;
 		centerZ = z;
+		fireCanvasChange();
 	}
 	private ArrayList<Polygon3D> polys = new ArrayList<Polygon3D>();
 	protected void clearPolys() {

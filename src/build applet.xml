@@ -21,7 +21,7 @@
 	</target>
 
 	<target name="compile" description="Compilation target">
-		<javac srcdir="." classpath="plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
+		<javac srcdir="edu/berkeley/gcweb/gui/" classpath="plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
 	</target>
 	
 	<target name="warnings" description="Compilation target">
@@ -42,10 +42,10 @@
 		<jar jarfile="${dist}/GamesCubeMan.jar">
 			<manifest>
 				<attribute name="Class-path" value="."/>
-				<attribute name="Main-Class" value="XYZCube.GamesCubeMan"/>
+				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
-			<fileset dir="." includes="edu/**" />
+			<fileset dir="." includes="edu/berkeley/gcweb/gui/**" />
 		</jar>
 	</target>
 

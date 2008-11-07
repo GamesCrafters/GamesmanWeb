@@ -1,0 +1,19 @@
++animating same axis simultaneously
++customizable keys
+	+spacebar for scramble
++BUG: hand positions
++babyface + void (michael gottlieb)
++BUG: pressing reset or changing gap while turning = bad
++BUG: changing size doesn't reset hand positions
+
+TODO:
+-BUG: w/ mac os x (email dan cohen)
+-BUG: w/ opera (patrick jameson)
+-BUG: adjusting gap resets cube :(
+-BUG: changing size while scrambling = bad
+-scramble progress bar?
+-turns should be really disabled during scramble, not just queued
+-hand positions indicator
+-square one! urghhh...
+-textbox w/ notation pressed (lucas garron)
+	-trivial move cancellations (michael gottlieb)

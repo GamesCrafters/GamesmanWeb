@@ -2,19 +2,21 @@ package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Random;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -25,30 +27,29 @@ import javax.swing.event.ChangeListener;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
-
-import netscape.javascript.JSObject;
+import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.XYZCube.CubeVariation;
 
 @SuppressWarnings("serial")
-public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener, ActionListener, CubeStateChangeListener {
+public class GamesCubeMan extends JApplet implements ChangeListener, ActionListener, CubeStateChangeListener {
 	private XYZCube cube;
+	private CubeCanvas cubeCanvas;
 	private Canvas3D canvas;
 	private JSlider scale, distance, gap;
 	private JSpinner[] dimensions;
-	private JCheckBox antialiasing;
+	private JCheckBox antialiasing, colorChooserCheckBox;
 	private JButton resetView, scramble, resetCube;
 	private JTextField stateField;
+	private JRadioButton[] variationButtons;
 	
-	private JSObject jso;
+//	private JSObject jso;
 	public void init() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cube = new XYZCube(2, 2, 2);
-					cube.setStickerGap(0);
+					cube = new XYZCube(3,3,3);
 					cube.addStateChangeListener(GamesCubeMan.this);
-					canvas = new Canvas3D();
-					canvas.addKeyListener(GamesCubeMan.this);
-					canvas.addShape3D(cube);
+					cubeCanvas = new CubeCanvas(cube);
+					canvas = cubeCanvas.getCanvas();
 					resetRotation();
 					
 					JPanel buttons = new JPanel();
@@ -77,10 +78,16 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 					antialiasing.addActionListener(GamesCubeMan.this);
 					buttons.add(antialiasing);
 					
+					colorChooserCheckBox = new JCheckBox("Choose colors", cubeCanvas.isColorEditing());
+					colorChooserCheckBox.setMnemonic(KeyEvent.VK_C);
+					colorChooserCheckBox.setFocusable(false);
+					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
+					buttons.add(colorChooserCheckBox);
+					
 					JPanel sliders = new JPanel();
 					sliders.setLayout(new BoxLayout(sliders, BoxLayout.PAGE_AXIS));
 					
-					distance = new JSlider(4, 20, (int) (cube.getCenter()[2]));
+					distance = new JSlider(4, 200, (int) (cube.getCenter()[2]));
 					distance.setFocusable(false);
 					distance.addChangeListener(GamesCubeMan.this);
 					sliders.add(sideBySide(new JLabel("Distance"), distance));
@@ -109,6 +116,18 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 					gap.addChangeListener(GamesCubeMan.this);
 					sliders.add(sideBySide(new JLabel("Gap"), gap));
 					
+					ButtonGroup g = new ButtonGroup();
+					CubeVariation[] vars = CubeVariation.values();
+					variationButtons = new JRadioButton[vars.length];
+					for(int i = 0; i < variationButtons.length; i++) {
+						variationButtons[i] = new JRadioButton(vars[i].toString(), vars[i] == cube.getCubeVariation());
+						variationButtons[i].setActionCommand(""+i);
+						variationButtons[i].setFocusable(false);
+						variationButtons[i].addActionListener(GamesCubeMan.this);
+						g.add(variationButtons[i]);
+					}
+					sliders.add(sideBySide(variationButtons));
+					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					topHalf.add(sideBySide(buttons, sliders), BorderLayout.PAGE_START);
 					
@@ -119,7 +138,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 					setContentPane(pane);
 					
 					pane.add(topHalf, BorderLayout.PAGE_START);
-					pane.add(canvas, BorderLayout.CENTER);
+					pane.add(cubeCanvas, BorderLayout.CENTER);
 					canvas.requestFocusInWindow();
 					
 					setBG(pane, Color.WHITE);
@@ -132,11 +151,13 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 	}
 	
 	private void setBG(JComponent comp, Color c) {
+		if(comp instanceof JButton)
+			return;
 		comp.setBackground(c);
 		for(Component child : comp.getComponents()) {
 			if(child instanceof JComponent)
 				setBG((JComponent)child, c);
-			else
+			else if(!(child instanceof JButton))
 				child.setBackground(c);
 		}
 	}
@@ -151,9 +172,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 	
 	private boolean green = false;
 	public void touch() {
-		if(jso != null)
+//		if(jso != null)
 //			jso.eval("update('hooow');"); //this and the next line are equivalent
-			jso.call("update", new Object[] {"hiya"});
+//			jso.call("update", new Object[] {"hiya"});
 		green = !green;
 //		cube.setBackground(green ? Color.GREEN : Color.WHITE);
 //		cube.repaint();
@@ -171,131 +192,29 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 			canvas.setScale(scale.getValue());
 		} else if(src instanceof JSpinner) {
 			cube.setDimensions((Integer) dimensions[0].getValue(), (Integer) dimensions[1].getValue(), (Integer) dimensions[2].getValue());
+			cube.setCubeVariation(getSelectedVariation());
 		} 
 	}
-
-	//TODO - undo-redo
-	//TODO - bounds on left hand & right hand, and some visual indicator of where they are
-	private int rightHand = 1, leftHand = 1;
-	public void keyPressed(KeyEvent e) {
-		if(e.isAltDown()) return;
-		int rightHand = this.rightHand;
-		int leftHand = this.leftHand;
-		int layer = 1;
-		if(e.isShiftDown()) {
-			rightHand++;
-			leftHand++;
-			layer++;
-		}
-		int leftRightWidth = cube.getDimensions()[XYZCube.Face.RIGHT.getWidthAxis()];
-		switch(e.getKeyCode()) {
-		//hand position changes
-		case KeyEvent.VK_8:
-			if(rightHand > 1)
-				this.rightHand--;
-			break;
-		case KeyEvent.VK_7:
-			if(rightHand < leftRightWidth - 1)
-				this.rightHand++;
-			break;
-		case KeyEvent.VK_4:
-			if(leftHand > 1)
-				this.leftHand--;
-			break;
-		case KeyEvent.VK_5:
-			if(leftHand < leftRightWidth - 1)
-				this.leftHand++;
-			break;
-		//reggie turns
-		case KeyEvent.VK_I:
-			cube.doTurn(XYZCube.Face.RIGHT, rightHand, 1);
-			break;
-		case KeyEvent.VK_K:
-			cube.doTurn(XYZCube.Face.RIGHT, rightHand, -1);
-			break;
-		case KeyEvent.VK_D:
-			cube.doTurn(XYZCube.Face.LEFT, leftHand, 1);
-			break;
-		case KeyEvent.VK_E:
-			cube.doTurn(XYZCube.Face.LEFT, leftHand, -1);
-			break;
-		case KeyEvent.VK_J:
-			cube.doTurn(XYZCube.Face.UP, layer, 1);
-			break;
-		case KeyEvent.VK_F:
-			cube.doTurn(XYZCube.Face.UP, layer, -1);
-			break;
-		case KeyEvent.VK_W:
-			cube.doTurn(XYZCube.Face.BACK, layer, 1);
-			break;
-		case KeyEvent.VK_O:
-			cube.doTurn(XYZCube.Face.BACK, layer, -1);
-			break;
-		case KeyEvent.VK_S:
-			cube.doTurn(XYZCube.Face.DOWN, layer, 1);
-			break;
-		case KeyEvent.VK_L:
-			cube.doTurn(XYZCube.Face.DOWN, layer, -1);
-			break;
-		case KeyEvent.VK_H:
-			cube.doTurn(XYZCube.Face.FRONT, layer, 1);
-			break;
-		case KeyEvent.VK_G:
-			cube.doTurn(XYZCube.Face.FRONT, layer, -1);
-			break;
-		//double layer turns
-		case KeyEvent.VK_R:
-			cube.doTurn(XYZCube.Face.LEFT, 2, -1);
-			break;
-		case KeyEvent.VK_C:
-			cube.doTurn(XYZCube.Face.LEFT, 2, 1);
-			break;
-		case KeyEvent.VK_U:
-			cube.doTurn(XYZCube.Face.RIGHT, 2, 1);
-			break;
-		case KeyEvent.VK_M:
-			cube.doTurn(XYZCube.Face.RIGHT, 2, -1);
-			break;
-		//cube rotations
-		case KeyEvent.VK_SEMICOLON:
-			cube.doCubeRotation(XYZCube.Face.UP, 1);
-			break;
-		case KeyEvent.VK_A:
-			cube.doCubeRotation(XYZCube.Face.UP, -1);
-			break;
-		case KeyEvent.VK_Y:
-		case KeyEvent.VK_T:
-			cube.doCubeRotation(XYZCube.Face.RIGHT, 1);
-			break;
-		case KeyEvent.VK_N:
-		case KeyEvent.VK_V:
-			cube.doCubeRotation(XYZCube.Face.RIGHT, -1);
-			break;
-		case KeyEvent.VK_P:
-			cube.doCubeRotation(XYZCube.Face.FRONT, 1);
-			break;
-		case KeyEvent.VK_Q:
-			cube.doCubeRotation(XYZCube.Face.FRONT, -1);
-			break;
-		}
-		cube.updateHandPositions(this.leftHand, this.rightHand);
-	}
-	public void keyReleased(KeyEvent e) {}
-	public void keyTyped(KeyEvent e) {}
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == resetView)
 			resetRotation();
-		else if(e.getSource() == scramble) {
-			XYZCube.Face[] faces = XYZCube.Face.faces();
-			Random r = new Random();
-			//TODO - scrambling not good for a 2x3x5?
-			for(int ch = 0; ch < 5*cube.getDimensions()[0]; ch++)
-				cube.doTurn(faces[r.nextInt(faces.length)], r.nextInt(Math.max(1, cube.getDimensions()[0]-1))+1, (r.nextInt(2)+1));
-		} else if(e.getSource() == resetCube)
-			cube.setDimensions(cube.getDimensions());
+		else if(e.getSource() == scramble)
+			cube.scramble();
+		else if(e.getSource() == resetCube)
+			cube.resetCube();
 		else if(e.getSource() == antialiasing)
 			canvas.setAntialiasing(antialiasing.isSelected());
+		else if(e.getSource() == colorChooserCheckBox)
+			cubeCanvas.setColorEditing(colorChooserCheckBox.isSelected());
+		else if(e.getSource() instanceof JRadioButton)
+			cube.setCubeVariation(getSelectedVariation());
+	}
+	private CubeVariation getSelectedVariation() {
+		for(int i = 0; i < variationButtons.length; i++)
+			if(variationButtons[i].isSelected())
+				return CubeVariation.values()[i];
+		return null;
 	}
 
 	private void resetRotation() {
@@ -305,5 +224,23 @@ public class GamesCubeMan extends JApplet implements ChangeListener, KeyListener
 
 	public void stateChanged(XYZCube src) {
 		stateField.setText(src.getState());
+	}
+	
+	public static void main(String[] args) {
+		final GamesCubeMan a = new GamesCubeMan();
+		a.init();
+		a.setPreferredSize(new Dimension(400, 500));
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame f = new JFrame();
+				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				JPanel pane = new JPanel();
+				f.setContentPane(pane);
+				f.add(a);
+				f.pack();
+				f.setVisible(true);
+				a.canvas.requestFocusInWindow();
+			}
+		});
 	}
 }
