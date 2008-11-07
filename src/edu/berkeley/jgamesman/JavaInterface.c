@@ -22,15 +22,16 @@
 #include <jni.h>
 
 #include "Core/GamesmanObjects/Game.h"
-#include "Core/UserInterface.h"
-#include "Core/Board.h"
-#include "Core/BoardDefinition.h"
+#include "UI/UserInterface.h"
+#include "UI/SettingMap.h"
+#include "Shells/ShellArguments.h"
+#include "Core/GamesmanObjects/Board.h"
+#include "Core/GamesmanObjects/BoardDefinition.h"
 #include "Solvers/Solvers.h"
 #include "Util/DataStructure/HashTable.h"
 #include "Hashers/Hasher.h"
 #include "Hashers/GenericHash.h"
 #include "Util/DataStructure/ArrayList.h"
-#include "Shells/ShellArguments.h"
 
 /* FIXME: Allow multiple functions to be linked at the same time without using any dlopen hacks. */
 
@@ -45,21 +46,21 @@ JNIEXPORT void JNICALL Java_edu_berkeley_jgamesman_GamesmanC_initnative(JNIEnv *
 	sa->theGame = GameSpecific_createGame();
 	sa->bd = sa->theGame->bd;
 	
-	sa->gh = (struct Hasher*)GenericHash_create(sa->bd);
-	sa->fdb = FlatDB_create(sa->outputFilename, Hasher_getMaxHash(((struct Hasher*)sa->gh), sa->bd), (int)(intptr_t)Game_getProperty(sa->theGame, "Data Size"));
+	sa->hasherObj = (struct Hasher*)GenericHash_create(sa->bd);
+	sa->dbObj = FlatDB_create(sa->outputFilename, Hasher_getMaxHash(((struct Hasher*)sa->hasherObj), sa->bd), (int)(intptr_t)Game_getProperty(sa->theGame, "Data Size"));
 	struct Solver *s = NULL;
 	if (sa->solver == 0){
-		s = Solver_createSolver(sa->fdb, (struct Hasher*)sa->gh, &Solver_Undo_solve);
+		s = Solver_createSolver(sa->dbObj, (struct Hasher*)sa->hasherObj, &Solver_Undo_solve);
 	} else if (sa->solver == 1){
-		s = Solver_createSolver(sa->fdb, (struct Hasher*)sa->gh, &Solver_MAX_solve);
+		s = Solver_createSolver(sa->dbObj, (struct Hasher*)sa->hasherObj, &Solver_MAX_solve);
 	} else {
-		s = Solver_createSolver(sa->fdb, (struct Hasher*)sa->gh, &Solver_MAX_solve_iterator);
-		s->tierIterator = Iterator_createNumberIterator(sa->gh->bd->size, -1, -1);
+		s = Solver_createSolver(sa->dbObj, (struct Hasher*)sa->hasherObj, &Solver_MAX_solve_iterator);
+		s->tierIterator = Iterator_createNumberIterator(sa->hasherObj->bd->size, -1, -1);
 	}
 	Solver_solve(s, sa->theGame);
 	printf("\n\n");
 	
-	FlatDB_saveDB(sa->fdb);
+	FlatDB_saveDB(sa->dbObj);
 	// sa->processArguments(0, NULL);
 }
 
@@ -165,7 +166,7 @@ jobject board_to_hash(JNIEnv *env, ShellArguments *sa, struct Board *b, const ch
 	Board_convertDataToString(b, sa->bd);
 	if (!boardstr) return NULL;
 	
-	positionValue = UserInterface_getValue(b, (struct Hasher*)sa->gh, sa->fdb);
+	positionValue = UserInterface_getValue(b, (struct Hasher*)sa->hasherObj, sa->dbObj);
 	
 	hash = positionValue_to_hashtable(env, positionValue, boardstr);
 	
