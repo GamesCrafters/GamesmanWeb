@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
@@ -72,8 +71,19 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 				RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
 				for(Shape3D s : shapes)
 					s.rotate(temp);
-				refreshSelectedPolygon();
 			}
+			for(Shape3D s : shapes) {
+				polys = s.getPolygons();
+				Collections.sort(polys);
+				polyProjection = new ArrayList<Shape>();
+				for(Polygon3D poly : polys) {
+					if(!poly.isVisible()) continue;
+					Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
+					polyProjection.add(proj);
+				}
+			}
+			if(!dragging || colorEditing)
+				refreshSelectedPolygon();
 			repaint();
 			dirty = false;
 		}
@@ -100,12 +110,24 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		if(colorEditing) {
 			Polygon3D selected = getSelectedPolygon();
 			if(selected != null) {
-				Color c = JColorChooser.showDialog(this, "Choose new sticker color", selected.getFillColor());
-				if(c != null)
-					selected.setFillColor(c);
+				firePolyClicked(selected.getOGPoly());
+				dirty = true;
 			}
 		}
 	}
+	
+	public interface PolyClickListener {
+		public void polyClicked(Polygon3D clicked);
+	}
+	private ArrayList<PolyClickListener> polyListeners = new ArrayList<PolyClickListener>();
+	public void addPolyClickListener(PolyClickListener l) {
+		polyListeners.add(l);
+	}
+	private void firePolyClicked(Polygon3D selected) {
+		for(PolyClickListener l : polyListeners)
+			l.polyClicked(selected);
+	}
+	
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {
@@ -134,7 +156,8 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	}
 	public void mouseMoved(MouseEvent e) {
 		old = e.getPoint();
-		refreshSelectedPolygon();
+		if(colorEditing)
+			refreshSelectedPolygon();
 	}
 	private boolean colorEditing = false;
 	public void setColorEditing(boolean editing) {
@@ -142,15 +165,17 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		dirty = true;
 	}
 	private void refreshSelectedPolygon() {
-		if(polys == null)
-			return;
 		if(!colorEditing) {
 			for(Polygon3D rendered : polys) {
+				rendered.setOpacity(1f);
+				rendered.setBorderColor(Color.BLACK);
 				rendered.getOGPoly().setOpacity(1f);
 				rendered.getOGPoly().setBorderColor(Color.BLACK);
 			}
 		} else {
 			for(Polygon3D rendered : polys) {
+				rendered.setOpacity(.8f);
+				rendered.setBorderColor(null);
 				rendered.getOGPoly().setOpacity(.8f);
 				rendered.getOGPoly().setBorderColor(null);
 			}
@@ -158,6 +183,8 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			if(poly != null) {
 				poly.setOpacity(1f);
 				poly.setBorderColor(Color.BLACK);
+				poly.getOGPoly().setOpacity(1f);
+				poly.getOGPoly().setBorderColor(Color.BLACK);
 			}
 		}
 		dirty = true;
@@ -173,7 +200,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 				match = i;
 		if(match == -1)
 			return null;
-		return polys.get(match).getOGPoly();
+		return polys.get(match);
 	}
 
 	//TODO - who are we kidding? this was coded w/ exactly one shape in mind
@@ -223,28 +250,22 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		g2d.setColor(Color.BLACK);
 		
 		//TODO - deal with z ordering! break everything into triangles?
-		for(Shape3D s : shapes) {
-			polys = s.getPolygons();
-			Collections.sort(polys);
-			polyProjection = new ArrayList<Shape>();
-			for(Polygon3D poly : polys) {
-				if(!poly.isVisible()) continue;
-				Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
-				polyProjection.add(proj);
-				if(poly.getFillColor() != null) {
-					g2d.setColor(poly.getFillColor());
-					Composite oldComposite = g2d.getComposite();
-					g2d.setComposite(poly.getOpacity());
-					g2d.fill(proj);
-					g2d.setComposite(oldComposite);
-				}
-				if(poly.getBorderColor() != null) {
-					g2d.setColor(poly.getBorderColor());
-					g2d.draw(proj);
-				}
+		for(int i = 0; i < polys.size(); i++) {
+			Polygon3D poly = polys.get(i);
+			Shape proj = polyProjection.get(i);
+			if(poly.getFillColor() != null) {
+				g2d.setColor(poly.getFillColor());
+				Composite oldComposite = g2d.getComposite();
+				g2d.setComposite(poly.getOpacity());
+				g2d.fill(proj);
+				g2d.setComposite(oldComposite);
+			}
+			if(poly.getBorderColor() != null) {
+				g2d.setColor(poly.getBorderColor());
+				g2d.draw(proj);
 			}
 		}
-		
+
 		g2d.setRenderingHints(oldHints);
 		g2d.setStroke(oldStroke);
 	}

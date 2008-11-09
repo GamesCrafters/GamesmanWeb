@@ -9,6 +9,9 @@ public class CubeSticker extends Polygon3D {
 	public void setFace(Face face) {
 		this.face = face;
 	}
+	public Face getFace() {
+		return face;
+	}
 	private static Color[] colorScheme;
 	public static void setColorScheme(Color[] colors) {
 		colorScheme = colors;

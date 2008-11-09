@@ -34,7 +34,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private XYZCube cube;
 	private CubeCanvas cubeCanvas;
 	private Canvas3D canvas;
-	private JSlider scale, distance, gap;
+	private JSlider scale, distance, gap, turningRate;
 	private JSpinner[] dimensions;
 	private JCheckBox antialiasing, colorChooserCheckBox;
 	private JButton resetView, scramble, resetCube;
@@ -116,6 +116,14 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					gap.addChangeListener(GamesCubeMan.this);
 					sliders.add(sideBySide(new JLabel("Gap"), gap));
 					
+					turningRate = new JSlider(1, cube.getMaxTurningRate(), cube.getTurningRate());
+					turningRate.setMajorTickSpacing(1);
+					turningRate.setMinorTickSpacing(1);
+					turningRate.setPaintTicks(true);
+					turningRate.setFocusable(false);
+					turningRate.addChangeListener(GamesCubeMan.this);
+					sliders.add(sideBySide(new JLabel("Speed"), turningRate));
+					
 					ButtonGroup g = new ButtonGroup();
 					CubeVariation[] vars = CubeVariation.values();
 					variationButtons = new JRadioButton[vars.length];
@@ -141,7 +149,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					pane.add(cubeCanvas, BorderLayout.CENTER);
 					canvas.requestFocusInWindow();
 					
-					setBG(pane, Color.WHITE);
+					setBG(pane, Color.GRAY);
 				}
 			});
 //			jso = JSObject.getWindow(this);
@@ -190,6 +198,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			cube.setCenter(center[0], center[1], center[2]);
 		} else if(src == scale) {
 			canvas.setScale(scale.getValue());
+		} else if(e.getSource() == turningRate) {
+			cube.setTurningRate(turningRate.getValue());
 		} else if(src instanceof JSpinner) {
 			cube.setDimensions((Integer) dimensions[0].getValue(), (Integer) dimensions[1].getValue(), (Integer) dimensions[2].getValue());
 			cube.setCubeVariation(getSelectedVariation());

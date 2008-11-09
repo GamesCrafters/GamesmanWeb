@@ -2,9 +2,11 @@ package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -13,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JColorChooser;
@@ -35,6 +38,7 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 		direction = visible ? 1 : -1;
 		if(visible != isVisible()) {
 			if(visible) super.setVisible(true);
+			else if(getParent() != null) getParent().setCursor(Cursor.getDefaultCursor());
 			t.start();
 		}
 	}
@@ -114,15 +118,36 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 				return i;
 		return -1;
 	}
+	private int selected = -1;
 	public void mouseClicked(MouseEvent e) {
 		int i = getSelectedIndex();
 		if(i != -1) {
-			Color c = JColorChooser.showDialog(this, "Choose new color", colors[i]);
-			if(c != null) {
-				colors[i] = c;
-				fireColorsChanged();
+			if(e.getClickCount() == 2) {
+				Color c = JColorChooser.showDialog(this, "Choose new color", colors[i]);
+				if(c != null) {
+					colors[i] = c;
+					fireColorsChanged();
+				}
+			} else {
+				selected = i;
+				getParent().setCursor(createCursor(colors[selected]));
 			}
 		}
+	}
+	private static final int CURSOR_SIZE = 32;
+	private Cursor createCursor(Color c) {
+		BufferedImage buffer = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) buffer.createGraphics();
+//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setColor(c);
+		g2d.fillRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
+		g2d.setColor(Color.BLACK);
+		g2d.drawRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
+		Toolkit tool = Toolkit.getDefaultToolkit();
+		return tool.createCustomCursor(buffer, new Point(0, 0), "bucket");
+	}
+	public Face getSelectedFace() {
+		return Face.faces()[selected];
 	}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}

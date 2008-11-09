@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -73,7 +74,16 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//spacing can range from 0->.5
 	public void setStickerGap(double spacing) {
 		this.stickerGap = spacing;
-		resetCube();
+		createPolys(true);
+	}
+	public int getMaxTurningRate() {
+		return TURNING_RATES.length - 1;
+	}
+	public int getTurningRate() {
+		return TURNING_RATE;
+	}
+	public void setTurningRate(int newRate) {
+		TURNING_RATE = newRate;
 	}
 	
 	public void setDimensions(int dimX, int dimY, int dimZ) {
@@ -81,7 +91,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 	}
 	public void setDimensions(int[] dims) {
 		dimensions = dims;
-		resetCube();
+		createPolys(false);
 	}
 	
 	private Timer turner = new Timer(10, this);
@@ -94,8 +104,20 @@ public class XYZCube extends Shape3D implements ActionListener {
 				turner.stop();
 		}
 	}
+	private static Integer[] TURNING_RATES;
+	{
+		HashSet<Integer> rates = new HashSet<Integer>();
+		for(int i : new int[] {1, 2})
+			for(int j : new int[] {1, 3})
+				for(int k : new int[] {1, 3})
+					for(int l : new int[] {1, 5})
+						rates.add(i*j*k*l);
+		ArrayList<Integer> temp = new ArrayList<Integer>(rates);
+		Collections.sort(temp);
+		TURNING_RATES = temp.toArray(new Integer[0]);
+	}
+	private int TURNING_RATE = 8;
 	private class FaceTurn {
-		private final int TURNING_RATE = 9*2; //this should be a factor of 90
 		private int degreesLeft;
 		private RotationMatrix rotation;
 		private int[][][] stickers;
@@ -115,8 +137,6 @@ public class XYZCube extends Shape3D implements ActionListener {
 			} else
 				legalTurns = cwTurns;
 			degreesLeft = 90*Math.abs(cwTurns);
-			//multiply by -1 because the rotation matrix expects degrees ccw
-			rotation = new RotationMatrix(face.getRotationAxis(), -1*(face.isCWWithAxis() ? 1 : -1)*Math.signum(amtCW)*TURNING_RATE);
 			stickers = getLayerIndices(face, layer);
 		}
 		private boolean cubeRotation;
@@ -140,9 +160,15 @@ public class XYZCube extends Shape3D implements ActionListener {
 		}
 		//this will turn the stickers, and return true when the move animation has finished
 		private boolean done = false;
+		private int speed = -1;
 		public boolean doMove() {
+			if(speed == -1) { //just starting animation
+				speed = TURNING_RATES[TURNING_RATE];
+				//multiply by -1 because the rotation matrix expects degrees ccw
+				rotation = new RotationMatrix(face.getRotationAxis(), -1*(face.isCWWithAxis() ? 1 : -1)*Math.signum(cwTurns)*speed);
+			}
 			if(!done) {
-				degreesLeft -= TURNING_RATE;
+				degreesLeft -= speed;
 				for(int i=0; i<stickers.length; i++)
 					for(int[] index : stickers[i])
 						cubeStickers[index[0]][index[1]][index[2]].rotate(rotation);
@@ -346,15 +372,67 @@ public class XYZCube extends Shape3D implements ActionListener {
 		
 		return stickers;
 	}
+	
+	private static class FaceLayerTurn {
+		private Face f;
+		private int layer;
+		private int cw;
+		public FaceLayerTurn(Face f, int layer, int cw) {
+			this.f = f;
+			this.layer = layer;
+			this.cw = cw;
+			modCW();
+		}
+		public boolean isMergeable(FaceLayerTurn other) {
+			return other.f == f && layer == other.layer;
+		}
+		//returns true if the turn is completely cancelled
+		public boolean merge(FaceLayerTurn other) {
+			cw += other.cw;
+			modCW();
+			return cw == 0;
+		}
+		private void modCW() {
+			//this'll work so long as cw isn't too negative
+			cw = (4 + cw) % 4;
+			if(cw == 3) cw = -1;
+		}
+		public String toString() {
+			String face = "" + f.getFaceName();
+			if(layer == -1) {
+				face = "" + "xyz".charAt(f.getRotationAxis());
+			} else if(layer == 2) //TODO - check cube size!
+				face = face.toLowerCase();
+			else if(layer > 2)
+				face = layer + " " + face;
+			return face + DIRECTION_TURN.get(cw);
+		}
+	}
+	
+	private ArrayList<FaceLayerTurn> turns = new ArrayList<FaceLayerTurn>();
+	private void appendTurn(FaceLayerTurn t) {
+		if(!turns.isEmpty()) {
+			FaceLayerTurn old = turns.get(turns.size() - 1);
+			if(old.isMergeable(t)) {
+				if(old.merge(t))
+					turns.remove(turns.size() - 1);
+				t = null;
+			}
+		}
+		if(t != null) //if it hasn't been merged
+			turns.add(t);
+	}
 	public void doTurn(Face face, int layer, int cw) {
+		appendTurn(new FaceLayerTurn(face, layer, cw));
 		FaceTurn turn = new FaceTurn(face, layer, cw);
 		if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
 			turnQueue.add(turn);
 		turner.start();
 	}
-	public void doCubeRotation(Face face, int degrees) {
-		FaceTurn turn = new FaceTurn(face, dimensions[face.getRotationAxis()] - 1, degrees);
-		FaceTurn t = new FaceTurn(face.getOppositeFace(), 1, -degrees);
+	public void doCubeRotation(Face face, int cw) {
+		appendTurn(new FaceLayerTurn(face, -1, cw));
+		FaceTurn turn = new FaceTurn(face, dimensions[face.getRotationAxis()] - 1, cw);
+		FaceTurn t = new FaceTurn(face.getOppositeFace(), 1, -cw);
 		t.setCubeRotation(true);
 		turn.mergeTurn(t);
 		turn.setCubeRotation(true);
@@ -364,12 +442,18 @@ public class XYZCube extends Shape3D implements ActionListener {
 		turner.start();
 	}
 	
-	private CubeSticker[][][] cubeStickers;
 	public void resetCube() {
+		createPolys(false);
+	}
+	
+	private CubeSticker[][][] cubeStickers;
+	private void createPolys(boolean copyOld) {
+		turns.clear();
 		turnQueue.clear();
 		turner.stop();
 		resetHandPositions();
 		clearPolys();
+		CubeSticker[][][] cubeStickersOld = cubeStickers;
 		cubeStickers = new CubeSticker[6][][];
 		double[] point = new double[3];
 		double scale = 2. / (Math.max(Math.max(dimensions[0], dimensions[1]), dimensions[2]));
@@ -405,14 +489,20 @@ public class XYZCube extends Shape3D implements ActionListener {
 					translate[f1.getHeightAxis()] = -halfHeight;
 					translate[f1.getRotationAxis()] = -halfDepth;
 					sticker.translate(translate).scale(scale, scale, scale);
-					sticker.setFace(f1);
+					if(copyOld)
+						sticker.setFace(cubeStickersOld[f1.index()][h][w].getFace());
+					else
+						sticker.setFace(f1);
 					cubeStickers[f1.index()][h][w] = sticker;
 					addPoly(sticker);
 
 					translate = new double[3];
 					translate[f1.getRotationAxis()] = scale*depth;
 					sticker = (CubeSticker) sticker.clone().translate(translate);
-					sticker.setFace(f2);
+					if(copyOld)
+						sticker.setFace(cubeStickersOld[f2.index()][h][w].getFace());
+					else
+						sticker.setFace(f2);
 					cubeStickers[f2.index()][h][w] = sticker;
 					addPoly(sticker);
 				}
@@ -435,6 +525,8 @@ public class XYZCube extends Shape3D implements ActionListener {
 //    #This method exists because python does not provide a way to have multiple constructors
 //    def initializeCubeWithStickers(self, F="FFFF", U="UUUU", R="RRRR", L="LLLL", B="BBBB", D="DDDD"):
 	public String getState() {
+		if(true)
+			return turns.toString();
 		for(Polygon3D[][] face : cubeStickers) {
 			Color c = null;
 			for(int i = 0; i < face.length; i++)
@@ -476,13 +568,16 @@ public class XYZCube extends Shape3D implements ActionListener {
 //			}
 //		}
 	}
-	private static final HashMap<String, Integer> TURN_DIRECTION = new HashMap<String, Integer>() {
-		{
-			put("", 1);
-			put("'", -1);
-			put("2", 2);
-		}
-	};
+	private static final HashMap<String, Integer> TURN_DIRECTION = new HashMap<String, Integer>();
+	private static final HashMap<Integer, String> DIRECTION_TURN = new HashMap<Integer, String>();
+	{
+		TURN_DIRECTION.put("", 1);
+		TURN_DIRECTION.put("'", -1);
+		TURN_DIRECTION.put("2", 2);
+		DIRECTION_TURN.put(1, "");
+		DIRECTION_TURN.put(-1, "'");
+		DIRECTION_TURN.put(2, "2");
+	}
 	public void doTurn(String turn) {
 		if(turn.equals("scramble")) {
 			scramble();

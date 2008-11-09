@@ -20,7 +20,9 @@ public class Face {
 	private int rotationAxis, widthAxis, heightAxis;
 	private int index;
 	private Color color;
+	private char faceName;
 	private Face(char faceName, int rotationAxis, boolean cw_cw, int widthAxis, int heightAxis, Color color) {
+		this.faceName = faceName;
 		namesFaces.put(faceName, this);
 		this.rotationAxis = rotationAxis;
 		this.cw_cw = cw_cw;
@@ -36,6 +38,9 @@ public class Face {
 		this.opposite = opposite;
 		isFirstAxisClockwise = false;
 		opposite.opposite = this;
+	}
+	public char getFaceName() {
+		return faceName;
 	}
 	public static Face decodeFace(char face) {
 		return namesFaces.get(Character.toUpperCase(face));

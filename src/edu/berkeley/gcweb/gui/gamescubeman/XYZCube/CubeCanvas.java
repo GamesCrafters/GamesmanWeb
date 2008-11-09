@@ -15,9 +15,11 @@ import java.util.Properties;
 import javax.swing.JLayeredPane;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.NColorChooser.ColorChangeListener;
 
-public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChangeListener {
+public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChangeListener, PolyClickListener {
 	private static Properties keyProps = new Properties();;
 	{
 		try {
@@ -49,6 +51,7 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 		this.cube = cube;
 		canvas = new Canvas3D();
 		canvas.addKeyListener(this);
+		canvas.addPolyClickListener(this);
 		canvas.addShape3D(cube);
 		
 		this.add(canvas, new Integer(0));
@@ -65,7 +68,6 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 				canvas.setBounds(0, 0, e.getComponent().getWidth(), e.getComponent().getHeight());
 			}
 		});
-		
 	}
 	
 	private boolean colorEditing;
@@ -94,4 +96,9 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 	}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
+	
+	public void polyClicked(Polygon3D clicked) {
+		CubeSticker sticker = (CubeSticker) clicked;
+		sticker.setFace(colorChooser.getSelectedFace());
+	}
 }
