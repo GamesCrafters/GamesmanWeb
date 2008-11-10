@@ -26,7 +26,6 @@ GCWeb = {
                         function(game, newMove, onMoveValuesReceived){
                             return function(moveValues){
                                 // housekeeping for each move
-                                console.log(newMove);
                                 game.setRemoteness(newMove);
                                 if(onMoveValuesReceived){
                                     onMoveValuesReceived(moveValues);
@@ -107,7 +106,6 @@ GCWeb = {
                 // game messages
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (moveValue) {
-                    console.log($('#option-predictions').is(':checked'));
                     if($('#option-predictions').is(':checked')){
                         $('#prediction').text(['Lose','Draw','Win'][moveValue.value-1]+" in "+moveValue.remoteness);
                     } else{

@@ -5,6 +5,7 @@ var height = 10;
 // used for coloring the table cells
 var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
 var nextMoves = [];
+var lastMove = -1;
 
 $(document).ready(function(){
     var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {});
@@ -15,9 +16,13 @@ $(document).ready(function(){
             // what happens when you click a table cell
             $('#cell-'+row+'-'+col).click(function(row, col){
                 return function(){
-                    if(currentBoard[row][col] == EMPTY){
+                    if(isValidMove(currentBoard, row, col)){
+                        // update our own state
+                        lastMove = row;
                         currentBoard[row][col] = 'X';
                         updateBoard(game, currentBoard);
+                        
+                        // find the move information that we stored
                         for(i=0;i<nextMoves.length;i++){
                             if(nextMoves[i].move == row){
                                 game.doMove(nextMoves[i], onNextValuesReceived);
@@ -31,6 +36,11 @@ $(document).ready(function(){
     
     game.getNextMoveValues(getBoardString(currentBoard), onNextValuesReceived);
 });
+
+// checks to see whether this move is valid
+function isValidMove(board, row, col){
+    return board[row][col] == EMPTY && row > lastMove;
+}
 
 function onNextValuesReceived(json){
     nextMoves = json;
