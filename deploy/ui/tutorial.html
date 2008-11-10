@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en-US"> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <title>GamesmanWeb Tutorial</title>
+    <style type="text/css">
+        body {
+            font-family: verdana;
+            font-size: 0.8em;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+        
+        h1{font-family: arial;}
+        h2{border-bottom: 1px solid #000;}
+        h3{margin: 0;}
+        
+        p{margin: 0.25em 0;}
+        
+        code,pre{font-size: 1.5em;}
+        pre {margin: 0; margin-top: 0.25em;}
+        pre span{color: green;}
+        
+        .files dt{
+            font-family: "courier new";
+        }
+    </style>
+  </head>
+  <body>
+    <h1>GamesmanWeb Framework Tutorial</h1>
+    <p>
+        This tutorial assumes we are dealing with the 1210puzzle game, a variant on the 1, 2..10 game where you play as both players and cannot lose.
+    </p>
+    
+    <h2>Files</h2>
+    <h3>Per-game</h3>
+    <p>These are the files that you will need to write for every game.</p>
+    <dl class="files">
+        <dt>&lt;game&gt;.js</dt>
+        <dd>The javascript file that is loaded on a per-game.</dd>
+        <dt>&lt;game&gt;.css</dt>
+        <dd>The css file that is loaded on a per-game.</dd>
+        <dt>&lt;game&gt;.html</dt>
+        <dd>Copy this file from <code>chrome.html</code> - this will serve as the template for the game page.</dd>
+    </dl>
+    <h3>Referenced Files</h3>
+    <p>These are the files you will include, but will not actually need to modify.</p>
+    <dl class="files">
+        <dt>gcweb.js</dt>
+        <dd>The main framework file.</dd>
+        <dt>jquery-1.2.6.min.js</dt>
+        <dd>The jQuery framework file. This is the base javascript framework we will be using.</dd>
+        <dt>styles.css</dt>
+        <dd>The main stylesheet for the chrome.html skin.</dd>
+    </dl>
+    
+    <h2><code>gcweb.js</code></h2>
+    <p>
+        This file contains the <code>GCWeb</code> global variable that contains everything in the framework. I will dissect the <code>1210puzzle.js</code> sample file and explain each part of ths file.
+    </p>
+    <h3>Global Variables</h3>
+    <p>These globals are defined at the top of the <code>gcweb.js</code> file. Most of it is fairly self-explanatory with the comments.</p>
+    <pre>
+    <span>// constants</span>
+    var EMPTY = ' ';
+    var FILLED = 'X';
+
+    <span>// custom representation of the board, will be different for different games</span>
+    var currentBoard;
+    var defaultBoard = [
+      [EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],
+      [EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY]
+    ];
+
+    <span>// easy reference to these constants for yourself 
+    // (it's static for now, but we might want this to be user-defined later)</span>
+    var width = 1;
+    var height = 10;
+
+    <span>// used for coloring the table cells</span>
+    var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
+
+    <span>// other state</span>
+    var nextMoves = [];
+    var lastMove = -1;
+    </pre>
+    
+    <h3>Page Load</h3>
+    <p>This is a jQuery function that executes the argument function when the page structure finishes loading.</p>
+    <pre>
+    $(document).ready(function(){...});
+    </pre>
+    
+    <h3>Creating a new Game</h3>
+    <pre>
+        <span>// create a new game</span>
+        var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
+            updateMoveValues: updateMoveValues, 
+            onNextValuesReceived: onNextValuesReceived,
+            isValidMove: isValidMove,
+            onExecutingMove: onExecutingMove
+        });
+        <span>// load the default board</span>
+        game.loadBoard(getBoardString(defaultBoard));
+        currentBoard = defaultBoard;
+    </pre>
+  </body> 
+</html> 

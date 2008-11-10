@@ -1,20 +1,34 @@
+// constants
 var EMPTY = ' ';
-var currentBoard = [[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY]];
+var FILLED = 'X';
+
+// custom representation of the board, will be different for different games
+var currentBoard;
+var defaultBoard = [[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY]];
+
+// easy reference to these constants for yourself (it's static for now, but we might want this to be user-defined later)
 var width = 1;
 var height = 10;
+
 // used for coloring the table cells
 var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
+
+// other state
 var nextMoves = [];
 var lastMove = -1;
 
+// bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
+    // create a new game
     var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
         updateMoveValues: updateMoveValues, 
         onNextValuesReceived:onNextValuesReceived,
         isValidMove: isValidMove,
         onExecutingMove: onExecutingMove
     });
-    game.loadBoard(getBoardString(currentBoard));
+    // load the default board
+    game.loadBoard(getBoardString(defaultBoard));
+    currentBoard = defaultBoard;
     
     for(var row=0;row<height;row++) {
         for(var col=0;col<width;col++) {
@@ -43,7 +57,7 @@ function isValidMove(moveInfo)
 function onExecutingMove(moveInfo){
     // update our own state
     lastMove = moveInfo.move;
-    currentBoard[moveInfo.move][0] = 'X';
+    currentBoard[moveInfo.move][0] = FILLED;
 
     // update the graphical display
     for(row=0;row<height;row++) {
