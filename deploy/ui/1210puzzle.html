@@ -13,10 +13,10 @@
     </style>
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/ttt.css">
+    <link rel="stylesheet" href="styles/1210puzzle.css">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
-    <script type="text/javascript" src="js/ttt.js"></script>
+    <script type="text/javascript" src="js/1210puzzle.js"></script>
   </head> 
   <body> 
     <div class="header">
@@ -35,10 +35,10 @@
         </ul>
         <h2>Display Options</h2>
         <ul id="options">
-          <li><label><input type="checkbox"> Move-values</label></li>
-          <li><label><input type="checkbox"> Move-value History</label></li>
-          <li><label><input type="checkbox"> Predictions</label></li>
-          <li><label><input type="checkbox"> Move Remoteness</label></li>
+          <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
+          <li><label><input type="checkbox" id="option-move-value-history"> Move-value History</label></li>
+          <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
+          <li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>
         </ul>
       </div> 
       <div id="main">
@@ -48,18 +48,33 @@
           <table>
             <tr id="row-0">
               <td id="cell-0-0"></td>
-              <td id="cell-0-1"></td>
-              <td id="cell-0-2"></td>
             </tr>
             <tr id="row-1">
               <td id="cell-1-0"></td>
-              <td id="cell-1-1"></td>
-              <td id="cell-1-2"></td>
             </tr>
             <tr id="row-2">
               <td id="cell-2-0"></td>
-              <td id="cell-2-1"></td>
-              <td id="cell-2-2"></td>
+            </tr>
+            <tr id="row-3">
+              <td id="cell-3-0"></td>
+            </tr>
+            <tr id="row-4">
+              <td id="cell-4-0"></td>
+            </tr>
+            <tr id="row-5">
+              <td id="cell-5-0"></td>
+            </tr>
+            <tr id="row-6">
+              <td id="cell-6-0"></td>
+            </tr>
+            <tr id="row-7">
+              <td id="cell-7-0"></td>
+            </tr>
+            <tr id="row-8">
+              <td id="cell-8-0"></td>
+            </tr>
+            <tr id="row-9">
+              <td id="cell-9-0"></td>
             </tr>
           </table>
           <div id="turn"></div>
@@ -69,7 +84,7 @@
       <!-- sidebar --> 
       <div id="moves" class="aside"> 
         <p>Game not started</p>
-        <p id="prediction">Player 1 to win in 9 moves.</p>
+        <p id="prediction"></p>
         <div id="move-value-key">
           <h1>Move-value Key</h1>
           <table>

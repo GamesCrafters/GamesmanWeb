@@ -22,11 +22,18 @@ GCWeb = {
                 doMove: function(newMove, onMoveValuesReceived){
                     this.currentBoardString = newMove.board;
                     this.previousMoves.push(newMove);
-                    this.getNextMoveValues(newMove.board, function(moveValues){
-                        // housekeeping for each move
-                        this.setRemoteness(newMove.board);
-                        onMoveValuesReceived(moveValues);
-                    };
+                    this.getNextMoveValues(newMove.board, 
+                        function(game, newMove, onMoveValuesReceived){
+                            return function(moveValues){
+                                // housekeeping for each move
+                                console.log(newMove);
+                                game.setRemoteness(newMove);
+                                if(onMoveValuesReceived){
+                                    onMoveValuesReceived(moveValues);
+                                }
+                            };
+                        }(this, newMove, onMoveValuesReceived)
+                    );
                 },
                 undoMove: function(){
                     if(args.allowUndo)
@@ -41,6 +48,18 @@ GCWeb = {
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
+                    
+                    // debugging for 1210 puzzle
+                    if(gameName == '1210puzzle') {
+                        onValueReceived({
+                            "board": position, 
+                            "move": null, 
+                            "remoteness": "-1",
+                            "value": 3
+                        });
+                        return;
+                    }
+                    
                     $.getJSON(url, {}, function (json) {
                         onValueReceived(json);
                     });
@@ -52,6 +71,34 @@ GCWeb = {
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
+                    
+                    // debugging for 1210 puzzle
+                    if(gameName == '1210puzzle') {
+                        var retval = [];
+                        var last = -1;
+                        for(i=0;i<args.height;i++) {
+                            if(position[i] == 'X'){
+                                last = i;
+                            }
+                        }
+                        if(last+1 < args.height){
+                            newBoard = '';
+                            for(i=0;i<args.height;i++) {
+                                newBoard += (i==last+1) ? 'X' : position[i];
+                            }
+                            retval.push({"board": newBoard, "move": (last+1), "remoteness": Math.floor((args.height-last-1)/2), "status": "OK", "value": 3});
+                        }
+                        if(last+2 < args.height){
+                            newBoard = '';
+                            for(i=0;i<args.height;i++) {
+                                newBoard += (i==last+2) ? 'X' : position[i];
+                            }
+                            retval.push({"board": newBoard, "move": (last+2), "remoteness": Math.floor((args.height-last-2)/2), "status": "OK", "value": 3});
+                        }
+                        onMoveValuesReceived(retval);
+                        return;
+                    }
+                    
                     $.getJSON(url, {}, function (json) {
                         onMoveValuesReceived(json);
                     });
