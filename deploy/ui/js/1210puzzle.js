@@ -8,42 +8,58 @@ var nextMoves = [];
 var lastMove = -1;
 
 $(document).ready(function(){
-    var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {});
-    updateBoard(game, currentBoard);
+    var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
+        updateMoveValues: updateMoveValues, 
+        onNextValuesReceived:onNextValuesReceived,
+        isValidMove: isValidMove,
+        onExecutingMove: onExecutingMove
+    });
+    game.loadBoard(getBoardString(currentBoard));
     
     for(var row=0;row<height;row++) {
         for(var col=0;col<width;col++) {
             // what happens when you click a table cell
             $('#cell-'+row+'-'+col).click(function(row, col){
                 return function(){
-                    if(isValidMove(currentBoard, row, col)){
-                        // update our own state
-                        lastMove = row;
-                        currentBoard[row][col] = 'X';
-                        updateBoard(game, currentBoard);
-                        
-                        // find the move information that we stored
-                        for(i=0;i<nextMoves.length;i++){
-                            if(nextMoves[i].move == row){
-                                game.doMove(nextMoves[i], onNextValuesReceived);
-                            }
+                    // find the move information that we stored and attempt to execute the move
+                    for(i=0;i<nextMoves.length;i++){
+                        if(nextMoves[i].move == row){
+                            game.doMove(nextMoves[i]);
                         }
                     }
                 }
             }(row, col));
         }
     }
-    
-    game.getNextMoveValues(getBoardString(currentBoard), onNextValuesReceived);
 });
 
-// checks to see whether this move is valid
-function isValidMove(board, row, col){
-    return board[row][col] == EMPTY && row > lastMove;
+// check to see whether the current move is valid
+function isValidMove(moveInfo)
+{
+    return currentBoard[moveInfo.move][0] == EMPTY && moveInfo.move > lastMove
 }
 
+// called when doMove executes successfully
+function onExecutingMove(moveInfo){
+    // update our own state
+    lastMove = moveInfo.move;
+    currentBoard[moveInfo.move][0] = 'X';
+
+    // update the graphical display
+    for(row=0;row<height;row++) {
+        for(col=0;col<width;col++) {
+            $('#cell-'+row+'-'+col).text(currentBoard[row][col]);
+        }
+    }
+}
+
+// called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
+}
+
+// colors the board based on move values
+function updateMoveValues(nextMoves){
     // clear background color
     for(row=0;row<height;row++) {
         for(col=0;col<width;col++) {
@@ -63,15 +79,6 @@ function onNextValuesReceived(json){
         
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
         $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
-    }
-}
-
-// updates the board based on a specific board
-function updateBoard(game, newBoard) {
-    for(row=0;row<height;row++) {
-        for(col=0;col<width;col++) {
-            $('#cell-'+row+'-'+col).text(newBoard[row][col]);
-        }
     }
 }
 

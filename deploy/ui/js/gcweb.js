@@ -16,22 +16,55 @@ GCWeb = {
                 loadBoard: function(newBoardString){
                     this.currentBoardString = newBoardString;
                     this.previousMoves = new Array();
+                    
+                    // gets the initial state and sets remoteness
+                    this.getPositionValue(this.currentBoardString, this.setRemoteness);
+                    
+                    // get move values in case the user wants to display them
+                    this.doMove({board: this.currentBoardString, isSetup: 1});
                 },
                 
                 // move functions
-                doMove: function(newMove, onMoveValuesReceived){
+                doMove: function(newMove){
+                    // if this is an invalid move, return and do not continue
+                    if(options.isValidMove && !newMove.isSetup){
+                        if(!options.isValidMove(newMove))
+                            return;
+                    }
+                    
+                    // tell the user we are executing this specific move (basically if isValidMove returned okay)
+                    if(options.onExecutingMove && !newMove.isSetup){
+                        options.onExecutingMove(newMove);
+                    }
+                    
+                    // update the current board string and the move stack
                     this.currentBoardString = newMove.board;
-                    this.previousMoves.push(newMove);
+                    if(newMove.isSetup){
+                        this.previousMoves.push(newMove);
+                    }
+                    
+                    // grab the next values
                     this.getNextMoveValues(newMove.board, 
-                        function(game, newMove, onMoveValuesReceived){
+                        function(game, newMove){
                             return function(moveValues){
                                 // housekeeping for each move
-                                game.setRemoteness(newMove);
-                                if(onMoveValuesReceived){
-                                    onMoveValuesReceived(moveValues);
+                                if(!newMove.isSetup){
+                                    game.setRemoteness(newMove);
+                                }
+                                if($('#option-move-values').is(':checked')){
+                                    if(options.updateMoveValues){
+                                        options.updateMoveValues(moveValues);
+                                    }
+                                }else{
+                                    if(options.clearMoveValues){
+                                        options.clearMoveValues();
+                                    }
+                                }
+                                if(options.onNextValuesReceived){
+                                    options.onNextValuesReceived(moveValues);
                                 }
                             };
-                        }(this, newMove, onMoveValuesReceived)
+                        }(this, newMove)
                     );
                 },
                 undoMove: function(){
@@ -53,7 +86,7 @@ GCWeb = {
                         onValueReceived({
                             "board": position, 
                             "move": null, 
-                            "remoteness": "-1",
+                            "remoteness": "5",
                             "value": 3
                         });
                         return;
