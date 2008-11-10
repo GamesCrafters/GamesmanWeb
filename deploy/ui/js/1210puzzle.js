@@ -21,10 +21,11 @@ var lastMove = -1;
 $(document).ready(function(){
     // create a new game
     var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
-        updateMoveValues: updateMoveValues, 
         onNextValuesReceived:onNextValuesReceived,
         isValidMove: isValidMove,
-        onExecutingMove: onExecutingMove
+        onExecutingMove: onExecutingMove,
+        updateMoveValues: updateMoveValues, 
+        clearMoveValues: clearMoveValues
     });
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
@@ -74,13 +75,9 @@ function onNextValuesReceived(json){
 
 // colors the board based on move values
 function updateMoveValues(nextMoves){
-    // clear background color
-    for(row=0;row<height;row++) {
-        for(col=0;col<width;col++) {
-            // resets the css classes on this table cell
-            $('#cell-'+row+'-'+col).removeClass();
-        }
-    }
+    // reset everything first
+    clearMoveValues();
+    
     // set background color to new values
     for(i=0;i<nextMoves.length;i++) {
         // if the move were something like a3, then you would use the commented lines below instead
@@ -93,6 +90,17 @@ function updateMoveValues(nextMoves){
         
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
         $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
+    }
+}
+
+// remove all indicators of move values
+function clearMoveValues(){
+    // clear background color
+    for(row=0;row<height;row++) {
+        for(col=0;col<width;col++) {
+            // resets the css classes on this table cell
+            $('#cell-'+row+'-'+col).removeClass();
+        }
     }
 }
 

@@ -13,17 +13,17 @@
         
         h1{font-family: arial;}
         h2{border-bottom: 1px solid #000;}
-        h3{margin: 0;}
+        h3, h4{margin: 0;}
         
-        p{margin: 0.25em 0;}
+        p{margin: 0.5em 0;}
         
         code,pre{font-size: 1.5em;}
         pre {margin: 0; margin-top: 0.25em;}
         pre span{color: green;}
         
-        .files dt{
-            font-family: "courier new";
-        }
+        dl{margin-left: 1em; margin-top: 0; margin-bottom: 0;}
+        dt{font-weight: bold;}
+        .files dt{font-family: "courier new";}
     </style>
   </head>
   <body>
@@ -55,54 +55,170 @@
     </dl>
     
     <h2><code>gcweb.js</code></h2>
+    <h3>Constructor</h3>
+    <h4><code>GCWeb.newPuzzleGame(string gameName, int width, int height, dictionary options)</code></h4>
+    <dl>
+        <dt>string gameName</dt>
+        <dd>The shortened, sanitized version of your full game name</dd>
+        <dt>int width, int height</dt>
+        <dd>The width and height of your game</dd>
+        <dt>dictionary options</dt>
+        <dd>Any other options you want to pass to the game object. For the framework to work optimally, you must specify a <code>updateMoveValues</code>, <code>clearMoveValues</code>, <code>onNextValuesReceived</code>, <code>isValidMove</code>, and <code>onExecutingMove</code> function. Javascript dictionaries are similar to python dictionaries - the format is <code>{key1: value1, key2: value2}</code>. Each of these functions are explained in further detail below.</dd>
+    </dl>
+    
+    <h3>Member Variables</h3>
+    <dl>
+        <dt>string currentBoardString</dt>
+        <dd>The current board that should be displayed</dd>
+        <dt>array previousMoves</dt>
+        <dd>The stack of previous moves that the visual value history will use</dd>
+    </dl>
+    
+    <h3>Functions</h3>
+    <dl>
+        <dt>loadBoard(string newBoardString)</dt>
+        <dd>Load a new board and reset the currentBoardString and previousMoves stack</dd>
+        <dt>doMove(moveInformation newMove)</dt>
+        <dd>Attempts to execute this move. Will check with <code>isValidMove</code> before doing anything, then it will call <code>onExecutingMove</code> after it has determined it is a valid move. Then it will make the remote server call and call either <code>updateMoveValues</code> or <code>clearMoveValues</code> depending on whether the box is checked or not. It will also update the remoteness is it is available and the user wants to display it.</dd>
+        <dt>undoMove()</dt>
+        <dd>[NOT YET IMPLEMENTED] Undo a move based on the move stack.</dd>
+        <dt>getPositionValue(string position, callback onValueReceived)</dt>
+        <dd>Makes a remote server call and gets the value of a specific position and calls a callback.</dd>
+        <dt>getNextMoveValues(string position, callback onMoveValuesReceived)</dt>
+        <dd>Makes a remote server call and gets the value of the next moves based on a specific current board.</dd>
+        <dt>setRemoteness(moveInformation move)</dt>
+        <dd>Sets the remoteness message based on a move.</dd>
+    </dl>
+    
+    <h2>Explanation of 1210puzzle.js</h2>
     <p>
         This file contains the <code>GCWeb</code> global variable that contains everything in the framework. I will dissect the <code>1210puzzle.js</code> sample file and explain each part of ths file.
     </p>
     <h3>Global Variables</h3>
-    <p>These globals are defined at the top of the <code>gcweb.js</code> file. Most of it is fairly self-explanatory with the comments.</p>
-    <pre>
-    <span>// constants</span>
-    var EMPTY = ' ';
-    var FILLED = 'X';
-
-    <span>// custom representation of the board, will be different for different games</span>
-    var currentBoard;
-    var defaultBoard = [
-      [EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY],
-      [EMPTY],[EMPTY],[EMPTY],[EMPTY],[EMPTY]
-    ];
-
-    <span>// easy reference to these constants for yourself 
-    // (it's static for now, but we might want this to be user-defined later)</span>
-    var width = 1;
-    var height = 10;
-
-    <span>// used for coloring the table cells</span>
-    var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
-
-    <span>// other state</span>
-    var nextMoves = [];
-    var lastMove = -1;
-    </pre>
-    
+    <p>These globals are defined at the top of the <code>gcweb.js</code> file. Most of it is fairly self-explanatory with the comments. None of these variables are mandatory. You can create an entirely new scheme if you wish.</p>
     <h3>Page Load</h3>
-    <p>This is a jQuery function that executes the argument function when the page structure finishes loading.</p>
+    <p>This is a jQuery function that executes the argument function when the page structure finishes loading. Please use this function to bootstrap the entire process, otherwise your game will be subject to race conditions.</p>
     <pre>
-    $(document).ready(function(){...});
+    $(document).ready(function(){
+        <span>// your function statements go here</span>
+    });
     </pre>
     
     <h3>Creating a new Game</h3>
+    <p>The basic flow is to create a new <code>GCWeb</code> game object, then load the default board into it. Please specify your optional functions here, so the framework will know about them. It is not enough to only write the function in your game-specific javascript file.</p>
     <pre>
-        <span>// create a new game</span>
-        var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
-            updateMoveValues: updateMoveValues, 
-            onNextValuesReceived: onNextValuesReceived,
-            isValidMove: isValidMove,
-            onExecutingMove: onExecutingMove
-        });
-        <span>// load the default board</span>
-        game.loadBoard(getBoardString(defaultBoard));
-        currentBoard = defaultBoard;
+<span>// create a new game</span>
+var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
+    onNextValuesReceived: onNextValuesReceived,
+    isValidMove: isValidMove,
+    onExecutingMove: onExecutingMove,
+    updateMoveValues: updateMoveValues,
+    clearMoveValues: clearMoveValues
+});
+<span>// load the default board</span>
+game.loadBoard(getBoardString(defaultBoard));
+currentBoard = defaultBoard;
     </pre>
+    
+    <h3>User Input</h3>
+    <p>You will want to respond to user input (i.e. a click on a game cell). jQuery makes it easy to attach hooks that run a custom function when a specific element is clicked. In the case of 1210puzzle, I want to attach a hook to every cell, so I loop through every cell and do some jQuery magic.</p>
+    <p>$('#cell-'+row+'-'+col) is special jQuery syntax to find the HTML element with an ID of cell-&lt;row&gt;-&lt;col&gt;. It is similar to a CSS query. You can then call <code>.click(function)</code> to attach this function to the element's click event handler.</p>
+    <pre>
+    for(var row=0;row&lt;height;row++) {
+        for(var col=0;col&lt;width;col++) {
+            <span>// what happens when you click a table cell</span>
+            $('#cell-'+row+'-'+col).click(function(row, col){
+                return function(){
+                    <span>// find the move information that we stored and attempt to execute the move</span>
+                    for(i=0;i&lt;nextMoves.length;i++){
+                        if(nextMoves[i].move == row){
+                            game.doMove(nextMoves[i]);
+                        }
+                    }
+                }
+            }(row, col)); <span>// eval the outer function NOW and bind row and col to the inner function</span>
+        }
+    }
+    </pre>
+    <h4>Anonymous Functions and Argument Binding</h4>
+    <p>Javascript allows for anonymous functions (aka lambda functions - remember your 61A?), so you can declare a new function without naming it. The syntax for this is simply:</p>
+    <pre>
+    function(x){
+        <span>// statements</span>
+        return x*x;
+    }</pre>    
+    <p>
+        And just like Scheme, you can also call an anonymous function on the spot:
+    </p>
+    <pre>
+    function(x){return x*x;}(5); <span>// evals to 25</span></pre>
+    <p>
+        Since functions in javascript use dynamic scoping, we need to create a closure so the function executes as desired. The following function returns a function that multiples its argument by 5.
+    </p>
+    <pre>
+    function(x){
+        return function(y){return x*y;}
+    }(5);</pre>
+    <p>
+        This principle is only used in one place in <code>1210puzzle.js</code>, but you may find that you will require this in other places where you need more complicated logic. To test your understanding, compare the above (correct) implementation with the following naive implementation. Make sure you understand why the new implementation will fail.
+    </p>
+    <pre>
+    <span>// DO NOT COPY THIS - IT IS INCORRECT</span>
+    for(var row=0;row&lt;height;row++) {
+        for(var col=0;col&lt;width;col++) {
+            <span>// what happens when you click a table cell</span>
+            $('#cell-'+row+'-'+col).click(function(){
+                <span>// find the move information that we stored and attempt to execute the move</span>
+                for(i=0;i&lt;nextMoves.length;i++){
+                    if(nextMoves[i].move == row){
+                        game.doMove(nextMoves[i]);
+                    }
+                }
+            });
+        }
+    }
+    </pre>
+    
+    <h3>isValidMove</h3>
+    <p>
+        This function will check to make sure whether a specific move is valid given your current internal state. <code>isValidMove</code> takes in a <code>moveInformation</code> object, which resembles the following:
+    </p>
+    <pre>
+    {
+        "board": "O       X",
+        "move": "a3",
+        "remoteness": "-1",
+        "status": "OK",
+        "value": "1"
+    }
+    </pre>
+    <p>
+        You should return <code>true</code> or <code>false</code>.
+    </p>
+    
+    <h3>onExecutingMove</h3>
+    <p>
+        <code>onExecutingMove</code> takes in a <code>moveInformation</code> object, which is the move that doMove actually executed. You should update your internal state and external graphics to reflect this fact.
+    </p>
+    
+    <h3>onNextValuesReceived</h3>
+    <p>
+        <code>onNextValuesReceived</code> takes in the full list of available moves. You should store this so that you know which moves are valid and so you can pass the moveInformation object to <code>doMove</code>.
+    </p>
+    
+    <h3>updateMoveValues</h3>
+    <p>
+        <code>updateMoveValues</code> is only called if move values is enabled. It takes in an array of <code>moveInformation</code> objects.
+    </p>
+    
+    <h3>clearMoveValues</h3>
+    <p>
+        <code>clearMoveValues</code> is called when we want to clear the board of any indicators of move values.
+    </p>
+    
+    <h3>getBoardString</h3>
+    <p>
+        Helper function to convert our internal representation of the board into a board string. This function is not required, but may prove useful.
+    </p>
   </body> 
 </html> 
