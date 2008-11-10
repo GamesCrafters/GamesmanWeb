@@ -121,5 +121,40 @@ GCWeb = {
                 }
             }
         }(gameName, args);
+    },
+    
+    newGame: function(gameName, width, height, options) {
+        if(width <= 0 || height <= 0) {
+            return null; // ERROR
+        }
+        args = options || {};
+        args['width'] = width;
+        args['height'] = height;
+        return function(gameName, args){
+            return {
+                getPositionValue: function (position, callback) {
+                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+position.replace(' ', '%20');
+                    for (var key in args) {
+                        url += ";"+key+"="+args[key];
+                    }
+                    $.getJSON(url, {}, function (json) {
+                        callback(json);
+                    });
+                },
+                getNextMoveValues: function (position, callback) {
+                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+position.replace(' ', '%20');
+                    for (var key in args) {
+                        url += ";"+key+"="+args[key];
+                    }
+                    $.getJSON(url, {}, function (json) {
+                        callback(json);
+                    });
+                },
+                // set the status message to "Player <player> to win in <remoteness>"
+                setRemoteness: function (player, remoteness) {
+                    $('#prediction').text("Player "+player+" to win in "+remoteness);
+                }
+            }
+        }(gameName, args);
     }
 }

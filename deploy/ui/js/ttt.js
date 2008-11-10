@@ -9,7 +9,7 @@ var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
 
 $(document).ready(function(){
-    var game = GCWeb.newDartboardGame("ttt", width, height, {});
+    var game = GCWeb.newGame("ttt", width, height, {});
     updateBoard(game, currentBoard);
     
     for(var row=0;row<height;row++) {
