@@ -179,7 +179,7 @@ currentBoard = defaultBoard;
     }
     </pre>
     
-    <h3>isValidMove</h3>
+    <h3>bool isValidMove(moveInformation move)</h3>
     <p>
         This function will check to make sure whether a specific move is valid given your current internal state. <code>isValidMove</code> takes in a <code>moveInformation</code> object, which resembles the following:
     </p>
@@ -196,29 +196,45 @@ currentBoard = defaultBoard;
         You should return <code>true</code> or <code>false</code>.
     </p>
     
-    <h3>onExecutingMove</h3>
+    <h3>void onExecutingMove(moveInformation move)</h3>
     <p>
         <code>onExecutingMove</code> takes in a <code>moveInformation</code> object, which is the move that doMove actually executed. You should update your internal state and external graphics to reflect this fact.
     </p>
     
-    <h3>onNextValuesReceived</h3>
+    <h3>void onNextValuesReceived(array availableMoves)</h3>
     <p>
         <code>onNextValuesReceived</code> takes in the full list of available moves. You should store this so that you know which moves are valid and so you can pass the moveInformation object to <code>doMove</code>.
     </p>
     
-    <h3>updateMoveValues</h3>
+    <h3>void updateMoveValues(array availableMoves)</h3>
     <p>
         <code>updateMoveValues</code> is only called if move values is enabled. It takes in an array of <code>moveInformation</code> objects.
     </p>
     
-    <h3>clearMoveValues</h3>
+    <h3>void clearMoveValues()</h3>
     <p>
         <code>clearMoveValues</code> is called when we want to clear the board of any indicators of move values.
     </p>
     
-    <h3>getBoardString</h3>
+    <h3>string getBoardString()</h3>
     <p>
         Helper function to convert our internal representation of the board into a board string. This function is not required, but may prove useful.
+    </p>
+    
+    <h2>Debugging</h2>
+    <p>For easier debugging, I have included more options you can specify. Specify functions that will simulate a database, and then turn on debugging with the option <code>debug: 1</code></p>
+    <pre>
+    getPositionValue: getPositionValue
+    getNextMoveValues: getNextMoveValues
+    debug: 1
+    </pre>
+    <h3>moveInformation getPositionValue(position, onValueReceived)</h3>
+    <p>
+        Returns a position value object based on the arguments.
+    </p>
+    <h3>array getNextMoveValues(position, onMoveValuesReceived)</h3>
+    <p>
+        Returns an array of moveInformation object based on the arguments.
     </p>
   </body> 
 </html> 

@@ -81,14 +81,9 @@ GCWeb = {
                         url += ";"+key+"="+args[key];
                     }
                     
-                    // debugging for 1210 puzzle
-                    if(gameName == '1210puzzle') {
-                        onValueReceived({
-                            "board": position, 
-                            "move": null, 
-                            "remoteness": "5",
-                            "value": 3
-                        });
+                    // debug if available
+                    if(options.debug && options.getPositionValue){
+                        options.getPositionValue(position, onValueReceived);
                         return;
                     }
                     
@@ -104,30 +99,9 @@ GCWeb = {
                         url += ";"+key+"="+args[key];
                     }
                     
-                    // debugging for 1210 puzzle
-                    if(gameName == '1210puzzle') {
-                        var retval = [];
-                        var last = -1;
-                        for(i=0;i<args.height;i++) {
-                            if(position[i] == 'X'){
-                                last = i;
-                            }
-                        }
-                        if(last+1 < args.height){
-                            newBoard = '';
-                            for(i=0;i<args.height;i++) {
-                                newBoard += (i==last+1) ? 'X' : position[i];
-                            }
-                            retval.push({"board": newBoard, "move": (last+1), "remoteness": Math.floor((args.height-last-1)/2), "status": "OK", "value": 3});
-                        }
-                        if(last+2 < args.height){
-                            newBoard = '';
-                            for(i=0;i<args.height;i++) {
-                                newBoard += (i==last+2) ? 'X' : position[i];
-                            }
-                            retval.push({"board": newBoard, "move": (last+2), "remoteness": Math.floor((args.height-last-2)/2), "status": "OK", "value": 3});
-                        }
-                        onMoveValuesReceived(retval);
+                    // debug if available
+                    if(options.debug && options.getNextMoveValues){
+                        options.getNextMoveValues(position, onMoveValuesReceived);
                         return;
                     }
                     

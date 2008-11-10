@@ -25,7 +25,10 @@ $(document).ready(function(){
         isValidMove: isValidMove,
         onExecutingMove: onExecutingMove,
         updateMoveValues: updateMoveValues, 
-        clearMoveValues: clearMoveValues
+        clearMoveValues: clearMoveValues,
+        getPositionValue: getPositionValue,
+        getNextMoveValues: getNextMoveValues,
+        debug: 1
     });
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
@@ -113,4 +116,40 @@ function getBoardString(board){
         }
     }
     return str;
+}
+
+// local debugging
+function getPositionValue(position, onValueReceived){
+    onValueReceived({
+        "board": position, 
+        "move": null, 
+        "remoteness": "5",
+        "value": 3
+    });
+    return;
+}
+
+function getNextMoveValues(position, onMoveValuesReceived){
+    var retval = [];
+    var last = -1;
+    for(i=0;i<args.height;i++) {
+        if(position[i] == 'X'){
+            last = i;
+        }
+    }
+    if(last+1 < args.height){
+        newBoard = '';
+        for(i=0;i<args.height;i++) {
+            newBoard += (i==last+1) ? 'X' : position[i];
+        }
+        retval.push({"board": newBoard, "move": (last+1), "remoteness": Math.floor((args.height-last-1)/2), "status": "OK", "value": 3});
+    }
+    if(last+2 < args.height){
+        newBoard = '';
+        for(i=0;i<args.height;i++) {
+            newBoard += (i==last+2) ? 'X' : position[i];
+        }
+        retval.push({"board": newBoard, "move": (last+2), "remoteness": Math.floor((args.height-last-2)/2), "status": "OK", "value": 3});
+    }
+    onMoveValuesReceived(retval);
 }
