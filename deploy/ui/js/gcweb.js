@@ -107,7 +107,12 @@ GCWeb = {
                 // game messages
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (moveValue) {
-                    $('#prediction').text(['Lose','Draw','Win'][moveValue.value-1]+" in "+moveValue.remoteness);
+                    console.log($('#option-predictions').is(':checked'));
+                    if($('#option-predictions').is(':checked')){
+                        $('#prediction').text(['Lose','Draw','Win'][moveValue.value-1]+" in "+moveValue.remoteness);
+                    } else{
+                        $('#prediction').text('');
+                    }
                 }
             }
         }(gameName, args);
