@@ -77,9 +77,12 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 				Collections.sort(polys);
 				polyProjection = new ArrayList<Shape>();
 				for(Polygon3D poly : polys) {
-					if(!poly.isVisible()) continue;
-					Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
-					polyProjection.add(proj);
+					if(!poly.isVisible())
+						polyProjection.add(null);
+					else {
+						Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
+						polyProjection.add(proj);
+					}
 				}
 			}
 			if(!dragging || colorEditing)
@@ -253,6 +256,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		for(int i = 0; i < polys.size(); i++) {
 			Polygon3D poly = polys.get(i);
 			Shape proj = polyProjection.get(i);
+			if(proj == null) continue; 
 			if(poly.getFillColor() != null) {
 				g2d.setColor(poly.getFillColor());
 				Composite oldComposite = g2d.getComposite();

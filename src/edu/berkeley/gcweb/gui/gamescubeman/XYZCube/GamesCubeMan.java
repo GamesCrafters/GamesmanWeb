@@ -25,6 +25,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import netscape.javascript.JSObject;
+
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.XYZCube.CubeVariation;
@@ -41,7 +43,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private JTextField stateField;
 	private JRadioButton[] variationButtons;
 	
-//	private JSObject jso;
+	private JSObject jso;
 	public void init() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -152,7 +154,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					setBG(pane, Color.GRAY);
 				}
 			});
-//			jso = JSObject.getWindow(this);
+			jso = JSObject.getWindow(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -180,7 +182,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	
 	private boolean green = false;
 	public void touch() {
-//		if(jso != null)
+		if(jso != null)
+			jso.eval("alert('Cube Reset!');");
 //			jso.eval("update('hooow');"); //this and the next line are equivalent
 //			jso.call("update", new Object[] {"hiya"});
 		green = !green;
@@ -211,8 +214,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			resetRotation();
 		else if(e.getSource() == scramble)
 			cube.scramble();
-		else if(e.getSource() == resetCube)
+		else if(e.getSource() == resetCube) {
+			touch();
 			cube.resetCube();
+		}
 		else if(e.getSource() == antialiasing)
 			canvas.setAntialiasing(antialiasing.isSelected());
 		else if(e.getSource() == colorChooserCheckBox)

@@ -21,7 +21,7 @@
 	</target>
 
 	<target name="compile" description="Compilation target">
-		<javac srcdir="edu/berkeley/gcweb/gui/" classpath="plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
+		<javac srcdir="edu/berkeley/gcweb/gui/" classpath="edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
 	</target>
 	
 	<target name="warnings" description="Compilation target">
