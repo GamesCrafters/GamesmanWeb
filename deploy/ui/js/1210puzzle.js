@@ -1,6 +1,6 @@
 // constants
-var EMPTY = ' ';
-var FILLED = 'X';
+const EMPTY = ' ';
+const FILLED = 'X';
 
 // custom representation of the board, will be different for different games
 var currentBoard;
@@ -21,7 +21,7 @@ var lastMove = -1;
 $(document).ready(function(){
     // create a new game
     var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
-        onNextValuesReceived:onNextValuesReceived,
+        onNextValuesReceived: onNextValuesReceived,
         isValidMove: isValidMove,
         onExecutingMove: onExecutingMove,
         updateMoveValues: updateMoveValues, 
