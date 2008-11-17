@@ -10,8 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.berkeley.jgamesman.Gamesman;
-
 @Path("/gamesman")
 public class GamesmanServlet {
     
@@ -25,11 +23,14 @@ public class GamesmanServlet {
         
         String response = null;
         try {
+	    /*
             Map<String, String> moveValue =
                 Gamesman.getMoveValue(game, width, height, position);
             JSONObject json = new JSONObject("{status: 'OK'}");
             json = new JSONObject(moveValue);
             response = json.toString(4);
+	    */
+	    response = Gamesman.getMoveValue(game, width, height, position).toString(4);
         } catch (Exception e) {
             try {
                 JSONObject json = new JSONObject("{status: 'error'}");
@@ -66,6 +67,7 @@ public class GamesmanServlet {
         
         String response = null;
         try {
+	    /*
             JSONArray json = new JSONArray();
             Map<String, String>[] nextMoveValues =
                 Gamesman.getNextMoveValues(game, width, height, position);
@@ -75,6 +77,8 @@ public class GamesmanServlet {
                 json.put(jsonMoveValue);
             }
             response = json.toString(4);
+	    */
+	    response = Gamesman.getNextMoveValues(game, width, height, position).toString(4);
         } catch (Exception e) {
             try {
                 JSONObject json = new JSONObject();
