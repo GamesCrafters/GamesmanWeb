@@ -7,8 +7,7 @@ const BOAT = 'B'
 const horizontalMovement = 300;
 
 // custom representation of the board, will be different for different games
-var currentBoard;
-var defaultBoard = [[EMPTY, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY]];
+var defaultBoard = "FCGB | ";
 
 // easy reference to these constants for yourself (it's static for now, but we might want this to be user-defined later)
 var width = 3;
@@ -39,8 +38,7 @@ $(document).ready(function(){
         debug: 1
     });
     // load the default board
-    game.loadBoard(getBoardString("FCGB | "));
-    currentBoard = defaultBoard;
+    game.loadBoard(defaultBoard);
     $("#fox").click(function(){
         if(boatOnLeft == foxOnLeft){
             for(i=0;i<nextMoves.length;i++){
