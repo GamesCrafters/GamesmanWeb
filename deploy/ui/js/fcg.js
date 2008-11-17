@@ -4,7 +4,7 @@ const FOX = 'F'
 const CHICKEN = 'C'
 const GRAIN = 'G'
 const BOAT = 'B'
-const horizontalMovement = 700;
+const horizontalMovement = 300;
 
 // custom representation of the board, will be different for different games
 var currentBoard;
