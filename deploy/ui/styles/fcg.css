@@ -7,3 +7,6 @@
 #boat, #fox, #chicken, #grain{float: left; position: relative;}
 #boat{clear: both;}
 #footer{clear:both;}
+
+.lose-move{border: 3px solid red;}
+.win-move{border: 3px solid green;}

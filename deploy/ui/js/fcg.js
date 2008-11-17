@@ -1,7 +1,10 @@
 // constants
 const EMPTY = ' ';
-const FILLED = 'X';
-var horizontalMovement = 700;
+const FOX = 'F'
+const CHICKEN = 'C'
+const GRAIN = 'G'
+const BOAT = 'B'
+const horizontalMovement = 700;
 
 // custom representation of the board, will be different for different games
 var currentBoard;
@@ -40,51 +43,74 @@ $(document).ready(function(){
     currentBoard = defaultBoard;
     $("#fox").click(function(){
         if(boatOnLeft == foxOnLeft){
-            $("#fox").animate({"left": (foxOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            boatOnLeft = !boatOnLeft;
-            foxOnLeft = !foxOnLeft;
+            for(i=0;i<nextMoves.length;i++){
+                if(nextMoves[i].move == FOX){
+                    game.doMove(nextMoves[i]);
+                }
+            }
         }
     });
     $("#chicken").click(function(){
         if(boatOnLeft == chickenOnLeft){
-            $("#chicken").animate({"left": (chickenOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            boatOnLeft = !boatOnLeft;
-            chickenOnLeft = !chickenOnLeft;
+            for(i=0;i<nextMoves.length;i++){
+                if(nextMoves[i].move == CHICKEN){
+                    game.doMove(nextMoves[i]);
+                }
+            }
         }
     });
     $("#grain").click(function(){
         if(boatOnLeft == grainOnLeft){
-            $("#grain").animate({"left": (grainOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-            boatOnLeft = !boatOnLeft;
-            grainOnLeft = !grainOnLeft;
+            for(i=0;i<nextMoves.length;i++){
+                if(nextMoves[i].move == GRAIN){
+                    game.doMove(nextMoves[i]);
+                }
+            }
         }
     });
     $("#boat").click(function(){
-        $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
-        boatOnLeft = !boatOnLeft;
+        for(i=0;i<nextMoves.length;i++){
+            if(nextMoves[i].move == BOAT){
+                game.doMove(nextMoves[i]);
+            }
+        }
     });
 });
 
 // check to see whether the current move is valid
 function isValidMove(moveInfo)
 {
-    return currentBoard[moveInfo.move][0] == EMPTY && moveInfo.move > lastMove
+    if(moveInfo.move == FOX)
+        return boatOnLeft == foxOnLeft;
+    else if(moveInfo.move == CHICKEN)
+        return boatOnLeft == chickenOnLeft;
+    else if(moveInfo.move == GRAIN)
+        return boatOnLeft == grainOnLeft;
+    return true
 }
 
 // called when doMove executes successfully
 function onExecutingMove(moveInfo){
     // update our own state
     lastMove = moveInfo.move;
-    currentBoard[moveInfo.move][0] = FILLED;
-
-    // update the graphical display
-    for(row=0;row<height;row++) {
-        for(col=0;col<width;col++) {
-            $('#cell-'+row+'-'+col).text(currentBoard[row][col]);
-        }
+    if(moveInfo.move == FOX){
+        $("#fox").animate({"left": (foxOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        boatOnLeft = !boatOnLeft;
+        foxOnLeft = !foxOnLeft;
+    } else if(moveInfo.move == CHICKEN) {
+        $("#chicken").animate({"left": (chickenOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        boatOnLeft = !boatOnLeft;
+        chickenOnLeft = !chickenOnLeft;
+    } else if(moveInfo.move == GRAIN) {
+        $("#grain").animate({"left": (grainOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        boatOnLeft = !boatOnLeft;
+        grainOnLeft = !grainOnLeft;
+    } else {
+        $("#boat").animate({"left": (boatOnLeft?'+':'-')+"="+horizontalMovement+"px"}, "slow");
+        boatOnLeft = !boatOnLeft;
     }
 }
 
@@ -100,28 +126,24 @@ function updateMoveValues(nextMoves){
     
     // set background color to new values
     for(i=0;i<nextMoves.length;i++) {
-        // if the move were something like a3, then you would use the commented lines below instead
-        // row = height-nextMoves[i].move[1];
-        // col = nextMoves[i].move.charCodeAt(0)-'a'.charCodeAt(0);
-        
-        // else if the move is a simple integer (in the case of 1210 puzzle), then the col is always 0 and the row is just the move number
-        row = nextMoves[i].move;
-        col = 0;
-        
-        // adds the css class to the table cell depending on whether it's a lose, draw, or win
-        $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
+        move = nextMoves[i].move;
+        if(move == FOX)
+            $('#fox').addClass(moveValueClasses[nextMoves[i].value-1]);
+        else if(move == CHICKEN)
+            $('#chicken').addClass(moveValueClasses[nextMoves[i].value-1]);
+        else if(move == GRAIN)
+            $('#grain').addClass(moveValueClasses[nextMoves[i].value-1]);
+        else
+            $('#boat').addClass(moveValueClasses[nextMoves[i].value-1]);
     }
 }
 
 // remove all indicators of move values
 function clearMoveValues(){
-    // clear background color
-    for(row=0;row<height;row++) {
-        for(col=0;col<width;col++) {
-            // resets the css classes on this table cell
-            $('#cell-'+row+'-'+col).removeClass();
-        }
-    }
+    $('#fox').removeClass();
+    $('#chicken').removeClass();
+    $('#grain').removeClass();
+    $('#boat').removeClass();
 }
 
 // converts our own representation of the board (2d/3d array) into a board string
@@ -148,25 +170,9 @@ function getPositionValue(position, onValueReceived){
 
 function getNextMoveValues(position, onMoveValuesReceived){
     var retval = [];
-    var last = -1;
-    for(i=0;i<args.height;i++) {
-        if(position[i] == 'X'){
-            last = i;
-        }
-    }
-    if(last+1 < args.height){
-        newBoard = '';
-        for(i=0;i<args.height;i++) {
-            newBoard += (i==last+1) ? 'X' : position[i];
-        }
-        retval.push({"board": newBoard, "move": (last+1), "remoteness": Math.floor((args.height-last-1)/2), "status": "OK", "value": 3});
-    }
-    if(last+2 < args.height){
-        newBoard = '';
-        for(i=0;i<args.height;i++) {
-            newBoard += (i==last+2) ? 'X' : position[i];
-        }
-        retval.push({"board": newBoard, "move": (last+2), "remoteness": Math.floor((args.height-last-2)/2), "status": "OK", "value": 3});
-    }
+    retval.push({"board": "", "move": FOX, "remoteness": -1, "status": "OK", "value": 3});
+    retval.push({"board": "", "move": CHICKEN, "remoteness": -1, "status": "OK", "value": 3});
+    retval.push({"board": "", "move": GRAIN, "remoteness": -1, "status": "OK", "value": 3});
+    retval.push({"board": "", "move": BOAT, "remoteness": -1, "status": "OK", "value": 3});
     onMoveValuesReceived(retval);
 }
