@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="GamesmanWeb" default="all">
-    <description>Compile and package GamesmanWeb into a distributable WAR file</description>
+	<description>Compile and package GamesmanWeb into a distributable WAR file</description>
+	
+	<!-- variables -->
 	<property name="src" location="src"/>
-    <property name="deploy" location="deploy"/>
-	<property name="jgamesman" location="${src}/edu/berkeley/jgamesman"/>
+	<property name="deploy" location="deploy"/>
 	<property name="lib" location="${deploy}/WEB-INF/lib"/>
 	<property name="build" location="${deploy}/WEB-INF/classes"/>
 	<property name="dist" location="."/>
-	<!-- <property name="dist" location="C:/Program Files/Apache Tomcat/webapps"/> -->
-
-	<target name="all" depends="clean, compile, jgamesman, war"/>
-    <target name="war" depends="compile, jgamesman" description="Package a WAR file">
-    	<delete file="gcweb.war"/>
-        <war destfile="${dist}/gcweb.war" basedir="${deploy}" webxml="${deploy}/WEB-INF/web.xml"
-             includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
-    </target>
-    <target name="compile" description="Compile the GCWeb classes">
-    	<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-code-0.9-ea.jar:${lib}/jersey-server-0.9-ea.jar:${lib}/json.jar:${lib}/jsr311-api-0.9.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
-               destdir="${build}" source="1.5" target="1.5" excludes="src build.xml" >
-            <include name="**/*.java"/>
-            <exclude name="**/tests/*.java"/>
-        </javac>
-    </target>
-    <target name="jgamesman">
-        <exec executable="make" failonerror="true">
-            <arg line="-C ${jgamesman} jnilib OUTDIR=${build}"/>
-        </exec>
-    </target>
+	
+	<!-- targets -->
+	<target name="all" depends="compile, war"/>
+	<target name="rebuild" depends="clean, compile, war"/>
+	<target name="war" depends="compile" description="Package a WAR file">
+    		<delete file="gcweb.war"/>
+	        <war destfile="${dist}/gcweb.war" basedir="${deploy}" webxml="${deploy}/WEB-INF/web.xml"
+		     includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
+	</target>
+	<target name="compile" description="Compile the GCWeb classes">
+		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-code-0.9-ea.jar:${lib}/jersey-server-0.9-ea.jar:${lib}/json.jar:${lib}/jsr311-api-0.9.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
+		       destdir="${build}" source="1.5" target="1.5" excludes="src build.xml" >
+			<include name="**/*.java"/>
+			<exclude name="**/tests/*.java"/>
+			<exclude name="**/gui/**/*.java"/>
+		</javac>
+	</target>
 	<target name="clean" description="Clean the build directories">
 		<delete dir="${build}/*"/>
-		<exec executable="make">
-			<arg line="-C ${jgamesman} clean OUTDIR=${build}"/>
-		</exec>
-    </target>
+	</target>
 </project>
