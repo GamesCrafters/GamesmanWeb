@@ -28,7 +28,7 @@ var lastMove = -1;
 // bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
     // create a new game
-    var game = GCWeb.newPuzzleGame("1210puzzle", width, height, {
+    var game = GCWeb.newPuzzleGame("fcg", width, height, {
         onNextValuesReceived: onNextValuesReceived,
         isValidMove: isValidMove,
         onExecutingMove: onExecutingMove,
@@ -39,7 +39,7 @@ $(document).ready(function(){
         debug: 1
     });
     // load the default board
-    game.loadBoard(getBoardString(defaultBoard));
+    game.loadBoard(getBoardString("FCGB | "));
     currentBoard = defaultBoard;
     $("#fox").click(function(){
         if(boatOnLeft == foxOnLeft){
