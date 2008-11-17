@@ -42,7 +42,7 @@ def writeDatabase(puzzname, options):
 	
 	alldata = {}
 	default = str(bitClass(value=0)) # value==0 but not solution means not seen.
-	for i in range(solver.get_max_level()):
+	for i in range(solver.get_max_level()+1): # +1 includes starting position
 		print 'Level %d'%i
 		for x in solver.levels[i]:
 			position = hash(x)

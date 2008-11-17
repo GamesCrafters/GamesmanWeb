@@ -35,8 +35,8 @@ def makeBitClass(fields):
 		
 		def __str__(self):
 			return ctypes.string_at(ctypes.addressof(self), totalbytes)
-		def to_dictionary(self):
-			d = {}
+		def to_dictionary(self, defaults=None):
+			d = defaults or {}
 			for f in ctypefields:
 				d[f[0]] = getattr(self,f[0])
 			return d
@@ -62,16 +62,20 @@ class OpenDB:
 	def getPuzzle(self, *args, **kwargs):
 		return self.puzzleclass(**self.header['options'])
 	
-	def read(self, mypuzzle):
-		if mypuzzle.is_illegal():
+	def read(self, mypuzzle, mydict = None):
+		if mypuzzle.is_illegal() and not mypuzzle.is_a_solution:
+			print 'ILLEGAL: '+str(mypuzzle)
 			return None # Illegal position.
 		
 		h = hash(mypuzzle)
 		self.fp.seek(self.startpos + (self.bitClass.bytesize * h))
 		info = self.bitClass.read_from_file(self.fp)
+		d = info.to_dictionary(mydict)
+
 		if info.value == 0 and not mypuzzle.is_a_solution():
-			return None # Not a reachable position!
+			d['value'] = -1 # Not a reachable position!
 		
-		return info.to_dictionary()
+		d['board'] = str(mypuzzle)
+		return d
 	
 
