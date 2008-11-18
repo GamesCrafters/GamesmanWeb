@@ -32,8 +32,8 @@ $(document).ready(function(){
         onExecutingMove: onExecutingMove,
         updateMoveValues: updateMoveValues, 
         clearMoveValues: clearMoveValues,
-        getPositionValue: getPositionValue,
-        getNextMoveValues: getNextMoveValues,
+        //getPositionValue: getPositionValue,
+        //getNextMoveValues: getNextMoveValues,
         //debug: 1
     });
     // load the default board
