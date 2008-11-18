@@ -89,7 +89,7 @@ GCWeb = {
                     }
                     
                     $.getJSON(url, {}, function (json) {
-                        onValueReceived(json.response);
+                        onValueReceived(json);
                     });
                 },
                 // position: string
@@ -108,7 +108,7 @@ GCWeb = {
                     }
                     
                     $.getJSON(url, {}, function (json) {
-                        onMoveValuesReceived(json.response);
+                        onMoveValuesReceived(json);
                     });
                 },
                 
