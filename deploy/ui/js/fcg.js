@@ -1,9 +1,8 @@
 // constants
-const EMPTY = ' ';
 const FOX = 'F'
 const CHICKEN = 'C'
 const GRAIN = 'G'
-const BOAT = 'B'
+const BOAT = '-'
 const horizontalMovement = 300;
 
 // custom representation of the board, will be different for different games
@@ -35,7 +34,7 @@ $(document).ready(function(){
         clearMoveValues: clearMoveValues,
         getPositionValue: getPositionValue,
         getNextMoveValues: getNextMoveValues,
-        debug: 1
+        //debug: 1
     });
     // load the default board
     game.loadBoard(defaultBoard);
