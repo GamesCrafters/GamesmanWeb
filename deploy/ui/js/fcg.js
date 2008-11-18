@@ -1,8 +1,8 @@
 // constants
-const FOX = 'F'
-const CHICKEN = 'C'
-const GRAIN = 'G'
-const BOAT = '-'
+const FOX = 'F';
+const CHICKEN = 'C';
+const GRAIN = 'G';
+const BOAT = '-';
 const horizontalMovement = 300;
 
 // custom representation of the board, will be different for different games
