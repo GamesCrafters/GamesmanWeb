@@ -45,7 +45,7 @@
 				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
-			<fileset dir="." includes="edu/berkeley/gcweb/gui/**" />
+			<fileset dir="." includes="edu/berkeley/gcweb/gui/**" excludes="**/*.jar" />
 		</jar>
 	</target>
 

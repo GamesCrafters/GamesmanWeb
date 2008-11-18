@@ -109,8 +109,8 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	public Shape projectXYPlane(double z, double scale) {
 		GeneralPath poly = new GeneralPath();
 		for(double[] p : points) {
-			double x = scale*p[0]*z/p[2];
-			double y = scale*p[1]*z/p[2];
+			float x = (float) (scale*p[0]*z/p[2]);
+			float y = (float) (scale*p[1]*z/p[2]);
 			if(poly.getCurrentPoint() == null)
 				poly.moveTo(x, y);
 			else

@@ -196,12 +196,15 @@ public class XYZCube extends Shape3D implements ActionListener {
 		return y + m;
 	}
 	//offset indicates that new_polys[(i + offset) % polys.length] = old_polys[i] for all 0 <= i < polys.length
-	private static <T> void cycle(T[][][] polys, int[][] indices, int offset) {
-		T[][][] old_polys = Arrays.copyOf(polys, polys.length);
+	private static void cycle(Polygon3D[][][] polys, int[][] indices, int offset) {
+		Polygon3D[][][] old_polys = new Polygon3D[polys.length][][];
 		for(int i = 0; i < old_polys.length; i++) { //making a deep copy of the original array
-			old_polys[i] = Arrays.copyOf(polys[i], polys[i].length);
-			for(int j = 0; j < old_polys[i].length; j++)
-				old_polys[i][j] = Arrays.copyOf(polys[i][j], polys[i][j].length);
+			old_polys[i] = new Polygon3D[polys[i].length][];
+			for(int j = 0; j < old_polys[i].length; j++) {
+				old_polys[i][j] = new Polygon3D[polys[i][j].length];
+				for(int k = 0; k < old_polys[i][j].length; k++)
+					old_polys[i][j][k] = polys[i][j][k];
+			}
 		}
 		
 		for(int c = 0; c < indices.length; c++) {
