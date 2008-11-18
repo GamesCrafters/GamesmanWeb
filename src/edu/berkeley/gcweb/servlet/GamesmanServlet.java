@@ -23,14 +23,11 @@ public class GamesmanServlet {
         
         String response = null;
         try {
-	    /*
-            Map<String, String> moveValue =
-                Gamesman.getMoveValue(game, width, height, position);
-            JSONObject json = new JSONObject("{status: 'OK'}");
-            json = new JSONObject(moveValue);
-            response = json.toString(4);
-	    */
-	    response = Gamesman.getMoveValue(game, width, height, position).toString(4);
+//            Map<String, String> moveValue =
+//                Game.getMoveValue(game, width, height, position);
+//            JSONObject json = new JSONObject("{status: 'OK'}");
+//            json = new JSONObject(moveValue);
+//            response = json.toString(4);
         } catch (Exception e) {
             try {
                 JSONObject json = new JSONObject("{status: 'error'}");
@@ -67,18 +64,15 @@ public class GamesmanServlet {
         
         String response = null;
         try {
-	    /*
-            JSONArray json = new JSONArray();
-            Map<String, String>[] nextMoveValues =
-                Gamesman.getNextMoveValues(game, width, height, position);
-            for (Map<String, String> moveValue : nextMoveValues) {
-                JSONObject jsonMoveValue = new JSONObject(moveValue);
-                jsonMoveValue.put("status", "OK");
-                json.put(jsonMoveValue);
-            }
-            response = json.toString(4);
-	    */
-	    response = Gamesman.getNextMoveValues(game, width, height, position).toString(4);
+//            JSONArray json = new JSONArray();
+//            Map<String, String>[] nextMoveValues =
+//                getNextMoveValues(game, width, height, position);
+//            for (Map<String, String> moveValue : nextMoveValues) {
+//                JSONObject jsonMoveValue = new JSONObject(moveValue);
+//                jsonMoveValue.put("status", "OK");
+//                json.put(jsonMoveValue);
+//            }
+//            response = json.toString(4);
         } catch (Exception e) {
             try {
                 JSONObject json = new JSONObject();

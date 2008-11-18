@@ -18,7 +18,6 @@ import javax.ws.rs.core.UriInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * A thin servlet that connects to a data source to retrieve puzzle move
  * information and return it to the client as a JSON-formatted string.

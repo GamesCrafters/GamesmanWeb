@@ -1,4 +1,5 @@
 package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
