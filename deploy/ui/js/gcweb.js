@@ -78,7 +78,8 @@ GCWeb = {
                 getPositionValue: function (position, onValueReceived) {
                     url = '/gcweb/service/gamesman/puzzles/'+gameName+'/getMoveValue;board='+escape(position);
                     for (var key in args) {
-                        url += ";"+key+"="+args[key];
+                        if(key == "board" || key == "width" || key == "height")
+                            url += ";"+key+"="+args[key];
                     }
                     
                     // debug if available
@@ -96,7 +97,8 @@ GCWeb = {
                 getNextMoveValues: function (position, onMoveValuesReceived) {
                     url = '/gcweb/service/gamesman/puzzles/'+gameName+'/getNextMoveValues;board='+escape(position);
                     for (var key in args) {
-                        url += ";"+key+"="+args[key];
+                        if(key == "board" || key == "width" || key == "height")
+                            url += ";"+key+"="+args[key];
                     }
                     
                     // debug if available
