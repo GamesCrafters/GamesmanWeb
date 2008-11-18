@@ -93,7 +93,7 @@ public class GamesmanServlet {
         return response;
     }
     
-    private MultivaluedMap<String, String> getMatrixParameters(UriInfo uri) {
+    public static MultivaluedMap<String, String> getMatrixParameters(UriInfo uri) {
         MultivaluedMap<String, String> parameters;
         List<PathSegment> segments = uri.getPathSegments();
         if (segments.isEmpty()) {
