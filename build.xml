@@ -19,7 +19,7 @@
 	</target>
 	<target name="compile" description="Compile the GCWeb classes">
 		<mkdir dir="${build}"/>
-		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-code-0.9-ea.jar:${lib}/jersey-server-0.9-ea.jar:${lib}/json.jar:${lib}/jsr311-api-0.9.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
+		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
 		       destdir="${build}" source="1.5" target="1.5" excludes="src build.xml" >
 			<include name="**/*.java"/>
 			<exclude name="**/tests/*.java"/>
