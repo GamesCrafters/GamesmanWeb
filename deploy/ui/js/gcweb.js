@@ -76,7 +76,7 @@ GCWeb = {
                 // position: string
                 // onValueReceived: function(json)
                 getPositionValue: function (position, onValueReceived) {
-                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;board='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;board='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
@@ -94,7 +94,7 @@ GCWeb = {
                 // position: string
                 // onMoveValuesReceived: function(json)
                 getNextMoveValues: function (position, onMoveValuesReceived) {
-                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;board='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;board='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
