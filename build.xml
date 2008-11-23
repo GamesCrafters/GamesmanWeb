@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="GamesmanWeb" default="all">
+	<exec outputproperty="revision" executable="svnversion">
+		<arg line="-n"/>
+		<redirector>
+			<outputfilterchain>
+				<tokenfilter>
+					<replaceregex pattern="^(.*:)?(\d+.)$" replace="\2"/>
+				</tokenfilter>
+			</outputfilterchain>
+		</redirector>
+	</exec>
+	
+	<tstamp>
+		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
+	
 	<description>Compile and package GamesmanWeb into a distributable WAR file</description>
 	
 	<!-- variables -->
@@ -8,11 +23,13 @@
 	<property name="lib" location="${deploy}/WEB-INF/lib"/>
 	<property name="build" location="${deploy}/WEB-INF/classes"/>
 	<property name="dist" location="."/>
+	<property name="appletbuild" location="${src}/dist"/>
+	<property name="appletdestdir" location="${deploy}/ui/applets"/>
 	
 	<!-- targets -->
-	<target name="all" depends="compile, war"/>
+	<target name="all" depends="compile, applets, war"/>
 	<target name="rebuild" depends="clean, compile, war"/>
-	<target name="war" depends="compile" description="Package a WAR file">
+	<target name="war" depends="compile, applets" description="Package a WAR file">
     		<delete file="gcweb.war"/>
 	        <war destfile="${dist}/gcweb.war" basedir="${deploy}" webxml="${deploy}/WEB-INF/web.xml"
 		     includes="**" excludes="**/.* **/.*/* **/servlet-api.jar" />
@@ -21,12 +38,46 @@
 		<mkdir dir="${build}"/>
 		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
 		       destdir="${build}" source="1.5" target="1.5" excludes="src build.xml" >
-			<include name="**/*.java"/>
+			<include name="src/edu/berkeley/gcweb/**/*.java"/>
 			<exclude name="**/tests/*.java"/>
-			<exclude name="**/gui/**/*.java"/>
+<!--			<exclude name="**/gui/**/*.java"/>-->
 		</javac>
 	</target>
-	<target name="clean" description="Clean the build directories">
+
+	<target name="clean" depends="clean-applets" 
+			description="Clean the build directories">
 		<delete dir="${build}"/>
+	</target>
+	<target name="applets" depends="gamescubeman" />
+	
+	<target name="clean-applets" depends="clean-gamescubeman">
+		<delete dir="${appletdestdir}" />
+	</target>
+
+
+	<target name="compile-gamescubeman" description="Compiles rubik's cube applet">
+		<mkdir dir="${appletbuild}" />
+		<javac srcdir="src/edu/berkeley/gcweb/gui/" destdir="${appletbuild}" classpath="src/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
+	</target>
+
+	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
+		<mkdir dir="${appletdestdir}" />
+		<jar jarfile="${appletdestdir}/GamesCubeMan.jar">
+			<manifest>
+				<attribute name="Class-path" value="."/>
+				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+			</manifest>
+			<fileset dir="${appletbuild}" includes="edu/berkeley/gcweb/gui/**" excludes="**/*.jar" />
+		</jar>
+	</target>
+
+	<target name="gamescubeman" depends="clean-gamescubeman, jar-gamescubeman" />
+
+	<target name="clean-gamescubeman" description="Clean applet directory">
+		<delete>
+			<fileset dir="." includes="${appletbuild}/**/*.class"/>
+		</delete>
+		<delete dir="${appletbuild}"/>
 	</target>
 </project>
