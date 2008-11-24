@@ -31,7 +31,7 @@ public class GameDetailsServlet {
         return (canonicalName == null) ? "" : canonicalName;
     }
 
-    private static synchronized GameDictionary getGameDictionary() {
+    public static synchronized GameDictionary getGameDictionary() {
         if (gameDictionary == null) {
             try {
                 URL xmlFile = servletContext.getResource(

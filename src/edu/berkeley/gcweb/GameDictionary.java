@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.net.InetAddress;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,12 +41,66 @@ import org.xml.sax.SAXException;
  * @author Ide
  */
 public class GameDictionary {
-    private Map<String, String> internalToCanonical;
+    public class HostInfo {
+        private String hostName;
+        private InetAddress host;
+        private int port;
+        
+        public HostInfo(String hostname, int port) throws UnknownHostException {
+            this.port = port;
+            this.hostName = hostName;
+            this.host = InetAddress.getByName(hostname);
+        }
+        public InetAddress getInetAddress() {
+            return host;
+        }
+        public String getHostName() {
+            return hostName;
+        }
+        public int getPort() {
+            return port;
+        }
+        public Socket connect() throws IOException {
+            return new Socket(getInetAddress(), getPort());
+        }
+    }
+    public class GameInfo {
+        private String canonicalName;
+        private ArrayList<HostInfo> hosts;
+        private Random rand;
+        
+        public GameInfo(String cname) {
+            this.canonicalName = cname;
+            this.hosts = new ArrayList<HostInfo>();
+            this.rand = new Random();
+        }
+        public void addHostInfo(HostInfo i) {
+            this.hosts.add(i);
+        }
+        
+        public HostInfo getHostInfo() {
+            if (hosts.size() == 0) return null;
+            return hosts.get(rand.nextInt(hosts.size()));
+        }
+        public List<HostInfo> getAllHostInfo() {
+            return hosts;
+        }
+        public Socket connectRandom() throws IOException {
+            HostInfo inf = getHostInfo();
+            if (inf == null) return null;
+            return inf.connect();
+        }
+
+        public String getCanonicalName() {
+            return canonicalName;
+        }
+    };
+    private Map<String, GameInfo> gameInfo;
     private Map<String, String> canonicalToInternal;
     private DocumentBuilder domBuilder;
     
     public GameDictionary() throws ParserConfigurationException {
-        internalToCanonical = new HashMap<String, String>();
+        gameInfo = new HashMap<String, GameInfo>();
         canonicalToInternal = new HashMap<String, String>();
         
         DocumentBuilderFactory domFactory = 
@@ -61,7 +115,7 @@ public class GameDictionary {
         this();
         unmarshal(xml);
     }
-    
+    /*
     public void marshal(File xmlFile) throws IOException {
         try {
             Document xmlDocument;
@@ -98,7 +152,35 @@ public class GameDictionary {
             throw new IOException(e.getMessage());
         }
     }
+    */
+    public void marshal(File f) throws IOException {
+        throw new IOException("unimplemented");
+    }
     
+    private void addServers(GameInfo myInfo, NodeList children) {
+        for (int j = 0; j < children.getLength(); j++) {
+            Node server = children.item(j);
+            if (server.getNodeType()==Node.ELEMENT_NODE && server.getNodeName()=="server") {
+                NamedNodeMap attributes = server.getAttributes();
+                Node hostNode = attributes.getNamedItem("host");
+                Node portNode = attributes.getNamedItem("port");
+                String host = hostNode.getNodeValue();
+                String portstr = portNode.getNodeValue();
+                if (host == null || portstr == null) {
+                    continue;
+                }
+                int port;
+                HostInfo inf;
+                try {
+                    myInfo.addHostInfo(new HostInfo(host, Integer.valueOf(portstr)));
+                } catch (NumberFormatException e) {
+                    continue;
+                } catch (UnknownHostException e) {
+                    continue;
+                }
+            }
+        }
+    }
     public void unmarshal(URL xml) throws IOException {
         InputStream xmlStream = null;
         try {
@@ -121,9 +203,11 @@ public class GameDictionary {
                 Node canonicalNode = attributes.getNamedItem("canonical-name");
                 if (internalNode != null && canonicalNode != null) {
                     String internalName = internalNode.getNodeValue();
-                    String canonicalName = canonicalNode.getNodeValue();
-                    addMapping(internalName, canonicalName);
-                }  
+                    GameInfo myInfo = new GameInfo(canonicalNode.getNodeValue());
+                    addMapping(internalName, myInfo);
+                    
+                    addServers(myInfo, game.getChildNodes());
+                }
             }
         } catch (SAXException e) {
             throw new IOException(e.getMessage());
@@ -136,9 +220,9 @@ public class GameDictionary {
         }
     }
     
-    public synchronized void addMapping(String internal, String canonical) {
-        internalToCanonical.put(internal, canonical);
-        canonicalToInternal.put(canonical, internal);
+    public synchronized void addMapping(String internal, GameInfo info) {
+        gameInfo.put(internal, info);
+        canonicalToInternal.put(info.getCanonicalName(), internal);
     }
     
     public synchronized void removeMappingByInternalName(String internalName) {
@@ -147,7 +231,7 @@ public class GameDictionary {
             assert internalName.equals(getInternalName(canonicalName)) : 
                 "Canonical-to-internal mapping exists but " + 
                 "internal-to-canonical mapping does not.";
-            internalToCanonical.remove(internalName);
+            gameInfo.remove(internalName);
             canonicalToInternal.remove(canonicalName);
         }
     }
@@ -159,14 +243,22 @@ public class GameDictionary {
                 "Internal-to-canonical mapping exists but " + 
                 "canonical-to-internal mapping does not.";
             canonicalToInternal.remove(canonicalName);
-            internalToCanonical.remove(internalName);
+            gameInfo.remove(internalName);
         }
+    }
+    
+    public synchronized GameInfo getGameInfo(String internalName) {
+        GameInfo thisGame = null;
+        if (gameInfo.containsKey(internalName)) {
+            thisGame = gameInfo.get(internalName);
+        }
+        return thisGame;
     }
     
     public synchronized String getCanonicalName(String internalName) {
         String canonicalName = null;
-        if (internalToCanonical.containsKey(internalName)) {
-            canonicalName = internalToCanonical.get(internalName);
+        if (gameInfo.containsKey(internalName)) {
+            canonicalName = gameInfo.get(internalName).getCanonicalName();
         }
         return canonicalName;
     }
@@ -192,7 +284,7 @@ public class GameDictionary {
         description.append("GameDictionary ");
         String[] internalNames;
         synchronized (this) {
-            internalNames = internalToCanonical.keySet().toArray(new String[0]);
+            internalNames = gameInfo.keySet().toArray(new String[0]);
         }
         description.append('{');
         for (int i = 0; i < internalNames.length; i++) {

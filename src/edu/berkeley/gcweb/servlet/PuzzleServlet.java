@@ -2,10 +2,13 @@ package edu.berkeley.gcweb.servlet;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLEncoder;
+import java.net.URL;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,9 +17,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
+import javax.servlet.ServletContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.berkeley.gcweb.GameDictionary;
 
 /**
  * A thin servlet that connects to a data source to retrieve puzzle move
@@ -28,6 +34,9 @@ import org.json.JSONObject;
 @Path("/gamesman/puzzles")
 public class PuzzleServlet {
     
+    @Context
+    private static ServletContext servletContext; // why do I need this?
+    
     public static final String REMOTE_HOST = "patrickhorn.dyndns.org";
     public static final int PORT = 1055;
     
@@ -36,7 +45,7 @@ public class PuzzleServlet {
     public String getMoveValue(@PathParam("puzzle") String puzzle,
                                @Context UriInfo uri) {
         String params = ";method=getMoveValue" + createMatrixParameterString(uri);
-        return executeRemoteQuery(params);
+        return executeRemoteQuery(puzzle, params);
     }
 
     @GET @Path("/{puzzle}/getNextMoveValues")
@@ -46,15 +55,36 @@ public class PuzzleServlet {
         
         String params = ";method=getNextMoveValues" +
             createMatrixParameterString(uri);
-        return executeRemoteQuery(params);
+        return executeRemoteQuery(puzzle, params);
     }
     
-    private String executeRemoteQuery(String message) {
+    private Socket connectToRemote(String gameName) throws IOException {
+        GameDictionary.GameInfo inf;
+        try {
+            URL xmlFile = servletContext.getResource(
+                    "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
+            GameDictionary gameDictionary = new GameDictionary(xmlFile);
+            inf = gameDictionary.getGameInfo(gameName);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("unable to make dictionary");
+        }
+        if (inf == null) {
+            throw new RuntimeException("unknown game "+gameName+"!");
+        }
+        Socket sock = inf.connectRandom();
+        if (sock == null) {
+            throw new RuntimeException("no hosts defined for "+gameName+"!");
+        }
+        return sock;
+    }
+    
+    private String executeRemoteQuery(String gamename, String message) {
         String response = null;
         Socket conn = null;
         try {
             // create a new TCP socket connection to the server
-            conn = new Socket(REMOTE_HOST, PORT);
+            conn = connectToRemote(gamename);
             BufferedReader in = new BufferedReader(
                 new InputStreamReader(conn.getInputStream()));
             PrintWriter out = new PrintWriter(conn.getOutputStream(), true);
@@ -64,10 +94,15 @@ public class PuzzleServlet {
             
             conn.close();
         } catch (Exception e) {
+            System.out.println(e);
             try {
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
                 JSONObject json = new JSONObject();
+                //json.put("exception", e.getClass().toString());
+                //json.put("stacktrace", sw.toString());
                 json.put("status", "error");
-                json.put("message", e.getMessage());
+                json.put("message", e.getMessage() != null ? e.getMessage() : e.toString());
                 response = json.toString(4);
             } catch (JSONException je) {
                 response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
