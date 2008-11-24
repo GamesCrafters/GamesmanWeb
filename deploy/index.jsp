@@ -52,12 +52,14 @@ public void jspInit() {
     <body>
         <h1>Gamesman Web</h1>
         <table>
-            <tr><th scope="col">Canonical Name</th><th scope="col">Internal Name</th></tr><%
+            <tr><th scope="col">Canonical Name</th><th scope="col">Internal Name</th><th>Graphical interface</th></tr><%
 String[] canonicalNames = gameDictionary.getCanonicalNames();
 for (int i = 0; i < canonicalNames.length; i++) {
     String canonicalName = canonicalNames[i];
+    String internalName = gameDictionary.getInternalName(canonicalName);
 %>
-            <tr><td><%= canonicalName %></td><td><%= gameDictionary.getInternalName(canonicalName) %></td></tr><%
+            <tr><td><%= canonicalName %></td><td><%= internalName %></td><td><a
+		href="ui/<%= internalName %>.html"><%= internalName %></a></tr><%
 }
 %>
         </table>

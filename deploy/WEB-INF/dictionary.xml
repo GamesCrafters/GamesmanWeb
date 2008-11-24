@@ -1,5 +1,9 @@
 <game-dictionary>
+    <game internal-name="1210puzzle" canonical-name="1...2...10 (Puzzle version)" puzzle="puzzle"/>
     <game internal-name="ttt" canonical-name="Tic-Tac-Toe"/>
     <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
     <game internal-name="achi" canonical-name="Achi"/>
+    <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)" puzzle="puzzle"/>
+    <game internal-name="lightsout" canonical-name="LightsOut" puzzle="puzzle"/>
+    <game internal-name="rubik" canonical-name="Rubik's cube" puzzle="puzzle"/>
 </game-dictionary>
