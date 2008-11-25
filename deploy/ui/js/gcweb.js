@@ -82,6 +82,11 @@ GCWeb = {
                         if(key == "board" || key == "width" || key == "height")
                             url += ";"+key+"="+args[key];
                     }
+                    if (args.options) {
+                        for (var key in args.options) {
+                            url += ";"+key+"="+args.options[key];
+                        }
+                    }
                     
                     // debug if available
                     if(options.debug && options.getPositionValue){
@@ -103,6 +108,12 @@ GCWeb = {
                         if(key == "board" || key == "width" || key == "height")
                             url += ";"+key+"="+args[key];
                     }
+                    if (args.options) {
+                        for (var key in args.options) {
+                            url += ";"+key+"="+args.options[key];
+                        }
+                    }
+                    
                     
                     // debug if available
                     if(options.debug && options.getNextMoveValues){
