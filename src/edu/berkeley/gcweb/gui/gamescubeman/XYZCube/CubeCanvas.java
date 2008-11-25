@@ -20,7 +20,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.NColorChooser.ColorChangeListener;
 
 public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChangeListener, PolyClickListener {
-	private static Properties keyProps = new Properties();;
+	private static Properties keyProps = new Properties();
 	{
 		try {
 			keyProps.load(CubeCanvas.class.getResourceAsStream("keys.properties"));

@@ -60,7 +60,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 				}
 			}
 		}
-		fireStateChanged();
+		fireStateChanged(null);
 	}
 	public CubeVariation getCubeVariation() {
 		return variation;
@@ -98,8 +98,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 	private ArrayList<FaceTurn> turnQueue = new ArrayList<FaceTurn>();
 	public void actionPerformed(ActionEvent e) {
 		if(turnQueue.get(0).doMove()) { //finished animation
-			fireStateChanged();
-			turnQueue.remove(0);
+			fireStateChanged(turnQueue.remove(0).toFaceLayerTurn());
 			if(turnQueue.isEmpty())
 				turner.stop();
 		}
@@ -185,6 +184,9 @@ public class XYZCube extends Shape3D implements ActionListener {
 				bothDone = done;
 			fireCanvasChange();
 			return bothDone;
+		}
+		public FaceLayerTurn toFaceLayerTurn() {
+			return new FaceLayerTurn(face, layer, cwTurns);
 		}
 	}
 
@@ -375,43 +377,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 		
 		return stickers;
 	}
-	
-	private static class FaceLayerTurn {
-		private Face f;
-		private int layer;
-		private int cw;
-		public FaceLayerTurn(Face f, int layer, int cw) {
-			this.f = f;
-			this.layer = layer;
-			this.cw = cw;
-			modCW();
-		}
-		public boolean isMergeable(FaceLayerTurn other) {
-			return other.f == f && layer == other.layer;
-		}
-		//returns true if the turn is completely cancelled
-		public boolean merge(FaceLayerTurn other) {
-			cw += other.cw;
-			modCW();
-			return cw == 0;
-		}
-		private void modCW() {
-			//this'll work so long as cw isn't too negative
-			cw = (4 + cw) % 4;
-			if(cw == 3) cw = -1;
-		}
-		public String toString() {
-			String face = "" + f.getFaceName();
-			if(layer == -1) {
-				face = "" + "xyz".charAt(f.getRotationAxis());
-			} else if(layer == 2) //TODO - check cube size!
-				face = face.toLowerCase();
-			else if(layer > 2)
-				face = layer + " " + face;
-			return face + DIRECTION_TURN.get(cw);
-		}
-	}
-	
+		
 	private ArrayList<FaceLayerTurn> turns = new ArrayList<FaceLayerTurn>();
 	private void appendTurn(FaceLayerTurn t) {
 		if(!turns.isEmpty()) {
@@ -511,7 +477,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 				}
 			}
 		}
-		fireStateChanged();
+		fireStateChanged(null);
 	}
 	private ArrayList<CubeStateChangeListener> stateListeners = new ArrayList<CubeStateChangeListener>();
 	public void addStateChangeListener(CubeStateChangeListener l) {
@@ -542,9 +508,9 @@ public class XYZCube extends Shape3D implements ActionListener {
 		}
 		return "Solved!";
 	}
-	private void fireStateChanged() {
+	private void fireStateChanged(FaceLayerTurn turn) {
 		for(CubeStateChangeListener l : stateListeners)
-			l.stateChanged(this);
+			l.cubeStateChanged(this, turn);
 		fireCanvasChange();
 	}
 
@@ -572,7 +538,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 //		}
 	}
 	private static final HashMap<String, Integer> TURN_DIRECTION = new HashMap<String, Integer>();
-	private static final HashMap<Integer, String> DIRECTION_TURN = new HashMap<Integer, String>();
+	public static final HashMap<Integer, String> DIRECTION_TURN = new HashMap<Integer, String>();
 	{
 		TURN_DIRECTION.put("", 1);
 		TURN_DIRECTION.put("'", -1);

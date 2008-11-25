@@ -27,7 +27,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import netscape.javascript.JSObject;
-
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.XYZCube.CubeVariation;
@@ -44,12 +43,34 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private JTextField stateField;
 	private JRadioButton[] variationButtons;
 	
+	private int size_x = 3, size_y = 3, size_z = 3;
+	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
+	private void parseParameters() {
+		try {
+			size_x = Integer.parseInt(getParameter("size_x"));
+		} catch(Exception e) {}
+		try {
+			size_y = Integer.parseInt(getParameter("size_y"));
+		} catch(Exception e) {}
+		try {
+			size_z = Integer.parseInt(getParameter("size_z"));
+		} catch(Exception e) {}
+		try {
+			bg_color = Color.decode(getParameter("bg_color"));
+		} catch(Exception e) {}
+		try {
+			fg_color = Color.decode(getParameter("fg_color"));
+		} catch(Exception e) {}
+	}
+	
 	private JSObject jso;
 	public void init() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cube = new XYZCube(3,3,3);
+					parseParameters();
+					
+					cube = new XYZCube(size_x, size_y, size_z);
 					cube.addStateChangeListener(GamesCubeMan.this);
 					cubeCanvas = new CubeCanvas(cube);
 					canvas = cubeCanvas.getCanvas();
@@ -152,24 +173,27 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					pane.add(cubeCanvas, BorderLayout.CENTER);
 					canvas.requestFocusInWindow();
 					
-					setBG(pane, Color.GRAY);
+					setBG_FG(pane, bg_color, fg_color);
 				}
 			});
 			jso = JSObject.getWindow(this);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void setBG(JComponent comp, Color c) {
+	private void setBG_FG(JComponent comp, Color bg, Color fg) {
 		if(comp instanceof JButton)
 			return;
-		comp.setBackground(c);
+		comp.setBackground(bg);
+		comp.setForeground(fg);
 		for(Component child : comp.getComponents()) {
 			if(child instanceof JComponent)
-				setBG((JComponent)child, c);
-			else if(!(child instanceof JButton))
-				child.setBackground(c);
+				setBG_FG((JComponent)child, bg, fg);
+			else if(!(child instanceof JButton)) {
+				child.setBackground(bg);
+				child.setForeground(fg);
+			}
 		}
 	}
 	
@@ -179,17 +203,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		for(JComponent c : cs)
 			p.add(c);
 		return p;
-	}
-	
-	private boolean green = false;
-	public void touch() {
-		if(jso != null)
-			jso.eval("alert('Cube Reset!');");
-//			jso.eval("update('hooow');"); //this and the next line are equivalent
-//			jso.call("update", new Object[] {"hiya"});
-		green = !green;
-//		cube.setBackground(green ? Color.GREEN : Color.WHITE);
-//		cube.repaint();
 	}
 
 	public void stateChanged(ChangeEvent e) {
@@ -215,10 +228,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			resetRotation();
 		else if(e.getSource() == scramble)
 			cube.scramble();
-		else if(e.getSource() == resetCube) {
-			touch();
+		else if(e.getSource() == resetCube)
 			cube.resetCube();
-		}
 		else if(e.getSource() == antialiasing)
 			canvas.setAntialiasing(antialiasing.isSelected());
 		else if(e.getSource() == colorChooserCheckBox)
@@ -237,8 +248,21 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		cube.setRotation(new RotationMatrix(0, -45));
 		canvas.mousePressed(null);
 	}
+	
+	public String getBoardString() {
+		return cube.getState();
+	}
+	
+	public void doMove(String move) {
+		cube.doTurn(move);
+	}
 
-	public void stateChanged(XYZCube src) {
+	public void cubeStateChanged(XYZCube src, FaceLayerTurn turn) {
+		if(jso != null) {
+//			jso.eval("alert('Cube Reset!');");
+//			jso.eval("update('hooow');"); //this and the next line are equivalent
+			jso.call("cubeStateChanged", new Object[] { turn });
+		}
 		stateField.setText(src.getState());
 	}
 	
