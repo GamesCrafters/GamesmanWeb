@@ -23,8 +23,7 @@
 	<property name="lib" location="${deploy}/WEB-INF/lib"/>
 	<property name="build" location="${deploy}/WEB-INF/classes"/>
 	<property name="dist" location="."/>
-	<property name="appletbuild" location="${src}/dist"/>
-	<property name="appletdestdir" location="${deploy}/ui/applets"/>
+	<property name="deploy-applet" location="${deploy}/ui/applets"/>
 	
 	<!-- targets -->
 	<target name="all" depends="compile, applets, war"/>
@@ -54,21 +53,19 @@
 		<delete dir="${appletdestdir}" />
 	</target>
 
-
 	<target name="compile-gamescubeman" description="Compiles rubik's cube applet">
-		<mkdir dir="${appletbuild}" />
-		<javac srcdir="src/edu/berkeley/gcweb/gui/" destdir="${appletbuild}" classpath="src/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:." debug="true" debuglevel="lines,vars,source"/>
+		<javac srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
 	</target>
 
 	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
-		<mkdir dir="${appletdestdir}" />
-		<jar jarfile="${appletdestdir}/GamesCubeMan.jar">
+		<mkdir dir="${deploy-applet}" />
+		<jar jarfile="${deploy-applet}/GamesCubeMan.jar">
 			<manifest>
 				<attribute name="Class-path" value="."/>
 				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
-			<fileset dir="${appletbuild}" includes="edu/berkeley/gcweb/gui/**" excludes="**/*.jar" />
+			<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/**" excludes="**/*.jar;**/*.java" />
 		</jar>
 	</target>
 
@@ -76,8 +73,7 @@
 
 	<target name="clean-gamescubeman" description="Clean applet directory">
 		<delete>
-			<fileset dir="." includes="${appletbuild}/**/*.class"/>
+			<fileset dir="${src}" includes="**/*.class"/>
 		</delete>
-		<delete dir="${appletbuild}"/>
 	</target>
 </project>
