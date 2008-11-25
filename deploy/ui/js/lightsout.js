@@ -1,22 +1,22 @@
 var EMPTY = ' ';
-var pieces = [EMPTY, 'X'];
+var pieces = [EMPTY, 'X','O'];
 var currentPlayer = 0;
-var width = 3;
-var height = 3;
+var width = 4;
+var height = 4;
 var defaultBoard = ""; //new Array(width*height);
 for (var i = 0; i < width*height; i++) {
 	defaultBoard += EMPTY;
 }
-var meanings = ['','Lose','Draw','Win'];
-var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
-var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
+var meanings = ['Lose','Draw','Win'];
+var moveValueColors = ['#8a0000', '#ff0', '#0f0'];
+var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
 var nextMoves = [];
 
 $(document).ready(function(){
     var game = GCWeb.newPuzzleGame("lightsout", width, height, {
 	onExecutingMove: function(moveInfo) {updateBoard(game, moveInfo)},
 	isValidMove: isValidMove,
-	updateMoveValues: updateMoveValues,
+	updateMoveValues: function(nextMoves) {updateMoveValues(game, nextMoves);},
 	clearMoveValues: clearMoveValues,
 	onNextValuesReceived: onNextValuesReceived
 	});
@@ -62,15 +62,15 @@ function isValidMove(moveInfo)
 }
 
 // colors the board based on move values
-function updateMoveValues(nextMoves){
+function updateMoveValues(game, nextMoves){
     // reset everything first
     clearMoveValues();
-    
+   
     // set background color to new values
     for(i=0;i<nextMoves.length;i++) {
         move = nextMoves[i].move;
-	row = move.charCodeAt(0) - 'a'.charCodeAt(0)
-	col = height - move.substr(1)
+	col = move.charCodeAt(0) - 'a'.charCodeAt(0)
+	row = height - move.substr(1)
         $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
     }
 }

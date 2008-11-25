@@ -10,6 +10,7 @@ GCWeb = {
             return {
                 // member variables
                 currentBoardString: null,
+                
                 previousMoves: new Array(),
                 
                 // board state functions
@@ -89,7 +90,9 @@ GCWeb = {
                     }
                     
                     $.getJSON(url, {}, function (json) {
-                        onValueReceived(json.response);
+                        if (json && json.response && !json.error) {
+                            onValueReceived(json.response);
+                        }
                     });
                 },
                 // position: string
@@ -108,7 +111,9 @@ GCWeb = {
                     }
                     
                     $.getJSON(url, {}, function (json) {
-                        onMoveValuesReceived(json.response);
+                        if (json && json.response && !json.error) {
+                            onMoveValuesReceived(json.response);
+                        }
                     });
                 },
                 
@@ -116,7 +121,17 @@ GCWeb = {
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (moveValue) {
                     if($('#option-predictions').is(':checked')){
-                        $('#prediction').text(['Lose','Draw','Win'][moveValue.value-1]+" in "+moveValue.remoteness);
+                        var text;
+                        if (moveValue.value >= 1 && moveValue.value <= 3) {
+                            text = ['Lose','Draw','Win'][moveValue.value-1];
+                        } else {
+                            text = 'Complete';
+                        }
+                        $('#prediction').text(text+" in "+moveValue.remoteness);
+                        var hist = document.getElementById('all-history');
+                        if (hist) {
+                            hist.value = text+" in "+moveValue.remoteness+"\n"+hist.value;
+                        }
                     } else{
                         $('#prediction').text('');
                     }
@@ -135,7 +150,7 @@ GCWeb = {
         return function(gameName, args){
             return {
                 getPositionValue: function (position, callback) {
-                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
@@ -144,7 +159,7 @@ GCWeb = {
                     });
                 },
                 getNextMoveValues: function (position, callback) {
-                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+position.replace(' ', '%20');
+                    url = '/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }

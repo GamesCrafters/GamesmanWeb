@@ -42,7 +42,7 @@
         </ul>
       </div> 
       <div id="main">
-        <h1>Tic-Tac-Toe</h1>
+        <h1>LightsOut</h1>
         <div id="game">
           Current Board:<p/>
           <div id="board"></div>
@@ -53,7 +53,7 @@
       <!-- sidebar --> 
       <div id="moves" class="aside"> 
         <p>Game not started</p>
-        <p id="prediction">Player 1 to win in 9 moves.</p>
+        <p id="prediction"></p>
         <div id="move-value-key">
           <h1>Move-value Key</h1>
           <table>
@@ -65,8 +65,11 @@
             </tr>
           </table>
         </div>
+        <div id="predictions">
+        </div>
         <div id="move-value-history">
           <h1>Move-value History</h1>
+          <form><textarea id="all-history" rows="15" cols="18"></textarea></form>
         </div>
       </div> 
     </div> 
