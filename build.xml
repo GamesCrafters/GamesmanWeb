@@ -54,7 +54,7 @@
 	</target>
 
 	<target name="compile-gamescubeman" description="Compiles rubik's cube applet">
-		<javac srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
+		<javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
 	</target>
 
 	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">

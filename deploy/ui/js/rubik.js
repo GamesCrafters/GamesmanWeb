@@ -15,7 +15,7 @@ var lastMove = -1;
 
 // create a new game
 //TODO - width and height don't make sense for a 2x2x2!
-var game = GCWeb.newPuzzleGame("2x2x2", width, height, {
+var game = GCWeb.newPuzzleGame("rubik", width, height, {
     onNextValuesReceived: onNextValuesReceived,
     isValidMove: isValidMove,
     onExecutingMove: onExecutingMove,
@@ -121,6 +121,7 @@ function drawApplet(id, archive, mainClass, params, width, height) {
 	str+='              height="' + height + '" width="' + width + '" >';
 	str+='        <!-- Konqueror browser needs the following param -->';
 	str+='        <param name="archive" value="' + archive + '" \/>';
+	str+='        <param name="mayscript" value="true" \/>';
 	str+= params
 	str+='      <!--<![endif]-->';
 	str+='        <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"';
@@ -148,8 +149,13 @@ function getBGColor() {
 				color = color + old.charAt(i) + old.charAt(i);
 			}
 		}
-	} else { //color is in the form rgb(r, g, b)
-		color = eval(color);
+	} else { //color is in the form rgb(r, g, b)a
+		var rgb =color.match(/rgb\(\s*([0-9]*)\s*,\s*([0-9]*)\s*,\s*([0-9]*)\s*\)/);
+		if (rgb && rgb.length == 4) {
+			var rgbcolor = parseInt(rgb[3]) + (parseInt(rgb[2])<<8) + (parseInt(rgb[1])<<16);
+			color = "000000" + rgbcolor.toString(16);
+			color = "#" + color.substr(color.length-6)
+		}
 	}
 	return color;
 }
