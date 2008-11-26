@@ -121,13 +121,11 @@ function drawApplet(id, archive, mainClass, params, width, height) {
 	str+='              height="' + height + '" width="' + width + '" >';
 	str+='        <!-- Konqueror browser needs the following param -->';
 	str+='        <param name="archive" value="' + archive + '" \/>';
-	str+='        <param name="mayscript" value="true" \/>';
 	str+= params
 	str+='      <!--<![endif]-->';
 	str+='        <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"';
 	str+='                id="' + id + '" height="' + height + '" width="' + width + '" >';
 	str+='          <param name="code" value="' + mainClass + '" \/>';
-	str+='          <param name="MAYSCRIPT" value="true" \/>';
 	str+='          <param name="archive" value="' + archive + '" \/>';
 	str+= params
 	str+='        <\/object>';
@@ -161,13 +159,4 @@ function getBGColor() {
 }
 function getFGColor() {
 	return "#ffffff"
-}
-function rgb(r, g, b) {
-	return "#" + pad(r.toString(16)) + pad(g.toString(16)) + pad(b.toString(16));
-}
-function pad(i) {
-	if(i.length == 2)
-		return i;
-	else
-		return "0" + i;
 }

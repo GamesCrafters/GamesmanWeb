@@ -55,11 +55,12 @@
         <div id="game" style="text-align: center;">
 	<script type="text/javascript">
 		drawApplet('cube', 'applets/GamesCubeMan.jar', 'edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan',
+				'<param name="MAYSCRIPT" value="true" \/>' +
 				'<param name="size_x" value="2" />' +
 				'<param name="size_y" value="2" />' +
 				'<param name="size_z" value="2" />' +
 				'<param name="bg_color" value="' + getBGColor() + '" />' +
-				'<param name="fg_color" value="' + getFGColor() + '" />', 400, 500);
+				'<param name="fg_color" value="' + getFGColor() + '" />', "75%", "75%");
 	</script>
 	<button type="button" id="optimalMove"></button>
         </div>

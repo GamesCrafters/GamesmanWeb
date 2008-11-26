@@ -29,7 +29,10 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Canvas3D extends JComponent implements KeyListener, ActionListener, MouseListener, MouseMotionListener, FocusListener {
 	private static final double VIEWPORT = 1;
-	private int SCALE = 400;
+	private double DEFAULT_SCALE = 600;
+	private final int DEFAULT_HEIGHT = 500;
+	private final int DEFAULT_WIDTH = 400;
+	private double scale = DEFAULT_SCALE;
 	private Timer t;
 	public Canvas3D() {
 		setFocusable(true);
@@ -42,19 +45,26 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		t.start();
 	}
 	
-	public int getScale() {
-		return SCALE;
+	public double getScale() {
+		return scale;
 	}
-	public void setScale(int scale) {
-		SCALE = scale;
-		dirty = true;
+	public void setScale(double newScale) {
+		DEFAULT_SCALE = newScale;
+		scale = DEFAULT_SCALE * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT);
+		fireCanvasChange();
+	}
+	
+	public void setBounds(int x, int y, int width, int height) {
+		super.setBounds(x, y, width, height);
+		setScale(DEFAULT_SCALE);
+		fireCanvasChange();
 	}
 	
 	public void focusGained(FocusEvent e) {
-		dirty = true;
+		fireCanvasChange();
 	}
 	public void focusLost(FocusEvent e) {
-		dirty = true;
+		fireCanvasChange();
 	}
 	public void actionPerformed(ActionEvent e) {
 		int x = 0, y = 0;
@@ -80,7 +90,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 					if(!poly.isVisible())
 						polyProjection.add(null);
 					else {
-						Shape proj = poly.projectXYPlane(VIEWPORT, SCALE);
+						Shape proj = poly.projectXYPlane(VIEWPORT, scale);
 						polyProjection.add(proj);
 					}
 				}

@@ -116,7 +116,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					distance.addChangeListener(GamesCubeMan.this);
 					sliders.add(sideBySide(new JLabel("Distance"), distance));
 					
-					scale = new JSlider(0, 10000, canvas.getScale());
+					scale = new JSlider(0, 10000, (int) canvas.getScale());
 					scale.setFocusable(false);
 					scale.addChangeListener(GamesCubeMan.this);
 					sliders.add(sideBySide(new JLabel("Scale"), scale));
@@ -257,11 +257,17 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		cube.doTurn(move);
 	}
 
-	public void cubeStateChanged(XYZCube src, FaceLayerTurn turn) {
+	public void cubeStateChanged(XYZCube src, final FaceLayerTurn turn) {
 		if(jso != null) {
 //			jso.eval("alert('Cube Reset!');");
 //			jso.eval("update('hooow');"); //this and the next line are equivalent
-			jso.call("cubeStateChanged", new Object[] { turn });
+			new Thread() {
+				public void run() {
+					//we do this in a separate thread because the call() method will
+					//hand for the javascript
+					jso.call("cubeStateChanged", new Object[] { turn });
+				}
+			}.start();
 		}
 		stateField.setText(src.getState());
 	}
