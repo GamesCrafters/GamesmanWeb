@@ -43,9 +43,14 @@ GCWeb = {
                         if(options.maxRemoteness){
                             width = newMove.remoteness*100/options.maxRemoteness;
                         }
+                        if(width == 0){
+                            width = '10px';
+                        } else {
+                            width = width+'%';
+                        }
                         text = newMove.remoteness;
                         text = '&nbsp;';
-                        $("#move-value-history").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"%; text-align: right;'><span>"+text+"</span></div>");
+                        $("#move-value-history").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>");
                     }
                     
                     // update the current board string and the move stack
