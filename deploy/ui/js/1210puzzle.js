@@ -28,6 +28,7 @@ $(document).ready(function(){
         clearMoveValues: clearMoveValues,
         getPositionValue: getPositionValue,
         getNextMoveValues: getNextMoveValues,
+        maxRemoteness: 5,
         debug: 1
     });
     // load the default board
