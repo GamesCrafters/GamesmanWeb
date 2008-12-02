@@ -498,19 +498,17 @@ public class XYZCube extends Shape3D implements ActionListener {
 	public void addStateChangeListener(CubeStateChangeListener l) {
 		stateListeners.add(l);
 	}
-	//TODO - format string as python solver expects it
-//    #Each face's stickers are defined in the following order:
-//    # +---+---+
-//    # |_3_|_2_|
-//    # | 1 | 0 |
-//    # +---+---+
-//    values = { "F" : 0, "U" : 0, "R" : 0, "L" : 1, "B" : 2, "D" : 4}
-//    """TODO - deal with corner 7 not being correct"""
-//    #This method exists because python does not provide a way to have multiple constructors
-//    def initializeCubeWithStickers(self, F="FFFF", U="UUUU", R="RRRR", L="LLLL", B="BBBB", D="DDDD"):
+
+	//    values = { "F" : 0, "U" : 0, "R" : 0, "L" : 1, "B" : 2, "D" : 4}
+	
+	//look @ BLD
+	//look for guy w/ BL stickers and deduce U color
+	//look for LD stickers and deduce F color
+	//look for BD stickers and deduce R color
 	public String getState() {
 		if(true)
 			return turns.toString();
+		Color F, B, D, L, U, R;
 		for(Polygon3D[][] face : cubeStickers) {
 			Color c = null;
 			for(int i = 0; i < face.length; i++)

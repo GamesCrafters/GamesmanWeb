@@ -12,7 +12,7 @@ public class Face {
 	public final static Face LEFT = new Face('L', 0, true, 2, 1, Color.GREEN);
 	public final static Face RIGHT = new Face('R', LEFT, Color.BLUE);
 	public final static Face FRONT = new Face('F', 2, false, 0, 1, Color.RED);
-	public final static Face BACK = new Face('B', FRONT, Color.ORANGE);
+	public final static Face BACK = new Face('B', FRONT, new Color(242, 98, 2));
 	//cw_cw is whether turning the face clockwise is the same as rotating clockwise about the axis
 	private boolean cw_cw;
 	//isClockwise indicates whether the first dimension is in the clockwise direction

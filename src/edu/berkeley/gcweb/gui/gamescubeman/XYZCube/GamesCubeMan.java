@@ -286,13 +286,13 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		if(jso != null) {
 //			jso.eval("alert('Cube Reset!');");
 //			jso.eval("update('hooow');"); //this and the next line are equivalent
-			new Thread() {
-				public void run() {
+//			new Thread() {
+//				public void run() {
 					//we do this in a separate thread because the call() method will
 					//hand for the javascript
 					jso.call("cubeStateChanged", new Object[] { turn });
-				}
-			}.start();
+//				}
+//			}.start();
 		}
 		stateField.setText(src.getState());
 	}
