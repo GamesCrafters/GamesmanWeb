@@ -1,6 +1,6 @@
-#boat, #fox, #chicken, #grain{float: left; position: relative; border: 3px transparent solid;}
+#boat, #fox, #chicken, #grain{float: left; position: relative; border: 3px solid transparent;}
 #boat{clear: both;}
 
-#game .win-move { border: 3px #0f0 solid }
-#game .tie-move { border: 3px #ff0 solid }
-#game .lose-move { border: 3px #8a0000 solid }
+#game .win-move { border: 3px solid #0f0 }
+#game .tie-move { border: 3px solid #ff0 }
+#game .lose-move { border: 3px solid #8a0000 }

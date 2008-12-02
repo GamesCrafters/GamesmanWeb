@@ -36,11 +36,11 @@ body > .header h1 {
 #main { width: 100%; margin-left: -10em }
 #main h1 { font-size: 1.5em; margin: 0.25em 0 0.5em; text-align: center }
 
-#game { width: 100%; margin: 0.5em auto; outline: 1px #aaf solid }
+#game { width: 100%; margin: 0.5em auto; outline: 1px solid #aaf }
 
 #moves {
   width: 11em; padding-left: 1em; padding-right: 0em; float: right; margin-right: -15em;
-  border-left: thin #0f4d92 solid; margin-top: 2em; font-size: 0.9em
+  border-left: thin solid #0f4d92; margin-top: 2em; font-size: 0.9em
 }
 #moves p { margin: 0.25em 0 }
 #moves h1 { }
