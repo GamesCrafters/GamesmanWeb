@@ -506,9 +506,31 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//look for LD stickers and deduce F color
 	//look for BD stickers and deduce R color
 	public String getState() {
-		if(true)
-			return turns.toString();
-		Color F, B, D, L, U, R;
+//		if(true)
+//			return turns.toString();
+		ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[Face.faces.size()]));
+		int[] values = new int[Face.faces.size()];
+		values[Face.FRONT.index()] = 0;
+		values[Face.RIGHT.index()] = 0;
+		values[Face.UP.index()] = 0;
+		values[Face.LEFT.index()] = 1;
+		values[Face.BACK.index()] = 2;
+		values[Face.DOWN.index()] = 4;
+		
+		System.out.println(cubeStickers[Face.BACK.index()][1][0].getFace());
+		colors.set(Face.BACK.index(), cubeStickers[Face.BACK.index()][0][0].getFillColor());
+		colors.set(Face.LEFT.index(), cubeStickers[Face.LEFT.index()][0][0].getFillColor());
+		colors.set(Face.DOWN.index(), cubeStickers[Face.DOWN.index()][0][0].getFillColor());
+		for(Polygon3D[][] face : cubeStickers) {
+			for(int i = 0; i < face.length; i++)
+				for(int j = 0; j < face[i].length; j++) {
+					face[i][j].getFillColor();
+				}
+		}
+		return "Cube state here";
+	}
+	
+	public boolean isSolved() {
 		for(Polygon3D[][] face : cubeStickers) {
 			Color c = null;
 			for(int i = 0; i < face.length; i++)
@@ -516,11 +538,12 @@ public class XYZCube extends Shape3D implements ActionListener {
 					if(c == null && face[i][j].isVisible())
 						c = face[i][j].getFillColor();
 					if(face[i][j].isVisible() && !face[i][j].getFillColor().equals(c))
-						return "Not solved :-( " + System.currentTimeMillis();
+						return false;
 				}
 		}
-		return "Solved!";
+		return true;
 	}
+	
 	private void fireStateChanged(FaceLayerTurn turn) {
 		for(CubeStateChangeListener l : stateListeners)
 			l.cubeStateChanged(this, turn);

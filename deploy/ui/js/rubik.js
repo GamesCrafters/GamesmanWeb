@@ -74,7 +74,7 @@ function updateMoveValues(nextMoves){
     // reset everything first
     clearMoveValues();
 
-	document.getElementById('optimalMove').style.display = 'block';
+	$('optimalMove').show();
     msg = ''
     for(i in nextMoves) {
     	msg += " | " + nextMoves[i].remoteness + ": " + nextMoves[i].move;
@@ -87,7 +87,7 @@ function updateMoveValues(nextMoves){
 
 // remove all indicators of move values
 function clearMoveValues(){
-	document.getElementById('optimalMove').style.display = 'none';
+	$('optimalMove').hide();
 }
 
 // converts our own representation of the board (2d/3d array) into a board string

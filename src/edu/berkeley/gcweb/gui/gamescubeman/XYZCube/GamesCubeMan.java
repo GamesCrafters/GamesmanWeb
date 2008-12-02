@@ -65,12 +65,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		try {
 			fg_color = Color.decode(getParameter("fg_color"));
 		} catch(Exception e) {}
-		try {
-			cubeRotations = Boolean.parseBoolean(getParameter("cube_rotations"));
-		} catch(Exception e) {}
-		try {
-			resizable = Boolean.parseBoolean(getParameter("resizable"));
-		} catch(Exception e) {}
+		cubeRotations = parseBoolean(getParameter("cube_rotations"), cubeRotations);
+		resizable = parseBoolean(getParameter("resizable"), resizable);
 		try {
 			legalFaces = new ArrayList<Face>();
 			String faces = getParameter("legal_faces");
@@ -79,6 +75,16 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		} catch(Exception e) {
 			legalFaces = null;
 		}
+	}
+	
+	private Boolean parseBoolean(String s, boolean def) {
+		if(s == null)
+			return def;
+		if(s.equalsIgnoreCase("true"))
+			return true;
+		else if(s.equalsIgnoreCase("false"))
+			return false;
+		return def;
 	}
 	
 	private JSObject jso;
@@ -286,13 +292,18 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		if(jso != null) {
 //			jso.eval("alert('Cube Reset!');");
 //			jso.eval("update('hooow');"); //this and the next line are equivalent
-//			new Thread() {
-//				public void run() {
+			new Thread() {
+				public void run() {
 					//we do this in a separate thread because the call() method will
 					//hand for the javascript
 					jso.call("cubeStateChanged", new Object[] { turn });
-//				}
-//			}.start();
+				}
+			}.start();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		stateField.setText(src.getState());
 	}

@@ -10,10 +10,10 @@
 +textbox w/ notation pressed (lucas garron)
 	+trivial move cancellations (michael gottlieb)
 +slider for turning speed
++BUG: w/ mac os x (email dan cohen) java 5
++BUG: w/ opera (patrick jameson)
 
 TODO:
--BUG: w/ mac os x (email dan cohen)
--BUG: w/ opera (patrick jameson)
 -scramble progress bar?
 -turns should be really disabled during scramble, not just queued
 -hand positions indicator
