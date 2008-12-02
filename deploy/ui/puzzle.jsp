@@ -10,7 +10,9 @@ void terminate(ServletRequest request, ServletResponse response) {
 
 void dynamicInclude(JspWriter out, String internalName) {
 	try {
-		BufferedReader in = new BufferedReader(new FileReader(internalName + ".html"));
+		File htmlFile = new File(internalName + ".html");
+		out.println(htmlFile.toString());
+		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
 		String line = in.readLine();
 		while (line != null) {
 			out.println(line);
