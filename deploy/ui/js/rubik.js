@@ -30,10 +30,10 @@ var game = GCWeb.newPuzzleGame("rubik", width, height, {
 // bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
     // load the default board
-    //game.loadBoard(getBoardString(defaultBoard));
+    game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
     $('#optimalMove').click(function() {
-    	$("#cube").get(0).doMove($(this).text());
+    	document.getElementById('cube').doMove($(this).text());
     });
 });
 
@@ -72,7 +72,7 @@ function updateMoveValues(nextMoves){
     // reset everything first
     clearMoveValues();
 
-	$('#optimalMove').show();
+	document.getElementById('optimalMove').style.display = 'block';
     msg = ''
     for(i in nextMoves) {
     	msg += " | " + nextMoves[i].remoteness + ": " + nextMoves[i].move;
@@ -85,12 +85,12 @@ function updateMoveValues(nextMoves){
 
 // remove all indicators of move values
 function clearMoveValues(){
-	$('#optimalMove').hide();
+	document.getElementById('optimalMove').style.display = 'none';
 }
 
 // converts our own representation of the board (2d/3d array) into a board string
 function getBoardString(board){
-	return $("#cube").get(0).getBoardString();
+	return document.getElementById('cube').getBoardString();
 }
 
 // local debugging
