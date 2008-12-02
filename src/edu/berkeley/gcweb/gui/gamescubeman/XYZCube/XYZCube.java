@@ -398,7 +398,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 	}
 	
 	public void doTurn(Face face, int layer, int cw) {
-		if(legalFaces == null || legalFaces.contains(face)) {
+		if(legalFaces == null || (legalFaces.contains(face) && layer == 1)) {
 			appendTurn(new FaceLayerTurn(face, layer, cw));
 			FaceTurn turn = new FaceTurn(face, layer, cw);
 			if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
