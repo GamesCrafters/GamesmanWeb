@@ -191,7 +191,7 @@ function validateInput() {
       for (var row = 1; row < boardSize; row ++) {
         //$("<div id='r"+row+"'>").appendTo("#mainBoard");                        
         for (var peg = 0; peg < row+1; peg ++) {
-          //$('<img src="images/white96.png" id="p'+peg+'" alt="Peg" onclick="checkPeg(this)">').appendTo("#r"+row);
+          //$('<img src="images/pegsol/white96.png" id="p'+peg+'" alt="Peg" onclick="checkPeg(this)">').appendTo("#r"+row);
           board += "o";
         }
         board += ";";
@@ -205,11 +205,11 @@ function createBoard() {
   var divWidth = document.getElementById("game").offsetWidth - 20;
   var resize = divWidth/boardSize
   $("<div id='r0'>").appendTo("#mainBoard");
-  $('<img src="images/blank96.png" id="p0" alt="Peg" onclick="checkPeg(this)">').appendTo("#r0");
+  $('<img src="images/pegsol/blank96.png" id="p0" alt="Peg" onclick="checkPeg(this)">').appendTo("#r0");
   for (var row = 1; row < boardSize; row ++) {
     $("<div id='r"+row+"'>").appendTo("#mainBoard");
     for (var peg = 0; peg < row+1; peg ++)
-      $('<img src="images/white96.png" id="p'+peg+'" alt="Peg" onclick="checkPeg(this)">').appendTo("#r"+row);
+      $('<img src="images/pegsol/white96.png" id="p'+peg+'" alt="Peg" onclick="checkPeg(this)">').appendTo("#r"+row);
   }
   $("#mainBoard > div > img").css("height", resize+"px");
   $("#mainBoard > div > img").css("width", resize+"px");
@@ -223,26 +223,26 @@ function checkPeg(peg) {
   if (peg.nodeName == "IMG") {  
     havePeg = 1;    
     if (curPeg == peg && cursor == "pointer") {
-      $(peg).attr("src", "images/white96.png");
+      $(peg).attr("src", "images/pegsol/white96.png");
       hideTrail();
       havePeg = 0;
       seen = 0
     } else if (img.indexOf("white") >= 0 && cursor == "auto") {
       curPeg = peg;
-      $(peg).attr("src", "images/black96.png");
+      $(peg).attr("src", "images/pegsol/black96.png");
       showTrail();
     } else if (img.indexOf("blank") >= 0 && cursor == "pointer") {    
       var remove = jumpPeg(peg);      
-      $(peg).attr("src", "images/white96.png");
-      $("#r"+remove[0] + " > #p"+remove[1]).attr("src", "images/blank96.png");
-      $(curPeg).attr("src", "images/blank96.png");      
+      $(peg).attr("src", "images/pegsol/white96.png");
+      $("#r"+remove[0] + " > #p"+remove[1]).attr("src", "images/pegsol/blank96.png");
+      $(curPeg).attr("src", "images/pegsol/blank96.png");      
       hideTrail();
       havePeg = 0;
       seen = 0;
     }
   } else {    
     if (cursor == "pointer" && havePeg == 1 && seen == 1) {            
-      $(curPeg).attr("src", "images/white96.png");      
+      $(curPeg).attr("src", "images/pegsol/white96.png");      
       hideTrail();
       seen = 0
     } else if (cursor == "pointer" && havePeg == 1 && seen == 0)
@@ -273,3 +273,66 @@ function fixPeg() {
   $("#mainBoard > div > img").css("width", resize+"px");
   resizePeg(resize);
 }
+
+
+
+
+/***
+ * INCLUDED FROM follow.js
+ */
+var trailimage = ["images/pegsol/white96.png", 96, 96]; //image path, plus width and height
+var offsetfrommouse = [10,10]; //image x,y offsets from cursor position in pixels. Enter 0,0 for no offset
+var displayduration = 0; //duration in seconds image should remain visible. 0 for always.
+
+function showTrail() {
+  gettrailobj().visibility = "visible";
+  document.onmousemove = followmouse;
+  document.body.style.cursor = "pointer";
+  if (displayduration > 0)
+    setTimeout("hidetrail()", displayduration*1000);
+}
+
+function resizePeg(size) {  
+  trailimage[1] = size;
+  trailimage[2] = size;  
+  $("#trailPeg").css("width", size+"px");
+  $("#trailPeg").css("height", size+"px");
+}
+
+function gettrailobj() {
+  if (document.getElementById)
+    return document.getElementById("trailimageid").style;
+  else if (document.all)
+    return document.all.trailimagid.style;
+}
+
+function truebody() {
+  return (!window.opera && document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body;
+}
+
+function hideTrail() {
+  document.body.style.cursor = "auto";
+  gettrailobj().visibility = "hidden";  
+}
+
+function followmouse(e) {
+  var xcoord=offsetfrommouse[0];
+  var ycoord=offsetfrommouse[1];
+  if (typeof e != "undefined") {
+    xcoord+=e.pageX;
+    ycoord+=e.pageY;
+  }
+  else if (typeof window.event !="undefined") {
+    xcoord+=truebody().scrollLeft+event.clientX;
+    ycoord+=truebody().scrollTop+event.clientY;
+  }
+  var docwidth=document.all? truebody().scrollLeft+truebody().clientWidth : pageXOffset+window.innerWidth-15;
+  var docheight=document.all? Math.max(truebody().scrollHeight, truebody().clientHeight) : Math.max(document.body.offsetHeight, window.innerHeight);
+  if (xcoord+trailimage[1]+3>docwidth || ycoord+trailimage[2]> docheight)
+    gettrailobj().display="none";
+  else 
+    gettrailobj().display="";
+    gettrailobj().left=xcoord+"px";
+    gettrailobj().top=ycoord+"px";
+}
+

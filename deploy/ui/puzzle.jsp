@@ -74,7 +74,7 @@ if ((internalName == null) || (canonicalName == null)) {
       <!-- game commands --> 
       <div class="nav">
         <ul> 
-          <li><a href="#">New Puzzle</a></li>
+          <li><a href="">New Puzzle</a></li>
           <!--<li><a href="#">Rules</a></li>
           <li><a href="#">Load Puzzle</a></li>
           <li><a href="#">Save Puzzle</a></li>
