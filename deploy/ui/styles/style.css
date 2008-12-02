@@ -46,6 +46,7 @@ body > .header h1 {
 #moves h1 { }
 #moves * + h1 { margin-top: 0.5em }
 
+#move-value-key { margin-top: 0.5em }
 #move-value-key table { margin-left: 0.5em; list-style: none; font-size: 0.9em; text-align: center; width: 100% }
 #move-value-key td { width: 33% }
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }

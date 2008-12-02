@@ -1,11 +1,17 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"; %>
+<%
+String gameName = request.getParameter("puzzle");
+// TODO: ensure that the game is registered by the dictionary servlet
+if (gameName == null) {
+	request.getRequestDispatcher("/").forward(request, response);
+}
+%>
+<c:set var="puzzle"><%= gameName %></c:set>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-    <title>GamesmanWeb</title> 
-    <style type="text/css"> 
-      
-    </style>
+    <title><c:out value="${puzzle}"/> - Puzzles - GamesmanWeb</title> 
     <!--[if lte IE 7]>
     <style type="text/css">
       html > body > .header > h1 { display: inline }
@@ -26,29 +32,31 @@
       <div class="nav">
         <ul> 
           <li><a href="#">New Game</a></li>
-          <li><a href="#">Rules</a></li>
+          <!--<li><a href="#">Rules</a></li>
           <li><a href="#">Load Game</a></li>
           <li><a href="#">Save Game</a></li>
-          <li><a href="#">Quit</a></li>
+          <li><a href="#">Quit</a></li>-->
         </ul>
         <h2>Display Options</h2>
         <ul id="options">
           <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
           <li><label><input type="checkbox" id="option-move-value-history"> Move-value History</label></li>
           <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
-          <li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>
+          <!--<li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>-->
         </ul>
       </div> 
       <div id="main">
-        <h1>Tic-Tac-Toe</h1>
+        <h1></h1>
         <div id="game">
           Game Here
         </div>
       </div> 
       <!-- sidebar --> 
-      <div id="moves" class="aside"> 
-        <p>Game not started</p>
-        <p id="prediction">Player 1 to win in 9 moves.</p>
+      <div id="moves" class="aside">
+        <div id="prediction">
+          <h1>Prediction</h1>
+          <span>Game not started</span>
+        </div>
         <div id="move-value-key">
           <h1>Move-value Key</h1>
           <table>
