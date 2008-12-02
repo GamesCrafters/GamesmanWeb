@@ -39,7 +39,7 @@ $(document).ready(function(){
             $('#cell-'+row+'-'+col).click(function(row, col){
                 return function(){
                     for(i=0;i<nextMoves.length;i++){
-                        var thisrow = height-nextMoves[i].move.substr(1);
+                        var thisrow = row; //height-nextMoves[i].move.substr(1);
                         var thiscol = nextMoves[i].move.charCodeAt(0)-'a'.charCodeAt(0);
                             if(row == thisrow && col == thiscol){
                             game.doMove(nextMoves[i])
@@ -70,7 +70,7 @@ function updateMoveValues(game, nextMoves){
     for(i=0;i<nextMoves.length;i++) {
         move = nextMoves[i].move;
 	col = move.charCodeAt(0) - 'a'.charCodeAt(0)
-	row = height - move.substr(1)
+	row = 0; //height - move.substr(1)
         $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
     }
 }

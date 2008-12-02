@@ -2,7 +2,7 @@ const NONEXIST = '';
 const EMPTY = '+';
 var pieceToText = ['1', '2', '3', '4', 'B', 'A', 'O', 'O', 'O'];
 
-var defaultBoard = getRandomBoard();
+var defaultBoard;
 var currentBoard;
 
 var width = 9;
@@ -27,39 +27,159 @@ var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
 var nextMoves = [];
 var lastMove = -1;
 
-var options = {"circle": 0, "binArt": 0, "dots": 1, "exactSol": 1};
+var options = {"circle": 1, "binArt": 1, "dots": 1, "exactSol": 1};
+var opKeys = ["circle", "binArt", "dots", "exactSol"];
+
+// determined by radio button on options page
+var userWantsRandomBoard = true;
 
 $(document).ready(function(){
+	// hide the gameboard while user chooses options
+	$('#board').hide();
+	// set up result of clicking the start button on options page
+	$('#startButton').click(function() {
+		getSelectedOptions();
+		
+		// make sure the user has at least chosen one of the sets of pieces
+		if (options.circle || options.binArt || options.dots) {
+			
+			// handle the two possible radio button options:
+			if (userWantsRandomBoard) {
+				defaultBoard = getRandomBoard();
+				startGame();
+			}
+			else
+				getUserBoard();
+		}
+		else
+			alert("You must choose at least one of the three sets of pieces to play with.");
+	});
+});
+
+
+// tracks which piece the user currently has selected
+var curPiece = 0;
+
+function getUserBoard() {
+	// hide the options and show the gameboard
+	$('#Options').hide();
+	$('#board').show();
+	
+	defaultBoard = [-1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0];
+	
+	// for each radio button, make it so when the user clicks it it changes curPiece
+	for (piece = 0; piece < 9; piece++)
+		$('#userP'+piece).click(function(p) {
+			return function(){
+				curPiece = p;
+			};
+		}(piece));
+	
+	// based on the options chosen, hide the radio buttons for pieces
+	// the user doesn't want to use and put them in a separate category called "off"
+	if (!options.circle) {
+		$('#placeCircle').hide();		
+		// (once the 0th piece is placed in "off", inputBoard actually shifts so
+		// that the next piece is now the 0th piece)
+		document.choosePiece.inputBoard[0].name = "off";
+		document.choosePiece.inputBoard[0].name = "off";
+		document.choosePiece.inputBoard[0].name = "off";
+		document.choosePiece.inputBoard[0].name = "off";
+	}
+	if (!options.binArt) {
+		$('#placeBinArt').hide();
+		var buttonNum = document.choosePiece.inputBoard.length - 5;
+		document.choosePiece.inputBoard[buttonNum].name = "off";
+		document.choosePiece.inputBoard[buttonNum].name = "off";
+	}
+	if (!options.dots) {
+		$('#placeDots').hide();
+		buttonNum = document.choosePiece.inputBoard.length - 3;
+		document.choosePiece.inputBoard[buttonNum].name = "off";
+		document.choosePiece.inputBoard[buttonNum].name = "off";
+		document.choosePiece.inputBoard[buttonNum].name = "off";
+	}
+	
+	// simulate the user clicking the first piece's radio button
+	document.choosePiece.inputBoard[0].click();
+	
+	displayBoard(defaultBoard);
+	
+	for (row = 0; row < height; row++) { 
+		for (col = 0; col < width; col++) {
+			$('#cell-'+row+'-'+col).click(function(row, col) {
+				return function(){
+					// make sure the cell the user clicked on exists and does not already contain a piece
+					if ($('#cell-'+row+'-'+col).text() && defaultBoard.indexOf(row * width + col) < 0) {
+						// get the currently selected button
+						for (but = 0; but < document.choosePiece.inputBoard.length; but++)
+							if (document.choosePiece.inputBoard[but].checked) {
+								var curButton = but;
+								break;
+							}
+						
+						// update the board
+						defaultBoard[curPiece] = row * width + col;
+						
+						// if the user wants to cycle through pieces as they place them and they aren't
+						// on the last piece, then automatically click the next radio button
+						if (document.choosePiece.cyclePieces.checked && 
+							curButton != document.choosePiece.inputBoard.length - 1)
+							document.choosePiece.inputBoard[curButton+1].click();
+						
+						displayBoard(defaultBoard);
+					}
+				};
+			}(row, col));
+		}
+	}
+	
+	$('#doneChoosingBoard').click(function() {
+		// make sure the user actually placed all the pieces
+		var countPiecesPlaced = 0;
+		for (i = 0; i < defaultBoard.length - 2; i++)
+			if (defaultBoard[i] != -1)
+				countPiecesPlaced++;
+		if (countPiecesPlaced == document.choosePiece.inputBoard.length)
+			// if they did, then start the game
+			startGame();
+		else
+			alert("You haven't placed all the pieces yet.");
+	});
+}
+
+function startGame() {
+	// hide the options (circle, binArt, etc.)
+	$('#Options').hide();
+	// show the gameboard
+	$('#board').show();
+	// but hide the menu for placing pieces
+	$('#inputBoard').hide();
+	
 	var game = GCWeb.newPuzzleGame("tcross", width, height, {
-        onNextValuesReceived: onNextValuesReceived,
-        isValidMove: isValidMove,
-        onExecutingMove: onExecutingMove,
-        updateMoveValues: updateMoveValues, 
-        clearMoveValues: clearMoveValues,
-        getPositionValue: getPositionValue,
-        getNextMoveValues: getNextMoveValues,
-		options: options
-    });
-	
-	// handle options
-	getSelectedOptions();
-	if (!options["circle"])
-		for (piece = 0; piece < 4; piece++)
-			defaultBoard[piece] = -1;
-	if (!options["binArt"])
-		for (piece = 4; piece < 6; piece++)
-			defaultBoard[piece] = -1;
-	if (!options["dots"])
-		for (piece = 6; piece < 9; piece++)
-			defaultBoard[piece] = -1;	
-	
+		onNextValuesReceived: onNextValuesReceived,
+		isValidMove: isValidMove,
+		onExecutingMove: onExecutingMove,
+		updateMoveValues: updateMoveValues, 
+		clearMoveValues: clearMoveValues,
+		getPositionValue: getPositionValue,
+		getNextMoveValues: getNextMoveValues,
+		options: options,
+		debug: 0
+	});
+
 	game.loadBoard(getBoardString(defaultBoard));
 	currentBoard = defaultBoard;
 	
+	// remove previous click functions (specifically, the ones created in getUserBoard())
+	for (row = 0; row < height; row++)
+		for (col = 0; col < width; col++)
+			$('#cell-'+row+'-'+col).unbind('click');
+			
 	// loop through the possible clickable positions
-	for(i = 0; i < clickables.length; i++) {
+	for(i = 0; i < clickables.length; i++)
 		$('#cell-' + clickables[i][0] + '-' + clickables[i][1]).click(function(row, col){
-            return function(){
+			return function(){
 				// find the move information that we stored and attempt to execute the move
 				for (j = 0; j < nextMoves.length; j++) {
 					if ((nextMoves[j].move == 'R' && col < 2) ||
@@ -70,13 +190,11 @@ $(document).ready(function(){
 						break; // must break because nextMoves is changed after call to doMove
 					}							
 				}
-			}
+			};
 		}(clickables[i][0], clickables[i][1]));
-	}
-	// temp
-	displayBoard();
-	//onExecutingMove(nextMoves[0]); // temp
-});
+		
+	displayBoard(currentBoard);
+}
 
 // check to see whether the current move is valid
 function isValidMove(moveInfo) {
@@ -109,7 +227,7 @@ function onExecutingMove(moveInfo){
         currentBoard[10] = 1;
 
 	// update the graphical display
-	displayBoard();
+	displayBoard(currentBoard);
 }
 
 // called on intiial load, and each subsequent doMove will also reference this
@@ -174,10 +292,12 @@ function getBoardString(board) {
 	return str;
 }
 
-function getSelectedOptions() { 
-     for (i = 0; i < document.solveform.solveoptions.length; i++)
-        if (document.solveform.solveoptions[i].checked)
-            options[i] = document.solveform.solveoptions[i].value; 
+function getSelectedOptions() {
+	for (i = 0; i < document.optionsform.solveoptions.length; i++) {
+		checked = document.optionsform.solveoptions[i].checked;
+		options[opKeys[i]] = checked ? 1 : 0;
+	}
+	userWantsRandomBoard = document.optionsform.useroptions[0].checked;
 }
 
 function getRandomBoard() {
@@ -195,15 +315,24 @@ function getRandomBoard() {
 		// remove the position chosen from the board so it isn't chosen again
 		validPositions.splice(randomPosIndex, 1);
 	}
+	if (!options.circle)
+		for (piece = 0; piece < 4; piece++)
+			gameboard[piece] = -1;
+	if (!options.binArt)
+		for (piece = 4; piece < 6; piece++)
+			gameboard[piece] = -1;
+	if (!options.dots)
+		for (piece = 6; piece < 9; piece++)
+			gameboard[piece] = -1;	
 	
 	return gameboard;
 }
 
-function displayBoard() {
+function displayBoard(board) {
 	// VERY sloppy way of handling nonexistants for now (BAD)
 	updatedNonExistants = nonExistants.slice();		
 
-	var vertPos = currentBoard[10];
+	var vertPos = board[10];
 	var notVertPos = 0;
 	if (vertPos == 0)
 		notVertPos = 1;
@@ -212,7 +341,7 @@ function displayBoard() {
 	updatedNonExistants.push(width * 3 * notVertPos + 2);
 	updatedNonExistants.push(width * 3 * notVertPos + 3);
 	
-	var horizPos = currentBoard[9];
+	var horizPos = board[9];
 	if (horizPos > -1) {
 		updatedNonExistants.push(width * 1 + 0);
 		updatedNonExistants.push(width * 2 + 0);
@@ -230,7 +359,7 @@ function displayBoard() {
 	
     for (row = 0; row < height; row++) { 
         for (col = 0; col < width; col++) {  
-			piece = currentBoard.slice(0, 9).indexOf(row * width + col); 
+			piece = board.slice(0, 9).indexOf(row * width + col); 
 			if (piece >= 0) // if the current row-col has a piece 
 				$('#cell-'+row+'-'+col).text(pieceToText[piece]); 
 			else if (updatedNonExistants.indexOf(row * width + col) >= 0)
@@ -320,6 +449,16 @@ function getNextMoveValues(position, onMoveValuesReceived){
 		}
 		newBoard[9] = horizontalPos;
 		newBoard[10] = verticalPos;
+		
+		if (!options.circle)
+			for (piece = 0; piece < 4; piece++)
+				newBoard[piece] = -1;
+		if (!options.binArt)
+			for (piece = 4; piece < 6; piece++)
+				newBoard[piece] = -1;
+		if (!options.dots)
+			for (piece = 6; piece < 9; piece++)
+				newBoard[piece] = -1;	
 		retval.push({"board": getBoardString(newBoard), "move": moves.charAt(i), "remoteness": 4, "status": "OK", "value": 3});
 	}
 

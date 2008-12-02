@@ -1,54 +1,83 @@
-<p>Current Board:</p>
-<table>
-  <tr id="row-0">
-    <td id="cell-0-0"></td>
-    <td id="cell-0-1"></td>
-    <td id="cell-0-2"></td>
-    <td id="cell-0-3"></td>
-    <td id="cell-0-4"></td>
-    <td id="cell-0-5"></td>
-    <td id="cell-0-6"></td>
-    <td id="cell-0-7"></td>
-    <td id="cell-0-8"></td>
-  </tr>
-  <tr id="row-1">
-    <td id="cell-1-0"></td>
-    <td id="cell-1-1"></td>
-    <td id="cell-1-2"></td>
-    <td id="cell-1-3"></td>
-    <td id="cell-1-4"></td>
-    <td id="cell-1-5"></td>
-    <td id="cell-1-6"></td>
-    <td id="cell-1-7"></td>
-    <td id="cell-1-8"></td>
-  </tr>
-  <tr id="row-2">
-    <td id="cell-2-0"></td>
-    <td id="cell-2-1"></td>
-    <td id="cell-2-2"></td>
-    <td id="cell-2-3"></td>
-    <td id="cell-2-4"></td>
-    <td id="cell-2-5"></td>
-    <td id="cell-2-6"></td>
-    <td id="cell-2-7"></td>
-    <td id="cell-2-8"></td>
-  </tr>
-  <tr id="row-3">
-    <td id="cell-3-0"></td>
-    <td id="cell-3-1"></td>
-    <td id="cell-3-2"></td>
-    <td id="cell-3-3"></td>
-    <td id="cell-3-4"></td>
-    <td id="cell-3-5"></td>
-    <td id="cell-3-6"></td>
-    <td id="cell-3-7"></td>
-    <td id="cell-3-8"></td>
-  </tr>
-</table>
-<h2>Solving Options</h2>
-<form name="solveform">
-    <input type="checkbox" name="solveoptions" value="circle">Sove: Circle<br>
-    <input type="checkbox" name="solveoptions" value="binArt">Solve: Binary Arts<br>
-    <input type="checkbox" name="solveoptions" value="dots">Solve: Three Dots<br>
-    <input type="checkbox" name="solveoptions" value="exactSol">Solve: Exact Solution<br>
-</form>
+<div id="board">
+          Current Board:<p/>
+          <table>
+            <tr id="row-0">
+              <td id="cell-0-0"></td>
+              <td id="cell-0-1"></td>
+              <td id="cell-0-2"></td>
+              <td id="cell-0-3"></td>
+              <td id="cell-0-4"></td>
+              <td id="cell-0-5"></td>
+              <td id="cell-0-6"></td>
+              <td id="cell-0-7"></td>
+              <td id="cell-0-8"></td>
+            </tr>
+            <tr id="row-1">
+              <td id="cell-1-0"></td>
+              <td id="cell-1-1"></td>
+              <td id="cell-1-2"></td>
+              <td id="cell-1-3"></td>
+              <td id="cell-1-4"></td>
+              <td id="cell-1-5"></td>
+              <td id="cell-1-6"></td>
+              <td id="cell-1-7"></td>
+              <td id="cell-1-8"></td>
+            </tr>
+            <tr id="row-2">
+              <td id="cell-2-0"></td>
+              <td id="cell-2-1"></td>
+              <td id="cell-2-2"></td>
+              <td id="cell-2-3"></td>
+              <td id="cell-2-4"></td>
+              <td id="cell-2-5"></td>
+              <td id="cell-2-6"></td>
+              <td id="cell-2-7"></td>
+              <td id="cell-2-8"></td>
+            </tr>
+            <tr id="row-3">
+              <td id="cell-3-0"></td>
+              <td id="cell-3-1"></td>
+              <td id="cell-3-2"></td>
+              <td id="cell-3-3"></td>
+              <td id="cell-3-4"></td>
+              <td id="cell-3-5"></td>
+              <td id="cell-3-6"></td>
+              <td id="cell-3-7"></td>
+              <td id="cell-3-8"></td>
+            </tr>
+          </table>
+		  <div id="inputBoard">
+			<br><div>Choose a piece to be placed on the board, then click where you want it</div>
+			<form name="choosePiece">
+			<input id="cycleThroughPieces" type="checkbox" name="cyclePieces" value="cycle" checked>Cycle through pieces as you place them on the board?<br>
+			<div id="placeCircle">Circle pieces:<br>
+				<input id="userP0" type="radio" name="inputBoard" value="1" checked>1
+				<input id="userP1" type="radio" name="inputBoard" value="2">2
+				<input id="userP2" type="radio" name="inputBoard" value="3">3
+				<input id="userP3" type="radio" name="inputBoard" value="4">4
+			</div>
+			<div id="placeBinArt">Binary Arts pieces:<br>
+				<input id="userP4" type="radio" name="inputBoard" value="B">B
+				<input id="userP5" type="radio" name="inputBoard" value="A">A
+			</div>
+			<div id="placeDots">Dots pieces:<br>
+			<input id="userP6" type="radio" name="inputBoard" value="O">O
+			<input id="userP7" type="radio" name="inputBoard" value="O">O
+			<input id="userP8" type="radio" name="inputBoard" value="O">O<br>
+			</div><br>
+			<input id="doneChoosingBoard" type="button" name="doneInputBoard" value="Done Choosing Board">
+			</form>
+		  </div>
+		</div>
+		<div id="Options">
+          <br><div>Game Options</div>
+          <form name="optionsform">
+		  <input type="checkbox" name="solveoptions" value="circle">Play with Four Circle pieces<br>
+          <input type="checkbox" name="solveoptions" value="binArt">Play with Two Binary Arts pieces<br>
+		  <input type="checkbox" name="solveoptions" value="dots" checked>Play with Three Dots pieces<br>
+          <input type="checkbox" name="solveoptions" value="exactSol" checked>Play for Exact Solution<br><br>
+		  <input type="radio"    name="useroptions" value="random" checked>Random Board<br>
+		  <input type="radio"    name="useroptions" value="user">Input My Own Board<br><br>
+		  <input id="startButton" type="button"   name="useroptions" value="Start Game">
+          </form>
+        </div>
