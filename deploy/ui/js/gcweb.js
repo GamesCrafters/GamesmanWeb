@@ -154,7 +154,7 @@ GCWeb = {
                     } else {
                         text = 'Complete';
                     }
-                    $('#prediction').text(text+" in "+moveValue.remoteness);
+                    $('#prediction > span').text(text+" in "+moveValue.remoteness);
                     var hist = document.getElementById('all-history');
                     if (hist) {
                         hist.value = text+" in "+moveValue.remoteness+"\n"+hist.value;
@@ -233,7 +233,7 @@ GCWeb = {
                 },
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (player, remoteness) {
-                    $('#prediction').text("Player "+player+" to win in "+remoteness);
+                    $('#prediction > span').text("Player "+player+" to win in "+remoteness);
                 }
             }
         }(gameName, args);
