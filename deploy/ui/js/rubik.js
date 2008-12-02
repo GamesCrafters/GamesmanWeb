@@ -33,7 +33,7 @@ $(document).ready(function(){
     game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
     $('#optimalMove').click(function() {
-    	document.getElementById('cube').doMove($(this).text());
+    	$("#cube").get(0).doMove($(this).text());
     });
 });
 
