@@ -17,6 +17,20 @@ public class GameDetailsServlet {
     private static ServletContext servletContext;
     private static GameDictionary gameDictionary;
 
+    static {
+        try {
+            URL xmlFile = servletContext.getResource(
+                "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
+            gameDictionary = new GameDictionary(xmlFile);
+        } catch (MalformedURLException e) {
+            System.err.println(e.getMessage());
+        } catch (ParserConfigurationException e) {
+            System.err.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+    
     @GET @Path("/getInternalName")
     @Produces("text/plain")
     public String getInternalName(@QueryParam("name") String name) {
@@ -33,17 +47,17 @@ public class GameDetailsServlet {
 
     public static synchronized GameDictionary getGameDictionary() {
         if (gameDictionary == null) {
-            try {
-                URL xmlFile = servletContext.getResource(
-                    "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
-                gameDictionary = new GameDictionary(xmlFile);
-            } catch (MalformedURLException e) {
-                System.err.println(e.getMessage());
-            } catch (ParserConfigurationException e) {
-                System.err.println(e.getMessage());
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
+//            try {
+//                URL xmlFile = servletContext.getResource(
+//                    "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
+//                gameDictionary = new GameDictionary(xmlFile);
+//            } catch (MalformedURLException e) {
+//                System.err.println(e.getMessage());
+//            } catch (ParserConfigurationException e) {
+//                System.err.println(e.getMessage());
+//            } catch (IOException e) {
+//                System.err.println(e.getMessage());
+//            }
         }
         return gameDictionary;
     }
