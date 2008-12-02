@@ -1,12 +1,19 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"; %>
-<%
-String gameName = request.getParameter("puzzle");
-// TODO: ensure that the game is registered by the dictionary servlet
-if (gameName == null) {
+<%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%!
+void terminate() {
 	request.getRequestDispatcher("/").forward(request, response);
 }
 %>
-<c:set var="puzzle"><%= gameName %></c:set>
+<%
+String internalName = request.getParameter("puzzle");
+String canonicalName = GameDetailsServlet.getGameDictionary().getCanonicalName(internalName);
+// ensure that the puzzle is specified and registered by the dictionary servlet
+if ((internalName == null) || (canonicalName == null)) {
+	terminate();
+}
+%>
+<c:set var="puzzle"><%= canonicalName %></c:set>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
