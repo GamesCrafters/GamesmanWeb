@@ -36,7 +36,7 @@ body > .header h1 {
 #main { width: 100%; margin-left: -10em }
 #main h1 { font-size: 1.5em; margin: 0.25em 0 0.5em; text-align: center }
 
-#game { width: 100%; margin: 0.5em auto; outline: 1px solid #aaf }
+#game { width: 98%; margin: 0.5em auto; outline: 1px solid #aaf; padding: 1% }
 
 #moves {
   width: 11em; padding-left: 1em; padding-right: 0em; float: right; margin-right: -15em;
