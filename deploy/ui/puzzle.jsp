@@ -68,8 +68,9 @@ if ((internalName == null) || (canonicalName == null)) {
         </ul>
       </div> 
       <div id="main">
-        <h1></h1>
+        <h1><%= canonicalName %></h1>
         <div id="game">
+          <% dynamicInclude(out, internalName); %>
         </div>
       </div> 
       <!-- sidebar --> 
