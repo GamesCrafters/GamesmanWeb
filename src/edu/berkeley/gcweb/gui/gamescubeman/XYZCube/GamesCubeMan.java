@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -45,6 +46,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	
 	private int size_x = 3, size_y = 3, size_z = 3;
 	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
+	private ArrayList<Face> legalFaces = null;
+	private boolean cubeRotations = true;
+	private boolean resizable = true;
 	private void parseParameters() {
 		try {
 			size_x = Integer.parseInt(getParameter("size_x"));
@@ -61,6 +65,20 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		try {
 			fg_color = Color.decode(getParameter("fg_color"));
 		} catch(Exception e) {}
+		try {
+			cubeRotations = Boolean.parseBoolean(getParameter("cube_rotations"));
+		} catch(Exception e) {}
+		try {
+			resizable = Boolean.parseBoolean(getParameter("resizable"));
+		} catch(Exception e) {}
+		try {
+			legalFaces = new ArrayList<Face>();
+			String faces = getParameter("legal_faces");
+			for(char f : faces.toCharArray())
+				legalFaces.add(Face.decodeFace(f));
+		} catch(Exception e) {
+			legalFaces = null;
+		}
 	}
 	
 	private JSObject jso;
@@ -71,6 +89,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					parseParameters();
 					
 					cube = new XYZCube(size_x, size_y, size_z);
+					cube.setCubeRotations(cubeRotations);
+					cube.setLegalFaces(legalFaces);
+					
 					cube.addStateChangeListener(GamesCubeMan.this);
 					cubeCanvas = new CubeCanvas(cube);
 					canvas = cubeCanvas.getCanvas();
@@ -133,7 +154,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 							dims.add(new JLabel("x"));
 						dims.add(dimensions[ch]);
 					}
-					sliders.add(dims);
+					if(resizable)
+						sliders.add(dims);
 					
 					gap = new JSlider(0, 50, (int)(100*cube.getStickerGap()));
 					gap.setFocusable(false);
@@ -158,7 +180,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 						variationButtons[i].addActionListener(GamesCubeMan.this);
 						g.add(variationButtons[i]);
 					}
-					sliders.add(sideBySide(variationButtons));
+					if(resizable)
+						sliders.add(sideBySide(variationButtons));
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					topHalf.add(sideBySide(buttons, sliders), BorderLayout.PAGE_START);
@@ -257,6 +280,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		cube.doTurn(move);
 	}
 
+	//TODO - detect sticker color changes
+	//TODO - parameter to disable cube resizing, and turns other than FUR
 	public void cubeStateChanged(XYZCube src, final FaceLayerTurn turn) {
 		if(jso != null) {
 //			jso.eval("alert('Cube Reset!');");

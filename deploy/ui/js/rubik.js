@@ -47,7 +47,7 @@ function cubeStateChanged(turn) {
 			}
 		}
 	} else {
-		//TODO - deal with cube reset
+		//TODO - deal with cube reset/sticker's changing
 	}
 }
 
@@ -72,15 +72,20 @@ function updateMoveValues(nextMoves){
     // reset everything first
     clearMoveValues();
 
-    //TODO - choose optimal move!
+	document.getElementById('optimalMove').style.display = 'block';
+    msg = ''
     for(i in nextMoves) {
-    	$('#optimalMove').text(nextMoves[i].move);
+    	msg += " | " + nextMoves[i].remoteness + ": " + nextMoves[i].move;
     }
+    nextMoves.sort(function(a, b) {
+    	return a.remoteness - b.remoteness;
+    });
+    $('#optimalMove').text(nextMoves[0].move);
 }
 
 // remove all indicators of move values
 function clearMoveValues(){
-	//TODO - do something here?
+	document.getElementById('optimalMove').style.display = 'none';
 }
 
 // converts our own representation of the board (2d/3d array) into a board string
@@ -100,13 +105,13 @@ function getPositionValue(position, onValueReceived){
 }
 
 //TODO - due to the move restriction, some legal turns aren't going to be in the database...
-var faces = ["F", "U", "R", "B", "L", "D"];
+var faces = ["F", "U", "R"]; //, "B", "L", "D"];
 var dirs = ["", "2", "'"];
 function getNextMoveValues(position, onMoveValuesReceived) {
     var retval = [];
     for(f in faces) {
     	for(d in dirs) {
-		    retval.push({"board": '', "move": faces[f] + dirs[d], "remoteness": 2, "status": "OK", "value": 2});
+		    retval.push({"board": '', "move": faces[f] + dirs[d], "remoteness": Math.floor(Math.random()*11), "status": "OK", "value": 2});
     	}
     }
     onMoveValuesReceived(retval);

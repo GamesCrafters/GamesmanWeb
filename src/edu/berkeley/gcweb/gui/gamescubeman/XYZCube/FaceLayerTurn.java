@@ -19,6 +19,9 @@ public class FaceLayerTurn {
 		modCW();
 		return cw == 0;
 	}
+	public Face getFace() {
+		return f;
+	}
 	private void modCW() {
 		//this'll work so long as cw isn't too negative
 		cw = (4 + cw) % 4;

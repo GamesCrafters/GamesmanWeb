@@ -39,6 +39,9 @@ public class Face {
 		isFirstAxisClockwise = false;
 		opposite.opposite = this;
 	}
+	public String toString() {
+		return "" + getFaceName();
+	}
 	public char getFaceName() {
 		return faceName;
 	}

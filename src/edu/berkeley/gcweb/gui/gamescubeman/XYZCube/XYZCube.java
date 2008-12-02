@@ -377,7 +377,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 		
 		return stickers;
 	}
-		
+	
 	private ArrayList<FaceLayerTurn> turns = new ArrayList<FaceLayerTurn>();
 	private void appendTurn(FaceLayerTurn t) {
 		if(!turns.isEmpty()) {
@@ -391,14 +391,29 @@ public class XYZCube extends Shape3D implements ActionListener {
 		if(t != null) //if it hasn't been merged
 			turns.add(t);
 	}
-	public void doTurn(Face face, int layer, int cw) {
-		appendTurn(new FaceLayerTurn(face, layer, cw));
-		FaceTurn turn = new FaceTurn(face, layer, cw);
-		if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
-			turnQueue.add(turn);
-		turner.start();
+	
+	private ArrayList<Face> legalFaces;
+	public void setLegalFaces(ArrayList<Face> faces) {
+		legalFaces = faces;
 	}
+	
+	public void doTurn(Face face, int layer, int cw) {
+		if(legalFaces == null || legalFaces.contains(face)) {
+			appendTurn(new FaceLayerTurn(face, layer, cw));
+			FaceTurn turn = new FaceTurn(face, layer, cw);
+			if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
+				turnQueue.add(turn);
+			turner.start();
+		}
+	}
+	
+	private boolean cubeRotation = true;
+	public void setCubeRotations(boolean cubeRotation) {
+		this.cubeRotation = cubeRotation;
+	}
+	
 	public void doCubeRotation(Face face, int cw) {
+		if(!cubeRotation) return;
 		appendTurn(new FaceLayerTurn(face, -1, cw));
 		FaceTurn turn = new FaceTurn(face, dimensions[face.getRotationAxis()] - 1, cw);
 		FaceTurn t = new FaceTurn(face.getOppositeFace(), 1, -cw);
