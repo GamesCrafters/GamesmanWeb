@@ -51,7 +51,7 @@ body > .header h1 {
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }
 
 #move-value-history { margin-top: 0.5em }
-#history-tree { height: 5em; overflow-y: scroll; border: 1px #aaf solid }
+#history-tree { height: 20em; overflow-y: scroll; border: 2px #88f inset; background: #116 }
 
 body > .footer {
   clear: both; color: #fc3; text-align: center; background: #006;
