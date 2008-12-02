@@ -49,7 +49,7 @@ if ((internalName == null) || (canonicalName == null)) {
     <link rel="stylesheet" href="styles/<%= internalName %>.css">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
-    <script type="text/javascript" stc="js/<%= internalName %>.js"></script>
+    <script type="text/javascript" src="js/<%= internalName %>.js"></script>
   </head> 
   <body> 
     <div class="header">
