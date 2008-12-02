@@ -4,6 +4,9 @@
     <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
     <game internal-name="achi" canonical-name="Achi"/>
     <game internal-name="mago" canonical-name="Mago"/>
+    <game internal-name="pegsolitaire" canonical-name="Peg Solitaire" puzzle="puzzle">
+        <server host="localhost" port="1155" />
+    </game>
     <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)" puzzle="puzzle">
         <server host="localhost" port="1466" />
     </game>

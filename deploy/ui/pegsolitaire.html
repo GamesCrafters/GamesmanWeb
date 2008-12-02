@@ -1,0 +1,12 @@
+<!--
+Must add these using javascript:
+  <body onload="self.focus();$('#boardSizeNumber').focus()" onclick="checkPeg(this)" onresize="fixPeg()">-->
+<div id="trailimageid" style="display:none;position:absolute;visibility:visible;left:0px;top:0px;width:1px;height:1px"><img src="images/white96.png" id="trailPeg" border="0"></div>
+<div id="boardSizeInput">
+    <p>Please enter the desired board size: </p>
+    <form>
+        <input id="boardSizeNumber" type="text" value="" tabindex="1" onkeydown="enterKey(event)" />
+        <input id="boardSizeButton" type="button" onclick="validateInput()" value="OK" />
+    </form>
+</div>
+<div id="mainBoard"></div>
