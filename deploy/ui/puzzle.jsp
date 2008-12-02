@@ -1,6 +1,6 @@
 <%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet" %>
 <%!
-void terminate() {
+void terminate(ServletRequest request) {
 	request.getRequestDispatcher("/").forward(request, response);
 }
 %>
@@ -9,7 +9,7 @@ String internalName = request.getParameter("puzzle");
 String canonicalName = GameDetailsServlet.getGameDictionary().getCanonicalName(internalName);
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
-	terminate();
+	terminate(request);
 }
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
