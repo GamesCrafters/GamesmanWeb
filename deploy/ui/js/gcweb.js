@@ -50,7 +50,7 @@ GCWeb = {
                         }
                         text = newMove.remoteness;
                         text = '&nbsp;';
-                        $("#move-value-history").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>");
+						$("#move-value-history").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>").scrollTop(Number.MAX_VALUE);
                     }
                     
                     // update the current board string and the move stack

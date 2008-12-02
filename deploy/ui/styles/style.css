@@ -50,6 +50,8 @@ body > .header h1 {
 #move-value-key td { width: 33% }
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }
 
+#move-value-history { height: 20em; overflow: scroll }
+
 body > .footer {
   clear: both; color: #fc3; text-align: center; background: #006;
   padding: 0.5em 0; border-top: 2px #0f4d92 solid
