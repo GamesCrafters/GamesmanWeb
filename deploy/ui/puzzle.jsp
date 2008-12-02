@@ -5,7 +5,7 @@ private GameDictionary gameDictionary;
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
     try {
-		if (true)throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")));
+		if (true)throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")).toString());
         gameDictionary = new GameDictionary(context.getResource(
             "/WEB-INF/" + context.getInitParameter("gameDictionary")));
     } catch (Exception e) {
