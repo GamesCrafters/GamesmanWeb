@@ -1,4 +1,4 @@
-<%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet, java.io.*" %>
+<%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet, edu.berkeley.gcweb.GameDictionary, java.io.*" %>
 <%!
 void terminate(ServletRequest request, ServletResponse response) {
 	try {
@@ -22,7 +22,8 @@ void dynamicInclude(JspWriter out, String internalName) {
 %>
 <%
 String internalName = request.getParameter("puzzle");
-String canonicalName = GameDetailsServlet.getGameDictionary().getCanonicalName(internalName);
+GameDictionary dictionary = GameDetailsServlet.getGameDictionary();
+String canonicalName = dictionary.getCanonicalName(internalName);
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
 	terminate(request, response);
