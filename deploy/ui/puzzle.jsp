@@ -5,7 +5,7 @@ private GameDictionary gameDictionary;
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
     try {
-		if (true)throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")).toString());
+		//if (true)throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")).toString());
         gameDictionary = new GameDictionary(context.getResource(
             "/WEB-INF/" + context.getInitParameter("gameDictionary")));
     } catch (Exception e) {
@@ -23,6 +23,7 @@ void terminate(ServletRequest request, ServletResponse response) {
 
 void dynamicInclude(JspWriter out, String internalName) {
 	try {
+		out.println(gameDictionary);
 		File htmlFile = new File("deploy/ui/" + internalName + ".html");
 		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
 		String line = in.readLine();
