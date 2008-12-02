@@ -17,9 +17,7 @@ void dynamicInclude(JspWriter out, String internalName) {
 			line = in.readLine();
 		}
 		in.close();
-	} catch (IOException e) {
-		out.println("An error occurred while importing the code for " + internalName + ".");
-	}
+	} catch (IOException e) { }
 }
 %>
 <%
