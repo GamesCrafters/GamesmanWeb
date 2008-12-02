@@ -3,7 +3,6 @@ const FOX = 'F';
 const CHICKEN = 'C';
 const GRAIN = 'G';
 const BOAT = '-';
-const horizontalMovement = 300;
 
 // custom representation of the board, will be different for different games
 var defaultBoard = "FCGB | ";
@@ -11,6 +10,7 @@ var defaultBoard = "FCGB | ";
 // easy reference to these constants for yourself (it's static for now, but we might want this to be user-defined later)
 var width = 3;
 var height = 1;
+var horizontalMovement;
 
 // used for coloring the table cells
 var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
@@ -36,6 +36,9 @@ $(document).ready(function(){
         //getNextMoveValues: getNextMoveValues,
         //debug: 1
     });
+	// calculate by how much to move the pieces
+	horizontalMovement = $("#game").width() - $("#passengers").outerWidth() * 3 * 2;
+	
     // load the default board
     game.loadBoard(defaultBoard);
     $("#fox").click(function(){
