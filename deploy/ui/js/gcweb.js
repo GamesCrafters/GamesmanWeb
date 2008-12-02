@@ -7,7 +7,7 @@ GCWeb = {
         args['width'] = width;
         args['height'] = height;
         return function(gameName, args){
-            return {
+            g = {
                 // member variables
                 currentBoardString: null,
                 
@@ -148,24 +148,56 @@ GCWeb = {
                 // game messages
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (moveValue) {
-                    if($('#option-predictions').is(':checked')){
-                        var text;
-                        if (moveValue.value >= 1 && moveValue.value <= 3) {
-                            text = ['Lose','Draw','Win'][moveValue.value-1];
-                        } else {
-                            text = 'Complete';
-                        }
-                        $('#prediction').text(text+" in "+moveValue.remoteness);
-                        var hist = document.getElementById('all-history');
-                        if (hist) {
-                            hist.value = text+" in "+moveValue.remoteness+"\n"+hist.value;
-                        }
-                    } else{
-                        $('#prediction').text('');
+                    var text;
+                    if (moveValue.value >= 1 && moveValue.value <= 3) {
+                        text = ['Lose','Draw','Win'][moveValue.value-1];
+                    } else {
+                        text = 'Complete';
+                    }
+                    $('#prediction').text(text+" in "+moveValue.remoteness);
+                    var hist = document.getElementById('all-history');
+                    if (hist) {
+                        hist.value = text+" in "+moveValue.remoteness+"\n"+hist.value;
                     }
                 }
-            }
+            };
+            
+            toggleMoveValueKey = function(immediate){
+                if($('#option-move-value-history').is(':checked') || $('#option-move-values').is(':checked')){
+                    if(immediate)
+                        $('#move-value-key').show();
+                    else
+                        $('#move-value-key').slideDown(150);
+                } else {
+                    if(immediate)
+                        $('#move-value-key').hide();
+                    else
+                        $('#move-value-key').slideUp(150);
+                }
+            };
+            
+            toggleMoveValueKey(true);
+            
+            if(!$('#option-predictions').is(':checked')){$('#prediction').hide();}
+            $('#option-predictions').change(function(){$('#prediction').slideToggle(150);});
+            
+            if(!$('#option-move-value-history').is(':checked')){$('#move-value-history').hide();}
+            $('#option-move-value-history').change(function(){$('#move-value-history').slideToggle(500); toggleMoveValueKey(false);});
+            
+            $('#option-move-values').change(function(){
+                if($('#option-move-values').is(':checked')){
+                    if(g.previousMoves.length > 0){
+                        options.getNextMoveValues(g.currentBoardString, function(json){options.updateMoveValues(json);});
+                    }
+                } else {
+                    options.clearMoveValues();
+                }
+                toggleMoveValueKey(false);
+            });
+            
+            return g;
         }(gameName, args);
+        
     },
     
     newGame: function(gameName, width, height, options) {
