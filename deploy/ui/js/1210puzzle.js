@@ -1,6 +1,6 @@
 // constants
-const EMPTY = ' ';
-const FILLED = 'X';
+var EMPTY = ' ';
+var FILLED = 'X';
 
 // custom representation of the board, will be different for different games
 var currentBoard;
