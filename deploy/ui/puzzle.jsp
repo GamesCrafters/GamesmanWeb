@@ -21,16 +21,20 @@ void terminate(ServletRequest request, ServletResponse response) {
 }
 
 void dynamicInclude(JspWriter out, String internalName) {
+	ServletContext context = getServletConfig().getServletContext();
 	try {
-		File htmlFile = new File(internalName + ".html");
-		out.println(htmlFile.getAbsolutePath());
-		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
-		String line = in.readLine();
-		while (line != null) {
-			out.println(line);
-			line = in.readLine();
+		InputStream htmlStream = context.getResourceAsStream("/ui/" + internalName + ".html");
+		if (htmlStream == null) {
+			throw new IOException("File at " + context.getRealPath("/ui/" + internalName + ".html") + " not found.");
+		} else {
+			BufferedReader in = new BufferedReader(new InputStreamReader(htmlStream));
+			String line = in.readLine();
+			while (line != null) {
+				out.println(line);
+				line = in.readLine();
+			}
+			in.close();
 		}
-		in.close();
 	} catch (IOException e) {
 		try {
 			out.println(e.getMessage());
