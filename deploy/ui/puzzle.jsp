@@ -1,7 +1,25 @@
-<%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet" %>
+<%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet, java.io.*" %>
 <%!
 void terminate(ServletRequest request, ServletResponse response) {
-	request.getRequestDispatcher("/").forward(request, response);
+	try {
+		request.getRequestDispatcher("/").forward(request, response);
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+
+void dynamicInclude(JspWriter out, String internalName) {
+	try {
+		BufferedReader in = new BufferedReader(internalName + ".html");
+		String line = in.readLine();
+		while (line != null) {
+			out.println(line);
+			line = in.readLine();
+		}
+		in.close();
+	} catch (IOException e) {
+		out.println("An error occurred while importing the code for " + internalName + ".");
+	}
 }
 %>
 <%
@@ -53,7 +71,6 @@ if ((internalName == null) || (canonicalName == null)) {
       <div id="main">
         <h1></h1>
         <div id="game">
-          Game Here
         </div>
       </div> 
       <!-- sidebar --> 
