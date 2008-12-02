@@ -154,7 +154,7 @@ public class GameDictionary {
     }
     */
     public void marshal(File f) throws IOException {
-        throw new IOException("unimplemented");
+        throw new UnsupportedOperationException("unimplemented");
     }
     
     private void addServers(GameInfo myInfo, NodeList children) {
