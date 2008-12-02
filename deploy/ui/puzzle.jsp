@@ -1,5 +1,4 @@
 <%@ page import="edu.berkeley.gcweb.servlet.GameDetailsServlet" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
 void terminate() {
 	request.getRequestDispatcher("/").forward(request, response);
@@ -13,12 +12,11 @@ if ((internalName == null) || (canonicalName == null)) {
 	terminate();
 }
 %>
-<c:set var="puzzle"><%= canonicalName %></c:set>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-    <title><c:out value="${puzzle}"/> - Puzzles - GamesmanWeb</title> 
+    <title><%= canonicalName %> - Puzzles - GamesmanWeb</title> 
     <!--[if lte IE 7]>
     <style type="text/css">
       html > body > .header > h1 { display: inline }
