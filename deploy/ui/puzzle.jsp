@@ -1,5 +1,4 @@
-<%@ page import="edu.berkeley.gcweb.GameDictionary, java.io.*" %>
-<%!
+<%@ page import="edu.berkeley.gcweb.GameDictionary, java.io.*" %><%!
 private GameDictionary gameDictionary;
 
 public void jspInit() {
@@ -23,7 +22,6 @@ void terminate(ServletRequest request, ServletResponse response) {
 
 void dynamicInclude(JspWriter out, String internalName) {
 	try {
-		out.println(gameDictionary);
 		File htmlFile = new File("deploy/ui/" + internalName + ".html");
 		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
 		String line = in.readLine();
@@ -38,16 +36,14 @@ void dynamicInclude(JspWriter out, String internalName) {
 		} catch (IOException ioe) { }
 	}
 }
-%>
-<%
+%><%
 String internalName = request.getParameter("puzzle");
 String canonicalName = gameDictionary.getCanonicalName(internalName);
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
 	terminate(request, response);
 }
-%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
