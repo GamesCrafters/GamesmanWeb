@@ -10,7 +10,7 @@ void terminate(ServletRequest request, ServletResponse response) {
 
 void dynamicInclude(JspWriter out, String internalName) {
 	try {
-		File htmlFile = new File(internalName + ".html");
+		File htmlFile = new File("deploy/ui/" + internalName + ".html");
 		out.println(htmlFile.getAbsolutePath());
 		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
 		String line = in.readLine();
