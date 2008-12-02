@@ -11,7 +11,6 @@ void terminate(ServletRequest request, ServletResponse response) {
 void dynamicInclude(JspWriter out, String internalName) {
 	try {
 		File htmlFile = new File("deploy/ui/" + internalName + ".html");
-		out.println(htmlFile.getAbsolutePath());
 		BufferedReader in = new BufferedReader(new FileReader(htmlFile));
 		String line = in.readLine();
 		while (line != null) {
@@ -47,8 +46,10 @@ if ((internalName == null) || (canonicalName == null)) {
     </style>
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/<%= internalName %>.css">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
+    <script type="text/javascript" stc="js/<%= internalName %>.js"></script>
   </head> 
   <body> 
     <div class="header">
