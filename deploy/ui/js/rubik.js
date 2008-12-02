@@ -1,3 +1,5 @@
+var game;
+
 // custom representation of the board, will be different for different games
 var currentBoard;
 var defaultBoard;
@@ -13,22 +15,22 @@ var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
 var nextMoves = [];
 var lastMove = -1;
 
-// create a new game
-//TODO - width and height don't make sense for a 2x2x2!
-var game = GCWeb.newPuzzleGame("rubik", width, height, {
-    onNextValuesReceived: onNextValuesReceived,
-    isValidMove: isValidMove,
-    onExecutingMove: onExecutingMove,
-    updateMoveValues: updateMoveValues, 
-    clearMoveValues: clearMoveValues,
-    getBoardString: getBoardString,
-    getPositionValue: getPositionValue,
-    getNextMoveValues: getNextMoveValues,
-    debug: 1
-});
-
 // bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
+	//TODO - width and height don't make sense for a 2x2x2!
+	// create a new game
+	game = GCWeb.newPuzzleGame("rubik", width, height, {
+		onNextValuesReceived: onNextValuesReceived,
+		isValidMove: isValidMove,
+		onExecutingMove: onExecutingMove,
+		updateMoveValues: updateMoveValues, 
+		clearMoveValues: clearMoveValues,
+		getBoardString: getBoardString,
+		getPositionValue: getPositionValue,
+		getNextMoveValues: getNextMoveValues,
+		debug: 1
+	});					   
+	
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
