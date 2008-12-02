@@ -74,11 +74,11 @@ if ((internalName == null) || (canonicalName == null)) {
       <!-- game commands --> 
       <div class="nav">
         <ul> 
-          <li><a href="#">New Game</a></li>
+          <li><a href="#">New Puzzle</a></li>
           <!--<li><a href="#">Rules</a></li>
-          <li><a href="#">Load Game</a></li>
-          <li><a href="#">Save Game</a></li>
-          <li><a href="#">Quit</a></li>-->
+          <li><a href="#">Load Puzzle</a></li>
+          <li><a href="#">Save Puzzle</a></li>
+          <li><a href="#">Game Selection</a></li>-->
         </ul>
         <h2>Display Options</h2>
         <ul id="options">
@@ -98,7 +98,7 @@ if ((internalName == null) || (canonicalName == null)) {
       <div id="moves" class="aside">
         <div id="prediction">
           <h1>Prediction</h1>
-          <span>Game not started</span>
+          <span>Puzzle not started</span>
         </div>
         <div id="move-value-key">
           <h1>Move-value Key</h1>
@@ -107,7 +107,7 @@ if ((internalName == null) || (canonicalName == null)) {
               <td><img src="images/win.png" alt="Green"></td><td><img src="images/tie.png" alt="Yellow"></td><td><img src="images/lose.png" alt="Red"></td>
             </tr>
             <tr>
-              <td>to win</td><td>to tie</td><td>to lose</td>
+              <td>to move towards solution</td><td>to maintain remoteness</td><td>to move away from solution</td>
             </tr>
           </table>
         </div>

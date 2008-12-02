@@ -50,8 +50,6 @@ GCWeb = {
                         }
                         text = newMove.remoteness;
                         text = '&nbsp;';
-						// fragile, but measures the width of the history tree without the scrollbar
-                        this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
 						$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
                     }
                     
@@ -182,7 +180,7 @@ GCWeb = {
             $('#option-predictions').change(function(){$('#prediction').slideToggle(150);});
             
             if(!$('#option-move-value-history').is(':checked')){$('#move-value-history').hide();}
-            $('#option-move-value-history').change(function(){$('#move-value-history').slideToggle(500); toggleMoveValueKey(false);});
+            $('#option-move-value-history').change(function(){$('#move-value-history').slideToggle(500).scrollTop(10000); toggleMoveValueKey(false);});
             
             $('#option-move-values').change(function(){
                 if($('#option-move-values').is(':checked')){
