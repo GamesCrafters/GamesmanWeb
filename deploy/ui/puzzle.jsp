@@ -17,7 +17,11 @@ void dynamicInclude(JspWriter out, String internalName) {
 			line = in.readLine();
 		}
 		in.close();
-	} catch (IOException e) { }
+	} catch (IOException e) {
+		try {
+			out.println(e.getMessage());
+		} catch (IOException ioe) { }
+	}
 }
 %>
 <%
