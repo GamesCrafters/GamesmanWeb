@@ -1,12 +1,6 @@
-#game td {
-    border: 1px solid #fff; width: 1.5em; height: 1.5em;
-    text-align: center; font-weight: bold; font-size: 3em;
-}
-#game table {border-spacing: 0;}
-
-#boat, #fox, #chicken, #grain{float: left; position: relative;}
+#boat, #fox, #chicken, #grain{float: left; position: relative; border: 3px transparent solid;}
 #boat{clear: both;}
-#footer{clear:both;}
 
-.lose-move{border: 3px solid red;}
-.win-move{border: 3px solid green;}
+#game .win-move { border: 3px #0f0 solid }
+#game .tie-move { border: 3px #ff0 solid }
+#game .lose-move { border: 3px #8a0000 solid }
