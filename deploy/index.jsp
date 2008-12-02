@@ -41,7 +41,8 @@ public void jspInit() {
             label:after { content: ':' }
             fieldset { width: 40%; padding: 0.5em }
             table { border-collapse: collapse }
-            td { padding: 0 0.5em; border: 1px #006 solid }
+			th, td { padding: 0 0.5em }
+            td { border: 1px #006 solid }
 						
             #footer { border-top: 1px #006 solid; margin: 1em 0; padding: 1em 0; font-size: 0.75em }
             .footnote-flag { vertical-align: super; font-size: 0.75em } /* simulate a superscript effect */
@@ -59,7 +60,7 @@ for (int i = 0; i < canonicalNames.length; i++) {
     String internalName = gameDictionary.getInternalName(canonicalName);
 %>
             <tr><td><%= canonicalName %></td><td><%= internalName %></td><td><a
-		href="ui/<%= internalName %>.html"><%= internalName %></a></tr><%
+		href="ui/puzzle.jsp?puzzle=<%= internalName %>"><%= internalName %></a></tr><%
 }
 %>
         </table>
