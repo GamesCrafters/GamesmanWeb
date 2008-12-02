@@ -37,7 +37,7 @@ $(document).ready(function(){
         //debug: 1
     });
 	// calculate by how much to move the pieces
-	horizontalMovement = $("#game").width() - $("#passengers").outerWidth() * 3 * 2;
+	horizontalMovement = $("#game").width() - $("#passengers").outerWidth();
 	
     // load the default board
     game.loadBoard(defaultBoard);
