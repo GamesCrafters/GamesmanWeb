@@ -51,7 +51,7 @@ GCWeb = {
                         text = newMove.remoteness;
                         text = '&nbsp;';
 						$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
-						window.alert("MVH width: "  + $("#history-tree").width() + "px");
+						window.alert("MVH inner width: "  + $("#history-tree").innerWidth() + "px");
                     }
                     
                     // update the current board string and the move stack
