@@ -1,9 +1,9 @@
 <script type="text/javascript">
-		var width = "75%";
-		var height = "75%";
+		var mywidth = "75%";
+		var myheight = "75%";
 		if ($.browser.mozilla) {
-			width = '400px';//$("#game").width() * 0.75 + "px";
-			height = '500px';//$("#game").height() * 0.75 + "px";
+			mywidth = '400px';//$("#game").width() * 0.75 + "px";
+			myheight = '500px';//$("#game").height() * 0.75 + "px";
 		}
 		drawApplet('cube', 'applets/GamesCubeMan.jar', 'edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan',
 				'<param name="MAYSCRIPT" value="true" \/>' +
@@ -14,6 +14,6 @@
 				'<param name="resizable" value="false" />' +
 				'<param name="legal_faces" value="FUR" />' +
 				'<param name="bg_color" value="' + getBGColor() + '" />' +
-				'<param name="fg_color" value="' + getFGColor() + '" />', width, height);
+				'<param name="fg_color" value="' + getFGColor() + '" />', mywidth, myheight);
 </script>
 <button type="button" id="optimalMove"></button>
