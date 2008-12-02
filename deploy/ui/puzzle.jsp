@@ -5,7 +5,7 @@ private GameDictionary gameDictionary;
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
     try {
-        gameDictionary = new GameDictionary(context.getResource(
+        gameDictionary = new GameDictionary("../" + context.getResource(
             "/WEB-INF/" + context.getInitParameter("gameDictionary")));
     } catch (Exception e) {
         throw new RuntimeException("An exception occurred during initialization: " + e.getMessage());
@@ -39,7 +39,6 @@ void dynamicInclude(JspWriter out, String internalName) {
 %>
 <%
 String internalName = request.getParameter("puzzle");
-//GameDictionary dictionary = GameDetailsServlet.getGameDictionary();
 String canonicalName = gameDictionary.getCanonicalName(internalName);
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
