@@ -39,7 +39,7 @@ body > .header h1 {
 #game { width: 100%; margin: 0.5em auto; outline: 1px #aaf solid }
 
 #moves {
-  width: 10em; padding-left: 1em; padding-right: 1em; float: right; margin-right: -15em;
+  width: 11em; padding-left: 1em; padding-right: 0em; float: right; margin-right: -15em;
   border-left: thin #0f4d92 solid; margin-top: 2em; font-size: 0.9em
 }
 #moves p { margin: 0.25em 0 }
@@ -50,7 +50,8 @@ body > .header h1 {
 #move-value-key td { width: 33% }
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }
 
-#history-tree { height: 5em; overflow: auto }
+#move-value-history { margin-top: 0.5em }
+#history-tree { height: 5em; overflow-y: scroll; border: 1px #aaf solid }
 
 body > .footer {
   clear: both; color: #fc3; text-align: center; background: #006;
