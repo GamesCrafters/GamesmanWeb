@@ -37,9 +37,8 @@ $(document).ready(function(){
         //debug: 1
     });
 	// calculate by how much to move the pieces
-	var passengerWidth = $("#fox").width() + $("#chicken").width() + $("#grain").width();
-	alert($("#game").width() + " " + passengerWidth);
-	horizontalMovement = $("#game").width() - Math.max(passengerWidth, $("#boat > img").width());
+	var passengerWidth = 243; //$("#fox").width() + $("#chicken").width() + $("#grain").width();  // webkit bug
+	horizontalMovement = $("#game").width() - passengerWidth;
 	
     // load the default board
     game.loadBoard(defaultBoard);
