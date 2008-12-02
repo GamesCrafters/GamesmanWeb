@@ -187,10 +187,14 @@ GCWeb = {
             $('#option-move-values').change(function(){
                 if($('#option-move-values').is(':checked')){
                     if(g.previousMoves.length > 0){
-                        options.getNextMoveValues(g.currentBoardString, function(json){options.updateMoveValues(json);});
+                        if(options.updateMoveValues){
+                            g.getNextMoveValues(g.currentBoardString, function(json){options.updateMoveValues(json);});
+                        }
                     }
                 } else {
-                    options.clearMoveValues();
+                    if(options.clearMoveValues){
+                        options.clearMoveValues();
+                    }
                 }
                 toggleMoveValueKey(false);
             });
