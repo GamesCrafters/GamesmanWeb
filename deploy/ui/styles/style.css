@@ -40,7 +40,7 @@ body > .header h1 {
 #game { width: 98%; margin: 0.5em auto; outline: 1px solid #aaf; padding: 1% }
 
 #moves {
-  width: 11em; padding-left: 1em; padding-right: 0em; float: right; margin-right: -15em;
+  width: 10em; padding-left: 1em; padding-right: 1em; float: right; margin-right: -15em;
   border-left: thin solid #0f4d92; margin-top: 2em; font-size: 0.9em
 }
 #moves p { margin: 0.25em 0 }

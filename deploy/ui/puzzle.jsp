@@ -1,10 +1,14 @@
 <%@ page import="edu.berkeley.gcweb.GameDictionary, java.io.*" %><%!
 private GameDictionary gameDictionary;
+private boolean debug = false;
 
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
     try {
-		//if (true)throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")).toString());
+		if (debug) {
+			throw new Exception(context.getResource("/WEB-INF/" + context.getInitParameter("gameDictionary")).toString());
+		}
+		// TODO: memoization
         gameDictionary = new GameDictionary(context.getResource(
             "/WEB-INF/" + context.getInitParameter("gameDictionary")));
     } catch (Exception e) {
@@ -22,10 +26,11 @@ void terminate(ServletRequest request, ServletResponse response) {
 
 void dynamicInclude(JspWriter out, String internalName) {
 	ServletContext context = getServletConfig().getServletContext();
+	String path = "/ui/" + internalName + ".html";
 	try {
-		InputStream htmlStream = context.getResourceAsStream("/ui/" + internalName + ".html");
+		InputStream htmlStream = context.getResourceAsStream(path);
 		if (htmlStream == null) {
-			throw new IOException("File at " + context.getRealPath("/ui/" + internalName + ".html") + " not found.");
+			throw new IOException("File at " + context.getRealPath(path) + " not found.");
 		} else {
 			BufferedReader in = new BufferedReader(new InputStreamReader(htmlStream));
 			String line = in.readLine();
@@ -48,6 +53,7 @@ String canonicalName = gameDictionary.getCanonicalName(internalName);
 if ((internalName == null) || (canonicalName == null)) {
 	terminate(request, response);
 }
+// TODO: encode the HTML entities in the names
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
@@ -64,6 +70,11 @@ if ((internalName == null) || (canonicalName == null)) {
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
     <script type="text/javascript" src="js/<%= internalName %>.js"></script>
+    <script type="text/javascript">
+	  $(document).ready(function() {
+	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
+	  });
+	</script>
   </head> 
   <body> 
     <div class="header">

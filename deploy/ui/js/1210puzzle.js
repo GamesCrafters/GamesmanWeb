@@ -72,7 +72,7 @@ function onExecutingMove(moveInfo){
     }
 }
 
-// called on intiial load, and each subsequent doMove will also reference this
+// called on initial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
 }
