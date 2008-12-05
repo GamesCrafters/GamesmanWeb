@@ -75,7 +75,6 @@ $(document).ready(function() {
 		else
 			alert("You must choose at least one of the three sets of pieces to play with.");
 	});
-	
 });
 
 function setUpImagePositions() {
@@ -217,9 +216,9 @@ function startGame() {
 		onExecutingMove: onExecutingMove,
 		updateMoveValues: updateMoveValues, 
 		clearMoveValues: clearMoveValues,
-		getPositionValue: getPositionValue,
-		getNextMoveValues: getNextMoveValues,
 		options: options,
+		//getPositionValue: getPositionValue,
+		//getNextMoveValues: getNextMoveValues,
 		debug: 0
 	});
 
@@ -245,60 +244,13 @@ function startGame() {
 							(nextMoves[j].move == "D" && (imgSrc == topLeftSliderSrc || imgSrc == botRightSliderSrc)) ||
 							(nextMoves[j].move == "U" && (imgSrc == topRightSliderSrc || imgSrc == botLeftSliderSrc))) {
 							game.doMove(nextMoves[j]);
-							updateSliders();
 							break;
 						}
 					}
 			};
 		}(clickables[i][0], clickables[i][1]));
 		
-	updateSliders();
 	displayBoard(chosenBoard);
-}
-
-// called when game starts and after every doMove
-function updateSliders() {
-	// first reset all the sliders' cursors and classes
-	for(i = 0; i < clickables.length; i++) {
-		sliderId = "#cell-" + clickables[i][0] + "-" + clickables[i][1];
-		// reset pointer
-		$(sliderId).css("cursor", "default");		
-		// make sure move values aren't turned on
-		if (!$(sliderId).hasClass(moveValueClasses[0]) 
-			&& !$(sliderId).hasClass(moveValueClasses[1])
-			&& !$(sliderId).hasClass(moveValueClasses[2]))
-			$(sliderId).removeClass();
-	}
-	
-	// look at the possible next moves and update the cursor for the appropriate sliders
-	for (j = 0; j < nextMoves.length; j++) {
-		if (nextMoves[j].move == "R")
-			updateSlider(clickables[2][0], clickables[2][1]);
-		else if (nextMoves[j].move == "L")
-			updateSlider(clickables[3][0], clickables[3][1]);
-		else if (nextMoves[j].move == "D") {
-			updateSlider(clickables[0][0], clickables[0][1]);
-			updateSlider(clickables[5][0], clickables[5][1]);
-		}
-		else if (nextMoves[j].move == "U") {
-			updateSlider(clickables[1][0], clickables[1][1]);
-			updateSlider(clickables[4][0], clickables[4][1]);
-		}
-	}
-	
-}
-
-// small helper for updateSliders
-function updateSlider(row, col) {
-	sliderId = "#cell-" + row + "-" + col;
-	// update pointer
-	$(sliderId).css("cursor", "pointer");
-	// update class so that user can tell if clicking the slider results in a valid move
-	// but make sure move values aren't turned on
-	if (!$(sliderId).hasClass(moveValueClasses[0]) 
-		&& !$(sliderId).hasClass(moveValueClasses[1])
-		&& !$(sliderId).hasClass(moveValueClasses[2]))
-		$(sliderId).addClass("valid-move");
 }
 
 // called when doMove executes successfully
@@ -341,13 +293,53 @@ function onExecutingMove(moveInfo){
 // called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
+	// now that we have the nextmoves, update the sliders so they display them
+	updateSliders();
+}
+
+// called when game starts and after every doMove (called in onNextValuesReceived)
+function updateSliders() {
+	// first reset all the sliders' cursors
+	for(i = 0; i < clickables.length; i++)
+		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).css("cursor", "default");
+	
+	// look at the possible next moves and update the cursor for the appropriate sliders
+	for (j = 0; j < nextMoves.length; j++) {
+		if (nextMoves[j].move == "R")
+			updateSlider(clickables[2][0], clickables[2][1]);
+		else if (nextMoves[j].move == "L")
+			updateSlider(clickables[3][0], clickables[3][1]);
+		else if (nextMoves[j].move == "D") {
+			updateSlider(clickables[0][0], clickables[0][1]);
+			updateSlider(clickables[5][0], clickables[5][1]);
+		}
+		else if (nextMoves[j].move == "U") {
+			updateSlider(clickables[1][0], clickables[1][1]);
+			updateSlider(clickables[4][0], clickables[4][1]);
+		}
+	}
+	
+}
+
+// small helper for updateSliders
+function updateSlider(row, col) {
+	sliderId = "#cell-" + row + "-" + col;
+	// update pointer
+	$(sliderId).css("cursor", "pointer");
+	// update class so that user can tell if clicking the slider results in a valid move
+	// but make sure move values aren't turned on
+	if (!$(sliderId).hasClass(moveValueClasses[0]) 
+		&& !$(sliderId).hasClass(moveValueClasses[1])
+		&& !$(sliderId).hasClass(moveValueClasses[2]))
+		$(sliderId).addClass("valid-move");
 }
 
 // colors the board based on move values
 function updateMoveValues(nextMoves){
     // reset everything first
-    clearMoveValues();
-    var clickables = [[0, 2], [-1, 5], [1, 0], [1, 8], [4, 2], [3, 5]];
+    for (i = 0; i < clickables.length; i++)
+		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).removeClass();
+	
     // set background color to new values
     for(i = 0; i < nextMoves.length; i++) {
         move = nextMoves[i].move;
@@ -368,8 +360,21 @@ function updateMoveValues(nextMoves){
 
 // remove all indicators of move values
 function clearMoveValues(){
-	for (i = 0; i < clickables.length; i++)
-		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).removeClass();
+	for (i = 0; i < clickables.length; i++) {
+		sliderId = "#cell-" + clickables[i][0] + "-" + clickables[i][1];
+		// check if the slider has a move value
+		// if it does then replace it with a valid-move because that means
+		// the move-values checkbox was just unchecked
+		if ($(sliderId).hasClass(moveValueClasses[0]) 
+			|| $(sliderId).hasClass(moveValueClasses[1])
+			|| $(sliderId).hasClass(moveValueClasses[2])) {
+				$(sliderId).removeClass();
+				$(sliderId).addClass("valid-move");
+		}
+		// if the slider doesn't have a move value then just remove the valid-move class
+		else
+			$(sliderId).removeClass();			
+	}
 }
 
 function getBoardString(board) {
@@ -386,6 +391,7 @@ function getBoardString(board) {
 	return str;
 }
 
+// get the options before the user starts the game
 function getSelectedOptions() {
 	for (i = 0; i < document.optionsform.solveoptions.length; i++) {
 		checked = document.optionsform.solveoptions[i].checked;
@@ -424,6 +430,7 @@ function getRandomBoard() {
 
 // should only be called before the user has started playing
 function displayBoard(board) {
+	// set up top and bottom rows
 	for (row = 0; row < 4; row+=3)
 		for (col = 5-row; col < 7-row; col++) {
 			piece = board.slice(0,9).indexOf(row * width + col);
