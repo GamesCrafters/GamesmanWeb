@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="GamesmanWeb" default="all">
-	<exec outputproperty="revision" executable="svnversion">
-		<arg line="-n"/>
-		<redirector>
-			<outputfilterchain>
-				<tokenfilter>
-					<replaceregex pattern="^(.*:)?(\d+.)$" replace="\2"/>
-				</tokenfilter>
-			</outputfilterchain>
-		</redirector>
-	</exec>
 	
 	<tstamp>
 		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -57,18 +47,30 @@
 		<javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
 	</target>
 
-	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
+	<target name="jar-oskarscube" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
 		<mkdir dir="${deploy-applet}" />
-		<jar jarfile="${deploy-applet}/GamesCubeMan.jar">
+		<jar jarfile="${deploy-applet}/OskarsCube.jar">
 			<manifest>
 				<attribute name="Class-path" value="."/>
-				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
+				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
-			<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/**" excludes="**/*.jar;**/*.java" />
+			<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**;edu/berkeley/gcweb/gui/gamescubeman/OskarsCube/**" excludes="**/*.jar;**/*.java" />
 		</jar>
 	</target>
-
+	
+	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
+			<mkdir dir="${deploy-applet}" />
+			<jar jarfile="${deploy-applet}/OskarsCube.jar">
+				<manifest>
+					<attribute name="Class-path" value="."/>
+					<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
+					<attribute name="Built-Date" value="${TODAY}"/>
+				</manifest>
+				<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**;edu/berkeley/gcweb/gui/gamescubeman/XYZCube/**" excludes="**/*.jar;**/*.java" />
+			</jar>
+		</target>
+	
 	<target name="gamescubeman" depends="clean-gamescubeman, jar-gamescubeman" />
 
 	<target name="clean-gamescubeman" description="Clean applet directory">
@@ -76,4 +78,5 @@
 			<fileset dir="${src}" includes="**/*.class"/>
 		</delete>
 	</target>
+	
 </project>
