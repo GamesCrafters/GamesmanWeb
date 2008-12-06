@@ -15,7 +15,7 @@ var botLeftSliderSrc = imgDir+"botLeftSlider.png";
 var botRightSliderSrc = imgDir+"botRightSlider.png";
 
 // starting left position in px
-var slp = 190;
+var slp = 240;
 // starting top position in px
 var stp = 135;
 // piece image width/height (size)
@@ -36,7 +36,7 @@ var height = 4;
 // 2 x - - - - - - - x
 // 3 - - - - - x x - -
 // 4 - - x x - - - - -
-var clickables = [[0, 2], [-1, 5], [1, 0], [1, 8], [4, 2], [3, 5]];
+var clickables = [[0, 2], [-1, 5], [1, -1], [1, 8], [4, 2], [3, 5]];
 			  
 // used for coloring
 var moveValueClasses = ["lose-move", "tie-move", "win-move"];
@@ -92,12 +92,12 @@ function setUpImagePositions() {
 			setUpImage(row, col, emptyImgSrc, sz, sz);
 		
 	// set up sliders
-	setUpImage(0, 2, topLeftSliderSrc, sz * 2, sz);
-	setUpImage(-1, 5, topRightSliderSrc, sz * 2, sz);
-	setUpImage(1, 0, leftSliderSrc, sz, sz * 2);
-	setUpImage(1, 8, rightSliderSrc, sz , sz * 2);
-	setUpImage(4, 2, botLeftSliderSrc, sz * 2, sz);
-	setUpImage(3, 5, botRightSliderSrc, sz * 2, sz);
+	setUpImage(clickables[0][0], clickables[0][1], topLeftSliderSrc, sz * 2, sz);
+	setUpImage(clickables[1][0], clickables[1][1], topRightSliderSrc, sz * 2, sz);
+	setUpImage(clickables[2][0], clickables[2][1], leftSliderSrc, sz * 2, sz * 2);
+	setUpImage(clickables[3][0], clickables[3][1], rightSliderSrc, sz * 2, sz * 2);
+	setUpImage(clickables[4][0], clickables[4][1], botLeftSliderSrc, sz * 2, sz);
+	setUpImage(clickables[5][0], clickables[5][1], botRightSliderSrc, sz * 2, sz);						   
 }
 
 function setUpImage(row, col, src, width, height) {
@@ -217,8 +217,8 @@ function startGame() {
 		updateMoveValues: updateMoveValues, 
 		clearMoveValues: clearMoveValues,
 		options: options,
-		//getPositionValue: getPositionValue,
-		//getNextMoveValues: getNextMoveValues,
+		getPositionValue: getPositionValue,
+		getNextMoveValues: getNextMoveValues,
 		debug: 0
 	});
 
@@ -234,6 +234,7 @@ function startGame() {
 		// do a move on click
 		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).click(function(row, col){
 			return function(){
+				// make sure the pieces aren't currently moving
 				if ($("img[id^='cell']:animated").length == 0) {
 					imgSrc = $("#cell-"+row+"-"+col).attr("src");
 		
@@ -344,16 +345,16 @@ function updateMoveValues(nextMoves){
     for(i = 0; i < nextMoves.length; i++) {
         move = nextMoves[i].move;
         if (move == "R")
-			$("#cell-1-0").addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[2][0] + "-" + clickables[2][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
         else if (move == "L")
-			$("#cell-1-8").addClass(moveValueClasses[nextMoves[i].value-1]);
-        else if (move == "U") {
-			$("#cell--1-5").addClass(moveValueClasses[nextMoves[i].value-1]);
-			$("#cell-4-2").addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[3][0] + "-" + clickables[3][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+        else if (move == "D") {
+			$("#cell-" + clickables[0][0] + "-" + clickables[0][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[5][0] + "-" + clickables[5][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
 		}
-        else {
-			$("#cell-0-2").addClass(moveValueClasses[nextMoves[i].value-1]);
-			$("#cell-3-5").addClass(moveValueClasses[nextMoves[i].value-1]);
+        else if (move == "U") {
+			$("#cell-" + clickables[1][0] + "-" + clickables[1][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[4][0] + "-" + clickables[4][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
 		}
     }
 }
