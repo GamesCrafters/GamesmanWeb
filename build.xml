@@ -37,17 +37,17 @@
 			description="Clean the build directories">
 		<delete dir="${build}"/>
 	</target>
-	<target name="applets" depends="gamescubeman" />
+	<target name="applets" depends="jar-gamescubeman, jar-oskarscube" />
 	
-	<target name="clean-applets" depends="clean-gamescubeman">
+	<target name="clean-applets" depends="clean-applet-source">
 		<delete dir="${appletdestdir}" />
 	</target>
 
-	<target name="compile-gamescubeman" description="Compiles rubik's cube applet">
+	<target name="compile-applets" description="Compiles java applets">
 		<javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
 	</target>
 
-	<target name="jar-oskarscube" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
+	<target name="jar-oskarscube" depends="compile-applets" description="Compresses CCT main executable and dependencies.">
 		<mkdir dir="${deploy-applet}" />
 		<jar jarfile="${deploy-applet}/OskarsCube.jar">
 			<manifest>
@@ -55,25 +55,34 @@
 				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
-			<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**;edu/berkeley/gcweb/gui/gamescubeman/OskarsCube/**" excludes="**/*.jar;**/*.java" />
+			<fileset dir="${src}">
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/OskarsCube/**"/>
+				<exclude name="**/*.jar"/>
+				<exclude name="**/*.java" />
+			</fileset>
 		</jar>
 	</target>
 	
-	<target name="jar-gamescubeman" depends="compile-gamescubeman" description="Compresses CCT main executable and dependencies.">
-			<mkdir dir="${deploy-applet}" />
-			<jar jarfile="${deploy-applet}/OskarsCube.jar">
-				<manifest>
-					<attribute name="Class-path" value="."/>
-					<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
-					<attribute name="Built-Date" value="${TODAY}"/>
-				</manifest>
-				<fileset dir="${src}" includes="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**;edu/berkeley/gcweb/gui/gamescubeman/XYZCube/**" excludes="**/*.jar;**/*.java" />
-			</jar>
-		</target>
+	<target name="jar-gamescubeman" depends="compile-applets" description="Compresses CCT main executable and dependencies.">
+		<mkdir dir="${deploy-applet}" />
+		<jar jarfile="${deploy-applet}/GamesCubeMan.jar">
+			<manifest>
+				<attribute name="Class-path" value="."/>
+				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+			</manifest>
+			<fileset dir="${src}">
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/XYZCube/**"/>
+				<exclude name="**/*.jar"/>
+				<exclude name="**/*.java" />
+			</fileset>
+		</jar>
+	</target>
 	
-	<target name="gamescubeman" depends="clean-gamescubeman, jar-gamescubeman" />
 
-	<target name="clean-gamescubeman" description="Clean applet directory">
+	<target name="clean-applet-source" description="Clean applet src directory">
 		<delete>
 			<fileset dir="${src}" includes="**/*.class"/>
 		</delete>

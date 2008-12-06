@@ -16,6 +16,9 @@
     <game internal-name="lightsout" canonical-name="LightsOut" puzzle="puzzle">
         <server host="localhost" port="1055" />
     </game>
+    <game internal-name="oskarscube" canonical-name="Oskar's cube" puzzle="puzzle">
+        <server host="localhost" port="1915" />
+    </game>
     <game internal-name="rubik" canonical-name="Rubik's cube" puzzle="puzzle">
         <server host="localhost" port="1815" />
     </game>
