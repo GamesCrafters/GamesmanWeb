@@ -299,11 +299,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					jso.call("cubeStateChanged", new Object[] { turn });
 				}
 			}.start();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 		stateField.setText(src.getState());
 	}

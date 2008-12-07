@@ -506,8 +506,8 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//look for LD stickers and deduce F color
 	//look for BD stickers and deduce R color
 	public String getState() {
-//		if(true)
-//			return turns.toString();
+		if(true)
+			return turns.toString();
 		ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[Face.faces.size()]));
 		int[] values = new int[Face.faces.size()];
 		values[Face.FRONT.index()] = 0;
