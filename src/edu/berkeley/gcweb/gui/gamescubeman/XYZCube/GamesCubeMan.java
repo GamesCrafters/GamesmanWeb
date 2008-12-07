@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -89,6 +91,14 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	
 	private JSObject jso;
 	public void init() {
+		addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				System.out.println(e);
+				canvas.requestFocusInWindow();
+			}
+			public void focusLost(FocusEvent e) {
+			}
+		});
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
