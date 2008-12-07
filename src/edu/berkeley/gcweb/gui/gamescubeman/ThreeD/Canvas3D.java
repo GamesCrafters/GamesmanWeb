@@ -263,7 +263,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		g2d.setColor(Color.BLACK);
 		
 		//TODO - deal with z ordering! break everything into triangles?
-		for(int i = 0; i < polys.size(); i++) {
+		for(int i = 0; polys != null && i < polys.size(); i++) {
 			Polygon3D poly = polys.get(i);
 			Shape proj = polyProjection.get(i);
 			if(proj == null) continue; 

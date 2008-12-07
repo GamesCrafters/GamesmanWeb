@@ -398,7 +398,8 @@ public class XYZCube extends Shape3D implements ActionListener {
 	}
 	
 	public void doTurn(Face face, int layer, int cw) {
-		if(legalFaces == null || (legalFaces.contains(face) && layer == 1)) {
+		if(legalFaces == null || (legalFaces.contains(face))) {
+			layer = Math.min(layer, dimensions[face.getRotationAxis()] - 1);
 			appendTurn(new FaceLayerTurn(face, layer, cw));
 			FaceTurn turn = new FaceTurn(face, layer, cw);
 			if(turnQueue.isEmpty() || !turnQueue.get(turnQueue.size() - 1).mergeTurn(turn))
@@ -517,7 +518,6 @@ public class XYZCube extends Shape3D implements ActionListener {
 		values[Face.BACK.index()] = 2;
 		values[Face.DOWN.index()] = 4;
 		
-		System.out.println(cubeStickers[Face.BACK.index()][1][0].getFace());
 		colors.set(Face.BACK.index(), cubeStickers[Face.BACK.index()][0][0].getFillColor());
 		colors.set(Face.LEFT.index(), cubeStickers[Face.LEFT.index()][0][0].getFillColor());
 		colors.set(Face.DOWN.index(), cubeStickers[Face.DOWN.index()][0][0].getFillColor());
@@ -527,7 +527,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 					face[i][j].getFillColor();
 				}
 		}
-		return "Cube state here";
+		return "Cube State Here!";
 	}
 	
 	public boolean isSolved() {
@@ -583,10 +583,10 @@ public class XYZCube extends Shape3D implements ActionListener {
 		DIRECTION_TURN.put(-1, "'");
 		DIRECTION_TURN.put(2, "2");
 	}
-	public void doTurn(String turn) {
+	public boolean doTurn(String turn) {
 		if(turn.equals("scramble")) {
 			scramble();
-			return;
+			return true;
 		}
 		char ch = turn.charAt(0);
 		Face face = Face.decodeFace(ch);
@@ -598,15 +598,20 @@ public class XYZCube extends Shape3D implements ActionListener {
 				direction = -1;
 			else if(">>".equals(turn.substring(1)))
 				direction = 1;
+			else
+				return false;
 			if(!face.isCWWithAxis()) direction = -direction;
 			handPositions[face.index()] += direction;
 			handPositions[face.index()] = Math.max(1, handPositions[face.index()]);
 			handPositions[face.index()] = Math.min(leftRightWidth - 1, handPositions[face.index()]);
+			return true;
 		} else if(face != null) { //n-layer face turn
 			int layer = handPositions[face.index()] + ((Character.isUpperCase(ch)) ? 0 : 1);
 			doTurn(face, layer, direction);
+			return true;
 		} else { //cube rotation
 			doCubeRotation(Face.decodeCubeRotation(ch), direction);
+			return true;
 		}
 	}
 	public void scramble() {

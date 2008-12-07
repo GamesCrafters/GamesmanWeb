@@ -282,16 +282,12 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		return cube.getState();
 	}
 	
-	public void doMove(String move) {
-		cube.doTurn(move);
+	public boolean doMove(String move) {
+		return cube.doTurn(move);
 	}
 
-	//TODO - detect sticker color changes
-	//TODO - parameter to disable cube resizing, and turns other than FUR
 	public void cubeStateChanged(XYZCube src, final FaceLayerTurn turn) {
 		if(jso != null) {
-//			jso.eval("alert('Cube Reset!');");
-//			jso.eval("update('hooow');"); //this and the next line are equivalent
 			new Thread() {
 				public void run() {
 					//we do this in a separate thread because the call() method will

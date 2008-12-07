@@ -77,7 +77,7 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	private double aveZ() {
 		double sum = 0;
 		for(double[] p : points)
-			sum += p[2];
+			sum += p[0]*p[0] + p[1]*p[1] + p[2]*p[2];
 		return sum / points.size();
 	}
 

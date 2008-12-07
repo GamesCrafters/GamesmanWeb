@@ -31,7 +31,7 @@ public class FaceLayerTurn {
 		String face = "" + f.getFaceName();
 		if(layer == -1) {
 			face = "" + "xyz".charAt(f.getRotationAxis());
-		} else if(layer == 2) //TODO - check cube size!
+		} else if(layer == 2)
 			face = face.toLowerCase();
 		else if(layer > 2)
 			face = layer + " " + face;

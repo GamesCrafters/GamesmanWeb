@@ -147,6 +147,8 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 		return tool.createCustomCursor(buffer, new Point(0, 0), "bucket");
 	}
 	public Face getSelectedFace() {
+		if(selected == -1)
+			return null;
 		return Face.faces()[selected];
 	}
 	public void mouseEntered(MouseEvent e) {}
