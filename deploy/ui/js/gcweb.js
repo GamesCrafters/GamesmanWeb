@@ -15,6 +15,7 @@ GCWeb = {
                 
                 // board state functions
                 loadBoard: function(newBoardString){
+                    this.currentMoveValue = null;
                     this.currentBoardString = newBoardString;
                     this.previousMoves = new Array();
                     
@@ -146,6 +147,7 @@ GCWeb = {
                 // game messages
                 // set the status message to "Player <player> to win in <remoteness>"
                 setRemoteness: function (moveValue) {
+                    this.currentMoveValue = moveValue;
                     var text;
                     if (moveValue.value >= 1 && moveValue.value <= 3) {
                         text = ['Lose','Draw','Win'][moveValue.value-1];

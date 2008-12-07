@@ -15,6 +15,9 @@ var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
 var nextMoves = [];
 var lastMove = -1;
 
+var doingMove = false;
+var queuedMoves = [];
+
 // bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
 	//TODO - width and height don't make sense for a 2x2x2!
@@ -28,29 +31,63 @@ $(document).ready(function(){
 		getBoardString: getBoardString,
 		getPositionValue: getPositionValue,
 		getNextMoveValues: getNextMoveValues,
-		debug: 1
+		debug: 0
 	});					   
 	
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
-    $('#optimalMove').click(function() {
-    	document.getElementById('cube').doMove($(this).text());
-    });
+    $('#optimalMove').click(clickedOptimal);
 });
 
-function cubeStateChanged(turn) {
-	if(turn != null) { //this means a turn actually happened
-		//TODO - this won't capture cube rotations, or "double layer" turns
-		for(i in nextMoves) {
-			if(nextMoves[i].move == turn) {
-				game.doMove(nextMoves[i]);
-				break;
-			}
-		}
-	} else {
-		//TODO - deal with cube reset/sticker's changing
+function clickedOptimal() {
+    	movetext = $(this).text();
+        $(this).text("...");
+        if (!document.getElementById('cube').doMove(movetext)) {
+            $(this).text(movetext);
+        }
+        document.getElementById('cube').requestFocus();
+    }
+
+
+function debug(mytext) {
+	// $("#debug").text($("#debug").text()+"\n"+mytext);
+	console && console.log && console.log(mytext);
+}
+
+function doQuery(turn) {
+	if (turn == null) {
+		game.loadBoard(getBoardString(defaultBoard));
 	}
+	for(i in nextMoves) {
+		if(nextMoves[i].move == turn) {
+			debug("requesting move "+nextMoves[i].move+", queue length = "+queuedMoves.length);
+			mymove = nextMoves[i];
+			game.doMove(mymove);
+			return true;
+		}
+	}
+	return false;
+}
+function cubeStateChanged(turn) {
+        $('#optimalMove').text("...");
+	if(queuedMoves.length == 0 && doingMove == false) { //this means a turn actually happened
+		//TODO - this won't capture cube rotations, or "double layer" turns
+		doingMove = true;
+		debug("Nothing in the queue, doing move "+turn);
+		if (!doQuery(turn))
+			doingMove = false;
+	} else {
+		// nextMoves is empty, so queue up the move request.
+		queuedMoves.push(turn);
+		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
+	} /*} else {
+		// TODO: causes issues while scrambling.
+		// deal with cube reset/sticker's changing
+		queuedMoves = [];
+		doingMove = true;
+		game.loadBoard(getBoardString(defaultBoard));
+	}*/
 }
 
 // check to see whether the current move is valid
@@ -66,28 +103,41 @@ function onExecutingMove(moveInfo){
 
 // called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
+    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
     nextMoves = json;
+    doingMove = false;
+    if (queuedMoves.length != 0) {
+        doingMove = true;
+        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
+        if (!doQuery(queuedMoves.shift()))
+            doingMove = false;
+    }
+    updateMoveValuesText(json)
 }
 
 // colors the board based on move values
 function updateMoveValues(nextMoves){
     // reset everything first
-    clearMoveValues();
-
-	$('optimalMove').show();
-    msg = ''
-    for(i in nextMoves) {
-    	msg += " | " + nextMoves[i].remoteness + ": " + nextMoves[i].move;
+    if ($('#optimalMove')[0].style.display=="none") {
+        $('#optimalMove')[0].style.display="inline";
+        $('#optimalMove')[0].style.width="7em";
     }
+    updateMoveValuesText(nextMoves);
+}
+function updateMoveValuesText(nextMoves){
     nextMoves.sort(function(a, b) {
     	return a.remoteness - b.remoteness;
     });
-    $('#optimalMove').text(nextMoves[0].move);
+    if (game.currentMoveValue && nextMoves[0].remoteness > game.currentMoveValue.remoteness) {
+        $('#optimalMove').text("Solved!");
+    } else {
+        $('#optimalMove').text(nextMoves[0].move);
+    }
 }
 
 // remove all indicators of move values
 function clearMoveValues(){
-	$('optimalMove').hide();
+	$('#optimalMove')[0].style.display="none";
 }
 
 // converts our own representation of the board (2d/3d array) into a board string
@@ -155,7 +205,7 @@ function getBGColor() {
 			}
 		}
 	} else { //color is in the form rgb(r, g, b)a
-		var rgb =color.match(/rgb\(\s*([0-9]*)\s*,\s*([0-9]*)\s*,\s*([0-9]*)\s*\)/);
+		var rgb =color.match(/rgba?\(\s*([0-9]*)\s*,\s*([0-9]*)\s*,\s*([0-9]*)\s*.*\)/);
 		if (rgb && rgb.length == 4) {
 			var rgbcolor = parseInt(rgb[3]) + (parseInt(rgb[2])<<8) + (parseInt(rgb[1])<<16);
 			color = "000000" + rgbcolor.toString(16);

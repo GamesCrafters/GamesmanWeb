@@ -1,6 +1,6 @@
 html, body, h1, h2, h3, h4, h5, h6, ul, ol, dl { margin: 0; padding: 0 }
-html { color: #fff; background-color: #006; font: 1em/1.2 Helvetica, Arial, sans-serif }
-body { margin: 0 auto }
+html { font: 1em/1.2 Helvetica, Arial, sans-serif }
+body { color: #fff; background-color: #006; margin: 0 auto }
 h1, h2, h3, h4, h5, h6 { }
 :link, :visited { color: #01b }
 .nav :link, .nav :visited { color: #fff }
