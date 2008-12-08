@@ -136,8 +136,6 @@ function getUserBoard() {
 		$("#userP"+piece).click(function(p) {
 			return function(){
 				curPiece = p;
-				url = "url(\"" + $("#userP" + curPiece + "img").attr("src") + "\")";
-				$("#board").css("cursor", "url('images/tcross/dot.png')");
 			};
 		}(piece));
 	
