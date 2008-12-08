@@ -58,12 +58,15 @@ String[] canonicalNames = gameDictionary.getCanonicalNames();
 for (int i = 0; i < canonicalNames.length; i++) {
     String canonicalName = canonicalNames[i];
     String internalName = gameDictionary.getInternalName(canonicalName);
+    boolean puzz = gameDictionary.getIsPuzzle(internalName);
+    String launchstr = puzz ? "Launch Puzzle" : "Launch Game";
 %>
             <tr><td><%= canonicalName %></td><td><%= internalName %></td><td><a
-		href="ui/puzzle.jsp?puzzle=<%= internalName %>"><%= internalName %></a></tr><%
+		href="ui/puzzle.jsp?puzzle=<%= internalName %>"><%= launchstr %></a></tr><%
 }
 %>
         </table>
+<% if (false) { %>
         <h2>Name Lookups</h2>
         <form action="service/games/getInternalName" method="get">
             <fieldset>
@@ -79,5 +82,6 @@ for (int i = 0; i < canonicalNames.length; i++) {
                 <p><button type="submit">Lookup External Name</button></p>
             </fieldset>
         </form>
+<% } %>
     </body>
 </html>

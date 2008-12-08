@@ -1,5 +1,28 @@
+
+var waitcount = 0;
+function waiting() {
+    if (waitcount == 0) {
+        setTimeout(function() {
+            if (waitcount) {
+                document.getElementById("waitingnotice").style.visibility = "visible";
+                document.body.style.cursor = "wait";
+            }
+        }, 100);
+    }
+    waitcount += 1;
+}
+
+function doneWaiting() {
+    waitcount -= 1;
+    if (waitcount == 0) {
+        document.getElementById("waitingnotice").style.visibility = "hidden";
+        document.body.style.cursor = "auto";
+    }
+}
+
 GCWeb = {
     newPuzzleGame: function(gameName, width, height, options) {
+
         if(width <= 0 || height <= 0) {
             return null; // ERROR
         }
@@ -110,7 +133,9 @@ GCWeb = {
                         return;
                     }
                     
+                    waiting();
                     $.getJSON(url, {}, function (json) {
+                        doneWaiting();
                         if (json && json.response && !json.error) {
                             onValueReceived(json.response);
                         }
@@ -137,7 +162,9 @@ GCWeb = {
                         return;
                     }
                     
+                    waiting();
                     $.getJSON(url, {}, function (json) {
+                        doneWaiting();
                         if (json && json.response && !json.error) {
                             onMoveValuesReceived(json.response);
                         }
@@ -218,7 +245,9 @@ GCWeb = {
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
+                    waiting();
                     $.getJSON(url, {}, function (json) {
+                        doneWaiting();
                         callback(json);
                     });
                 },
@@ -227,7 +256,9 @@ GCWeb = {
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
+                    waiting();
                     $.getJSON(url, {}, function (json) {
+                        doneWaiting();
                         callback(json);
                     });
                 },

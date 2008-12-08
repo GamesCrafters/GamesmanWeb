@@ -66,6 +66,8 @@ public class GameDictionary {
     }
     public class GameInfo {
         private String canonicalName;
+        public String uifile;
+        public boolean puzzle;
         private ArrayList<HostInfo> hosts;
         private Random rand;
         
@@ -201,11 +203,15 @@ public class GameDictionary {
                 NamedNodeMap attributes = game.getAttributes();
                 Node internalNode = attributes.getNamedItem("internal-name");
                 Node canonicalNode = attributes.getNamedItem("canonical-name");
+                Node puzzleNode = attributes.getNamedItem("puzzle");
+                Node urlNode = attributes.getNamedItem("ui");
                 if (internalNode != null && canonicalNode != null) {
                     String internalName = internalNode.getNodeValue();
                     GameInfo myInfo = new GameInfo(canonicalNode.getNodeValue());
-                    addMapping(internalName, myInfo);
+                    myInfo.puzzle = (puzzleNode != null);
+                    myInfo.uifile = (urlNode != null) ? urlNode.getNodeValue() : null;
                     
+                    addMapping(internalName, myInfo);
                     addServers(myInfo, game.getChildNodes());
                 }
             }
@@ -263,6 +269,25 @@ public class GameDictionary {
         return canonicalName;
     }
     
+    public synchronized boolean getIsPuzzle(String internalName) {
+        boolean ispuzzle = false;
+        if (gameInfo.containsKey(internalName)) {
+            ispuzzle = gameInfo.get(internalName).puzzle;
+        }
+        return ispuzzle;
+    }
+    
+    public synchronized String getUI(String internalName) {
+        String uifile = internalName;
+        if (gameInfo.containsKey(internalName)) {
+            String ui = gameInfo.get(internalName).uifile;
+            if (ui != null) {
+                uifile = ui;
+            }
+        }
+        return uifile;
+    }
+    
     public synchronized String getInternalName(String canonicalName) {
         String internalName = null;
         if (canonicalToInternal.containsKey(canonicalName)) {
@@ -275,7 +300,7 @@ public class GameDictionary {
         Set<String> keys = canonicalToInternal.keySet();
         String[] names = new String[keys.size()];
         keys.toArray(names);
-        return names;
+        return names;	
     }
     
     @Override
