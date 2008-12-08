@@ -21,21 +21,22 @@ var stp = 135;
 // piece image width/height (size)
 var sz = 50;
 
-var animationSpeed = 350; // milliseconds
+var animationSpeed = 225; // milliseconds
 
 var chosenBoard;
 
 var width = 9;
 var height = 4;
 
-// x's mark possible clickable positions:
-//   0 1 2 3 4 5 6 7 8
-//-1 - - - - - x x - -
-// 0 - - x x - - - - -
-// 1 x - - - - - - - x
-// 2 x - - - - - - - x
-// 3 - - - - - x x - -
-// 4 - - x x - - - - -
+// x's mark possible clickable positions
+// X marks top-right of clickables
+//  -1 0 1 2 3 4 5 6 7 8 9
+//-1 * * * * * * X x * * *
+// 0 * * * X x * - - * * *
+// 1 X x - - - - - - - X x
+// 2 x x - - - - - - - x x
+// 3 * * * - - * X x * * *
+// 4 * * * X x * * * * * *
 var clickables = [[0, 2], [-1, 5], [1, -1], [1, 8], [4, 2], [3, 5]];
 			  
 // used for coloring
@@ -44,28 +45,37 @@ var moveValueClasses = ["lose-move", "tie-move", "win-move"];
 var nextMoves = [];
 var lastMove = -1;
 
-var options = {"circle": 1, "binArt": 1, "dots": 1, "exactSol": 1};
+var options = {"circle": 0, "binArt": 0, "dots": 1, "exactSol": 1};
 var opKeys = ["circle", "binArt", "dots", "exactSol"];
-
-// determined by radio button on options page
-var userWantsRandomBoard = true;
 
 $(document).ready(function() {
 	// hide the gameboard while user chooses options
 	$("#board").hide();
 	// hide the board input panel while user chooses options
 	$("#inputBoard").hide();
+	// hide exact solution
+	$("#solInfo").hide();
 	
-	// set up result of clicking the start button on options page
-	$("#startButton").click(function() {
+	// set up result of clicking one of the start button on options page
+	$("input[name='startoption']").click(function() {
 		getSelectedOptions();
 		
 		// make sure the user has at least chosen one of the sets of pieces
 		if (options.circle || options.binArt || options.dots) {
 			setUpImagePositions();
 			
+			// set up showing of solution
+			if (!options.exactSol) {
+				if (!options.circle)
+					$("#inexactCircle").hide();
+				if (!options.binArt)
+					$("#inexactBinArt").hide();
+				if (!options.dots)
+					$("#inexactDots").hide();
+			}
+			
 			// handle the two possible radio button options:
-			if (userWantsRandomBoard) {
+			if ($(this).attr("id") == "getRandomBoard") {
 				chosenBoard = getRandomBoard();
 				startGame();
 			}
@@ -126,6 +136,8 @@ function getUserBoard() {
 		$("#userP"+piece).click(function(p) {
 			return function(){
 				curPiece = p;
+				url = "url(\"" + $("#userP" + curPiece + "img").attr("src") + "\")";
+				$("#board").css("cursor", "url('images/tcross/dot.png')");
 			};
 		}(piece));
 	
@@ -133,25 +145,21 @@ function getUserBoard() {
 	// the user doesn't want to use and put them in a separate category called "off"
 	if (!options.circle) {
 		$("#placeCircle").hide();		
-		// (once the 0th piece is placed in "off", inputBoard actually shifts so
-		// that the next piece is now the 0th piece)
-		document.choosePiece.inputBoard[0].name = "off";
-		document.choosePiece.inputBoard[0].name = "off";
-		document.choosePiece.inputBoard[0].name = "off";
-		document.choosePiece.inputBoard[0].name = "off";
+		// put the circle pieces in a different category
+		for (piece = 0; piece < 4; piece++)
+			$("#userP" + piece).attr("name", "off");
 	}
 	if (!options.binArt) {
 		$("#placeBinArt").hide();
-		var buttonNum = document.choosePiece.inputBoard.length - 5;
-		document.choosePiece.inputBoard[buttonNum].name = "off";
-		document.choosePiece.inputBoard[buttonNum].name = "off";
+		// put the binArt pieces in a different category
+		for (piece = 4; piece < 6; piece++)
+			$("#userP" + piece).attr("name", "off");
 	}
 	if (!options.dots) {
 		$("#placeDots").hide();
-		buttonNum = document.choosePiece.inputBoard.length - 3;
-		document.choosePiece.inputBoard[buttonNum].name = "off";
-		document.choosePiece.inputBoard[buttonNum].name = "off";
-		document.choosePiece.inputBoard[buttonNum].name = "off";
+		// put the binArt pieces in a different category
+		for (piece = 6; piece < 9; piece++)
+			$("#userP" + piece).attr("name", "off");
 	}
 	
 	// simulate the user clicking the first piece's radio button
@@ -164,23 +172,35 @@ function getUserBoard() {
 		for (col = 0; col < width; col++) {
 			$("#cell-"+row+"-"+col).click(function(row, col) {
 				return function(){
-					// make sure the cell the user clicked on exists and does not already contain a piece
-					if ($("#cell-"+row+"-"+col).attr("src") == emptyImgSrc && chosenBoard.indexOf(row * width + col) < 0) {
-						// get the currently selected button
-						for (but = 0; but < document.choosePiece.inputBoard.length; but++)
-							if (document.choosePiece.inputBoard[but].checked) {
-								var curButton = but;
-								break;
-							}
-						
+					cellSrc = $("#cell-"+row+"-"+col).attr("src"); 
+					// make sure the cell the user clicked on is either empty or contains a piece to be replaced
+					if (cellSrc == emptyImgSrc || imgSrc.indexOf(cellSrc) >= 0) {					
 						// update the board
-						chosenBoard[curPiece] = row * width + col;
+						pos = row * width + col;
+						pieceAlreadyThere = chosenBoard.indexOf(pos);
+						if (pieceAlreadyThere >= 0) {
+							chosenBoard[pieceAlreadyThere] = -1; // replace the piece if there's one there
+							$("#userP" + pieceAlreadyThere + "img").css("border", ""); // piece is no longer placed so unhighlight
+						}
+						chosenBoard[curPiece] = pos;
 						
-						// if the user wants to cycle through pieces as they place them and they aren't
-						// on the last piece, then automatically click the next radio button
-						if (document.choosePiece.cyclePieces.checked && 
-							curButton != document.choosePiece.inputBoard.length - 1)
-							document.choosePiece.inputBoard[curButton+1].click();
+						// indicate the pieces has been placed by highlighting it
+						$("#userP" + curPiece + "img").css("border", "3px solid yellow");
+						
+						// if the user wants to cycle through pieces as they place them
+						// then automatically click the next radio button
+						if ($("#cycleThroughPieces").is(":checked")) {
+							// get all the buttons
+							var allUnclickedButtons = $("input[name='inputBoard']");
+							for (but = 0; but < allUnclickedButtons.length; but++) {
+								var button = allUnclickedButtons[but];
+								// check if the piece corresponding to the button has been placed
+								if (!$(button).is(":checked") && chosenBoard[parseInt($(button).attr("value"))] == -1) {
+									$(button).click();
+									break;
+								}
+							}
+						}
 						
 						displayBoard(chosenBoard);
 					}
@@ -210,6 +230,31 @@ function startGame() {
 	$("#board").show();
 	// but hide the menu for placing pieces
 	$("#inputBoard").hide();
+	// show button to allow user to look at solution
+	$("#solInfo").show();
+	
+	// allow the user to show or hide the solution
+	$("#showSol").click(function() {
+		fadeSpeed = 600; // milliseconds
+		if ($(this).is(":checked")) {
+			if (options.exactSol)
+				$("#exactSolDiv").fadeIn(fadeSpeed);
+			else
+				$("#inexactSolDiv").fadeIn(fadeSpeed);
+		}
+		else {
+			if (options.exactSol)
+				$("#exactSolDiv").fadeOut(fadeSpeed);
+			else
+				$("#inexactSolDiv").fadeOut(fadeSpeed);
+		}
+	});
+	
+	// hide solution info by default and uncheck box
+	$("#showSol").attr("checked", false);
+	$("#exactSolDiv").hide();
+	$("#inexactSolDiv").hide();
+			
 	
 	var game = GCWeb.newPuzzleGame("tcross", width, height, {
 		onNextValuesReceived: onNextValuesReceived,
@@ -217,8 +262,8 @@ function startGame() {
 		updateMoveValues: updateMoveValues, 
 		clearMoveValues: clearMoveValues,
 		options: options,
-		getPositionValue: getPositionValue,
-		getNextMoveValues: getNextMoveValues,
+		//getPositionValue: getPositionValue,
+		//getNextMoveValues: getNextMoveValues,
 		debug: 0
 	});
 
@@ -244,7 +289,14 @@ function startGame() {
 							(nextMoves[j].move == "L" && imgSrc == rightSliderSrc) ||
 							(nextMoves[j].move == "D" && (imgSrc == topLeftSliderSrc || imgSrc == botRightSliderSrc)) ||
 							(nextMoves[j].move == "U" && (imgSrc == topRightSliderSrc || imgSrc == botLeftSliderSrc))) {
-							game.doMove(nextMoves[j]);
+							// store next move before set to empty
+							var nextMove = nextMoves[j];
+							
+							// set the nextMoves to empty temporarily - they will be set to new values once the
+							// server returns them
+							nextMoves = [];
+							
+							game.doMove(nextMove);
 							break;
 						}
 					}
@@ -398,7 +450,6 @@ function getSelectedOptions() {
 		checked = document.optionsform.solveoptions[i].checked;
 		options[opKeys[i]] = checked ? 1 : 0;
 	}
-	userWantsRandomBoard = document.optionsform.useroptions[0].checked;
 }
 
 function getRandomBoard() {

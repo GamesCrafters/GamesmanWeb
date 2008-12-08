@@ -4,3 +4,7 @@
 }
 
 .valid-move { background-color: white; }
+
+#getRandomBoard { background-color: darkblue; color: yellow; border: 3px outset yellow; }
+#getUserBoard { background-color: darkblue; color: yellow; border: 3px outset yellow; }
+#donePlacingPieces { background-color: darkblue; color: yellow; border: 3px outset yellow; }

@@ -33,38 +33,81 @@
 			  <!-- bottom row -->
 			  <img id="cell-3-2">
 			  <img id="cell-3-3">
-			 </div>
-		  <div id="inputBoard">
-			<br><div>Choose a piece to be placed on the board, then click where you want it</div>
-			<form name="choosePiece">
-			<input id="cycleThroughPieces" type="checkbox" name="cyclePieces" value="cycle" checked>Cycle through pieces as you place them on the board?<br>
-			<div id="placeCircle">Circle pieces:<br>
-				<input id="userP0" type="radio" name="inputBoard" value="1" checked><img src="images/tcross/topLeft.png" width="25" height="25">
-				<input id="userP1" type="radio" name="inputBoard" value="2"><img src="images/tcross/topRight.png" width="25" height="25">
-				<input id="userP2" type="radio" name="inputBoard" value="3"><img src="images/tcross/botLeft.png" width="25" height="25">
-				<input id="userP3" type="radio" name="inputBoard" value="4"><img src="images/tcross/botRight.png" width="25" height="25">
 			</div>
-			<div id="placeBinArt">Binary Arts pieces:<br>
-				<input id="userP4" type="radio" name="inputBoard" value="B"><img src="images/tcross/bin.png" width="25" height="25">
-				<input id="userP5" type="radio" name="inputBoard" value="A"><img src="images/tcross/art.png" width="25" height="25">
+			<div id="solInfo">
+				The solution can be displayed below for your reference:<br>
+				<label><input id="showSol" type="checkbox" name="showSol" value="show"> Show Solution</label><br>
+				<div id="exactSolDiv">You are playing for the exact solution:<br><br>
+					<img id="exactSol" src="images/tcross/exactSol.jpg">
+				</div>
+				<div id="inexactSolDiv">You are playing for the inexact solution.<br>
+					To win, you must have all of the following piece arrangements somewhere on the board:
+					<div id="inexactCircle"><br>
+						<img src="images/tcross/topLeft.png" width="50" height="50">
+						<img src="images/tcross/topRight.png" width="50" height="50"><br>
+						<img src="images/tcross/botLeft.png" width="50" height="50">
+						<img src="images/tcross/botRight.png" width="50" height="50">
+					</div>
+					<div id="inexactBinArt"><br>
+						<img src="images/tcross/bin.png" width="50" height="50">
+						<img src="images/tcross/art.png" width="50" height="50">
+					</div>
+					<div id="inexactDots"><br>
+						<img src="images/tcross/dot.png" width="50" height="50">
+						<img src="images/tcross/dot.png" width="50" height="50">
+						<img src="images/tcross/dot.png" width="50" height="50">
+					</div>
+				</div>
 			</div>
-			<div id="placeDots">Dots pieces:<br>
-			<input id="userP6" type="radio" name="inputBoard" value="O"><img src="images/tcross/dot.png" width="25" height="25">
-			<input id="userP7" type="radio" name="inputBoard" value="O"><img src="images/tcross/dot.png" width="25" height="25">
-			<input id="userP8" type="radio" name="inputBoard" value="O"><img src="images/tcross/dot.png" width="25" height="25"><br>
-			</div><br>
-			<input id="donePlacingPieces" type="button" name="doneInputBoard" value="Done Placing Pieces">
-			</form>
-		  </div>
+		    <div id="inputBoard">
+				<br><div>Choose a piece to be placed on the board, then click where you want it</div>
+				<form name="choosePiece">
+				<label><input id="cycleThroughPieces" type="checkbox" name="cyclePieces" value="cycle" checked> Cycle through pieces as you place them on the board?</label><br>
+				<div id="placeCircle">Circle pieces:<br>
+					<label><input id="userP0" type="radio" name="inputBoard" value="0" checked>
+						<img id="userP0img" src="images/tcross/topLeft.png" width="30" height="30"></label>
+					<label><input id="userP1" type="radio" name="inputBoard" value="1">
+						<img id="userP1img" src="images/tcross/topRight.png" width="30" height="30"></label>
+					<label><input id="userP2" type="radio" name="inputBoard" value="2">
+						<img id="userP2img" src="images/tcross/botLeft.png" width="30" height="30"></label>
+					<label><input id="userP3" type="radio" name="inputBoard" value="3">
+						<img id="userP3img" src="images/tcross/botRight.png" width="30" height="30"></label>
+				</div>
+				<div id="placeBinArt">Binary Arts pieces:<br>
+					<label><input id="userP4" type="radio" name="inputBoard" value="4">
+						<img id="userP4img" src="images/tcross/bin.png" width="30" height="30"></label>
+					<label><input id="userP5" type="radio" name="inputBoard" value="5">
+						<img id="userP5img" src="images/tcross/art.png" width="30" height="30"></label>
+				</div>
+				<div id="placeDots">Dots pieces:<br>
+					<label><input id="userP6" type="radio" name="inputBoard" value="6">
+						<img id="userP6img" src="images/tcross/dot.png" width="30" height="30"></label>
+					<label><input id="userP7" type="radio" name="inputBoard" value="7">
+						<img id="userP7img" src="images/tcross/dot.png" width="30" height="30"></label>
+					<label><input id="userP8" type="radio" name="inputBoard" value="8">
+						<img id="userP8img" src="images/tcross/dot.png" width="30" height="30"></label><br>
+				</div><br>
+				<input id="donePlacingPieces" type="button" name="doneInputBoard" value="Done Placing Pieces">
+				</form>
+			</div>
 			<div id="Options">
-			  <br><div>Game Options</div>
+			  <br><div><b>Puzzle Options</b></div>
 			  <form name="optionsform">
-			  <input type="checkbox" name="solveoptions" value="circle">Play with Four Circle pieces<br>
-			  <input type="checkbox" name="solveoptions" value="binArt">Play with Two Binary Arts pieces<br>
-			  <input type="checkbox" name="solveoptions" value="dots" checked>Play with Three Dots pieces<br>
-			  <input type="checkbox" name="solveoptions" value="exactSol" checked>Play for Exact Solution<br><br>
-			  <input type="radio"    name="useroptions" value="random" checked>Random Board<br>
-			  <input type="radio"    name="useroptions" value="user">Input My Own Board<br><br>
-			  <input id="startButton" type="button"   name="useroptions" value="Start Game">
+			  Choose your pieces:<br>
+			  <label><input type="checkbox" name="solveoptions" value="circle">
+				<img src="images/tcross/topLeft.png" width="30" height="30">
+				<img src="images/tcross/topRight.png" width="30" height="30">
+				<img src="images/tcross/botLeft.png" width="30" height="30">
+				<img src="images/tcross/botRight.png" width="30" height="30"></label><br>
+			  <label><input type="checkbox" name="solveoptions" value="binArt">
+				<img src="images/tcross/bin.png" width="30" height="30">
+				<img src="images/tcross/art.png" width="30" height="30"></label><br>
+			  <label><input type="checkbox" name="solveoptions" value="dots" checked>
+				<img src="images/tcross/dot.png" width="30" height="30">
+				<img src="images/tcross/dot.png" width="30" height="30">
+				<img src="images/tcross/dot.png" width="30" height="30"></label><br><br>
+			  <label><input type="checkbox" name="solveoptions" value="exactSol" checked> Play for Exact Solution</label><br><br>
+			  <input id="getRandomBoard" type="button" name="startoption" value="Get a Random Board"> or 
+			  <input id="getUserBoard" type="button" name="startoption" value="Input My Own Board">
 			  </form>
 			</div>
