@@ -194,7 +194,7 @@ GCWeb = {
 						} else {
 							if (moveValue.value >= 1 && moveValue.value <= 3) {
 								//text = ['Lose','Draw','Win'][moveValue.value-1];
-								text = 'Solvable in ' + moveValue.remoteness + " move"
+								text = 'Solvable in ' + moveValue.remoteness + " move" +
 								       (moveValue.remoteness == 1 ? "" : "s") + ".";
 							} else {
 								text = 'Puzzle not started.';
