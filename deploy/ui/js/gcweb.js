@@ -194,9 +194,9 @@ GCWeb = {
 						} else {
 							if (moveValue.value >= 1 && moveValue.value <= 3) {
 								//text = ['Lose','Draw','Win'][moveValue.value-1];
-								text = 'Solvable in ' + moveValue.remoteness + "\n" + hist.value;
+								text = 'Solvable in ' + moveValue.remoteness;
 							} else {
-								text = 'Complete';
+								text = 'Prediction state undefined.';
 							}
 						}
                         hist.text(text);
