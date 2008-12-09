@@ -1,36 +1,45 @@
 #game {
 	text-align: center;
 }
-body {
-	color:white;
-}
-table {
+
+#game table {
 	margin-left: auto;
 	margin-right: auto;
 }
-table.keyboard td {
+#game .keyboard td {
 	border: outset 2px #fff;
 	vertical-align: top;
 	color: #fff;
 	font-family: Arial,Helvetica;
 	font-size: 12px;
 }
-.letter {
+
+#game .keyboard .move-key:hover {
+	background: #009;
+	cursor: pointer;
+}
+
+#game .keyboard .move-key:active {
+	border-style: inset;
+	background: #003;
+}
+
+#game .letter {
 	font-size: 10px;
 	font-weight: normal;
 	font-family: verdana;
 	text-align: left;
 }
-.move {
+#game .move {
 	text-align: center;
 }
 /* TODO - how to extract from .win-move */
-table.keyboard td.win {
+#game .keyboard td.win {
 	border-color: #0f0;
 }
-table.keyboard td.lose {
+#game .keyboard td.lose {
 	border-color: #8a0000;
 }
-table.keyboard td.tie {
+#game .keyboard td.tie {
 	border-color: #ff0;
 }

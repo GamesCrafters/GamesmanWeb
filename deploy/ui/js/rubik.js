@@ -78,14 +78,24 @@ $(document).ready(function(){
     	table += "<td style='border: none;' width='" + 20*row + "' />"
     	for(col in qwerty[row]) {
     		key = qwerty[row][col];
-    		turn = keyMap[key];
-    		table += "<td id='" + key + "' width='30' height='30'><div class='letter'>" + key + "</div><div class='move'>" + (typeof(turn) != 'undefined' ? turn : "") + "</div></td>";
+    		turn = keyMap[key] || "";
+    		table += "<td id='" + key + "' width='30' height='30'><div class='letter'>" + key + "</div><div class='move'>" + turn + "</div></td>";
     	}
     	table += "</tr>";
     	table += "</table>";
     }
     table += "</table>";
     $('#key-help').append(table);
+	
+	var _createClickHandler = function(key) {
+		return function _handleClick() {
+			$("#cube").get(0).doMove(keyMap[key]);
+		};
+	};
+	
+	for (var key in keyMap) {
+		$("#" + key).click(_createClickHandler(key));
+	}
 });
 
 function debug(mytext) {
