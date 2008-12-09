@@ -184,8 +184,7 @@ GCWeb = {
                 // set the prediction message announcing the number of moves to win
                 setRemoteness: function (moveValue) {
                     this.currentMoveValue = moveValue;
-                    $('#prediction > span').text(text+" in "+moveValue.remoteness);
-                    var hist = document.getElementById('all-history');
+                    var hist = $('#prediction > span');
                     if (hist) {
 						var text = "";
 						if (moveValue.remoteness < 0) {
