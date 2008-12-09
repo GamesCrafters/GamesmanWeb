@@ -75,7 +75,7 @@ $(document).ready(function(){
     for(row in qwerty) {
     	table += '<table align="center" class="keyboard">';
     	table += "<tr>";
-    	table += "<td style='border: none; width: " + 20 * row + "'></td>"
+    	table += "<td style='border: none; width: " + 20 * row + "'>&nbsp;</td>"
     	for(col in qwerty[row]) {
     		key = qwerty[row][col];
     		turn = keyMap[key] || "";
@@ -95,7 +95,7 @@ $(document).ready(function(){
 	};
 	
 	for (var key in keyMap) {
-		$("#" + key).click(_createClickHandler(key)).addClass(".move-key");
+		$("#" + key).click(_createClickHandler(key)).addClass("move-key");
 	}
 });
 
