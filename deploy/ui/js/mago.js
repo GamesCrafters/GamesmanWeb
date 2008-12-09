@@ -73,6 +73,7 @@ $(document).ready(function(){
 			}
 		}
 });
+
 function getBoardString(currentBoard) {
 	var str = '';
 	for(row=0;row<height;row++) {

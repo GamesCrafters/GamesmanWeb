@@ -34,48 +34,41 @@
             $turn++;
 			
 		}) 
-		
+	
+	// starting left position in px
+18var slp = 240;
+19// starting top position in px
+20var stp = 135;
+21// piece image width/height (size)
+22var sz = 50;
     });*/
+		
     </script>
 
 </head>
-<body>
-
-<div id='board'>
-    <span>
-        <img src="images/mago/nwcorner.png" style="position:absolute;">
-    </span>
-    <span>
-        <img src="images/mago/necorner.png" style="position:absolute; left: 108px;">
-    </span>
+    <div id='board' style="display: block; height: 350px">
+    	<p>
+            <img src="images/mago/nwcorner.png" style="position:absolute; left: 194px; top: 154px">
+            <img src="images/mago/necorner.png" style="position:absolute; left: 294px; top: 154px;">
+            <img src="images/mago/swcorner.png" style="position:absolute; left: 194px; top: 254px;">
+            <img src="images/mago/secorner.png" style="position:absolute; left: 294px; top: 254px;">
+        </p>
+    </div>
     
-    <span>
-        <img src="images/mago/swcorner.png" style="position:absolute; top: 108px; left: 8px;">
-    </span>
-    
-    <span>
-        <img src="images/mago/secorner.png" style="position:absolute; top: 108px; left: 108px;">
-    </span>
-    
-    <span>
-        <img src="images/mago/secorner.png" style="position:absolute; top: 108px; left: 108px;">
-    </span>
+    <div id='pieces'>
+        <span style="position:absolute; top: 176px; left: 219px; width: 100px; height: 100px">
+            <img id='cell-0-0' class='click' src="images/mago/blank.png">
+        </span>
+        <span style="position:absolute; top: 176px; left: 319px;">
+            <img id='cell-0-1' class='click' src="images/mago/blank.png" >
+        </span>
+        <span style="position:absolute; top: 279px; left: 219px;">
+            <img id='cell-1-0' class='click' src="images/mago/blank.png" >
+        </span>
+        <span style="position:absolute; top: 279px; left: 319px;">
+            <img id='cell-1-1' class='click' src="images/mago/blank.png" >
+        </span>
+    </div>
 </div>
-
-<div id='pieces'>
-	<span style="position:absolute; top: 38px; left: 35px;">
-    	<img id='cell-0-0' class='click' src="images/mago/blank.png">
-    </span>
-    <span style="position:absolute; top: 139px; left: 35px;">
-    	<img id='cell-0-1' class='click' src="images/mago/blank.png" >
-    </span>
-	<span style="position:absolute; top: 39px; left: 136px;">
-    	<img id='cell-1-0' class='click' src="images/mago/blank.png" >
-    </span>
-	<span style="position:absolute; top: 139px; left: 136px;">
-    	<img id='cell-1-1' class='click' src="images/mago/blank.png" >
-    </span>
-</div>
-
 </body>
 </html>
