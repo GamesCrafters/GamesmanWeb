@@ -9,6 +9,7 @@ var height = 3;
 var meanings = ['','Lose','Draw','Win'];
 var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
+var win = false;
 
 
 $(document).ready(function(){
@@ -48,7 +49,7 @@ $(document).ready(function(){
 			for(var col=0;col<width;col++) {
 				$('#cell-'+row+'-'+col).click(function(row, col){
 					return function(){
-						if(currentBoard[row][col] == EMPTY){
+						if(currentBoard[row][col] == EMPTY && !win){
 							
 								currentBoard[row][col] = pieces[currentPlayer];
 								//currentPlayer = (currentPlayer+1)%2;
@@ -61,10 +62,10 @@ $(document).ready(function(){
 								  //alert("enter else list");
 								  document.getElementById('cell-'+row+'-'+col).src = "images/mago/white.png";
 							}
-							  currentPlayer = (currentPlayer+1)%2;
-		
+							  
 							  // end gui logic
-							 
+							
+							currentPlayer = (currentPlayer+1)%2; 
 							onExecutingMove(game, currentBoard);
 							 
 						}
@@ -78,7 +79,7 @@ function getBoardString(currentBoard) {
 	var str = '';
 	for(row=0;row<height;row++) {
 		for(col=0;col<width;col++) {
-			str += board[row][col];
+			str += currentBoard[row][col];
 		}
 	}
 	return str;
@@ -101,4 +102,10 @@ function onExecutingMove(game, currentBoard){
             $('#cell-'+row+'-'+col).addClass(moveValueClasses[json[i].value]);
         }
     });
+	//checkWin(getBoardString(currentBoard));
 }
+/*
+function checkWin(currentBoard) {
+	game.
+}
+*/
