@@ -14,12 +14,12 @@
 	font-size: 12px;
 }
 
-#game .keyboard .move-key:hover {
+#game .move-key:hover {
 	background: #009;
 	cursor: pointer;
 }
 
-#game .keyboard .move-key:active {
+#game .move-key:active {
 	border-style: inset;
 	background: #003;
 }

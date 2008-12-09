@@ -73,9 +73,9 @@ $(document).ready(function(){
                   [ 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/' ]];
     table = '';
     for(row in qwerty) {
-    	table += '<table align="center" class="keyboard">';
+    	table += '<table style="margin-left: auto; margin-right: auto" class="keyboard">';
     	table += "<tr>";
-    	table += "<td style='border: none; width: " + 20 * row + "'>&nbsp;</td>"
+    	table += "<td style='border: none; width: " + 20 * row + "px' ></td>"
     	for(col in qwerty[row]) {
     		key = qwerty[row][col];
     		turn = keyMap[key] || "";
@@ -88,14 +88,14 @@ $(document).ready(function(){
     table += "</table>";
     $('#key-help').append(table);
 	
-	var _createClickHandler = function(key) {
+	var createClickHandler = function(key) {
 		return function _handleClick() {
 			$("#cube").get(0).doMove(keyMap[key]);
 		};
 	};
 	
 	for (var key in keyMap) {
-		$("#" + key).click(_createClickHandler(key)).addClass("move-key");
+		$("#" + key).click(createClickHandler(key)).addClass("move-key");
 	}
 });
 
