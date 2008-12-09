@@ -47,6 +47,9 @@ GCWeb = {
                     
                     // get move values in case the user wants to display them
                     this.doMove({board: this.currentBoardString, isSetup: 1});
+                    
+                    this.maxRemotenessSeen = 0;
+                    this.minRemotenessSeen = 0;
                 },
                 
                 // move functions
@@ -63,23 +66,29 @@ GCWeb = {
                     }
                     
                     if(newMove.remoteness != undefined){
-                        width = newMove.remoteness * 10;
-                        if(options.maxRemoteness){
-                            width = newMove.remoteness*100/options.maxRemoteness;
+						// fragile, but measures the width of the history tree without the scrollbar
+                        this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
+                        if(newMove.remoteness > this.maxRemotenessSeen){
+                            this.maxRemotenessSeen = newMove.remoteness;
+                            $("#history-tree").html('');
+                            for(i=0;i<this.previousMoves.length;i++){
+                                width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
+                                $("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>&nbsp;</span></div>").scrollTop(10000);
+                            }
                         }
-                        if(width == 0){
-                            width = '10px';
+                        if(this.maxRemotenessSeen > 0){
+                            width = newMove.remoteness*100/this.maxRemotenessSeen + 10;
                         } else {
-                            width = width+'%';
+                            width = 10;
                         }
                         text = newMove.remoteness;
                         text = '&nbsp;';
-						$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
+						$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
                     }
                     
                     // update the current board string and the move stack
                     this.currentBoardString = newMove.board;
-                    if(newMove.isSetup){
+                    if(!newMove.isSetup){
                         this.previousMoves.push(newMove);
                     }
                     
