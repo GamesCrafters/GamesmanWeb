@@ -255,7 +255,7 @@ function updateMoveValues(nextMoves){
 			}
 		}
     	for(var ch in equivMoves) {
-    		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass();
+    		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass(moveValueClasses.join(" "));
     		$('#' + invertedKeyMap[equivMoves[ch]]).addClass(moveValueClasses[value]);
     	}
     }
