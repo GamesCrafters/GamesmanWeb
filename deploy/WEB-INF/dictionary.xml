@@ -1,4 +1,4 @@
-<game-dictionary>
+ <game-dictionary>
     <game internal-name="1210puzzle" canonical-name="1,2,...,10 (Puzzle version)" puzzle="puzzle"/>
     <game internal-name="connect4" canonical-name="Connect 4" ui="grid">
         <server host="localhost" port="2778" />

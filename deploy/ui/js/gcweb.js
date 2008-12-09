@@ -186,7 +186,8 @@ GCWeb = {
                     this.currentMoveValue = moveValue;
                     var text;
                     if (moveValue.value >= 1 && moveValue.value <= 3) {
-                        text = ['Lose','Draw','Win'][moveValue.value-1];
+                        //text = ['Lose','Draw','Win'][moveValue.value-1];
+						text = 'Solvable';
                     } else {
                         text = 'Complete';
                     }
