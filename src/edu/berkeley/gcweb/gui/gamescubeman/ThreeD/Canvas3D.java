@@ -33,6 +33,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	private final int DEFAULT_HEIGHT = 500;
 	private final int DEFAULT_WIDTH = 400;
 	private double scale = DEFAULT_SCALE;
+	private boolean focusIndicator = true;
 	private Timer t;
 	public Canvas3D() {
 		setFocusable(true);
@@ -43,6 +44,10 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		addFocusListener(this);
 		t = new Timer(10, this);
 		t.start();
+	}
+	
+	public void setFocusIndicator(boolean focusIndicator) {
+		this.focusIndicator = focusIndicator;
 	}
 	
 	public double getScale() {
@@ -249,7 +254,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 		Graphics2D g2d = (Graphics2D) g;
-		if(!isFocusOwner()) {
+		if(!isFocusOwner() && focusIndicator) {
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 			g2d.setComposite(ac);
 		}

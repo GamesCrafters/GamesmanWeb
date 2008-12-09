@@ -53,6 +53,15 @@ $(document).ready(function(){
 		debug: 0
 	});
 	
+	$(this).keypress(function keyDown(e) {
+		var keycode = e.which;
+		var realkey = String.fromCharCode(e.which);
+		var key = realkey.toLowerCase();
+		if(key in keyMap) {
+			$('#cube').get(0).doMove(keyMap[key]);
+		}
+	});
+	
     // load the default board
     game.loadBoard(getBoardString());
     
@@ -263,12 +272,12 @@ function updateMoveValues(nextMoves){
     	old = nextMoves[i].move;
     	var equivMoves = fromCardinalMove(old);
     	value = nextMoves[i].value - 1;
-    	if(nextMoves[i].move.substring(1) == "2" && value == 2) {
-    		for(var ch in equivMoves.slice()) {
-    			equivMoves[ch] = equivMoves[ch].substring(0, 1);
-    			equivMoves.push(equivMoves[ch] + "'");
-			}
-		}
+//    	if(nextMoves[i].move.substring(1) == "2" && value == 2) {
+//    		for(var ch in equivMoves.slice()) {
+//    			equivMoves[ch] = equivMoves[ch].substring(0, 1);
+//    			equivMoves.push(equivMoves[ch] + "'");
+//			}
+//		}
     	for(var ch in equivMoves) {
     		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass(moveValueClasses.join(" "));
     		$('#' + invertedKeyMap[equivMoves[ch]]).addClass(moveValueClasses[value]);

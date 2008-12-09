@@ -52,6 +52,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private ArrayList<Face> legalFaces = null;
 	private boolean cubeRotations = true;
 	private boolean resizable = true;
+	private boolean focusIndicator = true;
 	private void parseParameters() {
 		try {
 			size_x = Integer.parseInt(getParameter("size_x"));
@@ -70,6 +71,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		} catch(Exception e) {}
 		cubeRotations = parseBoolean(getParameter("cube_rotations"), cubeRotations);
 		resizable = parseBoolean(getParameter("resizable"), resizable);
+		focusIndicator = parseBoolean(getParameter("focus_indicator"), focusIndicator);
 		try {
 			legalFaces = new ArrayList<Face>();
 			String faces = getParameter("legal_faces");
@@ -113,6 +115,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					cube.addStateChangeListener(GamesCubeMan.this);
 					cubeCanvas = new CubeCanvas(cube, options);
 					canvas = cubeCanvas.getCanvas();
+					canvas.setFocusIndicator(focusIndicator);
 					resetRotation();
 					
 					resetView = new JButton("Reset View");
@@ -208,7 +211,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					topHalf.add(temp, BorderLayout.PAGE_START);
 					
 					stateField = new JTextField(cube.getState());
-					topHalf.add(stateField, BorderLayout.CENTER);
+//					topHalf.add(stateField, BorderLayout.CENTER);
 
 					JPanel pane = new JPanel(new BorderLayout());
 					setContentPane(pane);
