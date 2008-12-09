@@ -4,8 +4,8 @@ var EMPTY = ' ';
 var currentBoard = [[EMPTY,EMPTY],[EMPTY,EMPTY]];
 var pieces = ['X', 'O'];
 var currentPlayer = 0;
-var width = 3;
-var height = 3;
+var width = 2;
+var height = 2;
 var meanings = ['','Lose','Draw','Win'];
 var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
@@ -73,6 +73,7 @@ $(document).ready(function(){
 				}(row, col));
 			}
 		}
+    onExecutingMove(game, currentBoard);
 });
 
 function getBoardString(currentBoard) {

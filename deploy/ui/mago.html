@@ -1,52 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
-<html>
-<head>
-    <title>Untitled Page</title>
-	
-	<script type="text/javascript" src="http://nyc.cs.berkeley.edu:8080/gcweb/ui/js/gcweb.js"></script> 
-    <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
-    <script type="text/javascript" src="js/mago.js"></script>
-    <script type="text/javascript">
-	/*
-    $(document).ready(function(){
-      $turn = 0;
-	  $EMPTY = '';
-	  //$currentBoard = [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY];
-	  $boardString = '';
-	 var game = GCWeb.newPuzzleGame("mago", 3, 3, {debug: 1});
-
-	 //game.loadBoard(boardString);
-	 if (game == null){
-		 alert("game is null");
-	 }
-	 if(game.getPositionValue("         ",null) == null)
-	 	alert("test");
-	 alert(game.getPositionValue("        ", null));
-      $(".click")
-        //.filter(".click")
-          .click( function(){
-              if ($turn % 2 == 0)
-                $(this).replaceWith("<img class='red' src='images/mago/black.png'/>");
-              else
-                $(this).replaceWith("<img class='red' src='images/mago/white.png' />");
-            
-            $turn++;
-			
-		}) 
-	
-	// starting left position in px
-18var slp = 240;
-19// starting top position in px
-20var stp = 135;
-21// piece image width/height (size)
-22var sz = 50;
-    });*/
-		
-    </script>
-
-</head>
-    <div id='board' style="display: block; height: 350px">
+﻿    <div id='board' style="display: block; height: 350px">
     	<p>
             <img src="images/mago/nwcorner.png" style="position:absolute; left: 194px; top: 154px">
             <img src="images/mago/necorner.png" style="position:absolute; left: 294px; top: 154px;">
@@ -69,6 +21,3 @@
             <img id='cell-1-1' class='click' src="images/mago/blank.png" >
         </span>
     </div>
-</div>
-</body>
-</html>
