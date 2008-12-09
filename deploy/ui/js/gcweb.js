@@ -181,20 +181,27 @@ GCWeb = {
                 },
                 
                 // game messages
-                // set the status message to "Player <player> to win in <remoteness>"
+                // set the prediction message announcing the number of moves to win
                 setRemoteness: function (moveValue) {
                     this.currentMoveValue = moveValue;
                     var text;
-                    if (moveValue.value >= 1 && moveValue.value <= 3) {
-                        //text = ['Lose','Draw','Win'][moveValue.value-1];
-						text = 'Solvable';
-                    } else {
-                        text = 'Complete';
-                    }
+					if (moveValue.remoteness < 0) {
+						text = "Prediction unavailable.";
+					} else if (moveValue.remoteness == 0) {
+						text = "Puzzle complete!";
+					} else {
+						if (moveValue.value >= 1 && moveValue.value <= 3) {
+							//text = ['Lose','Draw','Win'][moveValue.value-1];
+							text = 'Solvable';
+						} else {
+							text = 'Complete';
+						}
+						text += " in "+moveValue.remoteness+"\n"+hist.value;
+					}
                     $('#prediction > span').text(text+" in "+moveValue.remoteness);
                     var hist = document.getElementById('all-history');
                     if (hist) {
-                        hist.value = text+" in "+moveValue.remoteness+"\n"+hist.value;
+                        hist.value = text;
                     }
                 }
             };
@@ -223,11 +230,11 @@ GCWeb = {
             
             $('#option-move-values').change(function(){
                 if($('#option-move-values').is(':checked')){
-                    if(g.previousMoves.length > 0){
+                    //if(g.previousMoves.length > 0){
                         if(options.updateMoveValues){
                             g.getNextMoveValues(g.currentBoardString, function(json){options.updateMoveValues(json);});
                         }
-                    }
+                    //}
                 } else {
                     if(options.clearMoveValues){
                         options.clearMoveValues();
