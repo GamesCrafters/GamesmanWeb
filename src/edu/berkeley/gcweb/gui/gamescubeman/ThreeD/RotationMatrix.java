@@ -59,9 +59,12 @@ public class RotationMatrix {
 		return t;
 	}
 	public boolean isIdentity() {
+		return isIdentity(0);
+	}
+	public boolean isIdentity(double tolerance) {
 		for(int i=0; i<data.length; i++)
 			for(int j=0; j<data[i].length; j++)
-				if((i==j && data[i][j] != 1) || (i!=j && data[i][j] != 0))
+				if((i==j && Math.abs(data[i][j] - 1) > tolerance) || (i!=j && Math.abs(data[i][j] - 0) > tolerance))
 					return false;
 		return true;
 	}

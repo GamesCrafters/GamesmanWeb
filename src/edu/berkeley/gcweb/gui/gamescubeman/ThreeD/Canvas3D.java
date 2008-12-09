@@ -78,6 +78,13 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			x--;
 		if(dirty || !rotationRate.isIdentity() || x != 0 || y != 0) {
 			if(!dragging) {
+				//TODO - drag isn't always working
+				rotationRate = rotationRate.multiply(dragRate);
+				if(rotationRate.isIdentity(0.05)) {
+					rotationRate = new RotationMatrix();
+					dragRate = new RotationMatrix();
+				}
+				System.out.println(rotationRate + "\n" + rotationRate.isIdentity());
 				RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
 				for(Shape3D s : shapes)
 					s.rotate(temp);
@@ -108,6 +115,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	}
 
 	private RotationMatrix rotationRate = new RotationMatrix();
+	private RotationMatrix dragRate = new RotationMatrix();
 	private Point old;
 	private long lastDrag;
 	private HashSet<Integer> keys = new HashSet<Integer>();
@@ -145,6 +153,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {
 		rotationRate = new RotationMatrix();
+		dragRate = new RotationMatrix();
 		dirty = true;
 	}
 	public void mouseReleased(MouseEvent e) {
@@ -159,12 +168,11 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		double deltaX = e.getX() - old.x;
 		double deltaY = e.getY() - old.y;
 		rotationRate = new RotationMatrix(1, deltaX).multiply(new RotationMatrix(0, -deltaY));
+		dragRate = new RotationMatrix(0, deltaY / 20).multiply(new RotationMatrix(1, -deltaX / 20));
 		old = e.getPoint();
 
-		RotationMatrix m = new RotationMatrix();
-		m = m.multiply(new RotationMatrix(1, deltaX).multiply(new RotationMatrix(0, -deltaY)));
 		for(Shape3D s : shapes)
-			s.rotate(m);
+			s.rotate(rotationRate);
 		dirty = true;
 	}
 	public void mouseMoved(MouseEvent e) {

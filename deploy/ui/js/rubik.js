@@ -12,18 +12,18 @@ var doingMove = false;
 var queuedMoves = [];
 
 function invertMap(map) {
-	invertedMap = {};
-	for(key in map) {
+	var invertedMap = {};
+	for(var key in map) {
 		invertedMap[map[key]] = key;
 	}
 	return invertedMap;
 }
 
 function mergeMaps(map1, map2) {
-	merged = {};
-	for(key in map1)
+	var merged = {};
+	for(var key in map1)
 		merged[key] = map1[key];
-	for(key in map2)
+	for(var key in map2)
 		merged[key] = map2[key];
 	return merged;
 }
@@ -71,14 +71,14 @@ $(document).ready(function(){
     var qwerty = [[ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ],
                   [ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';' ],
                   [ 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/' ]];
-    table = '';
-    for(row in qwerty) {
+    var table = '';
+    for(var row = 0; row < qwerty.length; row++) {
     	table += '<table style="margin-left: auto; margin-right: auto" class="keyboard">';
     	table += "<tr>";
     	table += "<td style='border: none; width: " + 20 * row + "px' ></td>"
-    	for(col in qwerty[row]) {
-    		key = qwerty[row][col];
-    		turn = keyMap[key] || "";
+    	for(var col in qwerty[row]) {
+    		var key = qwerty[row][col];
+    		var turn = keyMap[key] || "";
     		table += "<td id='" + key + "' style='width: 30px; height: 30px'>" +
 			    "<div class='letter'>" + key + "</div><div class='move'>" + turn + "</div></td>";
     	}
@@ -189,7 +189,6 @@ function doQuery(turn) {
 		game.loadBoard(getBoardString());
 		return false;
 	}
-	turn = turn.toString(); //this converts from the java object to a string
 	turn = toCardinalMove(turn);
 	for(var i in nextMoves) {
 		if(nextMoves[i].move == turn) {
@@ -201,14 +200,30 @@ function doQuery(turn) {
 	return false;
 }
 function cubeStateChanged(turn) {
+	var face = null;
+	var dir = null;
+	if(turn != null) {
+		turn = turn.toString(); //this converts from the java object to a string
+		face = turn.substring(0, 1);
+		dir = turn.substring(1);
+	}
+	
 	if(queuedMoves.length == 0 && doingMove == false) { //this means a turn actually happened
 		doingMove = true;
 		debug("Nothing in the queue, doing move "+turn);
-		if (!doQuery(turn))
+		if(dir == "2") { //some nastyness to ensure that half turns get converted to quarter turns
+			turn = face;
+			queuedMoves.push(face);
+		}
+		if(!doQuery(turn))
 			doingMove = false;
 	} else {
 		// nextMoves is empty, so queue up the move request.
-		queuedMoves.push(turn);
+		if(dir == "2") { //if we've got a half turn, make it 2 quarter turns
+			queuedMoves.push(face);
+			queuedMoves.push(face);
+		} else
+			queuedMoves.push(turn);
 		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
 	}
 }
