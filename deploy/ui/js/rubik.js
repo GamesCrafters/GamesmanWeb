@@ -95,7 +95,9 @@ $(document).ready(function(){
 	};
 	
 	for (var key in keyMap) {
-		$("#" + key).click(createClickHandler(key)).addClass("move-key");
+		var jq = $("#" + key);
+		jq.addClass("move-key");
+		jq.click(createClickHandler(key));
 	}
 });
 
