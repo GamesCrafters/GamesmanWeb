@@ -95,9 +95,7 @@ $(document).ready(function(){
 	};
 	
 	for (var key in keyMap) {
-		var jq = $("#" + key);
-		jq.addClass("move-key");
-		jq.click(createClickHandler(key));
+		$("#" + key).addClass("move-key").click(createClickHandler(key));
 	}
 });
 
@@ -265,7 +263,7 @@ function updateMoveValues(nextMoves){
 
 // remove all indicators of move values
 function clearMoveValues(){
-	$('table.keyboard td').removeClass();
+	$('.keyboard td').removeClass(moveValueClasses.join(" "));
 }
 
 // converts our own representation of the board (2d/3d array) into a board string
