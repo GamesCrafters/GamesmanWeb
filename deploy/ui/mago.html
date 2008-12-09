@@ -5,12 +5,14 @@
     <title>Untitled Page</title>
 	
 	<script type="text/javascript" src="http://nyc.cs.berkeley.edu:8080/gcweb/ui/js/gcweb.js"></script> 
-    <script type="text/javascript" src="jquery-1.2.6.js"></script>
+    <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+    <script type="text/javascript" src="js/mago.js"></script>
     <script type="text/javascript">
+	/*
     $(document).ready(function(){
       $turn = 0;
 	  $EMPTY = '';
-	  $currentBoard = [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY];
+	  //$currentBoard = [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY];
 	  $boardString = '';
 	 var game = GCWeb.newPuzzleGame("mago", 3, 3, {debug: 1});
 
@@ -25,46 +27,53 @@
         //.filter(".click")
           .click( function(){
               if ($turn % 2 == 0)
-                $(this).replaceWith("<img class='red' src='img/black.png'/>");
+                $(this).replaceWith("<img class='red' src='images/mago/black.png'/>");
               else
-                $(this).replaceWith("<img class='red' src='img/white.png' />");
+                $(this).replaceWith("<img class='red' src='images/mago/white.png' />");
             
             $turn++;
 			
 		}) 
 		
-    });
+    });*/
     </script>
 
 </head>
 <body>
-<span>
-	<img src="img/nwcorner.png" style="position:absolute;">
-</span>
-<span>
-	<img src="img/necorner.png" style="position:absolute; left: 108px;">
-</span>
-<span>
-	<img src="img/swcorner.png" style="position:absolute; top: 108px; left: 8px;">
-</span>
 
-<span>
-	<img src="img/secorner.png" style="position:absolute; top: 108px; left: 108px;">
-</span>
-
+<div id='board'>
+    <span>
+        <img src="images/mago/nwcorner.png" style="position:absolute;">
+    </span>
+    <span>
+        <img src="images/mago/necorner.png" style="position:absolute; left: 108px;">
+    </span>
+    
+    <span>
+        <img src="images/mago/swcorner.png" style="position:absolute; top: 108px; left: 8px;">
+    </span>
+    
+    <span>
+        <img src="images/mago/secorner.png" style="position:absolute; top: 108px; left: 108px;">
+    </span>
+    
+    <span>
+        <img src="images/mago/secorner.png" style="position:absolute; top: 108px; left: 108px;">
+    </span>
+</div>
 
 <div id='pieces'>
-	<span id='0' style="position:absolute; top: 38px; left: 35px;">
-    	<img id='cell-0-0' class='click' src="img/blank.png">
+	<span style="position:absolute; top: 38px; left: 35px;">
+    	<img id='cell-0-0' class='click' src="images/mago/blank.png">
     </span>
-    <span id='1' style="position:absolute; top: 139px; left: 35px;">
-    	<img id='cell-0-1' class='click' src="img/blank.png" >
+    <span style="position:absolute; top: 139px; left: 35px;">
+    	<img id='cell-0-1' class='click' src="images/mago/blank.png" >
     </span>
-	<span id='2' style="position:absolute; top: 39px; left: 136px;">
-    	<img id='cell-1-0' class='click' src="img/blank.png" >
+	<span style="position:absolute; top: 39px; left: 136px;">
+    	<img id='cell-1-0' class='click' src="images/mago/blank.png" >
     </span>
-	<span id='3' style="position:absolute; top: 139px; left: 136px;">
-    	<img id='cell-1-1' class='click' src="img/blank.png" >
+	<span style="position:absolute; top: 139px; left: 136px;">
+    	<img id='cell-1-1' class='click' src="images/mago/blank.png" >
     </span>
 </div>
 
