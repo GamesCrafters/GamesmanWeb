@@ -75,11 +75,12 @@ $(document).ready(function(){
     for(row in qwerty) {
     	table += '<table align="center" class="keyboard">';
     	table += "<tr>";
-    	table += "<td style='border: none;' width='" + 20*row + "' />"
+    	table += "<td style='border: none; width: " + 20 * row + "'></td>"
     	for(col in qwerty[row]) {
     		key = qwerty[row][col];
     		turn = keyMap[key] || "";
-    		table += "<td id='" + key + "' width='30' height='30'><div class='letter'>" + key + "</div><div class='move'>" + turn + "</div></td>";
+    		table += "<td id='" + key + "' style='width: 30px; height: 30px'>" +
+			    "<div class='letter'>" + key + "</div><div class='move'>" + turn + "</div></td>";
     	}
     	table += "</tr>";
     	table += "</table>";
@@ -94,7 +95,7 @@ $(document).ready(function(){
 	};
 	
 	for (var key in keyMap) {
-		$("#" + key).click(_createClickHandler(key));
+		$("#" + key).click(_createClickHandler(key)).addClass(".move-key");
 	}
 });
 
