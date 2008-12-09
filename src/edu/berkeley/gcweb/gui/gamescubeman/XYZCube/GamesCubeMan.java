@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -41,7 +42,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private Canvas3D canvas;
 	private JSlider scale, distance, gap, turningRate;
 	private JSpinner[] dimensions;
-	private JCheckBox antialiasing, colorChooserCheckBox;
+	private JCheckBox antialiasing, colorChooserCheckBox, optionsCheckBox;
 	private JButton resetView, scramble, resetCube;
 	private JTextField stateField;
 	private JRadioButton[] variationButtons;
@@ -93,70 +94,69 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	public void init() {
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				System.out.println(e);
 				canvas.requestFocusInWindow();
 			}
-			public void focusLost(FocusEvent e) {
-			}
+			public void focusLost(FocusEvent e) {}
 		});
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					parseParameters();
 					
+					RollingJPanel options = new RollingJPanel();
+					options.setLayout(new BoxLayout(options, BoxLayout.PAGE_AXIS));
+					
 					cube = new XYZCube(size_x, size_y, size_z);
 					cube.setCubeRotations(cubeRotations);
 					cube.setLegalFaces(legalFaces);
 					
 					cube.addStateChangeListener(GamesCubeMan.this);
-					cubeCanvas = new CubeCanvas(cube);
+					cubeCanvas = new CubeCanvas(cube, options);
 					canvas = cubeCanvas.getCanvas();
 					resetRotation();
 					
-					JPanel buttons = new JPanel();
-					buttons.setLayout(new BoxLayout(buttons, BoxLayout.PAGE_AXIS));
-					
 					resetView = new JButton("Reset View");
+					resetView.setToolTipText(resetView.getText());
 					resetView.setMnemonic(KeyEvent.VK_R);
 					resetView.setFocusable(false);
 					resetView.addActionListener(GamesCubeMan.this);
-					buttons.add(resetView);
 					
 					resetCube = new JButton("Reset Cube");
+					resetCube.setToolTipText(resetCube.getText());
 					resetCube.setFocusable(false);
 					resetCube.addActionListener(GamesCubeMan.this);
-					buttons.add(resetCube);
 					
 					scramble = new JButton("Scramble");
+					scramble.setToolTipText(scramble.getText());
 					scramble.setMnemonic(KeyEvent.VK_S);
 					scramble.setFocusable(false);
 					scramble.addActionListener(GamesCubeMan.this);
-					buttons.add(scramble);
-					
-					antialiasing = new JCheckBox("Antialiasing", canvas.isAntialiasing());
-					antialiasing.setMnemonic(KeyEvent.VK_A);
-					antialiasing.setFocusable(false);
-					antialiasing.addActionListener(GamesCubeMan.this);
-					buttons.add(antialiasing);
 					
 					colorChooserCheckBox = new JCheckBox("Choose colors", cubeCanvas.isColorEditing());
 					colorChooserCheckBox.setMnemonic(KeyEvent.VK_C);
 					colorChooserCheckBox.setFocusable(false);
 					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
-					buttons.add(colorChooserCheckBox);
 					
-					JPanel sliders = new JPanel();
-					sliders.setLayout(new BoxLayout(sliders, BoxLayout.PAGE_AXIS));
+					optionsCheckBox = new JCheckBox("Options", false);
+					optionsCheckBox.setMnemonic(KeyEvent.VK_O);
+					optionsCheckBox.setFocusable(false);
+					optionsCheckBox.addActionListener(GamesCubeMan.this);
 					
 					distance = new JSlider(4, 200, (int) (cube.getCenter()[2]));
 					distance.setFocusable(false);
 					distance.addChangeListener(GamesCubeMan.this);
-					sliders.add(sideBySide(new JLabel("Distance"), distance));
+					
+					antialiasing = new JCheckBox("Antialiasing", canvas.isAntialiasing());
+					antialiasing.setMnemonic(KeyEvent.VK_A);
+					antialiasing.setFocusable(false);
+					antialiasing.addActionListener(GamesCubeMan.this);
+					
+					options.add(sideBySide(new JLabel("Distance"), distance, antialiasing));
 					
 					scale = new JSlider(0, 10000, (int) canvas.getScale());
 					scale.setFocusable(false);
 					scale.addChangeListener(GamesCubeMan.this);
-					sliders.add(sideBySide(new JLabel("Scale"), scale));
+					options.add(sideBySide(new JLabel("Scale"), scale));
 					
 					int[] dim = cube.getDimensions();
 					dimensions = new JSpinner[dim.length];
@@ -171,12 +171,12 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 						dims.add(dimensions[ch]);
 					}
 					if(resizable)
-						sliders.add(dims);
+						options.add(dims);
 					
 					gap = new JSlider(0, 50, (int)(100*cube.getStickerGap()));
 					gap.setFocusable(false);
 					gap.addChangeListener(GamesCubeMan.this);
-					sliders.add(sideBySide(new JLabel("Gap"), gap));
+					options.add(sideBySide(new JLabel("Gap"), gap));
 					
 					turningRate = new JSlider(1, cube.getMaxTurningRate(), cube.getTurningRate());
 					turningRate.setMajorTickSpacing(1);
@@ -184,7 +184,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					turningRate.setPaintTicks(true);
 					turningRate.setFocusable(false);
 					turningRate.addChangeListener(GamesCubeMan.this);
-					sliders.add(sideBySide(new JLabel("Speed"), turningRate));
+					options.add(sideBySide(new JLabel("Speed"), turningRate));
 					
 					ButtonGroup g = new ButtonGroup();
 					CubeVariation[] vars = CubeVariation.values();
@@ -197,13 +197,18 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 						g.add(variationButtons[i]);
 					}
 					if(resizable)
-						sliders.add(sideBySide(variationButtons));
+						options.add(sideBySide(variationButtons));
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
-					topHalf.add(sideBySide(buttons, sliders), BorderLayout.PAGE_START);
+					
+					JPanel temp = new JPanel();
+					temp.setLayout(new BoxLayout(temp, BoxLayout.PAGE_AXIS));
+					temp.add(sideBySide(true, resetView, resetCube, scramble));
+					temp.add(sideBySide(false, colorChooserCheckBox, optionsCheckBox));
+					topHalf.add(temp, BorderLayout.PAGE_START);
 					
 					stateField = new JTextField(cube.getState());
-					topHalf.add(stateField, BorderLayout.CENTER);
+//					topHalf.add(stateField, BorderLayout.CENTER);
 
 					JPanel pane = new JPanel(new BorderLayout());
 					setContentPane(pane);
@@ -237,7 +242,14 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 	
 	private JPanel sideBySide(JComponent... cs) {
+		return sideBySide(false, cs);
+	}
+	private JPanel sideBySide(boolean resize, JComponent... cs) {
 		JPanel p = new JPanel();
+		if(resize)
+			p.setLayout(new GridLayout(1, 0));
+		else
+			p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
 		p.setBackground(Color.WHITE);
 		for(JComponent c : cs)
 			p.add(c);
@@ -273,6 +285,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			canvas.setAntialiasing(antialiasing.isSelected());
 		else if(e.getSource() == colorChooserCheckBox)
 			cubeCanvas.setColorEditing(colorChooserCheckBox.isSelected());
+		else if(e.getSource() == optionsCheckBox)
+			cubeCanvas.setOptionsVisible(optionsCheckBox.isSelected());
 		else if(e.getSource() instanceof JRadioButton)
 			cube.setCubeVariation(getSelectedVariation());
 	}

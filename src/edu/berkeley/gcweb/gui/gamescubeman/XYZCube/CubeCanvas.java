@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
@@ -47,12 +48,14 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 	private XYZCube cube;
 	private Canvas3D canvas;
 	private NColorChooser colorChooser;
-	public CubeCanvas(XYZCube cube) {
+	private JPanel cubeOptions;
+	public CubeCanvas(XYZCube cube, JPanel options) {
 		this.cube = cube;
 		canvas = new Canvas3D();
 		canvas.addKeyListener(this);
 		canvas.addPolyClickListener(this);
 		canvas.addShape3D(cube);
+		this.cubeOptions = options;
 		
 		this.add(canvas, new Integer(0));
 		colorChooser = new NColorChooser();
@@ -63,6 +66,7 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 		colorChooser.setColors(colors.toArray(new Color[0]));
 		colorChooser.setVisible(false);
 		this.add(colorChooser, new Integer(1));
+		this.add(cubeOptions, new Integer(1));
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				canvas.setBounds(0, 0, e.getComponent().getWidth(), e.getComponent().getHeight());
@@ -73,6 +77,9 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 	private boolean colorEditing;
 	public boolean isColorEditing() {
 		return colorEditing;
+	}
+	public void setOptionsVisible(boolean colorEditing) {
+		cubeOptions.setVisible(colorEditing);
 	}
 	public void setColorEditing(boolean colorEditing) {
 		canvas.setColorEditing(colorEditing);

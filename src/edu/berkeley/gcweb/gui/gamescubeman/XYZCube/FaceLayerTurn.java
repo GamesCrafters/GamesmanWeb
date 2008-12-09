@@ -2,7 +2,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
 
 public class FaceLayerTurn {
 	private Face f;
-	private int layer;
+	public int layer;
 	private int cw;
 	public FaceLayerTurn(Face f, int layer, int cw) {
 		this.f = f;

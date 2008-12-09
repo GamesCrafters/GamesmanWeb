@@ -186,7 +186,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 			return bothDone;
 		}
 		public FaceLayerTurn toFaceLayerTurn() {
-			return new FaceLayerTurn(face, layer, cwTurns);
+			return new FaceLayerTurn(face, cubeRotation ? -1 : layer, cwTurns);
 		}
 	}
 
@@ -388,8 +388,9 @@ public class XYZCube extends Shape3D implements ActionListener {
 				t = null;
 			}
 		}
-		if(t != null) //if it hasn't been merged
+		if(t != null) {//if it hasn't been merged
 			turns.add(t);
+		}
 	}
 	
 	private ArrayList<Face> legalFaces;
@@ -398,7 +399,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 	}
 	
 	public void doTurn(Face face, int layer, int cw) {
-		if(legalFaces == null || (legalFaces.contains(face))) {
+		if(legalFaces == null || legalFaces.contains(face)) {
 			layer = Math.min(layer, dimensions[face.getRotationAxis()] - 1);
 			appendTurn(new FaceLayerTurn(face, layer, cw));
 			FaceTurn turn = new FaceTurn(face, layer, cw);
