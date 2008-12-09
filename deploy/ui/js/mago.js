@@ -43,7 +43,7 @@ $(document).ready(function(){
 			}
 		}
 		*/
-	  // var game = GCWeb.newPuzzleGame("mago", 2, 2, {debug: 1});
+	   var game = GCWeb.newPuzzleGame("mago", 2, 2, {debug: 1});
 		for(var row=0;row<height;row++) {
 			for(var col=0;col<width;col++) {
 				$('#cell-'+row+'-'+col).click(function(row, col){
@@ -73,12 +73,20 @@ $(document).ready(function(){
 			}
 		}
 });
-
+function getBoardString(currentBoard) {
+	var str = '';
+	for(row=0;row<height;row++) {
+		for(col=0;col<width;col++) {
+			str += board[row][col];
+		}
+	}
+	return str;
+}
 function onExecutingMove(game, currentBoard){
     game.getPositionValue(getBoardString(currentBoard), function(json){
         $('#current-value').text('Current Value: '+meanings[json.value]);
     });
-    game.getNextMoveValues(getBoardString(newBoard), function(json){
+    game.getNextMoveValues(getBoardString(currentBoard), function(json){
         // clear background color
         for(row=0;row<height;row++) {
             for(col=0;col<width;col++) {
