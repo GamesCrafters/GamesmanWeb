@@ -53,6 +53,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private boolean cubeRotations = true;
 	private boolean resizable = true;
 	private boolean focusIndicator = true;
+	private boolean drawAxis = false;
 	private void parseParameters() {
 		try {
 			size_x = Integer.parseInt(getParameter("size_x"));
@@ -72,6 +73,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		cubeRotations = parseBoolean(getParameter("cube_rotations"), cubeRotations);
 		resizable = parseBoolean(getParameter("resizable"), resizable);
 		focusIndicator = parseBoolean(getParameter("focus_indicator"), focusIndicator);
+		drawAxis = parseBoolean(getParameter("draw_axis"), drawAxis);
 		try {
 			legalFaces = new ArrayList<Face>();
 			String faces = getParameter("legal_faces");
@@ -116,6 +118,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					cubeCanvas = new CubeCanvas(cube, options);
 					canvas = cubeCanvas.getCanvas();
 					canvas.setFocusIndicator(focusIndicator);
+					canvas.setDrawAxis(drawAxis);
 					resetRotation();
 					
 					resetView = new JButton("Reset View");

@@ -34,6 +34,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	private final int DEFAULT_WIDTH = 400;
 	private double scale = DEFAULT_SCALE;
 	private boolean focusIndicator = true;
+	private boolean drawAxis = false;
 	private Timer t;
 	public Canvas3D() {
 		setFocusable(true);
@@ -46,6 +47,9 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		t.start();
 	}
 	
+	public void setDrawAxis(boolean drawAxis) {
+		this.drawAxis = drawAxis;
+	}
 	public void setFocusIndicator(boolean focusIndicator) {
 		this.focusIndicator = focusIndicator;
 	}
@@ -269,9 +273,11 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		toCartesian.rotate(Math.toRadians(180));
 		g2d.transform(toCartesian);
 
-		g2d.setColor(Color.BLUE); //draw the axis
-		g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
-		g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
+		if(drawAxis) {
+			g2d.setColor(Color.BLUE); //draw the axis
+			g2d.drawLine(0, -getHeight() / 2, 0, getHeight() / 2);
+			g2d.drawLine(-getWidth() / 2, 0, getWidth() / 2, 0);
+		}
 		
 		g2d.setColor(Color.BLACK);
 		
