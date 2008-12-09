@@ -199,7 +199,7 @@ GCWeb = {
 								text = 'Complete';
 							}
 						}
-                        hist.value = text;
+                        hist.text(text);
                     }
                 }
             };
