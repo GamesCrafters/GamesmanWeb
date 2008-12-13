@@ -214,7 +214,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					topHalf.add(temp, BorderLayout.PAGE_START);
 					
 					stateField = new JTextField(cube.getState());
-//					topHalf.add(stateField, BorderLayout.CENTER);
+					topHalf.add(stateField, BorderLayout.CENTER);
 
 					JPanel pane = new JPanel(new BorderLayout());
 					setContentPane(pane);
@@ -317,6 +317,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 
 	public void cubeStateChanged(XYZCube src, final FaceLayerTurn turn) {
+		System.out.println(turn);
 		if(jso != null) {
 			new Thread() {
 				public void run() {

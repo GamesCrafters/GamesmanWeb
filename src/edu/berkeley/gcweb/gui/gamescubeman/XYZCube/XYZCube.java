@@ -98,7 +98,8 @@ public class XYZCube extends Shape3D implements ActionListener {
 	private ArrayList<FaceTurn> turnQueue = new ArrayList<FaceTurn>();
 	public void actionPerformed(ActionEvent e) {
 		if(turnQueue.get(0).doMove()) { //finished animation
-			fireStateChanged(turnQueue.remove(0).toFaceLayerTurn());
+			for(FaceLayerTurn turn : turnQueue.remove(0).toFaceLayerTurns())
+				fireStateChanged(turn);
 			if(turnQueue.isEmpty())
 				turner.stop();
 		}
@@ -185,8 +186,14 @@ public class XYZCube extends Shape3D implements ActionListener {
 			fireCanvasChange();
 			return bothDone;
 		}
-		public FaceLayerTurn toFaceLayerTurn() {
+		private FaceLayerTurn toFaceLayerTurn() {
 			return new FaceLayerTurn(face, cubeRotation ? -1 : layer, cwTurns);
+		}
+		public FaceLayerTurn[] toFaceLayerTurns() {
+			if(otherTurn != null && !cubeRotation)
+				return new FaceLayerTurn[] { toFaceLayerTurn(), otherTurn.toFaceLayerTurn() };
+			else
+				return new FaceLayerTurn[] { toFaceLayerTurn() };
 		}
 	}
 

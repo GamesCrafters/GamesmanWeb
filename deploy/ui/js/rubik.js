@@ -29,8 +29,8 @@ function mergeMaps(map1, map2) {
 }
 
 var keyMap = { 
-//		"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
-//		"l": "D'", "s": "D", "w": "B", "o": "B'", "e": "L'", "d": "L", //extension turns
+		"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
+		"l": "D'", "s": "D", "w": "B", "o": "B'", "e": "L'", "d": "L", //extension turns
 		"f": "U'", "j": "U", "i": "R", "k": "R'", "g": "F'", "h": "F" //solver turns 
 	};
 var invertedKeyMap = invertMap(keyMap);
@@ -87,8 +87,9 @@ $(document).ready(function(){
     	table += "<td style='border: none; width: " + 20 * row + "px' ></td>"
     	for(var col in qwerty[row]) {
     		var key = qwerty[row][col];
+    		var safeId = key == ';' ? 'semicolon' : key;
     		var turn = keyMap[key] || "";
-    		table += "<td id='" + key + "' style='width: 30px; height: 30px'>" +
+    		table += "<td id='" + safeId + "' style='width: 30px; height: 30px'>" +
 			    "<div class='letter'>" + key + "</div><div class='move'>" + turn + "</div></td>";
     	}
     	table += "</tr>";
@@ -99,12 +100,12 @@ $(document).ready(function(){
 	
 	var createClickHandler = function(key) {
 		return function _handleClick() {
-			$("#cube").get(0).doMove(keyMap[key]);
+			$("#cube").get(0).doMove(keyMap[key == 'semicolon' ? ';' : key]);
 		};
 	};
 	
 	for (var key in keyMap) {
-		$("#" + key).addClass("move-key").click(createClickHandler(key));
+		$("#" + (key == ';' ? 'semicolon' : key)).addClass("move-key").click(createClickHandler(key));
 	}
 });
 
@@ -114,19 +115,14 @@ function debug(mytext) {
 }
 
 //returns a list of moves equivalent to the cardinal move
-var dirs = {"": 1, "2" : 2, "'": 3};
-var cardinalToEquivalent = { "R": "L", "U": "D", "F": "B" }
-var toCardinalFromEquivalent = { "L": "R x'", "D": "U y'", "B": "F z'" }
-var equivalences = mergeMaps(cardinalToEquivalent, toCardinalFromEquivalent);
-var invertTurns = { "": "'", "'": "", "2": "2" }
+var dirToCount = {"": 1, "2" : 2, "'": 3};
+var countToDir = invertMap(dirToCount);
+var toCardinal = { "L": "R", "D": "U", "B": "F" };
+var fromCardinal = invertMap(toCardinal);
 
 var xMap = { "F": "U", "U": "B", "B": "D", "D": "F", "L": "L", "R": "R" };
-var xInvMap = invertMap(xMap);
 var yMap = { "R": "F", "F": "L", "L": "B", "B": "R", "U": "U", "D": "D" };
-var yInvMap = invertMap(yMap);
 var zMap = { "U": "R", "R": "D", "D": "L", "L": "U", "F": "F", "B": "B" };
-var zInvMap = invertMap(zMap);
-var rotationMaps = { "x": xMap, "x'": xInvMap, "y": yMap, "y'": yInvMap, "z": zMap, "z'": zInvMap };
 
 var moveR = [ [ [0, 2], [2, 1], [6, 2], [4, 1] ] ];
 var moveF = [ [ [0, 1], [4, 2], [5, 1], [1, 2] ] ];
@@ -139,57 +135,110 @@ var movey = [ moveU[0], moveD[0].slice().reverse() ];
 var movez = [ moveF[0], moveB[0].slice().reverse() ];
 var fixedPiece = [ 7, 0 ];
 
-function applyMove(move) {
-	var moveArr = eval("move" + move);
-	for(var cycle in moveArr) {
-		for(var i in moveArr[cycle]) {
-			if(moveArr[cycle][i][0] == fixedPiece[0]) {
-				//for some reason, i is a string, not a number!!!
-				var index = parseInt(i) + 1;
-				old = fixedPiece.slice();
-				fixedPiece[0] = moveArr[cycle][index % moveArr[cycle].length][0];
-				fixedPiece[1] = (fixedPiece[1] + moveArr[cycle][i][1])%3; //update orientation
-				return;
+function applyMove(move, piece) {
+	if(move == null || move == "")
+		return piece;
+	var face = move.substring(0, 1);
+	var dir = move.substring(1);
+	var moveArr = eval("move" + face);
+	for(var i = 0; i < dirToCount[dir]; i++)
+		piece = applyMoveHelper(moveArr, piece) || piece;
+	return piece;
+}
+
+function applyMoveHelper(moveArr, piece) {
+	for(var cycle = 0; cycle < moveArr.length; cycle++) {
+		for(var i = 0; i < moveArr[cycle].length; i++) {
+			if(moveArr[cycle][i][0] == piece[0]) {
+				return [ moveArr[cycle][(i+1) % moveArr[cycle].length][0], //permutation
+				(piece[1] + moveArr[cycle][i][1])%3 ]; //update orientation
 			}
 		}
 	}
 }
 
-function toCardinalMove(move) {
-	var face = move.substring(0, 1);
-	var turn = move.substring(1);
-	for(var i = 0; i < dirs[turn]; i++)
-		applyMove(face);
-	if(move in rotationMaps) {
-		//since this isn't an actual move, we won't be hearing back from the server
-		updateMoveValues(nextMoves);
-	} else {
-		cubeRotations = [];
-		//TODO - figure out rotations to fix orientation and permutation of fixed piece,
-		//and apply them to move
-		for(var i in cubeRotations) {
-			var face = move.substring(0, 1);
-			var turn = move.substring(1);
-			move = rotationMaps[cubeRotations[i]][face] + turn;
+function findRotation(objective, piece) {
+	if(objective(piece)) return null;
+	for(var rotation in piecesCubeRotationMap) {
+		var tempPiece = piece;
+		for(var count=1; count<=3; count++) {
+			tempPiece = applyMove(rotation, tempPiece);
+			if(objective(tempPiece))
+				return rotation + countToDir[count];
 		}
 	}
+	alert('Failure in findRotation! ' + objective + ' ' + piece);
+	return null;
+}
+
+var piecesCubeRotationMap = { "x": movex, "y": movey, "z": movez };
+function getRotationsToCardinal() {
+	var piece = fixedPiece.slice();
+	var rotations = [];
+	var objectives = [ function(p) { return p[1] == 0; },					//step 1: orient the fixedPiece
+	                   function(p) { return p[0] >= 4 && p[1] == 0; },		//step 2: place fixedPiece (properly oriented!) in the last layer
+	                   function(p) { return p[0] == 7 && p[1] == 0; } ];	//step 3: place fixedPiece in position 7 (properly oriented)
+	for(var i=0; i<objectives.length; i++) {
+		var rotation = findRotation(objectives[i], piece);
+		if(rotation != null) {
+			piece = applyMove(rotation, piece);
+			rotations.push(rotation);
+		}
+	}
+	if(!objectives[2](piece))
+		alert("Failure in getRotationsToCardinal()! " + rotations);
+	
+	return rotations;
+}
+
+function toString(hashmap) {
+	var str = '{ ';
+	for(key in hashmap)
+		str += key + ": " + hashmap[key] + "; ";
+	str += ' }';
+	return str;
+}
+
+function toCardinalMove(move) {
 	var face = move.substring(0, 1);
-	var turn = move.substring(1);
-	if(face in toCardinalFromEquivalent) { //BLD
-		move = toCardinalFromEquivalent[face].split(' ');
-		applyMove(move[1]);
-		move = move[0] + turn;
+	var dir = move.substring(1);
+	fixedPiece = applyMove(move, fixedPiece);
+	if('xyz'.indexOf(face) != -1) {
+		//since this isn't an actual move, we won't be hearing back from the server
+		//TODO - this could break if the framework changes...
+		if($('#option-move-values').is(':checked')) {
+			//TODO for some reason, chrome is iffy about refreshing the keyboard,
+			//hiding and reshowing it seem to fix that issue, though
+			$('#key-help').get(0).style.display = 'none';
+			updateMoveValues(nextMoves);
+			$('#key-help').get(0).style.display = 'block';
+		}
+	} else {
+		cubeRotations = getRotationsToCardinal();
+		for(var i=0; i<cubeRotations.length; i++) {
+			var rotationAxis = cubeRotations[i].substring(0, 1);
+			var amount = dirToCount[cubeRotations[i].substring(1)];
+			moveMap = eval(rotationAxis + "Map");
+			for(var d=0; d<amount; d++)
+				face = moveMap[face];
+		}
+		move = (toCardinal[face] || face) + dir;
 	}
 	return move;
 }
 function fromCardinalMove(move) {
-	old = move;
-//	for(var i in cubeRotations) {
-//		var face = move.substring(0, 1);
-//		var turn = move.substring(1);
-//		move = rotationMaps[cubeRotations[i]][face] + turn;
-//	}
-	return [ move, equivalences[move.substring(0, 1)].split(' ')[0] + move.substring(1) ];
+	var face = move.substring(0, 1);
+	var dir = move.substring(1);
+	cubeRotations = getRotationsToCardinal();
+	for(var i=cubeRotations.length-1; i>=0; i--) {
+		var rotationAxis = cubeRotations[i].substring(0, 1);
+		var amount = 4-dirToCount[cubeRotations[i].substring(1)];
+		moveMap = eval(rotationAxis + "Map");
+		for(var d=0; d<amount; d++)
+			face = moveMap[face];
+	}
+	face2 = toCardinal[face] || fromCardinal[face]; //only one of these will be != undefined
+	return [ face + dir, face2 + dir ];
 }
 
 function doQuery(turn) {
@@ -201,7 +250,7 @@ function doQuery(turn) {
 	turn = toCardinalMove(turn);
 	for(var i in nextMoves) {
 		if(nextMoves[i].move == turn) {
-			debug("requesting move "+nextMoves[i].move+", queue length = "+queuedMoves.length);
+//			debug("requesting move "+nextMoves[i].move+", queue length = "+queuedMoves.length);
 			game.doMove(nextMoves[i]);
 			return true;
 		}
@@ -219,7 +268,7 @@ function cubeStateChanged(turn) {
 	
 	if(queuedMoves.length == 0 && doingMove == false) { //this means a turn actually happened
 		doingMove = true;
-		debug("Nothing in the queue, doing move "+turn);
+//		debug("Nothing in the queue, doing move "+turn);
 		if(dir == "2") { //some nastyness to ensure that half turns get converted to quarter turns
 			turn = face;
 			queuedMoves.push(face);
@@ -233,7 +282,7 @@ function cubeStateChanged(turn) {
 			queuedMoves.push(face);
 		} else
 			queuedMoves.push(turn);
-		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
+//		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
 	}
 }
 
@@ -250,12 +299,12 @@ function onExecutingMove(moveInfo){
 
 // called on initial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
-    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
+//    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
     nextMoves = json;
     doingMove = false;
     if (queuedMoves.length != 0) {
         doingMove = true;
-        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
+//        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
         if (!doQuery(queuedMoves.shift()))
             doingMove = false;
     }
@@ -269,15 +318,8 @@ function updateMoveValues(nextMoves){
     	return b.remoteness - a.remoteness;
     });
     for(var i in nextMoves) {
-    	old = nextMoves[i].move;
-    	var equivMoves = fromCardinalMove(old);
+    	var equivMoves = fromCardinalMove(nextMoves[i].move);
     	value = nextMoves[i].value - 1;
-//    	if(nextMoves[i].move.substring(1) == "2" && value == 2) {
-//    		for(var ch in equivMoves.slice()) {
-//    			equivMoves[ch] = equivMoves[ch].substring(0, 1);
-//    			equivMoves.push(equivMoves[ch] + "'");
-//			}
-//		}
     	for(var ch in equivMoves) {
     		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass(moveValueClasses.join(" "));
     		$('#' + invertedKeyMap[equivMoves[ch]]).addClass(moveValueClasses[value]);
@@ -311,7 +353,7 @@ function getNextMoveValues(position, onMoveValuesReceived) {
     var retval = [];
     for(f in faces) {
     	for(d in dirs) {
-		    retval.push({"board": '', "move": faces[f] + dirs[d], "remoteness": Math.floor(Math.random()*11), "status": "OK", "value": 2});
+		    retval.push({"board": '', "move": faces[f] + dirToCount[d], "remoteness": Math.floor(Math.random()*11), "status": "OK", "value": 2});
     	}
     }
     onMoveValuesReceived(retval);

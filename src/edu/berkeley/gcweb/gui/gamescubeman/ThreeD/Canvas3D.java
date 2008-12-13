@@ -93,7 +93,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 					rotationRate = new RotationMatrix();
 					dragRate = new RotationMatrix();
 				}
-				System.out.println(rotationRate + "\n" + rotationRate.isIdentity());
+//				System.out.println(rotationRate + "\n" + rotationRate.isIdentity());
 				RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
 				for(Shape3D s : shapes)
 					s.rotate(temp);
