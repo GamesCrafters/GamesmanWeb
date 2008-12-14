@@ -1,6 +1,5 @@
 // JavaScript Document
 var EMPTY = ' ';
-//var currentBoard = [[EMPTY,EMPTY,EMPTY],[EMPTY,EMPTY,EMPTY],[EMPTY,EMPTY,EMPTY]];
 var currentBoard = [];
 var pieces = ['X', 'O'];
 var currentPlayer = 0;
@@ -31,28 +30,44 @@ if (key == "width") {
 */
 $(document).ready(function(){
 		//generate board
-		for(var row=0;row<height-1;row++) {
+		var imgWidth = 50;
+		var imgHeight = 50;
+		var tableposition = $("#test").position();
+		for(var row=0;row<height+1;row++) {
+			var cellwid, cellhei;
+			if (row == 0 || row == height)
+				cellhei = 30 + imgHeight/2;
+			else
+				cellhei = 30 + imgHeight;
 			document.getElementById('test').insertRow(0);
-			var colString = "<td border='2px' width='100px' height='100px' style='background: #9F5000;'></td>";
 			var element = "";
-			for(var col=0;col<width-1;col++) {
+			for(var col=0;col<width+1;col++) {
+				if (col == 0 || col == width)
+					cellwid = 30 + imgWidth/2;
+				else
+					cellwid = 30 + imgWidth;
+				var colString = "<td border='2' width='"+cellwid+"px' height='"+cellhei+"px' style='background: #9F5000; vertical-align: top'>";
 				element += colString;
+				if (row != height && col != 0) {
+					element += "<div style='margin-top: "+ (-imgHeight/2) +"px; margin-left: " + (-imgWidth/2) + "px;'><img id='cell-"+ (row) +"-"+ (col-1) +"' class='click' src='images/mago/blank.png'></div>";
+				}
+				element += "</td>";
 			}
 			document.getElementById('test').rows[0].innerHTML = element;
 		}
 		
 		//generate pieces
-		var topStart = 176;
-		var leftStart = 219;
+		var topStart = tableposition.top + 8 + imgHeight/2;
+		var leftStart = tableposition.left + 8 + imgWidth/2;
 		var pieceString = "";
 
 		for(var row=0;row<height;row++) {
-			var top = topStart + (105*row);
+			var top = topStart + (100+8)*row;
 			for(var col=0;col<width;col++) {
-				var left = leftStart + (108*col);
-				pieceString += "<span style='position:absolute; top: "+ top +"px; left: " + left + "px;'> <img id='cell-"+ row +"-"+ col +"' class='click' src='images/mago/black.png'> </span>";
+				var left = leftStart + (100+8)*col;
+				// pieceString += "<span style='position:absolute; top: "+ top +"px; left: " + left + "px;'> <img id='cell-"+ row +"-"+ col +"' class='click' src='images/mago/blank.png'> </span>";
 				defaultBoard += EMPTY;
-				currentBoard[row*height + col] = EMPTY;
+				currentBoard[row*width + col] = EMPTY;
 			}
 		}
 		document.getElementById('pieces').innerHTML = pieceString;
@@ -63,20 +78,22 @@ $(document).ready(function(){
  									 isValidMove: isValidMove,
 									 updateMoveValues: function(nextMoves) {updateMoveValues(game, nextMoves);},
 									 clearMoveValues: clearMoveValues,
-									 onNextValuesReceived: onNextValuesReceived});
+									 onNextValuesReceived: onNextValuesReceived, debug: 0});
 	   game.loadBoard(defaultBoard);
 		
 		for(var row=0;row<height;row++) {
 			for(var col=0;col<width;col++) {
 				$('#cell-'+row+'-'+col).click(function(row, col){
 					return function(){
-						var thisrow = height-nextMoves[i].move.substr(1);
-						var thiscol = nextMoves[i].move.charCodeAt(0)-'a'.charCodeAt(0);
-						if(row == thisrow && col == thiscol){
-							alert("doing move");
-							game.doMove(nextMoves[i]);
+						for (var i = 0; i < nextMoves.length; i++) {
+							var thisrow = height-nextMoves[i].move.substr(1);
+							var thiscol = nextMoves[i].move.charCodeAt(0)-'a'.charCodeAt(0);
+							if(row == thisrow && col == thiscol){
+								game.doMove(nextMoves[i]);
+								return;
+							}
 						}
-						else alert("not doing move: thisrow = " + thisrow + " thiscol = " + thiscol);
+						//alert("not doing move: thisrow = " + thisrow + " thiscol = " + thiscol);
 						/*
 						if(currentBoard[row*height + col] == EMPTY && !win){
 
@@ -140,15 +157,6 @@ function clearMoveValues(){
  		}
  	}
 }
-function getBoardString(currentBoard) {
-	var str = '';
-	for(row=0;row<height;row++) {
-		for(col=0;col<width;col++) {
-			str += currentBoard[row*height + col];
-		}
-	}
-	return str;
-}
 function onExecutingMove(game, currentBoard){
     game.getPositionValue(getBoardString(currentBoard), function(json){
         $('#current-value').text('Current Value: '+meanings[json.value]);
@@ -177,7 +185,7 @@ function updateBoard(game, moveInfo) {
 				document.getElementById('cell-'+row+'-'+col).src = "images/mago/black.png";
 				//$(this).text("<img id=#cell-"+row+"-"+col+" class='red' src='img/black.png'/>");
 			}
-			else if (newBoard[row*width+col] == pieces[0]){
+			else if (newBoard[row*width+col] == pieces[1]){
 				document.getElementById('cell-'+row+'-'+col).src = "images/mago/white.png";
 			}
 			else if (newBoard[row*width+col] == EMPTY){
