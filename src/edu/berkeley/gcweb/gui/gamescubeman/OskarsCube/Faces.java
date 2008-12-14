@@ -22,7 +22,7 @@ public class Faces{
 		b_face.translate(-1, 0, 10);
 		b_face2.rotate('y', 90);
 		b_face2.translate(10, 0, 10);
-		Object[] input_array = {b_face, b_face2, r_face, r_face2, w_face, w_face2, stick};
+		Object[] input_array = {b_face, b_face2, r_face, r_face2, w_face, w_face2};//, stick};
 		holder = new PolygonCollection(input_array);
 		//now you can translate and rotate the group of polygons via holder
 		//now you can translate and rotate the group of polygons via holder

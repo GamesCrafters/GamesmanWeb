@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Polygon3D implements Comparable<Polygon3D> {
 	private Polygon3D ogPoly;
@@ -166,16 +168,27 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		return sb.substring(4);
 	}
 
+	//higher Z -> lower value
 	public int compareTo(Polygon3D p) {
 		Shape proj = projectXYPlane(1, 1);
 		Shape proj2 = p.projectXYPlane(1, 1);
 		Area a = new Area(proj);
 		a.intersect(new Area(proj2));
 		if(!a.isEmpty()) {
+			PathIterator pi = a.getPathIterator(null);
+			double[] avePoint = new double[2];
 			double[] point = new double[2];
-			a.getPathIterator(null).currentSegment(point);
-			double x = point[0], y = point[1];
-			//higher Z -> lower value
+			int pointCount = 0;
+			while(!pi.isDone()) {
+				pointCount++;
+				pi.currentSegment(point);
+				for(int i=0; i<point.length; i++)
+					avePoint[i] += point[i];
+				pi.next();
+			}
+			for(int i=0; i<point.length; i++)
+				avePoint[i] /= pointCount;
+			double x = avePoint[0], y = avePoint[1]; //we want to look @ the center to hopefully avoid ties
 			return (int) Math.signum(p.unproject(x, y, 1) - unproject(x, y, 1));
 		} else //this will help deal with the multiple polygon case, but certainly not fix it :(
 			return (int) Math.signum(p.aveZ() - aveZ());

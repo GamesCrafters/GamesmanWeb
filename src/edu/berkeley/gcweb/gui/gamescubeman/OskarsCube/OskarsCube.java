@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
@@ -39,6 +40,25 @@ public class OskarsCube extends JApplet implements KeyListener{
 			jso = JSObject.getWindow(this);
 //			jso.call("isValidMove", new Object[0]);
 		} catch (Throwable e) {
+			jso = new JSObject() {
+				public Object call(String arg0, Object[] arg1)
+						throws JSException {
+					return true;
+				}
+				public Object eval(String arg0) throws JSException {
+					return true;
+				}
+				public Object getMember(String arg0) throws JSException {
+					return true;
+				}
+				public Object getSlot(int arg0) throws JSException {
+					return null;
+				}
+				public void removeMember(String arg0) throws JSException {}
+				public void setMember(String arg0, Object arg1)
+						throws JSException {}
+				public void setSlot(int arg0, Object arg1) throws JSException {}
+			};
 			e.printStackTrace();
 		}
 	}
@@ -74,7 +94,7 @@ public class OskarsCube extends JApplet implements KeyListener{
 	public static void main(String[] args) {
 		final OskarsCube a = new OskarsCube();
 		a.init();
-		a.setPreferredSize(new Dimension(4000, 5000));
+		a.setPreferredSize(new Dimension(400, 500));
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JFrame f = new JFrame();

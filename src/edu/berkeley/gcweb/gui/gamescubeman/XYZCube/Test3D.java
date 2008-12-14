@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 @SuppressWarnings("serial")
@@ -21,16 +22,14 @@ public class Test3D extends JApplet {
 			Polygon3D poly = new Polygon3D();
 			poly.addPoint(-1, -1, 0);
 			poly.addPoint(-1, 1, 0);
-			poly.addPoint(2, 1, 0);
-			poly.addPoint(2, -1, 0);
+			poly.addPoint(1, 1, 0);
+			poly.addPoint(1, -1, 0);
 			poly.setFillColor(Color.RED);
 			addPoly(poly);
 			
-			poly = new Polygon3D();
-			poly.addPoint(-1, -1, 1);
-			poly.addPoint(-1, 1, 1);
-			poly.addPoint(20, 1, 1);
-			poly.addPoint(20, -1, 1);
+			poly = poly.clone();
+			poly.rotate(new RotationMatrix(0, 90));
+			poly.translate(0, -1, 0);
 			poly.setFillColor(Color.GREEN);
 			addPoly(poly);
 		}
