@@ -508,6 +508,10 @@ public class XYZCube extends Shape3D implements ActionListener {
 		stateListeners.add(l);
 	}
 
+	public ArrayList<FaceLayerTurn> getTurnHistory() {
+			return turns;
+	}
+	
 	//    values = { "F" : 0, "U" : 0, "R" : 0, "L" : 1, "B" : 2, "D" : 4}
 	
 	//look @ BLD
@@ -515,8 +519,6 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//look for LD stickers and deduce F color
 	//look for BD stickers and deduce R color
 	public String getState() {
-		if(true)
-			return turns.toString();
 		ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[Face.faces.size()]));
 		int[] values = new int[Face.faces.size()];
 		values[Face.FRONT.index()] = 0;

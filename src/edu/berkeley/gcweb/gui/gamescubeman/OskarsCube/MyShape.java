@@ -1,8 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Shape3D;
-import netscape.javascript.JSObject;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 public class MyShape extends Shape3D {
 		public BigRedAxis big_red_axis;

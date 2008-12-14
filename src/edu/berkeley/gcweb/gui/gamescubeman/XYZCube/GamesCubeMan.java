@@ -42,9 +42,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private Canvas3D canvas;
 	private JSlider scale, distance, gap, turningRate;
 	private JSpinner[] dimensions;
-	private JCheckBox antialiasing, colorChooserCheckBox, optionsCheckBox;
+	private JCheckBox antialiasing, showTurnHistory, colorChooserCheckBox, optionsCheckBox;
 	private JButton resetView, scramble, resetCube;
-	private JTextField stateField;
+	private JTextField turnHistoryField;
 	private JRadioButton[] variationButtons;
 	
 	private int size_x = 3, size_y = 3, size_z = 3;
@@ -159,10 +159,13 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					
 					options.add(sideBySide(new JLabel("Distance"), distance, antialiasing));
 					
+					showTurnHistory = new JCheckBox("Show history", false);
+					showTurnHistory.addActionListener(GamesCubeMan.this);
+					
 					scale = new JSlider(0, 10000, (int) canvas.getScale());
 					scale.setFocusable(false);
 					scale.addChangeListener(GamesCubeMan.this);
-					options.add(sideBySide(new JLabel("Scale"), scale));
+					options.add(sideBySide(new JLabel("Scale"), scale, showTurnHistory));
 					
 					int[] dim = cube.getDimensions();
 					dimensions = new JSpinner[dim.length];
@@ -213,8 +216,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					temp.add(sideBySide(false, colorChooserCheckBox, optionsCheckBox));
 					topHalf.add(temp, BorderLayout.PAGE_START);
 					
-					stateField = new JTextField(cube.getState());
-					topHalf.add(stateField, BorderLayout.CENTER);
+					turnHistoryField = new JTextField(cube.getState());
+					turnHistoryField.setVisible(showTurnHistory.isSelected());
+					topHalf.add(turnHistoryField, BorderLayout.CENTER);
 
 					JPanel pane = new JPanel(new BorderLayout());
 					setContentPane(pane);
@@ -293,7 +297,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			cubeCanvas.setColorEditing(colorChooserCheckBox.isSelected());
 		else if(e.getSource() == optionsCheckBox)
 			cubeCanvas.setOptionsVisible(optionsCheckBox.isSelected());
-		else if(e.getSource() instanceof JRadioButton)
+		else if(e.getSource() == showTurnHistory) {
+			turnHistoryField.setVisible(showTurnHistory.isSelected());
+			this.validate();
+		} else if(e.getSource() instanceof JRadioButton)
 			cube.setCubeVariation(getSelectedVariation());
 	}
 	private CubeVariation getSelectedVariation() {
@@ -327,7 +334,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				}
 			}.start();
 		}
-		stateField.setText(src.getState());
+		turnHistoryField.setText(src.getTurnHistory().toString());
 	}
 	
 	public static void main(String[] args) {

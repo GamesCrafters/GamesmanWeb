@@ -3,6 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.ThreeD;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
@@ -74,12 +75,6 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	public void addPoint(double[] point) {
 		addPoint(point[0], point[1], point[2]);
 	}
-	private double aveZ() {
-		double sum = 0;
-		for(double[] p : points)
-			sum += p[0]*p[0] + p[1]*p[1] + p[2]*p[2];
-		return sum / points.size();
-	}
 
 	public void rotate(RotationMatrix m) {
 		for(int i = 0; i < points.size(); i++)
@@ -105,6 +100,49 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	public Polygon3D translate(double[] amt) {
 		return translate(amt[0], amt[1], amt[2]);
 	}
+
+	private static double[] subtract(double[] a, double[] b) {
+		double[] result = new double[3];
+		for(int i = 0; i < result.length; i++)
+			result[i] = a[i] - b[i];
+		return result;
+	}
+	private static double dot(double[] a, double[] b) {
+		double dot = 0;
+		for(int i=0; i<a.length; i++)
+			dot += a[i]*b[i];
+		return dot;
+	}
+	private static double[] cross(double[] a, double[] b) {
+		double[] cross = new double[3];
+		cross[0] = a[1]*b[2] - a[2]*b[1];
+		cross[1] = a[2]*b[0] - a[0]*b[2];
+		cross[2] = a[0]*b[1] - a[1]*b[0];
+		return cross;
+	}
+	
+	public double aveZ() {
+		double ave = 0;
+		for(double[] point : points)
+			ave += point[2];
+		return ave / points.size();
+	}
+	
+	//returns the z coordinate of the intersection of line through (0, 0, 0) -> (x, y, viewport)
+	//and the plane our polygon lies on
+	//we assume that we're dealing with convex polygons
+	private double unproject(double x, double y, double scale) {
+		int viewport = 1; //this really shouldn't matter for what we're using this function for
+		//TODO - do the maths!
+		double[] center = points.get(0);
+		double[] vector1 = subtract(points.get(1), center);
+		double[] vector2 = subtract(points.get(2), center);
+		double[] normal = cross(vector1, vector2);
+		//we want to choose a c such that c[(x, y) * normal] == center * normal
+		double[] point = new double[] {x, y, viewport};
+		double c = dot(center, normal) / dot(point, normal);
+		return viewport * c;
+	}
 	
 	public Shape projectXYPlane(double z, double scale) {
 		GeneralPath poly = new GeneralPath();
@@ -128,13 +166,18 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		return sb.substring(4);
 	}
 
-	//higher Z -> lower value
 	public int compareTo(Polygon3D p) {
-		double diff = this.aveZ() - p.aveZ();
-		if(diff < 0)
-			return 1;
-		if(diff > 0)
-			return -1;
-		return 0;
+		Shape proj = projectXYPlane(1, 1);
+		Shape proj2 = p.projectXYPlane(1, 1);
+		Area a = new Area(proj);
+		a.intersect(new Area(proj2));
+		if(!a.isEmpty()) {
+			double[] point = new double[2];
+			a.getPathIterator(null).currentSegment(point);
+			double x = point[0], y = point[1];
+			//higher Z -> lower value
+			return (int) Math.signum(p.unproject(x, y, 1) - unproject(x, y, 1));
+		} else //this will help deal with the multiple polygon case, but certainly not fix it :(
+			return (int) Math.signum(p.aveZ() - aveZ());
 	}
 }

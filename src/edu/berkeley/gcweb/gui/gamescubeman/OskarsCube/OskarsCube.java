@@ -1,37 +1,21 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.HashSet;
 
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import netscape.javascript.JSObject;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Canvas3D;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Shape3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 @SuppressWarnings("serial")
 public class OskarsCube extends JApplet implements KeyListener{
