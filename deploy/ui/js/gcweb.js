@@ -75,7 +75,7 @@ GCWeb = {
                             this.maxRemotenessSeen = newMove.remoteness;
                             $('#max-remoteness').text(this.maxRemotenessSeen);
                             $('#min-remoteness').text(this.minRemotenessSeen);
-                            //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
+                            //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(1));
                             $("#history-tree").html('');
                             for(i=0;i<this.previousMoves.length;i++){
                                 width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
