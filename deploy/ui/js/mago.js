@@ -29,6 +29,16 @@ if (key == "width") {
 }
 */
 $(document).ready(function(){
+	$("#startbutton").click(function(){
+		var mywidth = parseInt($("#widthinput").val());
+		var myheight = parseInt($("#heightinput").val());
+		if (! (mywidth > 0 && myheight > 0)) {
+			alert("You specified an invalid width '"+mywidth+"' or height '"+myheight+"'");
+			return false;
+		}
+		width = mywidth;
+		height = myheight;
+		$("#optionsform").hide();
 		//generate board
 		var imgWidth = 50;
 		var imgHeight = 50;
@@ -126,6 +136,7 @@ $(document).ready(function(){
 				}(row, col));
 			}
 		}
+	});
 });
 
 

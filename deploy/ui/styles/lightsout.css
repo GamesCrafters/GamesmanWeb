@@ -1,0 +1,5 @@
+#game td {
+    border: 1px solid #fff; width: 1.5em; height: 1.5em;
+    text-align: center; font-weight: bold; font-size: 3em;
+}
+#game table {border-spacing: 0;}

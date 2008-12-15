@@ -1,10 +1,20 @@
-﻿    <div id='board'>
-    	Current Board:
-    	<table id='test' border="4" cellpadding="0" cellspacing="0" valign="top" style="background: #000; vertical-align: top">
-        </table>
+    <div id='board' style='text-align: center'>
+        <center><table id='test' border="4" cellpadding="0" cellspacing="0" valign="top" style="background: #000; vertical-align: top">
+        </table></center>
 
     </div>
-    
+   <div id="options">
+	<form name="optionsform" id="optionsform">
+	<h2>Configure board size</h2>
+		The board
+		<label for="width"> width is </label><input type="text" name="width" value="4" id="widthinput" size="3" />
+		and its 
+		<label for="height"> height is </label><input type="text" name="height" value="4" id="heightinput" size="3" />
+		.
+		<br>
+		<input id="startbutton" type="button" value="Start!" />
+	</form>
+</div> 
     <div id='pieces'>
     
       

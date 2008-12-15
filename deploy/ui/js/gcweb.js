@@ -7,7 +7,7 @@ function waiting() {
                 document.getElementById("waitingnotice").style.visibility = "visible";
                 document.body.style.cursor = "wait";
             }
-        }, 100);
+        }, 10);
     }
     waitcount += 1;
 }
