@@ -50,9 +50,9 @@ GCWeb = {
                     
                     this.maxRemotenessSeen = 0;
                     this.minRemotenessSeen = 0;
-                    $('#max-remoteness').text(this.maxRemotenessSeen);
-                    $('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
-                    $('#min-remoteness').text(this.minRemotenessSeen);
+                    //$('#max-remoteness').text(this.maxRemotenessSeen);
+                    //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
+                    //$('#min-remoteness').text(this.minRemotenessSeen);
                 },
                 
                 // move functions
@@ -74,7 +74,8 @@ GCWeb = {
                         if(newMove.remoteness > this.maxRemotenessSeen){
                             this.maxRemotenessSeen = newMove.remoteness;
                             $('#max-remoteness').text(this.maxRemotenessSeen);
-                            $('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
+                            $('#min-remoteness').text(this.minRemotenessSeen);
+                            //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
                             $("#history-tree").html('');
                             for(i=0;i<this.previousMoves.length;i++){
                                 width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
