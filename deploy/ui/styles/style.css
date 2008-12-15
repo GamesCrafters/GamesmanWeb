@@ -55,6 +55,8 @@ body > .header h1 {
 #move-value-history { margin-top: 0.5em }
 #history-tree { height: 20em; overflow-y: scroll; border: 2px #88f inset; background: #116 }
 
+#move-value-history-labels{width: 100%;}
+#min-remoteness, #mid-remoteness, #max-remoteness {width: 33%;}
 #min-remoteness {text-align: left;}
 #mid-remoteness {text-align: center;}
 #max-remoteness {text-align: right;}

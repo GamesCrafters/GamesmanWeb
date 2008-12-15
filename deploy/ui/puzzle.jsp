@@ -139,7 +139,7 @@ String uifile = gameDictionary.getUI(internalName);
         </div>
         <div id="move-value-history">
           <h1>Move-value History</h1>
-          <table width="100%">
+          <table id="move-value-history-labels">
             <tr>
               <td id="min-remoteness">0</td>
               <td id="mid-remoteness">5</td>
