@@ -50,6 +50,8 @@ GCWeb = {
                     
                     this.maxRemotenessSeen = 0;
                     this.minRemotenessSeen = 0;
+                    $('#max-remoteness').text(this.maxRemotenessSeen);
+                    $('#min-remoteness').text(this.minRemotenessSeen);
                 },
                 
                 // move functions
@@ -70,6 +72,8 @@ GCWeb = {
                         this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
                         if(newMove.remoteness > this.maxRemotenessSeen){
                             this.maxRemotenessSeen = newMove.remoteness;
+                            $('#max-remoteness').text(this.maxRemotenessSeen);
+                            $('#mid-remoteness').text(this.maxRemotenessSeen/2.0);
                             $("#history-tree").html('');
                             for(i=0;i<this.previousMoves.length;i++){
                                 width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
