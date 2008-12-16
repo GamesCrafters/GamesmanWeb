@@ -512,6 +512,22 @@ public class XYZCube extends Shape3D implements ActionListener {
 			return turns;
 	}
 	
+	private static class InvertableHashMap<K, V> {
+		private HashMap<K, V> kTov = new HashMap<K, V>();
+		private HashMap<V, K> vTok = new HashMap<V, K>();
+		public InvertableHashMap() {}
+		public void put(K key, V value) {
+			kTov.put(key, value);
+			vTok.put(value, key);
+		}
+		public V getValue(K key) {
+			return kTov.get(key);
+		}
+		public K getKey(V value) {
+			return vTok.get(value);
+		}
+	}
+	
 	//    values = { "F" : 0, "U" : 0, "R" : 0, "L" : 1, "B" : 2, "D" : 4}
 	
 	//look @ BLD
@@ -519,7 +535,8 @@ public class XYZCube extends Shape3D implements ActionListener {
 	//look for LD stickers and deduce F color
 	//look for BD stickers and deduce R color
 	public String getState() {
-		ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[Face.faces.size()]));
+		if(dimensions[0] != 2 || dimensions[1] != 2 || dimensions[2] != 2)
+			return "Not a 2x2x2!";
 		int[] values = new int[Face.faces.size()];
 		values[Face.FRONT.index()] = 0;
 		values[Face.RIGHT.index()] = 0;
@@ -528,16 +545,83 @@ public class XYZCube extends Shape3D implements ActionListener {
 		values[Face.BACK.index()] = 2;
 		values[Face.DOWN.index()] = 4;
 		
-		colors.set(Face.BACK.index(), cubeStickers[Face.BACK.index()][0][0].getFillColor());
-		colors.set(Face.LEFT.index(), cubeStickers[Face.LEFT.index()][0][0].getFillColor());
-		colors.set(Face.DOWN.index(), cubeStickers[Face.DOWN.index()][0][0].getFillColor());
-		for(Polygon3D[][] face : cubeStickers) {
-			for(int i = 0; i < face.length; i++)
-				for(int j = 0; j < face[i].length; j++) {
-					face[i][j].getFillColor();
-				}
+		InvertableHashMap<Face, Color> colors = new InvertableHashMap<Face, Color>();
+		colors.put(Face.BACK, cubeStickers[Face.BACK.index()][0][1].getFillColor());
+		colors.put(Face.LEFT, cubeStickers[Face.LEFT.index()][0][1].getFillColor());
+		colors.put(Face.DOWN, cubeStickers[Face.DOWN.index()][1][1].getFillColor());
+		for(int p=0; p<ColorSpitter.pieces.length-1; p++) {
+			Color c;
+			if((c = findThirdColor(p, colors.getValue(Face.BACK), colors.getValue(Face.LEFT))) != null) {
+				colors.put(Face.UP, c);
+			} else if((c = findThirdColor(p, colors.getValue(Face.LEFT), colors.getValue(Face.DOWN))) != null) {
+				colors.put(Face.FRONT, c);
+			} else if((c = findThirdColor(p, colors.getValue(Face.BACK), colors.getValue(Face.DOWN))) != null) {
+				colors.put(Face.RIGHT, c);
+			}
 		}
-		return "Cube State Here!";
+		int[] pieces = new int[ColorSpitter.pieces.length];
+		int[] orientations = new int[ColorSpitter.pieces.length];
+		for(int p=0; p<ColorSpitter.pieces.length; p++) {
+			int piece = 0;
+			Face[] faces = ColorSpitter.solved_cube_faces[p];
+			int[][] indices = ColorSpitter.pieces[p];
+			int orientation = -1;
+			for(int i=0; i<3; i++) {
+				CubeSticker[][] face = cubeStickers[faces[i].index()];
+				Color c = face[indices[i][0]][indices[i][1]].getFillColor();
+				if(c.equals(colors.getValue(Face.UP)) || c.equals(colors.getValue(Face.DOWN)))
+					orientation = (3 - i) % 3;
+				piece += values[colors.getKey(c).index()];
+			}
+			pieces[p] = piece;
+			orientations[p] = orientation;
+		}
+//		System.out.println(Arrays.deepToString(ColorSpitter.spit_out_colors(pieces, orientations)));
+//		System.out.println(Arrays.toString(pieces) + " " + Arrays.toString(orientations));
+		
+		Face[][] decodedFaces = null;
+		try {
+			decodedFaces = ColorSpitter.spit_out_colors(pieces, orientations);
+		} catch(Exception e) {
+			return "Invalid"; //there may be a better way of doing this...
+		}
+		for(int p=0; p<ColorSpitter.pieces.length; p++) {
+			Face[] faces = ColorSpitter.solved_cube_faces[p];
+			int[][] indices = ColorSpitter.pieces[p];
+			for(int i=0; i<3; i++) {
+				CubeSticker[][] face = cubeStickers[faces[i].index()];
+				if(!colors.getKey(face[indices[i][0]][indices[i][1]].getFillColor()).equals(decodedFaces[p][i])) {
+					return "Invalid";
+				}
+			}
+		}
+		
+		//TODO - check legal state: all of 0-7 are in there, sum(orientations) % 3 == 0
+		
+		return join(",", pieces) + ";" + join(",", orientations);
+	}
+	
+	private static String join(String join, int[] os) {
+		String temp = "";
+		for(int o : os)
+			temp += join + o;
+		return temp.substring(join.length());
+	}
+	
+	private Color findThirdColor(int piece, Color color1, Color color2) {
+		boolean c1=false, c2=false;
+		Color thirdColor = null;
+		for(int i=0; i<3; i++) {
+			int[] indices = ColorSpitter.pieces[piece][i];
+			Color c = cubeStickers[ColorSpitter.solved_cube_faces[piece][i].index()][indices[0]][indices[1]].getFillColor();
+			boolean cc1 = c.equals(color1);
+			boolean cc2 = c.equals(color2);
+			if(!cc1 && !cc2)
+				thirdColor = c;
+			c1 = c1 || cc1;
+			c2 = c2 || cc2;
+		}
+		return (c1 && c2) ? thirdColor : null;
 	}
 	
 	public boolean isSolved() {
@@ -554,7 +638,7 @@ public class XYZCube extends Shape3D implements ActionListener {
 		return true;
 	}
 	
-	private void fireStateChanged(FaceLayerTurn turn) {
+	public void fireStateChanged(FaceLayerTurn turn) {
 		for(CubeStateChangeListener l : stateListeners)
 			l.cubeStateChanged(this, turn);
 		fireCanvasChange();

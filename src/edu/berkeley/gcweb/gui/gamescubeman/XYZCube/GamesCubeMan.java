@@ -47,7 +47,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private JTextField turnHistoryField;
 	private JRadioButton[] variationButtons;
 	
-	private int size_x = 3, size_y = 3, size_z = 3;
+	private int size_x = 2, size_y = 2, size_z = 2;
 	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
 	private ArrayList<Face> legalFaces = null;
 	private boolean cubeRotations = true;
@@ -216,7 +216,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					temp.add(sideBySide(false, colorChooserCheckBox, optionsCheckBox));
 					topHalf.add(temp, BorderLayout.PAGE_START);
 					
-					turnHistoryField = new JTextField(cube.getState());
+					turnHistoryField = new JTextField();
 					turnHistoryField.setVisible(showTurnHistory.isSelected());
 					topHalf.add(turnHistoryField, BorderLayout.CENTER);
 
@@ -323,8 +323,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		return cube.doTurn(move);
 	}
 
-	public void cubeStateChanged(XYZCube src, final FaceLayerTurn turn) {
-		System.out.println(turn);
+	public void cubeStateChanged(final XYZCube src, final FaceLayerTurn turn) {
+		System.out.println(src.getState());
 		if(jso != null) {
 			new Thread() {
 				public void run() {
@@ -334,7 +334,11 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				}
 			}.start();
 		}
-		turnHistoryField.setText(src.getTurnHistory().toString());
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				turnHistoryField.setText(src.getTurnHistory().toString());
+			}
+		});
 	}
 	
 	public static void main(String[] args) {

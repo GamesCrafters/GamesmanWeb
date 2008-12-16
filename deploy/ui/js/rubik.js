@@ -214,7 +214,7 @@ function toCardinalMove(move) {
 			$('#key-help').get(0).style.display = 'block';
 		}
 	} else {
-		cubeRotations = getRotationsToCardinal();
+		var cubeRotations = getRotationsToCardinal();
 		for(var i=0; i<cubeRotations.length; i++) {
 			var rotationAxis = cubeRotations[i].substring(0, 1);
 			var amount = dirToCount[cubeRotations[i].substring(1)];
@@ -229,7 +229,7 @@ function toCardinalMove(move) {
 function fromCardinalMove(move) {
 	var face = move.substring(0, 1);
 	var dir = move.substring(1);
-	cubeRotations = getRotationsToCardinal();
+	var cubeRotations = getRotationsToCardinal();
 	for(var i=cubeRotations.length-1; i>=0; i--) {
 		var rotationAxis = cubeRotations[i].substring(0, 1);
 		var amount = 4-dirToCount[cubeRotations[i].substring(1)];
@@ -242,18 +242,36 @@ function fromCardinalMove(move) {
 }
 
 function doQuery(turn) {
+	var board = getBoardString();
+	$('#debug').text(board);
 	if (turn == null) {
-		cubeRotations = [];
-		game.loadBoard(getBoardString());
+		fixedPiece = [ 7, 0 ];
+		game.loadBoard(board);
 		return false;
 	}
-	turn = toCardinalMove(turn);
+	var move = turn.substring(0, 1);
+	var dir = turn.substring(1);
+	if('BLD'.indexOf(move) != -1)
+		turn = toCardinal[move] + dir;
+		
+	var foundMove = null;
 	for(var i in nextMoves) {
 		if(nextMoves[i].move == turn) {
 //			debug("requesting move "+nextMoves[i].move+", queue length = "+queuedMoves.length);
-			game.doMove(nextMoves[i]);
-			return true;
+			foundMove = nextMoves[i];
 		}
+	}
+	if('xyz'.indexOf(move) != -1) {
+        // gets the initial state and sets remoteness
+        game.getPositionValue(board, game.setRemoteness);
+        
+        // get move values in case the user wants to display them
+        game.doMove({board: board, isSetup: 1});
+		return;
+	}
+	if(foundMove) {
+		//turn = toCardinalMove(turn);
+		game.doMove({"board": board, "move": turn, "remoteness": foundMove.remoteness, "value": foundMove.value });
 	}
 	return false;
 }

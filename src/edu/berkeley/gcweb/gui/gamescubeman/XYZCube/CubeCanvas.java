@@ -107,7 +107,9 @@ public class CubeCanvas extends JLayeredPane implements KeyListener, ColorChange
 	
 	public void polyClicked(Polygon3D clicked) {
 		CubeSticker sticker = (CubeSticker) clicked;
-		if(colorChooser.getSelectedFace() != null)
+		if(colorChooser.getSelectedFace() != null) {
 			sticker.setFace(colorChooser.getSelectedFace());
+			cube.fireStateChanged(null);
+		}
 	}
 }
