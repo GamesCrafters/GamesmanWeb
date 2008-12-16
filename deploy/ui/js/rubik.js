@@ -19,21 +19,23 @@ function invertMap(map) {
 	return invertedMap;
 }
 
-function mergeMaps(map1, map2) {
-	var merged = {};
-	for(var key in map1)
-		merged[key] = map1[key];
-	for(var key in map2)
-		merged[key] = map2[key];
-	return merged;
-}
-
 var keyMap = { 
 		"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
 		"l": "D'", "s": "D", "w": "B", "o": "B'", "e": "L'", "d": "L", //extension turns
 		"f": "U'", "j": "U", "i": "R", "k": "R'", "g": "F'", "h": "F" //solver turns 
 	};
 var invertedKeyMap = invertMap(keyMap);
+
+//returns a list of moves equivalent to the cardinal move
+var toCardinal = { "L": "R", "D": "U", "B": "F" };
+var fromCardinal = invertMap(toCardinal);
+
+function fromCardinalMove(move) {
+	var face = move.substring(0, 1);
+	var dir = move.substring(1);
+	face2 = toCardinal[face] || fromCardinal[face]; //only one of these will be != undefined
+	return [ face + dir, face2 + dir ];
+}
 
 // bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
@@ -64,18 +66,6 @@ $(document).ready(function(){
 	
     // load the default board
     game.loadBoard(getBoardString());
-    
-//TODO - possibly sync this with the properties file the applet reads from?
-//    var oRequest = new XMLHttpRequest();
-//    var sURL  = "rubik.html";
-//
-//    oRequest.open("GET",sURL,false);
-//    oRequest.setRequestHeader("User-Agent",navigator.userAgent);
-//    oRequest.send(null)
-//
-//    if (oRequest.status==200) alert(oRequest.responseText);
-//    else alert("Error executing XMLHttpRequest call!");
-    
     
     var qwerty = [[ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ],
                   [ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';' ],
@@ -114,166 +104,30 @@ function debug(mytext) {
 	typeof console != "undefined" && console.log && console.log(mytext);
 }
 
-//returns a list of moves equivalent to the cardinal move
-var dirToCount = {"": 1, "2" : 2, "'": 3};
-var countToDir = invertMap(dirToCount);
-var toCardinal = { "L": "R", "D": "U", "B": "F" };
-var fromCardinal = invertMap(toCardinal);
-
-var xMap = { "F": "U", "U": "B", "B": "D", "D": "F", "L": "L", "R": "R" };
-var yMap = { "R": "F", "F": "L", "L": "B", "B": "R", "U": "U", "D": "D" };
-var zMap = { "U": "R", "R": "D", "D": "L", "L": "U", "F": "F", "B": "B" };
-
-var moveR = [ [ [0, 2], [2, 1], [6, 2], [4, 1] ] ];
-var moveF = [ [ [0, 1], [4, 2], [5, 1], [1, 2] ] ];
-var moveU = [ [ [0, 0], [1, 0], [3, 0], [2, 0] ] ];
-var moveB = [ [ [2, 2], [3, 1], [7, 2], [6, 1] ] ];
-var moveL = [ [ [1, 1], [5, 2], [7, 1], [3, 2] ] ];
-var moveD = [ [ [4, 0], [6, 0], [7, 0], [5, 0] ] ];
-var movex = [ moveR[0], moveL[0].slice().reverse() ];
-var movey = [ moveU[0], moveD[0].slice().reverse() ];
-var movez = [ moveF[0], moveB[0].slice().reverse() ];
-var fixedPiece = [ 7, 0 ];
-
-function applyMove(move, piece) {
-	if(move == null || move == "")
-		return piece;
-	var face = move.substring(0, 1);
-	var dir = move.substring(1);
-	var moveArr = eval("move" + face);
-	for(var i = 0; i < dirToCount[dir]; i++)
-		piece = applyMoveHelper(moveArr, piece) || piece;
-	return piece;
-}
-
-function applyMoveHelper(moveArr, piece) {
-	for(var cycle = 0; cycle < moveArr.length; cycle++) {
-		for(var i = 0; i < moveArr[cycle].length; i++) {
-			if(moveArr[cycle][i][0] == piece[0]) {
-				return [ moveArr[cycle][(i+1) % moveArr[cycle].length][0], //permutation
-				(piece[1] + moveArr[cycle][i][1])%3 ]; //update orientation
-			}
-		}
-	}
-}
-
-function findRotation(objective, piece) {
-	if(objective(piece)) return null;
-	for(var rotation in piecesCubeRotationMap) {
-		var tempPiece = piece;
-		for(var count=1; count<=3; count++) {
-			tempPiece = applyMove(rotation, tempPiece);
-			if(objective(tempPiece))
-				return rotation + countToDir[count];
-		}
-	}
-	alert('Failure in findRotation! ' + objective + ' ' + piece);
-	return null;
-}
-
-var piecesCubeRotationMap = { "x": movex, "y": movey, "z": movez };
-function getRotationsToCardinal() {
-	var piece = fixedPiece.slice();
-	var rotations = [];
-	var objectives = [ function(p) { return p[1] == 0; },					//step 1: orient the fixedPiece
-	                   function(p) { return p[0] >= 4 && p[1] == 0; },		//step 2: place fixedPiece (properly oriented!) in the last layer
-	                   function(p) { return p[0] == 7 && p[1] == 0; } ];	//step 3: place fixedPiece in position 7 (properly oriented)
-	for(var i=0; i<objectives.length; i++) {
-		var rotation = findRotation(objectives[i], piece);
-		if(rotation != null) {
-			piece = applyMove(rotation, piece);
-			rotations.push(rotation);
-		}
-	}
-	if(!objectives[2](piece))
-		alert("Failure in getRotationsToCardinal()! " + rotations);
-	
-	return rotations;
-}
-
-function toString(hashmap) {
-	var str = '{ ';
-	for(key in hashmap)
-		str += key + ": " + hashmap[key] + "; ";
-	str += ' }';
-	return str;
-}
-
-function toCardinalMove(move) {
-	var face = move.substring(0, 1);
-	var dir = move.substring(1);
-	fixedPiece = applyMove(move, fixedPiece);
-	if('xyz'.indexOf(face) != -1) {
-		//since this isn't an actual move, we won't be hearing back from the server
-		//TODO - this could break if the framework changes...
-		if($('#option-move-values').is(':checked')) {
-			//TODO for some reason, chrome is iffy about refreshing the keyboard,
-			//hiding and reshowing it seem to fix that issue, though
-			$('#key-help').get(0).style.display = 'none';
-			updateMoveValues(nextMoves);
-			$('#key-help').get(0).style.display = 'block';
-		}
-	} else {
-		var cubeRotations = getRotationsToCardinal();
-		for(var i=0; i<cubeRotations.length; i++) {
-			var rotationAxis = cubeRotations[i].substring(0, 1);
-			var amount = dirToCount[cubeRotations[i].substring(1)];
-			moveMap = eval(rotationAxis + "Map");
-			for(var d=0; d<amount; d++)
-				face = moveMap[face];
-		}
-		move = (toCardinal[face] || face) + dir;
-	}
-	return move;
-}
-function fromCardinalMove(move) {
-	var face = move.substring(0, 1);
-	var dir = move.substring(1);
-	var cubeRotations = getRotationsToCardinal();
-	for(var i=cubeRotations.length-1; i>=0; i--) {
-		var rotationAxis = cubeRotations[i].substring(0, 1);
-		var amount = 4-dirToCount[cubeRotations[i].substring(1)];
-		moveMap = eval(rotationAxis + "Map");
-		for(var d=0; d<amount; d++)
-			face = moveMap[face];
-	}
-	face2 = toCardinal[face] || fromCardinal[face]; //only one of these will be != undefined
-	return [ face + dir, face2 + dir ];
-}
-
 function doQuery(turn) {
 	var board = getBoardString();
 	$('#debug').text(board);
 	if (turn == null) {
-		fixedPiece = [ 7, 0 ];
 		game.loadBoard(board);
 		return false;
 	}
-	var move = turn.substring(0, 1);
+
+	var face = turn.substring(0, 1);
+	face = toCardinal[face] || face;
 	var dir = turn.substring(1);
-	if('BLD'.indexOf(move) != -1)
-		turn = toCardinal[move] + dir;
+	turn = face + dir;
 		
-	var foundMove = null;
+	var moveInfo = { board: board };
 	for(var i in nextMoves) {
 		if(nextMoves[i].move == turn) {
-//			debug("requesting move "+nextMoves[i].move+", queue length = "+queuedMoves.length);
-			foundMove = nextMoves[i];
+			 moveInfo.move = turn;
+			 moveInfo.remoteness =  nextMoves[i].remoteness;
+			 moveInfo.value = nextMoves[i].value;
+			 break;
 		}
 	}
-	if('xyz'.indexOf(move) != -1) {
-        // gets the initial state and sets remoteness
-        game.getPositionValue(board, game.setRemoteness);
-        
-        // get move values in case the user wants to display them
-        game.doMove({board: board, isSetup: 1});
-		return;
-	}
-	if(foundMove) {
-		//turn = toCardinalMove(turn);
-		game.doMove({"board": board, "move": turn, "remoteness": foundMove.remoteness, "value": foundMove.value });
-	}
-	return false;
+	game.doMove(moveInfo);
+	return;
 }
 function cubeStateChanged(turn) {
 	var face = null;
@@ -291,7 +145,7 @@ function cubeStateChanged(turn) {
 			turn = face;
 			queuedMoves.push(face);
 		}
-		if(!doQuery(turn))
+		if(!doQuery(turn)) //TODO - the return value isn't getting used at all
 			doingMove = false;
 	} else {
 		// nextMoves is empty, so queue up the move request.
@@ -305,13 +159,12 @@ function cubeStateChanged(turn) {
 }
 
 // check to see whether the current move is valid
-function isValidMove(moveInfo)
-{
+function isValidMove(moveInfo) {
     return true;
 }
 
 // called when doMove executes successfully
-function onExecutingMove(moveInfo){
+function onExecutingMove(moveInfo) {
     //Due to the nature of the applet, I'm pretty sure nothing should go here
 }
 
