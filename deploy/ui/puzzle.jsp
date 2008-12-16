@@ -118,10 +118,6 @@ String uifile = gameDictionary.getUI(internalName);
       </div> 
       <!-- sidebar --> 
       <div id="moves" class="aside">
-        <div id="prediction">
-          <h1>Prediction</h1>
-          <span><%= gameclass %> not started</span>
-        </div>
         <div id="move-value-key">
           <h1>Move-value Key</h1>
           <table>
@@ -136,6 +132,10 @@ String uifile = gameDictionary.getUI(internalName);
               <% } %>
             </tr>
           </table>
+        </div>
+        <div id="prediction">
+          <h1>Prediction</h1>
+          <span><%= gameclass %> not started</span>
         </div>
         <div id="move-value-history">
           <h1>Move-value History</h1>
