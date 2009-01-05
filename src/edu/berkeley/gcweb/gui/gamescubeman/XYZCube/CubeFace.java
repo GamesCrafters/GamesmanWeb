@@ -1,18 +1,18 @@
-package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
+package edu.berkeley.gcweb.gui.gamescubeman.Cuboid;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Face {
-	private static HashMap<Character, Face> namesFaces = new HashMap<Character, Face>();
-	public static ArrayList<Face> faces = new ArrayList<Face>();
-	public final static Face UP = new Face('U', 1, true, 0, 2, Color.WHITE);
-	public final static Face DOWN = new Face('D', UP, Color.YELLOW);
-	public final static Face LEFT = new Face('L', 0, true, 2, 1, Color.GREEN);
-	public final static Face RIGHT = new Face('R', LEFT, Color.BLUE);
-	public final static Face FRONT = new Face('F', 2, false, 0, 1, Color.RED);
-	public final static Face BACK = new Face('B', FRONT, new Color(242, 98, 2));
+public class CubeFace {
+	private static HashMap<Character, CubeFace> namesFaces = new HashMap<Character, CubeFace>();
+	public static ArrayList<CubeFace> faces = new ArrayList<CubeFace>();
+	public final static CubeFace UP = new CubeFace('U', 1, true, 0, 2, Color.WHITE);
+	public final static CubeFace DOWN = new CubeFace('D', UP, Color.YELLOW);
+	public final static CubeFace LEFT = new CubeFace('L', 0, true, 2, 1, Color.GREEN);
+	public final static CubeFace RIGHT = new CubeFace('R', LEFT, Color.BLUE);
+	public final static CubeFace FRONT = new CubeFace('F', 2, false, 0, 1, Color.RED);
+	public final static CubeFace BACK = new CubeFace('B', FRONT, new Color(242, 98, 2));
 	//cw_cw is whether turning the face clockwise is the same as rotating clockwise about the axis
 	private boolean cw_cw;
 	//isClockwise indicates whether the first dimension is in the clockwise direction
@@ -21,7 +21,7 @@ public class Face {
 	private int index;
 	private Color color;
 	private char faceName;
-	private Face(char faceName, int rotationAxis, boolean cw_cw, int widthAxis, int heightAxis, Color color) {
+	private CubeFace(char faceName, int rotationAxis, boolean cw_cw, int widthAxis, int heightAxis, Color color) {
 		this.faceName = faceName;
 		namesFaces.put(faceName, this);
 		this.rotationAxis = rotationAxis;
@@ -32,8 +32,8 @@ public class Face {
 		index = faces.size();
 		faces.add(this);
 	}
-	private Face opposite;
-	private Face(char faceName, Face opposite, Color color) {
+	private CubeFace opposite;
+	private CubeFace(char faceName, CubeFace opposite, Color color) {
 		this(faceName, opposite.rotationAxis, !opposite.cw_cw, opposite.widthAxis, opposite.heightAxis, color);
 		this.opposite = opposite;
 		isFirstAxisClockwise = false;
@@ -45,10 +45,10 @@ public class Face {
 	public char getFaceName() {
 		return faceName;
 	}
-	public static Face decodeFace(char face) {
+	public static CubeFace decodeFace(char face) {
 		return namesFaces.get(Character.toUpperCase(face));
 	}
-	public static Face decodeCubeRotation(char face) {
+	public static CubeFace decodeCubeRotation(char face) {
 		switch(face) {
 		case 'x':
 			return RIGHT;
@@ -60,8 +60,8 @@ public class Face {
 			return null;
 		}
 	}
-	public static Face[] faces() {
-		return faces.toArray(new Face[0]);
+	public static CubeFace[] faces() {
+		return faces.toArray(new CubeFace[0]);
 	}
 	public int index() {
 		return index;
@@ -75,7 +75,7 @@ public class Face {
 	public int getRotationAxis() {
 		return rotationAxis;
 	}
-	public Face getOppositeFace() {
+	public CubeFace getOppositeFace() {
 		return opposite;
 	}
 	public Color getColor() {

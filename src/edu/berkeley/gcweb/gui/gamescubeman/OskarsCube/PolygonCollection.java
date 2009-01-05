@@ -30,7 +30,7 @@ public class PolygonCollection{
 			}
 		}
 	}
-	
+
 	public void rotate(char axis, int degreesCCW){
 		/**
 		 * rotate the entire set of polygons by the said number of degrees CCW
@@ -40,17 +40,17 @@ public class PolygonCollection{
 		RotationMatrix m;
 		if(axis == 'x')
 			rotation_number = 0;
-			else if(axis == 'y')
-				rotation_number = 1;
-				else
-					rotation_number = 2;
+		else if(axis == 'y')
+			rotation_number = 1;
+		else
+			rotation_number = 2;
 		m = new RotationMatrix(rotation_number, degreesCCW);
 		for (int i = 0; i < collection.length; i++){
 			if (collection[i] != null)
 				collection[i].rotate(m);
 		}
 	}
-	
+
     public void translate(double x,double y,double z){
     	/**
     	 * Translate the set of polygons position by amount (x,y,z).

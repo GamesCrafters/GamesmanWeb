@@ -20,9 +20,9 @@ TODO:
 -square one! urghhh...
 
 GAMESCRAFTERS:
-+fix polygon draw ordering bug for ethan
+-fix polygon draw ordering bug for ethan
 -move-value history doesn't sync when pressing reset
--importing state of cube doesn't work
 -lots of flickering on firefox mac?
++importing state of cube doesn't work
 +many turns that should be legal aren't allowed
 +create a help that shows the legal turns and the move-values of each

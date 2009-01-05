@@ -226,7 +226,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		double y = -(p.y - getHeight() / 2.);
 		int match = -1;
 		for(int i = 0; i < polyProjection.size(); i++)
-			if(polyProjection.get(i).contains(x, y))
+			if(polyProjection.get(i) != null && polyProjection.get(i).contains(x, y))
 				match = i;
 		if(match == -1)
 			return null;

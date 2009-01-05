@@ -81,4 +81,9 @@ public class RotationMatrix {
 	public String toString() {
 		return toString(data);
 	}
+	public static void main(String[] args) {
+		System.out.println(new RotationMatrix(1, 30.));
+		System.out.println(new RotationMatrix(1, 30./5));
+		System.out.println(new RotationMatrix(1, 30.).multiply(new RotationMatrix(0, 180.)));
+	}
 }

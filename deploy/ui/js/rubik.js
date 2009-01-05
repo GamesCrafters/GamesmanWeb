@@ -129,7 +129,7 @@ function doQuery(turn) {
 	game.doMove(moveInfo);
 	return;
 }
-function cubeStateChanged(turn) {
+function puzzleStateChanged(turn) {
 	var face = null;
 	var dir = null;
 	if(turn != null) {

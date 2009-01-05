@@ -6,16 +6,15 @@
 			mywidth = '400px';//$("#game").width() * 0.75 + "px";
 			myheight = '400px';//$("#game").height() * 0.75 + "px";
 		}
-		drawApplet('cube', 'applets/GamesCubeMan.jar', 'edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan',
+		drawApplet('cube', 'applets/GamesCubeMan.jar', 'edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.GamesCubeMan',
 				'<param name="MAYSCRIPT" value="true" \/>' +
+				'<param name="puzzle_class" value="edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid" />' +
 				'<param name="size_x" value="2" />' +
 				'<param name="size_y" value="2" />' +
 				'<param name="size_z" value="2" />' +
 				'<param name="focus_indicator" value="false" />' +
 				'<param name="draw_axis" value="false" />' +
 				'<param name="resizable" value="false" />' +
-				//'<param name="cube_rotations" value="false" />' +
-				//'<param name="legal_faces" value="FUR" />' +
 				'<param name="bg_color" value="' + getBGColor() + '" />' +
 				'<param name="fg_color" value="' + getFGColor() + '" />', mywidth, myheight);
 </script>

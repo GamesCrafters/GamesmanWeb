@@ -1,4 +1,4 @@
-package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
+package edu.berkeley.gcweb.gui.gamescubeman.Cuboid;
 
 
 public class ColorSpitter {
@@ -14,25 +14,25 @@ public class ColorSpitter {
 			{ {1, 1}, {0, 1}, {0, 1} },
 	};
 	private static final char[][] solved_cube = {{'U','R','F'},{'U','F','L'},{'U','B','R'},{'U','L','B'},{'D','F','R'},{'D','L','F'},{'D','R','B'},{'D','B','L'}};
-	public static Face[][] solved_cube_faces;
+	public static CubeFace[][] solved_cube_faces;
 	static {
-		solved_cube_faces = new Face[solved_cube.length][];
+		solved_cube_faces = new CubeFace[solved_cube.length][];
 		for(int i=0; i<solved_cube_faces.length; i++) {
-			solved_cube_faces[i] = new Face[solved_cube[i].length];
+			solved_cube_faces[i] = new CubeFace[solved_cube[i].length];
 			for(int j=0; j<solved_cube_faces[i].length; j++)
-				solved_cube_faces[i][j] = Face.decodeFace(solved_cube[i][j]);
+				solved_cube_faces[i][j] = CubeFace.decodeFace(solved_cube[i][j]);
 		}
 	}
-	public static Face[][] spit_out_colors(int[] pieces, int[] orientations){
+	public static CubeFace[][] spit_out_colors(int[] pieces, int[] orientations){
 		/**
 		 * Take in an array of pieces and their orientations and return a char[][] containing the 
 		 * stickers on each side.
 		 */
-		Face[][] actual_colors = new Face[8][];
+		CubeFace[][] actual_colors = new CubeFace[8][];
 		int location = 0;
 		for(int i=0; i<pieces.length; i++){
 			int piece = pieces[i], orientation = orientations[i];
-			Face[] current_chunk = new Face[3];
+			CubeFace[] current_chunk = new CubeFace[3];
             current_chunk[0] = (solved_cube_faces[piece][(orientation)%3]); //top piece
             current_chunk[1] = (solved_cube_faces[piece][(1+orientation)%3]); //right piece
             current_chunk[2] = (solved_cube_faces[piece][(2+orientation)%3]); //left piece
@@ -45,7 +45,7 @@ public class ColorSpitter {
 		System.out.println("Debugging");
 		int[] pieces = { 0, 1, 2, 3, 4, 5, 6, 7 };
 		int[] orientations = { 1, 2, 0, 0, 0, 0, 0, 0 };
-		Face[][] current_state = spit_out_colors(pieces, orientations);
+		CubeFace[][] current_state = spit_out_colors(pieces, orientations);
 		String cube_string = "                                 ___________\n";
 		cube_string += "                                 |     |    |\n";
         cube_string += "                    __________   |  "+current_state[2][1]+"  | "+current_state[3][2]+"  |\n";

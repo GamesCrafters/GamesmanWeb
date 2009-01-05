@@ -1,16 +1,16 @@
-package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
+package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -32,29 +32,35 @@ import javax.swing.event.ChangeListener;
 
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
-import edu.berkeley.gcweb.gui.gamescubeman.XYZCube.XYZCube.CubeVariation;
 
 @SuppressWarnings("serial")
-public class GamesCubeMan extends JApplet implements ChangeListener, ActionListener, CubeStateChangeListener {
-	private XYZCube cube;
-	private CubeCanvas cubeCanvas;
+public class GamesCubeMan extends JApplet implements ChangeListener, ActionListener, PuzzleStateChangeListener {
+	private TwistyPuzzle puzzle;
+	private PuzzleCanvas puzzleCanvas;
 	private Canvas3D canvas;
 	private JSlider scale, distance, gap, turningRate;
 	private JSpinner[] dimensions;
-	private JCheckBox antialiasing, showTurnHistory, colorChooserCheckBox, optionsCheckBox;
-	private JButton resetView, scramble, resetCube;
+	private JCheckBox antialiasing, showTurnHistory;
+	private JCheckBox[] tabBoxes;
+	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox;
+	private RollingJPanel optionsPanel, keysPanel;
+	private JButton resetView, scramble, resetPuzzle;
 	private JTextField turnHistoryField;
 	private JRadioButton[] variationButtons;
 	
-	private int size_x = 2, size_y = 2, size_z = 2;
+	private String puzzleClassName = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
+	private int size_x = -1, size_y = -1, size_z = -1;
 	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
-	private ArrayList<Face> legalFaces = null;
-	private boolean cubeRotations = true;
 	private boolean resizable = true;
-	private boolean focusIndicator = true;
-	private boolean drawAxis = false;
+	private boolean focus_indicator = true;
+	private boolean draw_axis = false;
 	private void parseParameters() {
+		try {
+			puzzleClassName = getParameter("puzzle_class");
+		} catch(NullPointerException e) {
+			//this indicates that we're not running as an applet
+			return;
+		}
 		try {
 			size_x = Integer.parseInt(getParameter("size_x"));
 		} catch(Exception e) {}
@@ -70,18 +76,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		try {
 			fg_color = Color.decode(getParameter("fg_color"));
 		} catch(Exception e) {}
-		cubeRotations = parseBoolean(getParameter("cube_rotations"), cubeRotations);
 		resizable = parseBoolean(getParameter("resizable"), resizable);
-		focusIndicator = parseBoolean(getParameter("focus_indicator"), focusIndicator);
-		drawAxis = parseBoolean(getParameter("draw_axis"), drawAxis);
-		try {
-			legalFaces = new ArrayList<Face>();
-			String faces = getParameter("legal_faces");
-			for(char f : faces.toCharArray())
-				legalFaces.add(Face.decodeFace(f));
-		} catch(Exception e) {
-			legalFaces = null;
-		}
+		focus_indicator = parseBoolean(getParameter("focus_indicator"), focus_indicator);
+		draw_axis = parseBoolean(getParameter("draw_axis"), draw_axis);
 	}
 	
 	private Boolean parseBoolean(String s, boolean def) {
@@ -92,6 +89,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		else if(s.equalsIgnoreCase("false"))
 			return false;
 		return def;
+	}
+	
+	public void paint(Graphics g) {
+		g.drawString("Loading puzzle class: " + puzzleClassName, 0, 20);
 	}
 	
 	private JSObject jso;
@@ -106,19 +107,24 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					parseParameters();
+					try {
+						Class<? extends TwistyPuzzle> puzzleClass = Class.forName(puzzleClassName).asSubclass(TwistyPuzzle.class);
+						puzzle = puzzleClass.getConstructor().newInstance();
+					} catch (Exception e) {
+						System.err.println("Error loading puzzle class " + puzzleClassName);
+						e.printStackTrace();
+						return;
+					}
 					
-					RollingJPanel options = new RollingJPanel();
-					options.setLayout(new BoxLayout(options, BoxLayout.PAGE_AXIS));
+					optionsPanel = new RollingJPanel();
+					optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+					keysPanel = new KeyCustomizerPanel(puzzle);
 					
-					cube = new XYZCube(size_x, size_y, size_z);
-					cube.setCubeRotations(cubeRotations);
-					cube.setLegalFaces(legalFaces);
-					
-					cube.addStateChangeListener(GamesCubeMan.this);
-					cubeCanvas = new CubeCanvas(cube, options);
-					canvas = cubeCanvas.getCanvas();
-					canvas.setFocusIndicator(focusIndicator);
-					canvas.setDrawAxis(drawAxis);
+					puzzle.addStateChangeListener(GamesCubeMan.this);
+					puzzleCanvas = new PuzzleCanvas(puzzle, optionsPanel, keysPanel);
+					canvas = puzzleCanvas.getCanvas();
+					canvas.setFocusIndicator(focus_indicator);
+					canvas.setDrawAxis(draw_axis);
 					resetRotation();
 					
 					resetView = new JButton("Reset View");
@@ -127,10 +133,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					resetView.setFocusable(false);
 					resetView.addActionListener(GamesCubeMan.this);
 					
-					resetCube = new JButton("Reset Cube");
-					resetCube.setToolTipText(resetCube.getText());
-					resetCube.setFocusable(false);
-					resetCube.addActionListener(GamesCubeMan.this);
+					resetPuzzle = new JButton("Reset Puzzle");
+					resetPuzzle.setToolTipText(resetPuzzle.getText());
+					resetPuzzle.setFocusable(false);
+					resetPuzzle.addActionListener(GamesCubeMan.this);
 					
 					scramble = new JButton("Scramble");
 					scramble.setToolTipText(scramble.getText());
@@ -138,7 +144,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					scramble.setFocusable(false);
 					scramble.addActionListener(GamesCubeMan.this);
 					
-					colorChooserCheckBox = new JCheckBox("Choose colors", cubeCanvas.isColorEditing());
+					colorChooserCheckBox = new JCheckBox("Choose colors", false);
 					colorChooserCheckBox.setMnemonic(KeyEvent.VK_C);
 					colorChooserCheckBox.setFocusable(false);
 					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
@@ -148,7 +154,12 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					optionsCheckBox.setFocusable(false);
 					optionsCheckBox.addActionListener(GamesCubeMan.this);
 					
-					distance = new JSlider(4, 200, (int) (cube.getCenter()[2]));
+					keysCheckBox = new JCheckBox("Keys", false);
+					keysCheckBox.setMnemonic(KeyEvent.VK_K);
+					keysCheckBox.setFocusable(false);
+					keysCheckBox.addActionListener(GamesCubeMan.this);
+					
+					distance = new JSlider(4, 200, (int) (puzzle.getCenter()[2]));
 					distance.setFocusable(false);
 					distance.addChangeListener(GamesCubeMan.this);
 					
@@ -157,7 +168,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					antialiasing.setFocusable(false);
 					antialiasing.addActionListener(GamesCubeMan.this);
 					
-					options.add(sideBySide(new JLabel("Distance"), distance, antialiasing));
+					optionsPanel.add(Utils.sideBySide(new JLabel("Distance"), distance, antialiasing));
 					
 					showTurnHistory = new JCheckBox("Show history", false);
 					showTurnHistory.addActionListener(GamesCubeMan.this);
@@ -165,56 +176,65 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					scale = new JSlider(0, 10000, (int) canvas.getScale());
 					scale.setFocusable(false);
 					scale.addChangeListener(GamesCubeMan.this);
-					options.add(sideBySide(new JLabel("Scale"), scale, showTurnHistory));
+					optionsPanel.add(Utils.sideBySide(new JLabel("Scale"), scale, showTurnHistory));
 					
-					int[] dim = cube.getDimensions();
-					dimensions = new JSpinner[dim.length];
-					JPanel dims = new JPanel();
-					for(int ch = 0; ch < dimensions.length; ch++) {
-						dimensions[ch] = new JSpinner(new SpinnerNumberModel(dim[ch], 1, null, 1));
-						((JSpinner.NumberEditor)dimensions[ch].getEditor()).getTextField().setFocusable(false);
-						dimensions[ch].getEditor().setFocusable(false);
-						dimensions[ch].addChangeListener(GamesCubeMan.this);
-						if(ch != 0)
-							dims.add(new JLabel("x"));
-						dims.add(dimensions[ch]);
+					if(size_x != -1)
+						puzzle.setDimensions(size_x, size_y, size_z);
+					else //this'll even force dimensionless puzzles to draw their polys
+						puzzle.setDimensions(puzzle.getDefaultXYZDimensions()); 
+					if(puzzle.getDefaultXYZDimensions() != null) {
+						int[] dim = puzzle.getDimensions();
+						dimensions = new JSpinner[dim.length];
+						JPanel dims = new JPanel();
+						for(int ch = 0; ch < dimensions.length; ch++) {
+							dimensions[ch] = new JSpinner(new SpinnerNumberModel(dim[ch], 1, null, 1));
+							((JSpinner.NumberEditor)dimensions[ch].getEditor()).getTextField().setFocusable(false);
+							dimensions[ch].getEditor().setFocusable(false);
+							dimensions[ch].addChangeListener(GamesCubeMan.this);
+							if(ch != 0)
+								dims.add(new JLabel("x"));
+							dims.add(dimensions[ch]);
+						}
+						if(resizable)
+							optionsPanel.add(dims);
 					}
-					if(resizable)
-						options.add(dims);
 					
-					gap = new JSlider(0, 50, (int)(100*cube.getStickerGap()));
+					gap = new JSlider(0, 100, (int)(200*puzzle.getStickerGap()));
 					gap.setFocusable(false);
 					gap.addChangeListener(GamesCubeMan.this);
-					options.add(sideBySide(new JLabel("Gap"), gap));
+					optionsPanel.add(Utils.sideBySide(new JLabel("Gap"), gap));
 					
-					turningRate = new JSlider(1, cube.getMaxTurningRate(), cube.getTurningRate());
+					turningRate = new JSlider(1, puzzle.getMaxFramesPerAnimation(), puzzle.getFramesPerAnimation());
 					turningRate.setMajorTickSpacing(1);
 					turningRate.setMinorTickSpacing(1);
 					turningRate.setPaintTicks(true);
 					turningRate.setFocusable(false);
 					turningRate.addChangeListener(GamesCubeMan.this);
-					options.add(sideBySide(new JLabel("Speed"), turningRate));
+					optionsPanel.add(Utils.sideBySide(new JLabel("Frames/Animation"), turningRate));
 					
 					ButtonGroup g = new ButtonGroup();
-					CubeVariation[] vars = CubeVariation.values();
-					variationButtons = new JRadioButton[vars.length];
-					for(int i = 0; i < variationButtons.length; i++) {
-						variationButtons[i] = new JRadioButton(vars[i].toString(), vars[i] == cube.getCubeVariation());
-						variationButtons[i].setActionCommand(""+i);
-						variationButtons[i].setFocusable(false);
-						variationButtons[i].addActionListener(GamesCubeMan.this);
-						g.add(variationButtons[i]);
+					String[] vars = puzzle.getPuzzleVariations();
+					if(vars != null) {
+						variationButtons = new JRadioButton[vars.length];
+						for(int i = 0; i < variationButtons.length; i++) {
+							variationButtons[i] = new JRadioButton(vars[i].toString(), vars[i].equals(puzzle.getPuzzleVariation()));
+							variationButtons[i].setActionCommand(""+i);
+							variationButtons[i].setFocusable(false);
+							variationButtons[i].addActionListener(GamesCubeMan.this);
+							g.add(variationButtons[i]);
+						}
+						if(resizable)
+							optionsPanel.add(Utils.sideBySide(variationButtons));
 					}
-					if(resizable)
-						options.add(sideBySide(variationButtons));
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					
-					JPanel temp = new JPanel();
-					temp.setLayout(new BoxLayout(temp, BoxLayout.PAGE_AXIS));
-					temp.add(sideBySide(true, resetView, resetCube, scramble));
-					temp.add(sideBySide(false, colorChooserCheckBox, optionsCheckBox));
-					topHalf.add(temp, BorderLayout.PAGE_START);
+					tabBoxes = Arrays.asList(colorChooserCheckBox, optionsCheckBox, keysCheckBox).toArray(new JCheckBox[0]);
+					JPanel tabs = new JPanel();
+					tabs.setLayout(new BoxLayout(tabs, BoxLayout.PAGE_AXIS));
+					tabs.add(Utils.sideBySide(true, resetView, resetPuzzle, scramble));
+					tabs.add(Utils.sideBySide(false, colorChooserCheckBox, optionsCheckBox, keysCheckBox));
+					topHalf.add(tabs, BorderLayout.PAGE_START);
 					
 					turnHistoryField = new JTextField();
 					turnHistoryField.setVisible(showTurnHistory.isSelected());
@@ -224,7 +244,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					setContentPane(pane);
 					
 					pane.add(topHalf, BorderLayout.PAGE_START);
-					pane.add(cubeCanvas, BorderLayout.CENTER);
+					pane.add(puzzleCanvas, BorderLayout.CENTER);
 					canvas.requestFocusInWindow();
 					
 					setBG_FG(pane, bg_color, fg_color);
@@ -250,37 +270,23 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			}
 		}
 	}
-	
-	private JPanel sideBySide(JComponent... cs) {
-		return sideBySide(false, cs);
-	}
-	private JPanel sideBySide(boolean resize, JComponent... cs) {
-		JPanel p = new JPanel();
-		if(resize)
-			p.setLayout(new GridLayout(1, 0));
-		else
-			p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-		p.setBackground(Color.WHITE);
-		for(JComponent c : cs)
-			p.add(c);
-		return p;
-	}
 
 	public void stateChanged(ChangeEvent e) {
 		Object src = e.getSource();
 		if(src == gap) {
-			cube.setStickerGap(gap.getValue() / 100.);
+			puzzle.setStickerGap(gap.getValue() / 200.);
 		} else if(src == distance) {
-			double[] center = cube.getCenter();
+			double[] center = puzzle.getCenter();
 			center[2] = distance.getValue();
-			cube.setCenter(center[0], center[1], center[2]);
+			puzzle.setCenter(center[0], center[1], center[2]);
 		} else if(src == scale) {
 			canvas.setScale(scale.getValue());
 		} else if(e.getSource() == turningRate) {
-			cube.setTurningRate(turningRate.getValue());
+			puzzle.setFramesPerAnimation(turningRate.getValue());
 		} else if(src instanceof JSpinner) {
-			cube.setDimensions((Integer) dimensions[0].getValue(), (Integer) dimensions[1].getValue(), (Integer) dimensions[2].getValue());
-			cube.setCubeVariation(getSelectedVariation());
+			//TODO - the next 2 calls should be merged/figure out a solution to the dimensions issue
+			puzzle.setDimensions((Integer) dimensions[0].getValue(), (Integer) dimensions[1].getValue(), (Integer) dimensions[2].getValue());
+			puzzle.setPuzzleVariation(getSelectedVariation());
 		} 
 	}
 
@@ -288,55 +294,59 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		if(e.getSource() == resetView)
 			resetRotation();
 		else if(e.getSource() == scramble)
-			cube.scramble();
-		else if(e.getSource() == resetCube)
-			cube.resetCube();
+			puzzle.scramble();
+		else if(e.getSource() == resetPuzzle)
+			puzzle.resetPuzzle();
 		else if(e.getSource() == antialiasing)
 			canvas.setAntialiasing(antialiasing.isSelected());
-		else if(e.getSource() == colorChooserCheckBox)
-			cubeCanvas.setColorEditing(colorChooserCheckBox.isSelected());
-		else if(e.getSource() == optionsCheckBox)
-			cubeCanvas.setOptionsVisible(optionsCheckBox.isSelected());
-		else if(e.getSource() == showTurnHistory) {
+		else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
+			for(JCheckBox box : tabBoxes)
+				if(box != e.getSource())
+					box.setSelected(false);
+			puzzleCanvas.setColorEditing(colorChooserCheckBox.isSelected());
+			optionsPanel.setVisible(optionsCheckBox.isSelected());
+			keysPanel.setVisible(keysCheckBox.isSelected());
+		} else if(e.getSource() == showTurnHistory) {
 			turnHistoryField.setVisible(showTurnHistory.isSelected());
 			this.validate();
 		} else if(e.getSource() instanceof JRadioButton)
-			cube.setCubeVariation(getSelectedVariation());
+			puzzle.setPuzzleVariation(getSelectedVariation());
 	}
-	private CubeVariation getSelectedVariation() {
+	private String getSelectedVariation() {
 		for(int i = 0; i < variationButtons.length; i++)
 			if(variationButtons[i].isSelected())
-				return CubeVariation.values()[i];
+				return puzzle.getPuzzleVariations()[i];
 		return null;
 	}
 
 	private void resetRotation() {
-		cube.setRotation(new RotationMatrix(0, -45));
+		puzzle.resetRotation();
 		canvas.mousePressed(null);
 	}
 	
 	public String getBoardString() {
-		return cube.getState();
+		return puzzle.getState();
 	}
 	
 	public boolean doMove(String move) {
-		return cube.doTurn(move);
+		return puzzle.doTurn(move);
 	}
 
-	public void cubeStateChanged(final XYZCube src, final FaceLayerTurn turn) {
-		System.out.println(src.getState());
+	public void puzzleStateChanged(final TwistyPuzzle src, final PuzzleTurn turn) {
 		if(jso != null) {
 			new Thread() {
 				public void run() {
 					//we do this in a separate thread because the call() method will
-					//hand for the javascript
-					jso.call("cubeStateChanged", new Object[] { turn });
+					//hang for the javascript
+					jso.call("puzzleStateChanged", new Object[] { turn });
 				}
 			}.start();
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				turnHistoryField.setText(src.getTurnHistory().toString());
+				String turns = src.getTurnHistory().toString();
+				//removing the "[]" surrounding it
+				turnHistoryField.setText(turns.substring(1, turns.length() - 1));
 			}
 		});
 	}
@@ -354,7 +364,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				f.add(a);
 				f.pack();
 				f.setVisible(true);
-				a.canvas.requestFocusInWindow();
+				if(a.canvas != null)
+					a.canvas.requestFocusInWindow();
 			}
 		});
 	}

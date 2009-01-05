@@ -11,7 +11,7 @@ public abstract class Shape3D {
 	public void setCanvas(Canvas3D canvas) {
 		this.canvas = canvas;
 	}
-	protected void fireCanvasChange() {
+	public void fireCanvasChange() {
 		if(canvas != null)
 			canvas.fireCanvasChange();
 	}
@@ -30,6 +30,10 @@ public abstract class Shape3D {
 	}
 	protected void addPoly(Polygon3D poly) {
 		polys.add(poly);
+	}
+	protected void addPolys(PolygonCollection<?> newPolys) {
+		for(Polygon3D p : newPolys)
+			polys.add(p);
 	}
 	
 	//We're viewing this shape from the origin, looking down

@@ -7,7 +7,6 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Polygon3D implements Comparable<Polygon3D> {
 	private Polygon3D ogPoly;
@@ -82,7 +81,6 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		for(int i = 0; i < points.size(); i++)
 			points.set(i, m.multiply(points.get(i)));
 	}
-	
 	public Polygon3D scale(double x, double y, double z) {
 		for(double[] p : points) {
 			p[0] *= x;
@@ -101,6 +99,11 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	}
 	public Polygon3D translate(double[] amt) {
 		return translate(amt[0], amt[1], amt[2]);
+	}
+	public Polygon3D mirror(int axis) {
+		for(double[] p : points)
+			p[axis] = -p[axis];
+		return this;
 	}
 
 	private static double[] subtract(double[] a, double[] b) {

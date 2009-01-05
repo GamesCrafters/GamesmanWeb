@@ -1,6 +1,7 @@
-package edu.berkeley.gcweb.gui.gamescubeman.XYZCube;
+package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -17,6 +18,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -35,6 +37,7 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 	private double visible;
 	private int direction;
 	public void setVisible(boolean visible) {
+		selectedFace = null;
 		direction = visible ? 1 : -1;
 		if(visible != isVisible()) {
 			if(visible) super.setVisible(true);
@@ -67,29 +70,32 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-		for(int i = 0; i < colorRectangles.length; i++) {
-			Rectangle2D r = colorRectangles[i];
-			g2d.setColor(colors[i]);
+		for(String face : colorRectangles.keySet()) {
+			Rectangle2D r = colorRectangles.get(face);
+			g2d.setColor(colors.get(face));
 			g2d.fill(r);
 			g2d.setColor(Color.WHITE);
 			g2d.draw(r);
 		}
 	}
 	
-	private Rectangle2D[] colorRectangles;
-	private Color[] colors;
-	public void setColors(Color[] colors) {
+	private HashMap<String, Rectangle2D> colorRectangles;
+	private HashMap<String, Color> colors;
+	public void setColors(HashMap<String, Color> colors) {
 		this.colors = colors;
 		recomputeRectangles();
 		fireColorsChanged();
 	}
 
 	private void recomputeRectangles() {
-		colorRectangles = new Rectangle2D[colors.length];
-		double increment = (double) getWidth() / colors.length;
+		colorRectangles = new HashMap<String, Rectangle2D>();
+		double gap = (double) getWidth() / (colors.size()+1);
+		double rectWidth = .6*HEIGHT;
 		double w = 0;
-		for(int i = 0; i < colors.length; i++, w += increment)
-			colorRectangles[i] = new Rectangle2D.Double(w + 10, 10, HEIGHT - 20, HEIGHT - 20);
+		for(String face : colors.keySet()) {
+			w += gap;
+			colorRectangles.put(face, new Rectangle2D.Double(w-rectWidth/2., (HEIGHT-rectWidth)/2., rectWidth, rectWidth));
+		}
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -107,31 +113,32 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 	public void componentResized(ComponentEvent e) {
 		recomputeRectangles();
 	}
-	public void componentShown(ComponentEvent e) {
-		
+	public void componentShown(ComponentEvent e) {}
+	
+	private String selectedFace = null;
+	public String getSelectedFace() {
+		return selectedFace;
 	}
-	private int getSelectedIndex() {
+	private String getClickedFace() {
 		Point p = getMousePosition();
-		if(p == null) return -1;
-		for(int i = 0; i < colorRectangles.length; i++)
-			if(colorRectangles[i].contains(p))
-				return i;
-		return -1;
+		if(p == null) return null;
+		for(String face : colorRectangles.keySet())
+			if(colorRectangles.get(face).contains(p))
+				return face;
+		return null;
 	}
-	private int selected = -1;
 	public void mouseClicked(MouseEvent e) {
-		int i = getSelectedIndex();
-		if(i != -1) {
+		String face = getClickedFace();
+		if(face != null) {
 			if(e.getClickCount() == 2) {
-				Color c = JColorChooser.showDialog(this, "Choose new color", colors[i]);
+				Color c = JColorChooser.showDialog(this, "Choose new color", colors.get(face));
 				if(c != null) {
-					colors[i] = c;
+					colors.put(face, c);
 					fireColorsChanged();
 				}
-			} else {
-				selected = i;
-				getParent().setCursor(createCursor(colors[selected]));
 			}
+			getParent().setCursor(createCursor(colors.get(face)));
+			selectedFace = face;
 		}
 	}
 	private static final int CURSOR_SIZE = 32;
@@ -142,14 +149,11 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 		g2d.setColor(c);
 		g2d.fillRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
 		g2d.setColor(Color.BLACK);
-		g2d.drawRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
+		g2d.setStroke(new BasicStroke(10));
+		g2d.drawLine(0, 0, CURSOR_SIZE, 0);
+		g2d.drawLine(0, 0, 0, CURSOR_SIZE);
 		Toolkit tool = Toolkit.getDefaultToolkit();
 		return tool.createCustomCursor(buffer, new Point(0, 0), "bucket");
-	}
-	public Face getSelectedFace() {
-		if(selected == -1)
-			return null;
-		return Face.faces()[selected];
 	}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
@@ -165,6 +169,6 @@ public class NColorChooser extends JComponent implements ActionListener, MouseMo
 			l.colorsChanged(colors);
 	}
 	public interface ColorChangeListener {
-		public void colorsChanged(Color[] colorScheme);
+		public void colorsChanged(HashMap<String, Color> colorScheme);
 	}
 }
