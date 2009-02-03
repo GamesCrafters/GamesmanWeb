@@ -14,9 +14,15 @@ import javax.swing.Timer;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
-public abstract class TwistyPuzzle extends Shape3D implements ActionListener {
+public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener {
+	//TODO - generalize to an animation simulator
+	//generators, solves, pre-moves,
+	//color schemes/key layouts
+	//enable/disable spin view
+	//save state? ask lucas...
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
+		addStateChangeListener(this);
 	}
 
 	protected double stickerGap = getDefaultStickerGap();
@@ -61,13 +67,18 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener {
 	private Timer turner = new Timer(10, this);
 	private ArrayList<TurnAnimation> animationQueue = new ArrayList<TurnAnimation>();
 	public void actionPerformed(ActionEvent e) {
-		TurnAnimation anim = animationQueue.get(0);
-		for(PuzzleTurn finished : anim.animate())
-			fireStateChanged(finished);
-		if(anim.isEmpty()) {
-			animationQueue.remove(0);
-			if(animationQueue.isEmpty())
-				turner.stop();
+		if(e.getSource() == turner) {
+			TurnAnimation anim = animationQueue.get(0);
+			for(PuzzleTurn finished : anim.animate())
+				fireStateChanged(finished);
+			if(anim.isEmpty()) {
+				animationQueue.remove(0);
+				if(animationQueue.isEmpty())
+					turner.stop();
+			}
+		} else if(e.getSource() == timer) {
+			canvas.setDisplayString(getTime());
+			canvas.repaint();
 		}
 	}
 
@@ -159,11 +170,55 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener {
 		}
 	}
 	public final void doTurn(KeyEvent e) {
-		String turn = (String) keyProps.get(""+e.getKeyChar());
-		if(e.isAltDown() || turn == null) return;
+		if(e.isAltDown()) return;
+		String character = ""+e.getKeyChar();
+		String turn = (String) keyProps.get(character);
+		if(turn == null)
+			turn = (String) keyProps.get(character.toLowerCase());
+		if(turn == null) return;
 		doTurn(turn);
 	}
+	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {
+		if(src.isSolved() && stop == -1)
+			stopTimer();
+	}
+	private String getTime() {
+		if(start == -1)
+			return "";
+		long time = stop;
+		if(stop == -1)
+			time = System.currentTimeMillis();
+		return (time-start)/1000. + "";
+	}
+	private long start = -1, stop = -1;
+	private void stopTimer() {
+		stop = System.currentTimeMillis();
+		timer.stop();
+		canvas.setDisplayString(getTime());
+	}
+	private void startTimer() {
+		start = System.currentTimeMillis();
+		stop = -1;
+		timer.start();
+	}
+	private void resetTimer() {
+		stop = start = -1;
+		timer.stop();
+	}
+	private Timer timer = new Timer(100, this);
 	//returns true if the String was recognized as a turn
-	public abstract boolean doTurn(String turn);
+	public final boolean doTurn(String turn) {
+		if(turn.equals("scramble")) {
+			scramble();
+			resetTimer();
+			return true;
+		} else if(turn.equals("time")) {
+			if(!this.isSolved())
+				startTimer();
+			return true;
+		}
+		return doTurn2(turn);
+	}
+	protected abstract boolean doTurn2(String turn);
 	public abstract String getState();
 }

@@ -2,9 +2,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.SquareOne;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,10 +38,25 @@ public class SquareOne extends TwistyPuzzle {
 	//the bottom is the same as the top, but starting in the back, such that a slash turn will switch the 0th indices
 	private PolygonCollection<PuzzleSticker>[] ogTopLayerPolys, ogBottomLayerPolys;
 	private PolygonCollection<PuzzleSticker>[] topLayerPolys, bottomLayerPolys;
+	private Iterable<PolygonCollection<PuzzleSticker>> getHalfPolys(boolean rightHalf) {
+		ArrayList<PolygonCollection<PuzzleSticker>> polys = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		int start = rightHalf ? 0 : 6;
+		for(int i = start; i < start+6; i++) {
+			if(topLayerPolys[i] != null)
+				polys.add(topLayerPolys[i]);
+			if(bottomLayerPolys[i] != null)
+				polys.add(bottomLayerPolys[i]);
+		}
+		if(rightHalf)
+			polys.add(rightHalfPolys);
+		else
+			polys.add(leftHalfPolys);
+		return polys;
+	}
 	private PolygonCollection<PuzzleSticker> leftHalfPolys, rightHalfPolys;
-	private boolean[] topLayer, bottomLayer;
+	private Boolean[] topLayer, bottomLayer;
 	//this keeps track of how many times the left and right halves have been twisted
-	private boolean leftHalfEven, rightHalfEven;
+	private boolean leftHalfEven, rightHalfEven, leftRightSwitched;
 	protected void createPolys(boolean copyOld) {
 		super.createPolys(copyOld);
 		
@@ -188,8 +201,8 @@ public class SquareOne extends TwistyPuzzle {
 		rightHalfPolys.rotate(m, false);
 
 		PolygonCollection<PuzzleSticker>[] oldOgTopLayerPolys = ogTopLayerPolys, oldOgBottomLayerPolys = ogBottomLayerPolys;
-		ogTopLayerPolys = Arrays.copyOf(topLayerPolys, topLayerPolys.length);
-		ogBottomLayerPolys = Arrays.copyOf(bottomLayerPolys, bottomLayerPolys.length);
+		ogTopLayerPolys = Utils.copyOf(topLayerPolys, topLayerPolys.length);
+		ogBottomLayerPolys = Utils.copyOf(bottomLayerPolys, bottomLayerPolys.length);
 		if(copyOld) {
 			//this is some nasty stuff to get the puzzle to not reset when the gap size is changed
 			leftHalfPolys.rotate(leftRotate);
@@ -222,55 +235,82 @@ public class SquareOne extends TwistyPuzzle {
 			}
 		}
 		
-		topLayer = new boolean[topLayerPolys.length];
+		topLayer = new Boolean[topLayerPolys.length];
 		for(int i=0; i<topLayer.length; i++)
 			topLayer[i] = (topLayerPolys[i] != null);
-		bottomLayer = new boolean[bottomLayerPolys.length];
+		bottomLayer = new Boolean[bottomLayerPolys.length];
 		for(int i=0; i<bottomLayer.length; i++)
 			bottomLayer[i] = (bottomLayerPolys[i] != null);
 		leftHalfEven = rightHalfEven = true;
+		leftRightSwitched = copyOld ? leftRightSwitched : false;
 		fireStateChanged(null);
 	}
 	
 	private class SquareOneTurn extends PuzzleTurn {
 		private int top, down;
-		//secondLayer will be used for a super square one
-		private boolean secondLayer;
-		public SquareOneTurn(int topPieces, int bottomPieces, boolean secondLayer) {
-			this.top = topPieces;
-			this.down = bottomPieces;
-			this.secondLayer = secondLayer;
+		public SquareOneTurn(int topPieces, int bottomPieces, boolean legalIncrements) {
+			if(legalIncrements) {
+				int topDir = (int) Math.signum(topPieces), bottomDir = (int) Math.signum(bottomPieces);
+				while(Math.abs(topPieces) > 0 || Math.abs(bottomPieces) > 0) {
+					topPieces -= topDir;
+					bottomPieces -= bottomDir;
+					do {
+						top += topDir;
+						down += bottomDir;
+					} while(!isSlashLegal(top, down));
+					if(topPieces == 0) topDir = 0;
+					if(bottomPieces == 0) bottomDir = 0;
+				}
+			} else {
+				this.top = topPieces;
+				this.down = bottomPieces;
+			}
 		}
 		//this is a slash
-		private boolean slash, leftSlash;
-		public SquareOneTurn(boolean left) {
+		private boolean slash, leftSlash, cw;
+		private int ccw_axis;
+		public SquareOneTurn(boolean left, boolean cw) {
+			this.cw = cw;
 			slash = true;
 			leftSlash = left;
+			ccw_axis = cw ? 1 : -1;
+			if(!left)
+				ccw_axis = -ccw_axis;
+		}
+		private static final String axisnames = "xyz";
+		private int axis=-1;
+		private char axisname;
+		public SquareOneTurn(int axis, boolean cw) {
+			this.axis = axis;
+			axisname = axisnames.charAt(axis);
+			this.cw = cw;
+			ccw_axis = cw ? 1 : -1;
+			//z and x need to be inverted
+			if(axis == 2 || axis == 0)
+				ccw_axis = -ccw_axis;
 		}
 		private int frames = -1;
-		private RotationMatrix topRotationMatrix, downRotationMatrix, slashMatrix;
+		private RotationMatrix topRotationMatrix, downRotationMatrix, rotationMatrix;
 		public boolean animateMove() {
 			if(frames == -1) {
 				frames = getFramesPerAnimation();
 				if(slash) {
-					slashMatrix = new RotationMatrix(0, 180./frames);
+					rotationMatrix = new RotationMatrix(0, ccw_axis*180./frames);
+				} else if(axis != -1) {
+					rotationMatrix = new RotationMatrix(axis, -ccw_axis*180./frames);
 				} else {
 					topRotationMatrix = new RotationMatrix(1, -top*30./frames);
 					downRotationMatrix = new RotationMatrix(1, down*30./frames);
 				}
 			}
 			if(slash) {
-				int start = leftSlash ? 6 : 0;
-				for(int i = start; i < start+6; i++) {
-					if(topLayerPolys[i] != null)
-						topLayerPolys[i].rotate(slashMatrix);
-					if(bottomLayerPolys[i] != null)
-						bottomLayerPolys[i].rotate(slashMatrix);
-				}
-				if(leftSlash)
-					leftHalfPolys.rotate(slashMatrix);
-				else
-					rightHalfPolys.rotate(slashMatrix);
+				for(PolygonCollection<PuzzleSticker> polys : getHalfPolys(!leftSlash))
+					polys.rotate(rotationMatrix);
+			} else if(axis != -1) {
+				for(PolygonCollection<PuzzleSticker> polys : getHalfPolys(true))
+					polys.rotate(rotationMatrix);
+				for(PolygonCollection<PuzzleSticker> polys : getHalfPolys(false))
+					polys.rotate(rotationMatrix);
 			} else {
 				for(PolygonCollection<PuzzleSticker> piece : topLayerPolys)
 					if(piece != null)
@@ -301,17 +341,35 @@ public class SquareOne extends TwistyPuzzle {
 					else
 						rightHalfEven = !rightHalfEven;
 				}
+			} else if(axis != -1) {
+				//cube rotation
+				if(!polygons && axis != 0) //we aren't affecting the polygons
+					leftRightSwitched = !leftRightSwitched;
+				if(axis == 2 || axis == 0) {
+					//this indicates a z2 or x2, so we swap the top and bottom
+					if(polygons) {
+						PolygonCollection<PuzzleSticker>[] temp = topLayerPolys;
+						topLayerPolys = bottomLayerPolys;
+						bottomLayerPolys = temp;
+					} else {
+						Boolean[] temp = topLayer;
+						topLayer = bottomLayer;
+						bottomLayer = temp;
+						leftHalfEven = !leftHalfEven;
+						rightHalfEven = !rightHalfEven;
+					}
+				}
 			} else {
 				if(polygons) {
-					PolygonCollection<PuzzleSticker>[] topLayerCopy = Arrays.copyOf(topLayerPolys, topLayerPolys.length);
-					PolygonCollection<PuzzleSticker>[] bottomLayerCopy = Arrays.copyOf(bottomLayerPolys, bottomLayerPolys.length);
+					PolygonCollection<PuzzleSticker>[] topLayerCopy = Utils.copyOf(topLayerPolys, topLayerPolys.length);
+					PolygonCollection<PuzzleSticker>[] bottomLayerCopy = Utils.copyOf(bottomLayerPolys, bottomLayerPolys.length);
 					for(int i=0; i<topLayerCopy.length; i++) {
 						topLayerPolys[i] = topLayerCopy[Utils.modulo(i + top, topLayerCopy.length)];
 						bottomLayerPolys[i] = bottomLayerCopy[Utils.modulo(i + down, bottomLayerCopy.length)];
 					}
 				} else {
-					boolean[] topLayerCopy = Arrays.copyOf(topLayer, topLayer.length);
-					boolean[] bottomLayerCopy = Arrays.copyOf(bottomLayer, bottomLayer.length);
+					Boolean[] topLayerCopy = Utils.copyOf(topLayer, topLayer.length);
+					Boolean[] bottomLayerCopy = Utils.copyOf(bottomLayer, bottomLayer.length);
 					for(int i=0; i<topLayerCopy.length; i++) {
 						topLayer[i] = topLayerCopy[Utils.modulo(i + top, topLayerCopy.length)];
 						bottomLayer[i] = bottomLayerCopy[Utils.modulo(i + down, bottomLayerCopy.length)];
@@ -321,16 +379,22 @@ public class SquareOne extends TwistyPuzzle {
 		}
 		public boolean isAnimationMergeble(PuzzleTurn o) {
 			SquareOneTurn other = (SquareOneTurn) o;
+			if(this.axis != -1 || other.axis != -1) //can't merge rotations
+				return false;
 			return this.slash == other.slash && this.leftSlash != other.leftSlash || //we can animate a left & right slash simultaneously
 				!this.slash && !other.slash && (this.top == 0 || other.top == 0); //we can animate turning the top/bottom simultaneously (regardless of layer)
-			//TODO - this doesn't quite work for super sq1
 		}
 		public boolean isNullTurn() {
-			return slash == false && top == 0 && down == 0;
+			return slash == false && top == 0 && down == 0 && axis == -1;
 		}
 		public PuzzleTurn mergeTurn(PuzzleTurn o) {
-			SquareOneTurn other = (SquareOneTurn) o;
 			if(o == null || o.isNullTurn()) return this;
+			SquareOneTurn other = (SquareOneTurn) o;
+			if(this.axis != -1 || other.axis != -1) { //can't merge rotations
+				if(this.axis == other.axis)
+					return new SquareOneTurn(0, 0, false);
+				return null;
+			}
 			if(this.isNullTurn()) return o;
 			if(this.slash && other.slash) {
 				if(this.leftSlash == other.leftSlash)
@@ -338,50 +402,63 @@ public class SquareOne extends TwistyPuzzle {
 				return null; //or could merge this into an x2?
 			} else if(this.slash ^ other.slash)
 				return null; //can't merge a slash with a top/bottom turn
-			else if(this.secondLayer != other.secondLayer)
-				return null; //can't merge second layer turns w/ first layer turns
 			//if we made it to here, we're merging top/bottom turns in the same layer
-			return new SquareOneTurn(this.top + other.top, this.down + other.down, this.secondLayer);
+			return new SquareOneTurn(this.top + other.top, this.down + other.down, false);
 		}
 		public String toString() {
 			if(slash)
-				return leftSlash ? "\\" : "/";
-			String turns = top + ", " + down;
-			if(secondLayer)
-				turns = "[" + turns + "]";
-			else
-				turns = "(" + turns + ")";
+				return (leftSlash ? "\\" : "/") + (cw ? "" : "'");
+			else if(axis != -1)
+				return axisname + "2" + (cw ? "" : "'");
+			String turns = "(" + top + ", " + down + ")";
 			return turns;
 		}
 	}
 
 	private Pattern turnPattern = Pattern.compile("(-?\\d*), *(-?\\d*)");
-	public boolean doTurn(String turn) {
+	public boolean doTurn2(String turn) {
 		Matcher m;
 		SquareOneTurn s1turn = null;
-		if(turn.equals("/"))
-			s1turn = new SquareOneTurn(false);
-		else if(turn.equals("\\"))
-			s1turn = new SquareOneTurn(true);
+		if(turn.startsWith("/"))
+			s1turn = new SquareOneTurn(leftRightSwitched, leftRightSwitched ^ turn.substring(1).equals("'"));
+		else if(turn.startsWith("\\"))
+			s1turn = new SquareOneTurn(!leftRightSwitched, leftRightSwitched ^ turn.substring(1).equals("'"));
 		else if((m=turnPattern.matcher(turn)).find()) {
 			int top = Integer.parseInt(m.group(1));
 			int bottom = Integer.parseInt(m.group(2));
 			s1turn = new SquareOneTurn(top, bottom, turn.charAt(0) == '[');
-		} else if(turn.equals("x")) {
-			//TODO - do proper cube rotations?
-			appendTurn(new SquareOneTurn(true));
-			appendTurn(new SquareOneTurn(false));
+		} else {
+			//cube rotations
+			String face = turn.substring(0, 1);
+			String dir = turn.substring(1);
+			boolean ccw = dir.endsWith("'");
+			if(ccw)
+				dir = dir.substring(0, dir.length()-1);
+			//only allowing rotations by 2 for ease of implementation
+			//and because they're all that people would use 
+			if(!dir.equals("2"))
+				return false;
+			if(face.equals("x")) {
+				appendTurn(new SquareOneTurn(0, !ccw));
+			} else if(face.equals("y")) {
+				appendTurn(new SquareOneTurn(1, !ccw));
+			} else if(face.equals("z")) {
+				appendTurn(new SquareOneTurn(2, !ccw));
+			}
 			return true;
-		} else
-			return false;
-		if(s1turn.slash && !isSlashLegal())
+		}
+		if(s1turn.slash && !isSlashLegal(0, 0))
 			return false;
 		appendTurn(s1turn);
 		return true;
 	}
 	
-	private boolean isSlashLegal() {
-		return topLayer[0] && topLayer[6] && bottomLayer[0] && bottomLayer[6];
+	private boolean isSlashLegal(int top, int bottom) {
+		int len = topLayer.length;
+		return topLayer[Utils.modulo(top, len)] && 
+				topLayer[Utils.modulo(6+top, len)] &&
+				bottomLayer[Utils.modulo(bottom, len)] &&
+				bottomLayer[Utils.modulo(6+bottom, len)];
 	}
 
 	public String getState() {
@@ -389,25 +466,93 @@ public class SquareOne extends TwistyPuzzle {
 	}
 
 	public boolean isSolved() {
-		return false;
+		Color side = null;
+		for(PolygonCollection<PuzzleSticker> piece : topLayerPolys)
+			if(piece != null) {
+				if(side == null)
+					side = piece.get(0).getFillColor();
+				else if(!piece.get(0).getFillColor().equals(side))
+					return false;
+			}
+		side = null;
+		for(PolygonCollection<PuzzleSticker> piece : bottomLayerPolys)
+			if(piece != null) {
+				if(side == null)
+					side = piece.get(0).getFillColor();
+				else if(!piece.get(0).getFillColor().equals(side))
+					return false;
+			}
+		if(leftHalfEven != rightHalfEven)
+			return false;
+		Color[] faces = new Color[4]; //F R B L
+		for(int i=0; i<topLayerPolys.length; i+=3) {
+			int index = rightHalfEven ? i : i-1;
+			PolygonCollection<PuzzleSticker> topEdge = Utils.modoloAcces(topLayerPolys, index);
+			PolygonCollection<PuzzleSticker> topCorner = Utils.modoloAcces(topLayerPolys, index+1);
+			if(topEdge == null || topCorner == null || Utils.modoloAcces(topLayerPolys, index+2) != null)
+				return false;
+			index = rightHalfEven ? i : i+1;
+			PolygonCollection<PuzzleSticker> bottomCorner = Utils.modoloAcces(bottomLayerPolys, index);
+			PolygonCollection<PuzzleSticker> bottomEdge = Utils.modoloAcces(bottomLayerPolys, index+2);
+			if(bottomEdge == null || bottomCorner == null || Utils.modoloAcces(bottomLayerPolys, index+1) != null)
+				return false;
+			int group = i/3;
+			if(!sameColor(topEdge.get(1).getFillColor(), faces, group) ||
+					!sameColor(topCorner.get(2).getFillColor(), faces, group) ||
+					!sameColor(topCorner.get(1).getFillColor(), faces, group+1) ||
+					!sameColor(bottomEdge.get(1).getFillColor(), faces, faces.length-group+1) ||
+					!sameColor(bottomCorner.get(2).getFillColor(), faces, faces.length-group+2) ||
+					!sameColor(bottomCorner.get(1).getFillColor(), faces, faces.length-group+1))
+				return false;
+		}
+		int front, right, back, left;
+		if(leftHalfEven) {
+			front = 0; right = 1; back = 2; left = 3;
+		} else {
+			front = 2; right = 1; back = 0; left = 3;
+		}
+		if(!faces[front].equals(leftHalfPolys.get(0).getFillColor()) || !faces[front].equals(rightHalfPolys.get(1).getFillColor()) ||
+				!faces[back].equals(leftHalfPolys.get(1).getFillColor()) || !faces[back].equals(rightHalfPolys.get(0).getFillColor()) ||
+				!faces[left].equals(leftHalfPolys.get(2).getFillColor()) || 
+				!faces[right].equals(rightHalfPolys.get(2).getFillColor()))
+			return false;
+		return true;
+	}
+	private boolean sameColor(Color c, Color[] arr, int i) {
+		i = Utils.modulo(i, arr.length);
+		if(arr[i] == null) {
+			arr[i] = c;
+			return true;
+		}
+		return c.equals(arr[i]);
 	}
 
-	//TODO - better scramble...
 	public void scramble() {
-		Random r = new Random();
-		for(int i=0; i<25; i++) {
-			int t = r.nextInt(3);
-			if(t == 0) {
-				doTurn("/");
-			} else {
-				t = r.nextInt(22);
-				do {
-					if(t <= 10)
-						doTurn("(0," + (t+1) + ")");
-					else
-						doTurn("(" + (t-10) + ",0)");
-				} while(!isSlashLegal());
+		boolean top = true, bottom = true, slash = true;
+		for(int i=0; i<40; i++) {
+			ArrayList<SquareOneTurn> legalTurns = new ArrayList<SquareOneTurn>();
+			for(int c=0; c<12; c++) {
+				if(top && isSlashLegal(c, 0))
+					legalTurns.add(new SquareOneTurn(c, 0, false));
+				if(bottom && isSlashLegal(0, c))
+					legalTurns.add(new SquareOneTurn(0, c, false));
+				if(slash && isSlashLegal(0, 0))
+					legalTurns.add(new SquareOneTurn(false, true));
 			}
+			SquareOneTurn turn = Utils.choose(legalTurns);
+			if(turn.top != 0) {
+				top = false;
+				slash = true;
+			}
+			if(turn.down != 0) {
+				bottom = false;
+				slash = true;
+			}
+			if(turn.slash) {
+				top = bottom = true;
+				slash = false;
+			}
+			appendTurn(turn);
 		}
 	}
 	public HashMap<String, Color> getDefaultColorScheme() {

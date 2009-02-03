@@ -47,7 +47,7 @@
 		<javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/" classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/" debug="true" debuglevel="lines,vars,source"/>
 	</target>
 
-	<target name="jar-oskarscube" depends="compile-applets" description="Compresses CCT main executable and dependencies.">
+	<target name="jar-oskarscube" depends="compile-applets">
 		<mkdir dir="${deploy-applet}" />
 		<jar jarfile="${deploy-applet}/OskarsCube.jar">
 			<manifest>
@@ -64,23 +64,24 @@
 		</jar>
 	</target>
 	
-	<target name="jar-gamescubeman" depends="compile-applets" description="Compresses CCT main executable and dependencies.">
+	<target name="jar-gamescubeman" depends="compile-applets">
 		<mkdir dir="${deploy-applet}" />
 		<jar jarfile="${deploy-applet}/GamesCubeMan.jar">
 			<manifest>
 				<attribute name="Class-path" value="."/>
-				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.XYZCube.GamesCubeMan"/>
+				<attribute name="Main-Class" value="edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.GamesCubeMan"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
 			<fileset dir="${src}">
 				<include name="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**"/>
-				<include name="edu/berkeley/gcweb/gui/gamescubeman/XYZCube/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/PuzzleUtils/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/Cuboid/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/SquareOne/**"/>
 				<exclude name="**/*.jar"/>
 				<exclude name="**/*.java" />
 			</fileset>
 		</jar>
 	</target>
-	
 
 	<target name="clean-applet-source" description="Clean applet src directory">
 		<delete>

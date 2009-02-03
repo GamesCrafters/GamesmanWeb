@@ -104,8 +104,7 @@ function debug(mytext) {
 	typeof console != "undefined" && console.log && console.log(mytext);
 }
 
-function doQuery(turn) {
-	var board = getBoardString();
+function doQuery(turn, board) {
 	$('#debug').text(board);
 	if (turn == null) {
 		game.loadBoard(board);
@@ -129,7 +128,7 @@ function doQuery(turn) {
 	game.doMove(moveInfo);
 	return;
 }
-function puzzleStateChanged(turn) {
+function puzzleStateChanged(turn, boardState) {
 	var face = null;
 	var dir = null;
 	if(turn != null) {
@@ -140,12 +139,12 @@ function puzzleStateChanged(turn) {
 	
 	if(queuedMoves.length == 0 && doingMove == false) { //this means a turn actually happened
 		doingMove = true;
-//		debug("Nothing in the queue, doing move "+turn);
+		debug("Nothing in the queue, doing move "+turn);
 		if(dir == "2") { //some nastyness to ensure that half turns get converted to quarter turns
 			turn = face;
 			queuedMoves.push(face);
 		}
-		if(!doQuery(turn)) //TODO - the return value isn't getting used at all
+		if(!doQuery(turn, boardState)) //TODO - the return value isn't getting used at all
 			doingMove = false;
 	} else {
 		// nextMoves is empty, so queue up the move request.
@@ -154,7 +153,7 @@ function puzzleStateChanged(turn) {
 			queuedMoves.push(face);
 		} else
 			queuedMoves.push(turn);
-//		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
+		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
 	}
 }
 
@@ -170,12 +169,12 @@ function onExecutingMove(moveInfo) {
 
 // called on initial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
-//    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
+    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
     nextMoves = json;
     doingMove = false;
     if (queuedMoves.length != 0) {
         doingMove = true;
-//        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
+        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
         if (!doQuery(queuedMoves.shift()))
             doingMove = false;
     }

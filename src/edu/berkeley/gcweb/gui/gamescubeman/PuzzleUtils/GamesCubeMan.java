@@ -40,7 +40,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private Canvas3D canvas;
 	private JSlider scale, distance, gap, turningRate;
 	private JSpinner[] dimensions;
-	private JCheckBox antialiasing, showTurnHistory;
+	private JCheckBox antialiasing, showTurnHistory, freeRotation;
 	private JCheckBox[] tabBoxes;
 	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox;
 	private RollingJPanel optionsPanel, keysPanel;
@@ -51,9 +51,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private String puzzleClassName = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
 	private int size_x = -1, size_y = -1, size_z = -1;
 	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
-	private boolean resizable = true;
-	private boolean focus_indicator = true;
-	private boolean draw_axis = false;
+	private boolean resizable = true, focus_indicator = true, draw_axis = false, free_rotation = true;
 	private void parseParameters() {
 		try {
 			puzzleClassName = getParameter("puzzle_class");
@@ -79,6 +77,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		resizable = parseBoolean(getParameter("resizable"), resizable);
 		focus_indicator = parseBoolean(getParameter("focus_indicator"), focus_indicator);
 		draw_axis = parseBoolean(getParameter("draw_axis"), draw_axis);
+		free_rotation = parseBoolean(getParameter("free_rotation"), free_rotation);
 	}
 	
 	private Boolean parseBoolean(String s, boolean def) {
@@ -92,7 +91,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 	
 	public void paint(Graphics g) {
-		g.drawString("Loading puzzle class: " + puzzleClassName, 0, 20);
+		if(puzzle == null)
+			g.drawString("Loading puzzle class: " + puzzleClassName, 0, 20);
 	}
 	
 	private JSObject jso;
@@ -121,6 +121,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					keysPanel = new KeyCustomizerPanel(puzzle);
 					
 					puzzle.addStateChangeListener(GamesCubeMan.this);
+
 					puzzleCanvas = new PuzzleCanvas(puzzle, optionsPanel, keysPanel);
 					canvas = puzzleCanvas.getCanvas();
 					canvas.setFocusIndicator(focus_indicator);
@@ -171,6 +172,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					optionsPanel.add(Utils.sideBySide(new JLabel("Distance"), distance, antialiasing));
 					
 					showTurnHistory = new JCheckBox("Show history", false);
+					showTurnHistory.setFocusable(false);
 					showTurnHistory.addActionListener(GamesCubeMan.this);
 					
 					scale = new JSlider(0, 10000, (int) canvas.getScale());
@@ -199,10 +201,15 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 							optionsPanel.add(dims);
 					}
 					
+					freeRotation = new JCheckBox("Free rotation", free_rotation);
+					freeRotation.setFocusable(false);
+					freeRotation.addActionListener(GamesCubeMan.this);
+					canvas.setFreeRotation(free_rotation);
+					
 					gap = new JSlider(0, 100, (int)(200*puzzle.getStickerGap()));
 					gap.setFocusable(false);
 					gap.addChangeListener(GamesCubeMan.this);
-					optionsPanel.add(Utils.sideBySide(new JLabel("Gap"), gap));
+					optionsPanel.add(Utils.sideBySide(new JLabel("Gap"), gap, freeRotation));
 					
 					turningRate = new JSlider(1, puzzle.getMaxFramesPerAnimation(), puzzle.getFramesPerAnimation());
 					turningRate.setMajorTickSpacing(1);
@@ -299,7 +306,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			puzzle.resetPuzzle();
 		else if(e.getSource() == antialiasing)
 			canvas.setAntialiasing(antialiasing.isSelected());
-		else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
+		else if(e.getSource() == freeRotation) {
+			canvas.setFreeRotation(freeRotation.isSelected());
+			resetRotation();
+		} else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
 			for(JCheckBox box : tabBoxes)
 				if(box != e.getSource())
 					box.setSelected(false);
@@ -333,22 +343,23 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 
 	public void puzzleStateChanged(final TwistyPuzzle src, final PuzzleTurn turn) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				String hist = Utils.join(" ", src.getTurnHistory().toArray());
+				//this check reduces flickering
+				if(!hist.equals(turnHistoryField.getText()))
+					turnHistoryField.setText(hist);
+			}
+		});
 		if(jso != null) {
 			new Thread() {
 				public void run() {
 					//we do this in a separate thread because the call() method will
 					//hang for the javascript
-					jso.call("puzzleStateChanged", new Object[] { turn });
+					jso.call("puzzleStateChanged", new Object[] { turn, src.getState() });
 				}
 			}.start();
 		}
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				String turns = src.getTurnHistory().toString();
-				//removing the "[]" surrounding it
-				turnHistoryField.setText(turns.substring(1, turns.length() - 1));
-			}
-		});
 	}
 	
 	public static void main(String[] args) {

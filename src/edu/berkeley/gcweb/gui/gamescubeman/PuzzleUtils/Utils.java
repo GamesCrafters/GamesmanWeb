@@ -3,7 +3,11 @@ package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -40,13 +44,38 @@ public class Utils {
 		return max;
 	}
 	
+	public static<H> H[] copyOf(H[] arr, int len) {
+		int nonNullIndex = -1;
+		for(int i=0; i < arr.length; i++)
+			if(arr[i] != null) {
+				nonNullIndex = i;
+				break;
+			}
+		ArrayList<H> list = new ArrayList<H>();
+		for(int i=0; i<len; i++) list.add(null);
+		H[] copy = (H[]) list.toArray((H[]) Array.newInstance(arr[nonNullIndex].getClass(), 0));
+		for(int i=0; i<len; i++)
+			copy[i] = arr[i];
+		return copy;
+	}
+	
 	public static String join(String join, int[] os) {
 		String temp = "";
 		for(int o : os)
 			temp += join + o;
+		if(temp.length() == 0) return temp;
 		return temp.substring(join.length());
 	}
-	
+	public static String join(String join, Object[] os) {
+		String temp = "";
+		for(Object o : os)
+			temp += join + o.toString();
+		if(temp.length() == 0) return temp;
+		return temp.substring(join.length());
+	}
+	public static<H> H modoloAcces(H[] arr, int i) {
+		return arr[modulo(i, arr.length)];
+	}
 	public static int indexOf(Object o, Object[] arr) {
 		for(int i=0; i<arr.length; i++)
 			if(arr[i] == o)
@@ -59,6 +88,11 @@ public class Utils {
 			// exchange the first and last
 			Object temp = arr[left]; arr[left] = arr[right]; arr[right] = temp;
 		}
+	}
+	
+	private static final Random r = new Random();
+	public static<H> H choose(ArrayList<H> arr) {
+		return arr.get(r.nextInt(arr.size()));
 	}
 
 	public static JPanel sideBySide(JComponent... cs) {

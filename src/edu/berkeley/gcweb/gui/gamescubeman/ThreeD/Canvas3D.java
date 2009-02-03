@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -170,8 +171,15 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			mousePressed(null);
 		dragging = false;
 	}
+	
+	private boolean freeRotation=true;
+	public void setFreeRotation(boolean enabled) {
+		freeRotation = enabled;
+	}
 	private boolean dragging = false;
 	public void mouseDragged(MouseEvent e) {
+		if(!freeRotation)
+			return;
 		dragging = true;
 		lastDrag = System.currentTimeMillis();
 		double deltaX = e.getX() - old.x;
@@ -298,8 +306,18 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 				g2d.draw(proj);
 			}
 		}
-
+		try {
+			g2d.transform(toCartesian.createInverse());
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
+		}
+		if(display != null) g2d.drawString(display, 20, 20);
 		g2d.setRenderingHints(oldHints);
 		g2d.setStroke(oldStroke);
+	}
+	//TODO - this is a fairly nasty hack, and will really spike cpu usage
+	private String display;
+	public void setDisplayString(String display) {
+		this.display = display;
 	}
 }

@@ -1,6 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
