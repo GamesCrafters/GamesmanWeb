@@ -1,7 +1,6 @@
 import sys
 import DatabaseHelper
-import Solver
-import ByteArraySolver
+import ThreeLevelSolver
 import OldSolver
 import UnreverseSolver
 import Puzzle
@@ -25,7 +24,7 @@ def numBits(x):
 		a += 1
 	return a
 
-def solveDatabase(puzzname, passedoptions,isunreverse,solverclass):
+def writeDatabase(puzzname, passedoptions,isunreverse,solverclass):
 	if puzzname.find('/') != -1 or puzzname.find('\\') != -1:
 		raise ArgumentException, "invalid puzzle"
 
@@ -38,21 +37,10 @@ def solveDatabase(puzzname, passedoptions,isunreverse,solverclass):
 	print "Solving "+puzzleclass.__name__+" with options "+repr(options)[1:-1]+"..."
 	puzzle = puzzleclass.unserialize(options) #.generate_start(**options) # instantiates a new puzzle object
 	solver = solverclass()
-	solver.solve(puzzle,verbose=True)
+	solveriter = solver.solve(puzzle,verbose=True)
+	# Generator function
 	
-	print "Solved!  Generating array of values"
-	
-	return solver
-
-def writeDatabase(puzzname, passedoptions, solver, isunreverse):
-	
-	if solver is None:
-		return
-	
-	module = __import__(puzzname)
-	puzzleclass = getattr(module, puzzname)
-
-	maxlevel = solver.get_max_level()
+        maxlevel = 255 # WARNING: BIG ASSUMPTION, NEED A 2-PASS SOLVER!
 	
 	options = {}
 	options.update(puzzleclass.default_options)
@@ -70,69 +58,88 @@ def writeDatabase(puzzname, passedoptions, solver, isunreverse):
 	CHUNK = 1<<CHUNKBITS
 	
 	filename = DatabaseHelper.getFileName(puzzname, options)
+	default = str(bitClass(remoteness=0)) # remoteness==0 but not solution means not seen.
 	print "writing to file %s"%filename
+	maxchunkwritten = -1
+        countitem = 0
+	pct = 0.0
+
+	data = {} # indexed by chunk
+
+	# Not as innocent as it looks: solveriter.next() may take a long time.
+	for levelnum, curlevel in solveriter:
+		try:
+			x = solver.maxHash
+		except:
+			solver.maxHash = 2**32
+                len_curlevel = len(curlevel)
+                countitem += len_curlevel
+		if solver.maxHash:
+			pct = float(100*countitem)/solver.maxHash
+		print "[% 2.4f%%]  Writing level %d, numitems=%d, curitem=%d, maxhash=%d."% \
+			(pct,levelnum,len(curlevel),countitem,solver.maxHash)
+		maxchunks = 1 + solver.maxHash/CHUNK
+		#print "Maximum hash is %d, number of %d-byte chunks to write is %d"%(solver.maxHash, CHUNK, maxchunks)
+
+		mykeys = curlevel.keys()
+		mykeys.sort()
+		mykeys.append(None) # write the last chunk to disk
+		
+		lastchunknum = -1
+		arr = None
+		for position in mykeys:
+			if position is None:
+				chunknum = -1
+			else:
+				chunknum = position>>CHUNKBITS
+				chunkoff = position & (CHUNK-1)
+			if chunknum != lastchunknum:
+				if arr:
+					maxchunkwritten = max(maxchunkwritten, lastchunknum)
+					data[lastchunknum] = (''.join(arr))
+				arr = None
+				lastchunknum = chunknum
+			if position is not None:
+				#position = (chunknum<<CHUNKBITS)+chunkoff
+				#if position not in curlevel:
+				#	continue
+				myval = levelnum
+				if arr == None:
+					if chunknum not in data:
+						arr = []
+					else:
+						arr = [c for c in data[chunknum]]
+				if isunreverse:
+					#print dict(remoteness=(maxlevel - myval[0]), score=myval[1])
+					val = bitClass(remoteness=(maxlevel - myval[0])) #, score=myval[1])
+					#print repr(str(val))
+				else:
+					val = bitClass(remoteness=myval)
+				setList(arr, chunkoff, str(val), default)
+			
+		
+		#print "Done with level %d!"%levelnum
+	
+	print "Solved!  Thank you, writing to disk."
 	f = open(filename, "wb")
 	pickle.dump({'puzzle': puzzname,
 		'options': options,
 		'fields': fields,
 		'version': 1,
-		'maxlevel': maxlevel,
+		'maxlevel': solver.get_max_level(),
 		'chunkbits': CHUNKBITS}, f)
 	chunkbase = (f.tell() + (CHUNK-1)) >> CHUNKBITS
 	
-	default = str(bitClass(remoteness=0)) # remoteness==0 but not solution means not seen.
-	
-	mystr = None
-	try:
-		mystr = solver.getBytes()
-	except:
-		pass # Not a bytearray solve.  Use the normal writing functions.
-	if mystr:
-		f.seek(chunkbase<<CHUNKBITS)
-		print "Writing %d-length buffer to disk..."%len(mystr)
-		f.write(mystr)
-		f.close()
-		return
-	try:
-		print solver.maxHash
-	except:
-		solver.maxHash = 2**32
-	maxchunks = 1 + solver.maxHash/CHUNK
-	print "Maximum hash is %d, number of %d-byte chunks to write is %d"%(solver.maxHash, CHUNK, maxchunks)
-	
-	lasttime = starttime = time.time()
-	for chunknum in xrange(0,maxchunks):
-		arr = []
-		for chunkoff in xrange(CHUNK):
-			position = (chunknum<<CHUNKBITS)+chunkoff
-			myval = solver.seen.get(position, None)
-			if not myval:
-				continue
-			
-			if isunreverse:
-				print dict(remoteness=(maxlevel - myval[0]), score=myval[1])
-				val = bitClass(remoteness=(maxlevel - myval[0])) #, score=myval[1])
-				#print repr(str(val))
-			else:
-				val = bitClass(remoteness=myval)
-			setList(arr, chunkoff, str(val), default)
-		
-		nexttime = time.time()
-		pct = 100.0*float(1+chunknum)/maxchunks
-		if chunknum==0:
-			print "Writing first chunk out of %d to file %s"%(maxchunks,filename)
-		elif nexttime - lasttime > 0.5 or chunknum==1:
-			timeleft = (maxchunks-chunknum) * ((nexttime-starttime)/chunknum)
-			minleft = int(timeleft/60)
-			secleft = int(timeleft)%60
-			print "[%3.2f%%] Writing chunk %d/%d to file %s, %d:%d minutes left"%(pct, chunknum, maxchunks, filename, minleft, secleft)
-			lasttime = nexttime
-		if arr:
-			f.seek((chunkbase + (chunknum*bitClass.bytesize))<<CHUNKBITS)
-			f.write(''.join(arr))
-	
 	f.close()
-	print "Done!"
+	f = open(filename, "r+b") # read/write, no truncate.
+	for chunknum in xrange(1 + (solver.maxHash >> CHUNKBITS)):
+		if chunknum in data:
+			f.seek((chunkbase + (chunknum*bitClass.bytesize))<<CHUNKBITS)
+			f.write(data[chunknum])
+	print "DONE."
+	f.close()
+	solveriter.close()
+	return solver
 
 solver = None
 
@@ -141,8 +148,7 @@ solve_args = ()
 # run with -i to interact with solver.
 def run(name, options, unreverse, solverclass):
 	global solver
-	solver = solveDatabase(name, options, unreverse, solverclass)
- 	writeDatabase(name, options, solver, unreverse)
+	solver = writeDatabase(name, options, unreverse, solverclass)
 	
 
 # run with -i to use the prof variable.
@@ -164,7 +170,6 @@ if __name__=='__main__':
 	if len(sys.argv)<2:
 		print >>sys.stderr, "Arguments: [-u] [-o] [-p] PythonClass option1 value1 option2 value2 ..."
 		print >>sys.stderr, "\t-u: Unreverse solver"
-		print >>sys.stderr, "\t-b: ByteArray solver (requires Python 2.6)"
 		print >>sys.stderr, "\t-o: Old and slow solver for 'legacy' puzzles (including FCG)"
 		print >>sys.stderr, "\t-p: Enable solver profiling"
 		print >>sys.stderr, "\tto determine allowed options, look at default_options in PythonClass.py"
@@ -172,13 +177,10 @@ if __name__=='__main__':
 	args = sys.argv[1:]
 	unreverse=False
 	profiling=False
-	solverclass = Solver.Solver
+	solverclass = ThreeLevelSolver.Solver
 	if args[0]=="-u":
 		solverclass = UnreverseSolver.UnreverseSolver
 		unreverse=True
-		args=args[1:]
-        if args[0]=="-b":
-                solverclass = ByteArraySolver.Solver
 		args=args[1:]
 	if args[0]=="-o":
 		solverclass = OldSolver.Solver

@@ -11,12 +11,32 @@
 
 # Beware the Jabberwock, my son! The jaws that bite, the claws that catch!
 # Beware the Jubjub bug, and read vazor.com/cjson.html#!
-from cjson import decode as json_dec, encode as json_enc
+try:
+	from json import loads as json_dec, dumps as json_enc
+	print "YAY"
+except:
+	try:
+		from cjson import decode as json_dec, encode as json_enc
+	except ImportError:
+		try:
+			# Or, if you like simplejson better:
+			from simplejson import loads as json_dec, dumps as json_enc
+		except ImportError:
+			# Does the right thing in many cases, but it's good to scare the user some.
+			print "************* WARNING *************"
+			print "You are using repr() to produce javascript code.  This will work"
+			print "in many cases, but may fail on complicated STRINGS with weird characters"
+			print "or if you send TUPLES to javascript."
+			print ""
+			print "I highly recommend you download and install either the 'simplejson' or"
+			print "the 'cjson' packaage, or upgrade to PYTHON 2.6."
+			print "***********************************"
+			json_enc  = repr
+	
 
-# Or, if you like simplejson better:
-# from simplejson import loads as json_dec, dumps as json_enc
 
 import urllib
+import traceback
 import socket
 import asyncore
 from asynchat import async_chat
@@ -60,8 +80,9 @@ class JsonConnection(async_chat):
 			msg = {"status": "ok", "response": response}
 			
 		except Exception, e:
-			print "Error when parsing JSON query."
+			print "Error when handling JSON query."
 			print e
+			traceback.print_exc()
 			print "---------------"
 			msg = {"status": "error", "msg": str(e)}
 			
@@ -73,6 +94,7 @@ class JsonConnection(async_chat):
 		except:
 			print "FAILURE in encoding message"
 			print repr(msg)
+			traceback.print_exc()
 
 class JsonServer(asyncore.dispatcher):
 	def __init__(self, port, handler):
