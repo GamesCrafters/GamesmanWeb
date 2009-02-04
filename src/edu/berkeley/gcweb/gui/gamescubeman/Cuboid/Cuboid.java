@@ -444,7 +444,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		DIRECTION_TURN.put(-2, "2'");
 		DIRECTION_TURN.put(2, "2");
 	}
-	public boolean doTurn(String turn) {
+	public boolean doTurn2(String turn) {
 		if(turn.equals("scramble")) {
 			scramble();
 			return true;
