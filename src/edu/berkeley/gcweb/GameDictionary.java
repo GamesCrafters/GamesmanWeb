@@ -3,23 +3,20 @@ package edu.berkeley.gcweb;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.net.InetAddress;
-import java.util.*;
+import java.net.Socket;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -27,7 +24,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,10 +42,10 @@ public class GameDictionary {
         private InetAddress host;
         private int port;
         
-        public HostInfo(String hostname, int port) throws UnknownHostException {
+        public HostInfo(String hostName, int port) throws UnknownHostException {
             this.port = port;
             this.hostName = hostName;
-            this.host = InetAddress.getByName(hostname);
+            this.host = InetAddress.getByName(hostName);
         }
         public InetAddress getInetAddress() {
             return host;
@@ -171,8 +167,6 @@ public class GameDictionary {
                 if (host == null || portstr == null) {
                     continue;
                 }
-                int port;
-                HostInfo inf;
                 try {
                     myInfo.addHostInfo(new HostInfo(host, Integer.valueOf(portstr)));
                 } catch (NumberFormatException e) {
