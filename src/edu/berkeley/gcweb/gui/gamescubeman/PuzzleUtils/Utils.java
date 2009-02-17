@@ -6,7 +6,6 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
@@ -44,6 +43,12 @@ public class Utils {
 		return max;
 	}
 	
+	public static<P> void swap(ArrayList<P> a, int i, int j) {
+		P temp = a.get(i);
+		a.set(i, a.get(j));
+		a.set(j, temp);
+	}
+	
 	public static<H> H[] copyOf(H[] arr, int len) {
 		int nonNullIndex = -1;
 		for(int i=0; i < arr.length; i++)
@@ -77,7 +82,7 @@ public class Utils {
 		return arr[modulo(i, arr.length)];
 	}
 	public static int indexOf(Object o, Object[] arr) {
-		for(int i=0; i<arr.length; i++)
+		for(int i=0; arr != null && i<arr.length; i++)
 			if(arr[i] == o)
 				return i;
 		return -1;

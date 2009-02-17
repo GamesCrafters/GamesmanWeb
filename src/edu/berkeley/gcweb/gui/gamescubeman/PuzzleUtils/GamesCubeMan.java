@@ -13,15 +13,14 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -46,19 +45,21 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private RollingJPanel optionsPanel, keysPanel;
 	private JButton resetView, scramble, resetPuzzle;
 	private JTextField turnHistoryField;
-	private JRadioButton[] variationButtons;
+	private JComboBox variations;
 	
-	private String puzzleClassName = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
+	private String puzzle_class = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
+	private String puzzle_variation = null;
 	private int size_x = -1, size_y = -1, size_z = -1;
 	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
 	private boolean resizable = true, focus_indicator = true, draw_axis = false, free_rotation = true;
 	private void parseParameters() {
 		try {
-			puzzleClassName = getParameter("puzzle_class");
+			puzzle_class = getParameter("puzzle_class");
 		} catch(NullPointerException e) {
 			//this indicates that we're not running as an applet
 			return;
 		}
+		puzzle_variation = getParameter("puzzle_variation");
 		try {
 			size_x = Integer.parseInt(getParameter("size_x"));
 		} catch(Exception e) {}
@@ -79,7 +80,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		draw_axis = parseBoolean(getParameter("draw_axis"), draw_axis);
 		free_rotation = parseBoolean(getParameter("free_rotation"), free_rotation);
 	}
-	
 	private Boolean parseBoolean(String s, boolean def) {
 		if(s == null)
 			return def;
@@ -92,7 +92,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	
 	public void paint(Graphics g) {
 		if(puzzle == null)
-			g.drawString("Loading puzzle class: " + puzzleClassName, 0, 20);
+			g.drawString("Loading puzzle class: " + puzzle_class, 0, 20);
 	}
 	
 	private JSObject jso;
@@ -108,10 +108,10 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				public void run() {
 					parseParameters();
 					try {
-						Class<? extends TwistyPuzzle> puzzleClass = Class.forName(puzzleClassName).asSubclass(TwistyPuzzle.class);
+						Class<? extends TwistyPuzzle> puzzleClass = Class.forName(puzzle_class).asSubclass(TwistyPuzzle.class);
 						puzzle = puzzleClass.getConstructor().newInstance();
 					} catch (Exception e) {
-						System.err.println("Error loading puzzle class " + puzzleClassName);
+						System.err.println("Error loading puzzle class " + puzzle_class);
 						e.printStackTrace();
 						return;
 					}
@@ -219,21 +219,15 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					turningRate.addChangeListener(GamesCubeMan.this);
 					optionsPanel.add(Utils.sideBySide(new JLabel("Frames/Animation"), turningRate));
 					
-					ButtonGroup g = new ButtonGroup();
-					String[] vars = puzzle.getPuzzleVariations();
-					if(vars != null) {
-						variationButtons = new JRadioButton[vars.length];
-						for(int i = 0; i < variationButtons.length; i++) {
-							variationButtons[i] = new JRadioButton(vars[i].toString(), vars[i].equals(puzzle.getPuzzleVariation()));
-							variationButtons[i].setActionCommand(""+i);
-							variationButtons[i].setFocusable(false);
-							variationButtons[i].addActionListener(GamesCubeMan.this);
-							g.add(variationButtons[i]);
-						}
-						if(resizable)
-							optionsPanel.add(Utils.sideBySide(variationButtons));
+					if(puzzle_variation != null)
+						puzzle.setPuzzleVariation(puzzle_variation);
+					if(puzzle.getPuzzleVariation() != null && resizable) {
+						variations = new JComboBox(puzzle.getPuzzleVariations());
+						variations.addActionListener(GamesCubeMan.this);
+						optionsPanel.add(variations);
+						variations.setSelectedItem(puzzle.getPuzzleVariation());
 					}
-					
+
 					JPanel topHalf = new JPanel(new BorderLayout());
 					
 					tabBoxes = Arrays.asList(colorChooserCheckBox, optionsCheckBox, keysCheckBox).toArray(new JCheckBox[0]);
@@ -319,14 +313,12 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		} else if(e.getSource() == showTurnHistory) {
 			turnHistoryField.setVisible(showTurnHistory.isSelected());
 			this.validate();
-		} else if(e.getSource() instanceof JRadioButton)
+		} else if(e.getSource() == variations) {
 			puzzle.setPuzzleVariation(getSelectedVariation());
+		}
 	}
 	private String getSelectedVariation() {
-		for(int i = 0; i < variationButtons.length; i++)
-			if(variationButtons[i].isSelected())
-				return puzzle.getPuzzleVariations()[i];
-		return null;
+		return (String) variations.getSelectedItem();
 	}
 
 	private void resetRotation() {

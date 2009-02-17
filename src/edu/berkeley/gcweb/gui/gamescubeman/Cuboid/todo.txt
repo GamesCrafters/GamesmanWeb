@@ -15,14 +15,20 @@
 
 TODO:
 -scramble progress bar?
--turns should be really disabled during scramble, not just queued
 -hand positions indicator
--square one! urghhh...
++turns should be really disabled during scramble, not just queued
 
 GAMESCRAFTERS:
+-Square One Variations
+	3 layer Flower (put only corners in top and bottom layers and build up middle to match)
+	2 layer Flower (remove middle layer instead)
+	Barrel (put only edges in top and bottom layer and cut middle to match)
+	+2 layer sq 1
+	+Square 2 (unbandaged)
+-super cubes
 -fix polygon draw ordering bug for ethan
--move-value history doesn't sync when pressing reset
 -lots of flickering on firefox mac?
++move-value history doesn't sync when pressing reset
 +importing state of cube doesn't work
 +many turns that should be legal aren't allowed
 +create a help that shows the legal turns and the move-values of each

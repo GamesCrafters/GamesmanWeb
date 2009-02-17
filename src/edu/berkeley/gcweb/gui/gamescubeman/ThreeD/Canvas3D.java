@@ -311,13 +311,18 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-		if(display != null) g2d.drawString(display, 20, 20);
+		if(display != null) {
+			g2d.setColor(textColor);
+			g2d.drawString(display, 20, 20);
+		}
 		g2d.setRenderingHints(oldHints);
 		g2d.setStroke(oldStroke);
 	}
-	//TODO - this is a fairly nasty hack, and will really spike cpu usage
+	//TODO - this is a fairly nasty hack
 	private String display;
-	public void setDisplayString(String display) {
+	private Color textColor;
+	public void setDisplayString(Color c, String display) {
 		this.display = display;
+		textColor = c;
 	}
 }

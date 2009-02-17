@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -39,6 +40,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 
 	public void resetPuzzle() {
+		resetTimer();
 		createPolys(false);
 	}
 
@@ -77,9 +79,13 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 					turner.stop();
 			}
 		} else if(e.getSource() == timer) {
-			canvas.setDisplayString(getTime());
-			canvas.repaint();
+			updateTimeDisplay();
 		}
+	}
+	
+	private void updateTimeDisplay() {
+		canvas.setDisplayString(isInspecting() ? Color.RED : Color.BLACK, getTime());
+		canvas.repaint();
 	}
 
 	private int framesPerAnimation = 5; //this is the number of animations per turn (less -> faster animation)
@@ -144,7 +150,13 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		}
 		clearPolys();
 	}
-	public abstract void scramble();
+	private boolean scrambling = false;
+	public final void scramble() {
+		resetPuzzle();
+		scrambling = true;
+		scramble2();
+	}
+	protected abstract void scramble2();
 	public abstract boolean isSolved();
 	public abstract HashMap<String, Color> getDefaultColorScheme();
 	//this sets the default angle to view the puzzle from (using Shape3D's setRotation() method)
@@ -179,24 +191,50 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		doTurn(turn);
 	}
 	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {
-		if(src.isSolved() && stop == -1)
+		//this will start the timer if we're currently inspecting
+		if(!scrambling && isInspecting())
+			start = System.currentTimeMillis() - INSPECTION_TIME*1000;
+		//this is to detect when scrambling is finished
+		//this is kinda funky, but it seems to work fine
+		if(src.animationQueue.size() <= 1 && scrambling) {
+			startInspection();
+			scrambling = false;
+		}
+		if(src.isSolved() && isTiming())
 			stopTimer();
 	}
+	private static final int INSPECTION_TIME = 15;
+	private static final DecimalFormat df = new DecimalFormat("0.00");
 	private String getTime() {
 		if(start == -1)
 			return "";
-		long time = stop;
-		if(stop == -1)
-			time = System.currentTimeMillis();
-		return (time-start)/1000. + "";
+		if(isInspecting())
+			return "" + (int)Math.ceil(getCountdownSeconds());
+		return "" + df.format(getElapsedTime()/1000.);
 	}
 	private long start = -1, stop = -1;
 	private void stopTimer() {
 		stop = System.currentTimeMillis();
 		timer.stop();
-		canvas.setDisplayString(getTime());
+		updateTimeDisplay();
 	}
-	private void startTimer() {
+	private long getElapsedTime() {
+		if(start == -1) return 0;
+		long time = stop;
+		if(stop == -1)
+			time = System.currentTimeMillis();
+		return time - start - 1000*INSPECTION_TIME;
+	}
+	private double getCountdownSeconds() {
+		return -getElapsedTime()/1000.;
+	}
+	private boolean isTiming() {
+		return start != -1 && stop == -1;
+	}
+	private boolean isInspecting() {
+		return start != -1 && getCountdownSeconds() > 0;
+	}
+	private void startInspection() {
 		start = System.currentTimeMillis();
 		stop = -1;
 		timer.start();
@@ -204,17 +242,14 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	private void resetTimer() {
 		stop = start = -1;
 		timer.stop();
+		updateTimeDisplay();
 	}
 	private Timer timer = new Timer(100, this);
 	//returns true if the String was recognized as a turn
 	public final boolean doTurn(String turn) {
+		if(scrambling) return false;
 		if(turn.equals("scramble")) {
 			scramble();
-			resetTimer();
-			return true;
-		} else if(turn.equals("time")) {
-			if(!this.isSolved())
-				startTimer();
 			return true;
 		}
 		return doTurn2(turn);

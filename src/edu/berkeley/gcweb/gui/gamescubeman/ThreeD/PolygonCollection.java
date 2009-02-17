@@ -2,6 +2,8 @@ package edu.berkeley.gcweb.gui.gamescubeman.ThreeD;
 
 import java.util.ArrayList;
 
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.Utils;
+
 public class PolygonCollection<P extends Polygon3D> extends ArrayList<P> {
 	public PolygonCollection() {}
 	public PolygonCollection<P> clone() {
@@ -40,8 +42,6 @@ public class PolygonCollection<P extends Polygon3D> extends ArrayList<P> {
 		return this;
 	}
 	public void swap(int index1, int index2) {
-		P temp = get(index1);
-		set(index1, get(index2));
-		set(index2, temp);
+		Utils.swap(this, index1, index2);
 	}
 }

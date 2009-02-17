@@ -445,10 +445,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		DIRECTION_TURN.put(2, "2");
 	}
 	public boolean doTurn2(String turn) {
-		if(turn.equals("scramble")) {
-			scramble();
-			return true;
-		}
 		char ch = turn.charAt(0);
 		CubeFace face = CubeFace.decodeFace(ch);
 		Integer direction = TURN_DIRECTION.get(turn.substring(1));
@@ -475,7 +471,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			return true;
 		}
 	}
-	public void scramble() {
+	public void scramble2() {
 		CubeFace[] faces = CubeFace.faces();
 		Random r = new Random();
 		for(int ch = 0; ch < 3*(dimensions[0]+dimensions[1]+dimensions[2]); ch++) {
