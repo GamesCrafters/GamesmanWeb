@@ -12,7 +12,7 @@ public class CubeFace {
 	public final static CubeFace LEFT = new CubeFace('L', 0, true, 2, 1, Color.GREEN);
 	public final static CubeFace RIGHT = new CubeFace('R', LEFT, Color.BLUE);
 	public final static CubeFace FRONT = new CubeFace('F', 2, false, 0, 1, Color.RED);
-	public final static CubeFace BACK = new CubeFace('B', FRONT, new Color(242, 98, 2));
+	public final static CubeFace BACK = new CubeFace('B', FRONT, new Color(255, 128, 0));
 	//cw_cw is whether turning the face clockwise is the same as rotating clockwise about the axis
 	private boolean cw_cw;
 	//isClockwise indicates whether the first dimension is in the clockwise direction

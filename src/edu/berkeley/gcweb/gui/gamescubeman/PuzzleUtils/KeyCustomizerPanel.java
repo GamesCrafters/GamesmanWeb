@@ -13,6 +13,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -25,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class KeyCustomizerPanel extends RollingJPanel {
-	//TODO - store in a cookie (and update html display)
 	private TwistyPuzzle puzzle;
 	private Properties keyLayoutBackup, keyLayout;
 	private JPanel keyPanel;
@@ -49,6 +50,7 @@ public class KeyCustomizerPanel extends RollingJPanel {
 		puzzle = twistyPuzzle;
 		keyLayout = puzzle.getKeyboardLayout();
 		keyLayoutBackup = (Properties) keyLayout.clone();
+		loadCookie();
 		keyPanel = new JPanel();
 		keyPanel.setLayout(new GridLayout(0, 1));
 		keyEditors = new KeyEditor[QWERTY_LOWER.length][];
@@ -77,6 +79,7 @@ public class KeyCustomizerPanel extends RollingJPanel {
 				keyLayout = (Properties) keyLayoutBackup.clone();
 				puzzle.setKeyboardLayout(keyLayout);
 				keysChanged();
+				saveCookie();
 			}
 		});
 		
@@ -86,6 +89,25 @@ public class KeyCustomizerPanel extends RollingJPanel {
 		add(Utils.sideBySide(reset, caps), BorderLayout.PAGE_END);
 		
 		keysChanged();
+	}
+	private String getCookieKeyName() {
+		return "keys";
+	}
+	//attempts to load the cookie with the previous keyboard layout, if it exists
+	private void loadCookie() {
+		Dictionary<String, String> cookie = GamesCubeMan.cookies.getMap(getCookieKeyName());
+		if(cookie != null) {
+			keyLayout = new Properties();
+			Enumeration<String> keys = cookie.keys();
+			while(keys.hasMoreElements()) {
+				String key = keys.nextElement();
+				keyLayout.setProperty(key, cookie.get(key));
+			}
+			puzzle.setKeyboardLayout(keyLayout);
+		}
+	}
+	private void saveCookie() {
+		GamesCubeMan.cookies.setMap("keys", keyLayout);
 	}
 	private void keysChanged() {
 		for(int row=0; row<keyEditors.length; row++)
@@ -117,6 +139,7 @@ public class KeyCustomizerPanel extends RollingJPanel {
 						String turn = editor.getText();
 						keyLayout.setProperty(key, turn);
 						setTurn(turn);
+						saveCookie();
 					} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 						setEditing(false);
 				}

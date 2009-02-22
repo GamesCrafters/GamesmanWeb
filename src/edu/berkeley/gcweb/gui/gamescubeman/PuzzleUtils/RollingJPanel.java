@@ -3,8 +3,6 @@ package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 
 import javax.swing.JPanel;
@@ -17,13 +15,6 @@ public class RollingJPanel extends JPanel implements ActionListener {
 		t = new Timer(10, this);
 		super.setVisible(false);
 		addMouseListener(new MouseAdapter() {}); //this is to prevent key presses from falling through the tab
-		addContainerListener(new ContainerListener() {
-			public void componentAdded(ContainerEvent e) {
-			}
-			public void componentRemoved(ContainerEvent e) {
-				
-			}
-		});
 	}
 	
 	private int preferredHeight;

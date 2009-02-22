@@ -12,23 +12,32 @@
 +slider for turning speed
 +BUG: w/ mac os x (email dan cohen) java 5
 +BUG: w/ opera (patrick jameson)
-
-TODO:
--scramble progress bar?
--hand positions indicator
++store key layout and color scheme (on a per puzzle basis) in cookies
 +turns should be really disabled during scramble, not just queued
-
-GAMESCRAFTERS:
--Square One Variations
-	3 layer Flower (put only corners in top and bottom layers and build up middle to match)
-	2 layer Flower (remove middle layer instead)
-	Barrel (put only edges in top and bottom layer and cut middle to match)
-	+2 layer sq 1
-	+Square 2 (unbandaged)
--super cubes
--fix polygon draw ordering bug for ethan
--lots of flickering on firefox mac?
 +move-value history doesn't sync when pressing reset
 +importing state of cube doesn't work
 +many turns that should be legal aren't allowed
 +create a help that shows the legal turns and the move-values of each
++don't stop inspection when doing cube rotations
+
+TODO:
+-generalize to an animation simulator
+	-generators, solves, pre-moves,
+	-color schemes/key layouts
+	-enable/disable spin view
+	-save state? ask lucas...
+-scramble progress bar?
+-hand positions indicator
+-Square One Variations
+	-4 layer sq 1
+	-3 layer Flower (put only corners in top and bottom layers and build up middle to match)
+	-2 layer Flower (remove middle layer instead)
+	-Barrel (put only edges in top and bottom layer and cut middle to match)
+	+2 layer sq 1
+	+Square 2 (unbandaged)
+-super cuboids
+
+GAMESCRAFTERS:
+-update page keyboard when the applet's key layout changes
+-fix polygon draw ordering bug for ethan
+-lots of flickering on firefox mac?

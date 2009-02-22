@@ -1,7 +1,10 @@
 package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 public abstract class PuzzleTurn {
-	//returns true if this turn has no effect on the puzzle
+	//returns true if this turn is legal during inspection
+	public abstract boolean isInspectionLegal();
+	//returns true if this turn has no visible effect on the puzzle
+	//(a cube rotation would return false here)
 	public abstract boolean isNullTurn();
 	//if the moves are mergeable into one move (ex: R + R = R2), returns that move, otherwise null
 	//if other == null, just return this

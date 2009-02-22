@@ -16,11 +16,6 @@ import javax.swing.Timer;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener {
-	//TODO - generalize to an animation simulator
-	//generators, solves, pre-moves,
-	//color schemes/key layouts
-	//enable/disable spin view
-	//save state? ask lucas...
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
 		addStateChangeListener(this);
@@ -40,6 +35,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 
 	public void resetPuzzle() {
+		scrambling = false;
 		resetTimer();
 		createPolys(false);
 	}
@@ -71,6 +67,11 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == turner) {
 			TurnAnimation anim = animationQueue.get(0);
+			//this is to detect when scrambling is finished
+			if(anim == END_SCRAMBLING) {
+				scrambling = false;
+				startInspection();
+			}
 			for(PuzzleTurn finished : anim.animate())
 				fireStateChanged(finished);
 			if(anim.isEmpty()) {
@@ -134,7 +135,9 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		createPolys(false);
 	}
 	
-	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor *** 
+	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
+	public abstract String getPuzzleName();
+	
 	//something like a cuboid would have this, whereas square one wouldn't
 	protected int[] getDefaultXYZDimensions() {
 		return null;
@@ -150,11 +153,13 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		}
 		clearPolys();
 	}
+	private final TurnAnimation END_SCRAMBLING = new TurnAnimation(this);
 	private boolean scrambling = false;
 	public final void scramble() {
 		resetPuzzle();
 		scrambling = true;
 		scramble2();
+		animationQueue.add(END_SCRAMBLING);
 	}
 	protected abstract void scramble2();
 	public abstract boolean isSolved();
@@ -162,44 +167,39 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	//this sets the default angle to view the puzzle from (using Shape3D's setRotation() method)
 	public abstract void resetRotation();
 	
-	private Properties keyProps = new Properties();
+	private Properties keyProps = null;
 	public Properties getKeyboardLayout() {
+		if(keyProps == null) {
+			keyProps = new Properties();
+			try {
+				keyProps.load(this.getClass().getResourceAsStream("keys.properties"));
+			} catch(FileNotFoundException e) {
+				e.printStackTrace();
+			} catch(IOException e) {
+				e.printStackTrace();
+			} catch(NullPointerException e) {
+				System.err.println("keys.properties not found!");
+				e.printStackTrace();
+			}
+		}
 		return keyProps;
 	}
 	public void setKeyboardLayout(Properties props) {
 		keyProps = props;
 	}
-	{
-		try {
-			keyProps.load(this.getClass().getResourceAsStream("keys.properties"));
-		} catch(FileNotFoundException e) {
-			e.printStackTrace();
-		} catch(IOException e) {
-			e.printStackTrace();
-		} catch(NullPointerException e) {
-			System.err.println("keys.properties not found!");
-			e.printStackTrace();
-		}
-	}
 	public final void doTurn(KeyEvent e) {
 		if(e.isAltDown()) return;
 		String character = ""+e.getKeyChar();
-		String turn = (String) keyProps.get(character);
+		String turn = (String) getKeyboardLayout().get(character);
 		if(turn == null)
-			turn = (String) keyProps.get(character.toLowerCase());
+			turn = (String) getKeyboardLayout().get(character.toLowerCase());
 		if(turn == null) return;
 		doTurn(turn);
 	}
 	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {
 		//this will start the timer if we're currently inspecting
-		if(!scrambling && isInspecting())
+		if(!scrambling && isInspecting() && turn != null && !turn.isInspectionLegal())
 			start = System.currentTimeMillis() - INSPECTION_TIME*1000;
-		//this is to detect when scrambling is finished
-		//this is kinda funky, but it seems to work fine
-		if(src.animationQueue.size() <= 1 && scrambling) {
-			startInspection();
-			scrambling = false;
-		}
 		if(src.isSolved() && isTiming())
 			stopTimer();
 	}
@@ -214,6 +214,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 	private long start = -1, stop = -1;
 	private void stopTimer() {
+		if(!isTiming()) return;
 		stop = System.currentTimeMillis();
 		timer.stop();
 		updateTimeDisplay();

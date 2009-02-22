@@ -17,6 +17,11 @@ public class SquareOne extends TwistyPuzzle {
 	public SquareOne() {
 		super(0, 0, 4);
 	}
+	
+	public String getPuzzleName() {
+		return "Square One";
+	}
+	
 	private static final String NORMAL = "Square 1",
 								TWO_LAYER = "Two Layer Square 1",
 								UNBANDAGED = "Square 2",
@@ -449,6 +454,9 @@ public class SquareOne extends TwistyPuzzle {
 		public boolean isNullTurn() {
 			return slash == false && top == 0 && down == 0 && axis == -1;
 		}
+		public boolean isInspectionLegal() {
+			return axis != -1; //this indicates a cube rotation
+		}
 		public PuzzleTurn mergeTurn(PuzzleTurn o) {
 			if(o == null || o.isNullTurn()) return this;
 			SquareOneTurn other = (SquareOneTurn) o;
@@ -630,13 +638,18 @@ public class SquareOne extends TwistyPuzzle {
 			} else {
 				front = 2; right = 1; back = 0; left = 3;
 			}
-			if(!faces[front].equals(leftHalfPolys.get(0).getFillColor()) || !faces[front].equals(rightHalfPolys.get(1).getFillColor()) ||
-					!faces[back].equals(leftHalfPolys.get(1).getFillColor()) || !faces[back].equals(rightHalfPolys.get(0).getFillColor()) ||
-					!faces[left].equals(leftHalfPolys.get(2).getFillColor()) || 
-					!faces[right].equals(rightHalfPolys.get(2).getFillColor()))
+			if(!equals(faces[front], leftHalfPolys.get(0).getFillColor()) || !equals(faces[front], rightHalfPolys.get(1).getFillColor()) ||
+					!equals(faces[back], leftHalfPolys.get(1).getFillColor()) || !equals(faces[back], rightHalfPolys.get(0).getFillColor()) ||
+					!equals(faces[left], leftHalfPolys.get(2).getFillColor()) || 
+					!equals(faces[right], rightHalfPolys.get(2).getFillColor()))
 				return false;
 		}
 		return true;
+	}
+	private boolean equals(Object a, Object b) {
+		if(a == null)
+			return b == null;
+		return a.equals(b);
 	}
 	private boolean sameColor(Color c, Color[] arr, int i) {
 		i = Utils.modulo(i, arr.length);

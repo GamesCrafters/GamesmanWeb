@@ -114,4 +114,25 @@ public class Utils {
 			p.add(c);
 		return p;
 	}
+	
+	public static String colorToString(Color c) {
+		if(c == null)
+			return "";
+		return padWith0s(Integer.toHexString(c.getRGB() & 0xffffff));
+	}
+	private static String padWith0s(String s) {
+		int pad = 6 - s.length();
+		if(pad > 0) {
+			for(int i = 0; i < pad; i++)
+				s = "0" + s;
+		}
+		return s;
+	}
+	public static Color stringToColor(String s, boolean nullIfInvalid) {
+		try {
+			return new Color(Integer.parseInt(s, 16));
+		} catch(Exception e) {
+			return nullIfInvalid ? null : Color.WHITE;
+		}
+	}
 }

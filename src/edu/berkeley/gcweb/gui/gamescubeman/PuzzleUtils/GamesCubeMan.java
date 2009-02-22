@@ -11,6 +11,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
 import javax.swing.JApplet;
@@ -54,32 +55,42 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private boolean resizable = true, focus_indicator = true, draw_axis = false, free_rotation = true;
 	private void parseParameters() {
 		try {
-			puzzle_class = getParameter("puzzle_class");
+			puzzle_class = getArgument("puzzle_class");
 		} catch(NullPointerException e) {
 			//this indicates that we're not running as an applet
 			return;
 		}
-		puzzle_variation = getParameter("puzzle_variation");
+		puzzle_variation = getArgument("puzzle_variation");
+		if(puzzle_variation != null) {
+			//TODO - there has to be a library for this
+			puzzle_variation = puzzle_variation.replaceAll("%20", " ");
+		}
 		try {
-			size_x = Integer.parseInt(getParameter("size_x"));
+			size_x = Integer.parseInt(getArgument("size_x"));
 		} catch(Exception e) {}
 		try {
-			size_y = Integer.parseInt(getParameter("size_y"));
+			size_y = Integer.parseInt(getArgument("size_y"));
 		} catch(Exception e) {}
 		try {
-			size_z = Integer.parseInt(getParameter("size_z"));
+			size_z = Integer.parseInt(getArgument("size_z"));
+		} catch(Exception e) {}
+		//TODO - generalize the tostring fromstring for colors in the simulator!
+		try {
+			bg_color = Color.decode(getArgument("bg_color"));
 		} catch(Exception e) {}
 		try {
-			bg_color = Color.decode(getParameter("bg_color"));
+			fg_color = Color.decode(getArgument("fg_color"));
 		} catch(Exception e) {}
-		try {
-			fg_color = Color.decode(getParameter("fg_color"));
-		} catch(Exception e) {}
-		resizable = parseBoolean(getParameter("resizable"), resizable);
-		focus_indicator = parseBoolean(getParameter("focus_indicator"), focus_indicator);
-		draw_axis = parseBoolean(getParameter("draw_axis"), draw_axis);
-		free_rotation = parseBoolean(getParameter("free_rotation"), free_rotation);
+		resizable = parseBoolean(getArgument("resizable"), resizable);
+		focus_indicator = parseBoolean(getArgument("focus_indicator"), focus_indicator);
+		draw_axis = parseBoolean(getArgument("draw_axis"), draw_axis);
+		free_rotation = parseBoolean(getArgument("free_rotation"), free_rotation);
 	}
+	private String getArgument(String key) {
+		String value = urlArguments.get(key);
+		return (value != null) ? value : getParameter(key);
+	}
+	
 	private Boolean parseBoolean(String s, boolean def) {
 		if(s == null)
 			return def;
@@ -96,6 +107,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 	
 	private JSObject jso;
+	private Hashtable<String, String> urlArguments = new Hashtable<String, String>();;
+	public static Cookies cookies = new Cookies();
 	public void init() {
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -106,10 +119,23 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
+					try {
+						jso = JSObject.getWindow(GamesCubeMan.this);
+						cookies = new Cookies(jso);
+						
+						String argString = ((String) ((JSObject) jso.getMember("location")).getMember("search")).substring(1);
+						for(String param : argString.split("&")) {
+							String[] key_val = param.split("=");
+							if(key_val.length != 2) throw new Error("Expected key=value not found in " + param);
+							urlArguments.put(key_val[0], key_val[1]);
+						}
+					} catch(Exception e) {}
 					parseParameters();
+					
 					try {
 						Class<? extends TwistyPuzzle> puzzleClass = Class.forName(puzzle_class).asSubclass(TwistyPuzzle.class);
 						puzzle = puzzleClass.getConstructor().newInstance();
+						cookies.setCategory(puzzle.getPuzzleName());
 					} catch (Exception e) {
 						System.err.println("Error loading puzzle class " + puzzle_class);
 						e.printStackTrace();
@@ -251,7 +277,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					setBG_FG(pane, bg_color, fg_color);
 				}
 			});
-			jso = JSObject.getWindow(this);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

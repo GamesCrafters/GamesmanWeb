@@ -22,6 +22,10 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		super(0, 0, 4);
 	}
 	
+	public String getPuzzleName() {
+		return "Cuboid";
+	}
+	
 	public void resetRotation() {
 		setRotation(new RotationMatrix(0, -45));
 	}

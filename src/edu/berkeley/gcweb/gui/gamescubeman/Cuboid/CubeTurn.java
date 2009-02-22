@@ -37,6 +37,9 @@ public class CubeTurn extends PuzzleTurn {
 			f = layer + " " + face;
 		return f + Cuboid.DIRECTION_TURN.get(cw);
 	}
+	public boolean isInspectionLegal() {
+		return layer == -1; //this is a cube rotation
+	}
 	public boolean isNullTurn() {
 		return cw == 0;
 	}

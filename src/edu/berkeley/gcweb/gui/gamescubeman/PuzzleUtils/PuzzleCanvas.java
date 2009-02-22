@@ -1,7 +1,6 @@
 package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -28,9 +27,8 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		canvas.addShape3D(puzzle);
 		
 		this.add(canvas, new Integer(0));
-		colorChooser = new NColorChooser();
+		colorChooser = new NColorChooser(puzzle.getDefaultColorScheme());
 		colorChooser.addColorChangeListener(this);
-		colorChooser.setColors(puzzle.getDefaultColorScheme());
 		colorChooser.setVisible(false);
 		this.add(colorChooser, new Integer(1));
 		for(JPanel p : options)
@@ -49,6 +47,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {
 		PuzzleSticker.setColorScheme(colorScheme);
+		canvas.fireCanvasChange();
 	}
 	
 	public Canvas3D getCanvas() {
