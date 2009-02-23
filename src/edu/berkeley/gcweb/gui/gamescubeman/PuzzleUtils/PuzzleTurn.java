@@ -7,7 +7,6 @@ public abstract class PuzzleTurn {
 	//(a cube rotation would return false here)
 	public abstract boolean isNullTurn();
 	//if the moves are mergeable into one move (ex: R + R = R2), returns that move, otherwise null
-	//if other == null, just return this
 	public abstract PuzzleTurn mergeTurn(PuzzleTurn other);
 	//returns true if this moves are animatable simultaneously (ex: R & L, x & R, x & r, but not R & R)
 	public abstract boolean isAnimationMergeble(PuzzleTurn other);

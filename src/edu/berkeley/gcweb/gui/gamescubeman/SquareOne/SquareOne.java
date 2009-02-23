@@ -66,9 +66,7 @@ public class SquareOne extends TwistyPuzzle {
 	private Boolean[] topLayer, bottomLayer;
 	//this keeps track of how many times the left and right halves have been twisted
 	private boolean leftHalfEven, rightHalfEven, leftRightSwitched;
-	protected void createPolys(boolean copyOld) {
-		super.createPolys(copyOld);
-		
+	protected void createPolys2(boolean copyOld) {
 		double gap = super.getStickerGap();
 		double sin15 = Math.sin(Math.toRadians(15));
 		double sin30 = Math.sin(Math.toRadians(30));
@@ -310,7 +308,6 @@ public class SquareOne extends TwistyPuzzle {
 			bottomLayer[i] = (bottomLayerPolys[i] != null);
 		leftHalfEven = rightHalfEven = true;
 		leftRightSwitched = copyOld ? leftRightSwitched : false;
-		fireStateChanged(null);
 	}
 	
 	private class SquareOneTurn extends PuzzleTurn {
@@ -458,7 +455,7 @@ public class SquareOne extends TwistyPuzzle {
 			return axis != -1; //this indicates a cube rotation
 		}
 		public PuzzleTurn mergeTurn(PuzzleTurn o) {
-			if(o == null || o.isNullTurn()) return this;
+			if(o.isNullTurn()) return this;
 			SquareOneTurn other = (SquareOneTurn) o;
 			if(this.axis != -1 || other.axis != -1) { //can't merge rotations
 				if(this.axis == other.axis)

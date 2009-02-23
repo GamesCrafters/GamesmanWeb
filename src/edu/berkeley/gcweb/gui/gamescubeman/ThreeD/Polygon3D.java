@@ -10,8 +10,12 @@ import java.util.ArrayList;
 
 public class Polygon3D implements Comparable<Polygon3D> {
 	private Polygon3D ogPoly;
+	public Polygon3D(Color fill, Color border) {
+		setFillColor(fill);
+		setBorderColor(border);
+	}
 	public Polygon3D() {
-		setColors(null, Color.BLACK);
+		this(null, Color.BLACK);
 	}
 	private boolean visible = true;
 	public void setVisible(boolean visible) {
@@ -36,10 +40,6 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		return ac;
 	}
 	private Color fillColor, borderColor; //null means transparent
-	public void setColors(Color fill, Color border) {
-		setFillColor(fill);
-		setBorderColor(border);
-	}
 	public void setFillColor(Color fill) {
 		fillColor = fill;
 	}
@@ -60,7 +60,8 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	}
 	protected void copyInto(Polygon3D clone) {
 		clone.ogPoly = this;
-		clone.setColors(fillColor, borderColor);
+		clone.fillColor = fillColor;
+		clone.borderColor = borderColor;
 		clone.ac = this.ac;
 		clone.visible = this.visible;
 		for(double[] point : points)
@@ -77,9 +78,10 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		addPoint(point[0], point[1], point[2]);
 	}
 
-	public void rotate(RotationMatrix m) {
+	public Polygon3D rotate(RotationMatrix m) {
 		for(int i = 0; i < points.size(); i++)
 			points.set(i, m.multiply(points.get(i)));
+		return this;
 	}
 	public Polygon3D scale(double x, double y, double z) {
 		for(double[] p : points) {

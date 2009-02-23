@@ -52,10 +52,7 @@ public abstract class Shape3D {
 
 	private RotationMatrix rotation = new RotationMatrix();
 	public void setRotation(RotationMatrix m) {
-		if(m == null)
-			rotation = new RotationMatrix();
-		else
-			rotation = m;
+		rotation = (m == null) ? new RotationMatrix() : m;
 	}
 	public void rotate(RotationMatrix m) {
 		rotation = m.multiply(rotation);

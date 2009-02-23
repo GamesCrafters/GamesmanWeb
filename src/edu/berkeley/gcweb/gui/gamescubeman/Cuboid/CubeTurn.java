@@ -44,8 +44,6 @@ public class CubeTurn extends PuzzleTurn {
 		return cw == 0;
 	}
 	public PuzzleTurn mergeTurn(PuzzleTurn o) {
-		if(o == null)
-			return this;
 		CubeTurn other = (CubeTurn) o;
 		if(other.face != this.face || other.layer != this.layer)
 			return null;

@@ -234,8 +234,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public PuzzleSticker[][][] cubeStickers;
-	protected void createPolys(boolean copyOld) {
-		super.createPolys(copyOld);
+	protected void createPolys2(boolean copyOld) {
 		if(!copyOld)
 			resetHandPositions();
 		PuzzleSticker[][][] cubeStickersOld = cubeStickers;
@@ -293,7 +292,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 				}
 			}
 		}
-		fireStateChanged(null);
 	}
 	
 	private static class InvertableHashMap<K, V> {

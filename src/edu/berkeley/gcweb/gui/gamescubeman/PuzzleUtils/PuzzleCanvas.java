@@ -27,7 +27,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		canvas.addShape3D(puzzle);
 		
 		this.add(canvas, new Integer(0));
-		colorChooser = new NColorChooser(puzzle.getDefaultColorScheme());
+		colorChooser = new NColorChooser(puzzle.getDefaultColorScheme(), canvas);
 		colorChooser.addColorChangeListener(this);
 		colorChooser.setVisible(false);
 		this.add(colorChooser, new Integer(1));

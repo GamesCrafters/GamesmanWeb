@@ -31,6 +31,9 @@ public class PolygonCollection<P extends Polygon3D> extends ArrayList<P> {
 			poly.scale(x, y, z);
 		return this;
 	}
+	public PolygonCollection<P> translate(double[] amt) {
+		return translate(amt[0], amt[1], amt[2]);
+	}
 	public PolygonCollection<P> translate(double x, double y, double z) {
 		for(P poly : this)
 			poly.translate(x, y, z);

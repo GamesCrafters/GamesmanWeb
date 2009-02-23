@@ -206,23 +206,16 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		if(!colorEditing) {
 			for(Polygon3D rendered : polys) {
 				rendered.setOpacity(1f);
-				rendered.setBorderColor(Color.BLACK);
-				rendered.getOGPoly().setOpacity(1f);
-				rendered.getOGPoly().setBorderColor(Color.BLACK);
 			}
 		} else {
 			for(Polygon3D rendered : polys) {
 				rendered.setOpacity(.8f);
 				rendered.setBorderColor(null);
-				rendered.getOGPoly().setOpacity(.8f);
-				rendered.getOGPoly().setBorderColor(null);
 			}
 			Polygon3D poly = getSelectedPolygon();
 			if(poly != null) {
 				poly.setOpacity(1f);
-				poly.setBorderColor(Color.BLACK);
-				poly.getOGPoly().setOpacity(1f);
-				poly.getOGPoly().setBorderColor(Color.BLACK);
+				poly.setBorderColor(poly.getOGPoly().getBorderColor());
 			}
 		}
 		dirty = true;

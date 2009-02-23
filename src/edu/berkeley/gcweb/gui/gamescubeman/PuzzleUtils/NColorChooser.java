@@ -27,6 +27,7 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 public class NColorChooser extends RollingJPanel {
@@ -34,7 +35,9 @@ public class NColorChooser extends RollingJPanel {
 	private JButton reset;
 	private ColorBoxes boxes;
 	private HashMap<String, Color> colors, backupColors;
-	public NColorChooser(HashMap<String, Color> colorScheme) {
+	private JComponent paintCanvas;
+	public NColorChooser(HashMap<String, Color> colorScheme, JComponent paintCanvas) {
+		this.paintCanvas = paintCanvas;
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
@@ -59,9 +62,11 @@ public class NColorChooser extends RollingJPanel {
 		setColors(colors);
 	}
 	
-	public void setPaintCursor(Cursor cursor) {
-		//the parent of our parent is the canvas
-		getParent().getParent().setCursor(cursor);
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if(!visible)
+			boxes.selectedFace = null;
+		boxes.refreshCursor();
 	}
 	
 	private class ColorBoxes extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
@@ -130,13 +135,14 @@ public class NColorChooser extends RollingJPanel {
 						fireColorsChanged();
 					}
 				}
-				refreshCursor();
 				selectedFace = face;
+				refreshCursor();
 			}
 		}
 		private void refreshCursor() {
-			if(selectedFace != null)
-				setPaintCursor(createCursor(colors.get(selectedFace)));
+			Cursor c = selectedFace == null ? Cursor.getDefaultCursor() : createCursor(colors.get(selectedFace));
+			this.setCursor(c);
+			paintCanvas.setCursor(c);
 		}
 		private static final int CURSOR_SIZE = 32;
 		private Cursor createCursor(Color c) {

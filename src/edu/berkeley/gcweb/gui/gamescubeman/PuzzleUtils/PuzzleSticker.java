@@ -6,7 +6,9 @@ import java.util.HashMap;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class PuzzleSticker extends Polygon3D {
-	public PuzzleSticker() {}
+	public PuzzleSticker() {
+		super(null, Color.GREEN);
+	}
 	private String face;
 	public void setFace(String face) {
 		this.face = face;
@@ -17,9 +19,6 @@ public class PuzzleSticker extends Polygon3D {
 	private static HashMap<String, Color> colorScheme;
 	public static void setColorScheme(HashMap<String, Color> colors) {
 		colorScheme = colors;
-	}
-	public Color getBorderColor() {
-		return Color.BLACK;
 	}
 	public Color getFillColor() {
 		Color c = null;
@@ -33,7 +32,7 @@ public class PuzzleSticker extends Polygon3D {
 		clone.face = face;
 		return clone;
 	}
-	public String toString() {
-		return face;
-	}
+//	public String toString() {
+//		return face == null ? "" : face;
+//	}
 }

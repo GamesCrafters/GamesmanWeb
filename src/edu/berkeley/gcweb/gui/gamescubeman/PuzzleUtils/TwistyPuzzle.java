@@ -47,7 +47,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	protected void appendTurn(PuzzleTurn nextTurn) {
 		nextTurn.updateInternalRepresentation(false);
 		PuzzleTurn lastTurn = turns.isEmpty() ? null : turns.remove(turns.size() - 1);
-		PuzzleTurn newTurn = nextTurn.mergeTurn(lastTurn);
+		PuzzleTurn newTurn = lastTurn == null ? nextTurn : nextTurn.mergeTurn(lastTurn);
 		if(newTurn == null) {
 			turns.add(lastTurn);
 			turns.add(nextTurn);
@@ -145,14 +145,17 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	protected String[] getPuzzleVariations() {
 		return null;
 	}
-	protected void createPolys(boolean copyOld) {
+	public final void createPolys(boolean copyOld) {
 		if(!copyOld) {
 			turns.clear();
 			animationQueue.clear();
 			turner.stop();
 		}
 		clearPolys();
+		createPolys2(copyOld);
+		fireStateChanged(null);
 	}
+	protected abstract void createPolys2(boolean copyOld);
 	private final TurnAnimation END_SCRAMBLING = new TurnAnimation(this);
 	private boolean scrambling = false;
 	public final void scramble() {
