@@ -136,6 +136,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 	
 	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
+	//may not contain spaces!
 	public abstract String getPuzzleName();
 	
 	//something like a cuboid would have this, whereas square one wouldn't

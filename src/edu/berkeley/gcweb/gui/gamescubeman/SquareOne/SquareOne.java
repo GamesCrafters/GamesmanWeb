@@ -19,7 +19,7 @@ public class SquareOne extends TwistyPuzzle {
 	}
 	
 	public String getPuzzleName() {
-		return "Square One";
+		return "SquareOne";
 	}
 	
 	private static final String NORMAL = "Square 1",
