@@ -67,6 +67,7 @@ public class KeyCustomizerPanel extends RollingJPanel {
 		}
 		
 		caps = new JCheckBox("CAPS");
+		caps.setFocusable(false);
 		caps.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keysChanged();

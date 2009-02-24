@@ -7,7 +7,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class PuzzleSticker extends Polygon3D {
 	public PuzzleSticker() {
-		super(null, Color.GREEN);
+		super(null, Color.BLACK);
 	}
 	private String face;
 	public void setFace(String face) {
@@ -32,7 +32,7 @@ public class PuzzleSticker extends Polygon3D {
 		clone.face = face;
 		return clone;
 	}
-//	public String toString() {
-//		return face == null ? "" : face;
-//	}
+	public String toString() {
+		return face == null ? "" : face;
+	}
 }
