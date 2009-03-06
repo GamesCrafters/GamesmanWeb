@@ -21,7 +21,7 @@ import JsonServer
 
 #### ENVIRONMENT SETTINGS.  CHANGE THESE FOR YOUR COMPUTER.
 PORTNUM=8080
-GAMESMANWEB=os.environ["HOME"]+"/workspace/GamesmanWeb2/deploy/ui"
+GAMESMANWEB=os.path.join(os.path.split(os.path.abspath(os.path.dirname(sys.argv[0])))[0], 'deploy', 'ui')
 
 #### DEFAULT PUZZLE.
 PUZZLENAME="fcg"
