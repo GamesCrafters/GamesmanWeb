@@ -88,7 +88,6 @@ function createboard(val) {
             }
         }
     }
-    alert(clicked)
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
