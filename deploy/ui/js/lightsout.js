@@ -45,6 +45,50 @@ function createboard(val) {
             defaultBoard[row][col] = EMPTY;
         }
     }
+    
+    /* Randomly press buttons */
+    clicked = 0;
+    for (var row = 0; row < height; row++) {
+        for (var col = 0; col < width; col++) {
+            if (Math.random() > 0.5) {
+                clicked++;
+                if (defaultBoard[row][col] == EMPTY) {
+                    defaultBoard[row][col] = FILLED;
+                } else {
+                    defaultBoard[row][col] = EMPTY;
+                }
+                if (row > 0) {
+                    if (defaultBoard[row-1][col] == EMPTY) {
+                        defaultBoard[row-1][col] = FILLED;
+                    } else {
+                        defaultBoard[row-1][col] = EMPTY;
+                    }
+                }
+                if (row < height - 1) {
+                    if (defaultBoard[row+1][col] == EMPTY) {
+                        defaultBoard[row+1][col] = FILLED;
+                    } else {
+                        defaultBoard[row+1][col] = EMPTY;
+                    }
+                }
+                if (col > 0) {
+                    if (defaultBoard[row][col-1] == EMPTY) {
+                        defaultBoard[row][col-1] = FILLED;
+                    } else {
+                        defaultBoard[row][col-1] = EMPTY;
+                    }
+                }
+                if (col < width - 1) {
+                    if (defaultBoard[row][col+1] == EMPTY) {
+                        defaultBoard[row][col+1] = FILLED;
+                    } else {
+                        defaultBoard[row][col+1] = EMPTY;
+                    }
+                }
+            }
+        }
+    }
+    alert(clicked)
     // load the default board
     game.loadBoard(getBoardString(defaultBoard));
     currentBoard = defaultBoard;
