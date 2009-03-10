@@ -1,4 +1,8 @@
-
+var puzzleMessages = {
+	'lose':'Imperfect solution',
+	'tie':'Tie',
+	'draw':'Draw',
+	'win':'Solvable'};
 var waitcount = 0;
 function waiting() {
     if (waitcount == 0) {
@@ -61,13 +65,13 @@ GCWeb = {
                     if(options.isValidMove && !newMove.isSetup){
                         if(!options.isValidMove(newMove))
                             return;
+                        this.currentMoveValue = newMove;
                     }
                     
                     // tell the user we are executing this specific move (basically if isValidMove returned okay)
                     if(options.onExecutingMove && !newMove.isSetup){
                         options.onExecutingMove(newMove);
                     }
-                    
                     if(newMove.remoteness != undefined){
 						// fragile, but measures the width of the history tree without the scrollbar
                         this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
@@ -152,6 +156,7 @@ GCWeb = {
                     $.getJSON(url, {}, function (json) {
                         doneWaiting();
                         if (json && json.response && !json.error) {
+                            this.currentMoveValue = json.response;
                             onValueReceived(json.response);
                         }
                     });
@@ -176,12 +181,22 @@ GCWeb = {
                         options.getNextMoveValues(position, onMoveValuesReceived);
                         return;
                     }
-                    
+                    var mythis = this;
                     waiting();
                     $.getJSON(url, {}, function (json) {
                         doneWaiting();
                         if (json && json.response && !json.error) {
-                            onMoveValuesReceived(json.response);
+                                var moveValues = json.response;
+                                var thisRemoteness = 0;
+                                if (mythis.currentMoveValue && mythis.currentMoveValue.remoteness) {
+                                    thisRemoteness = mythis.currentMoveValue.remoteness;
+                                }
+                                for (mvkey in moveValues) {
+                                    var mv = moveValues[mvkey];
+                                    mv.delta = mv.remoteness - thisRemoteness;
+                                    //alert(mv.delta+";"+mv.remoteness+";"+thisRemoteness);
+                                }
+                            onMoveValuesReceived(moveValues);
                         }
                     });
                 },
@@ -189,7 +204,6 @@ GCWeb = {
                 // game messages
                 // set the prediction message announcing the number of moves to win
                 setRemoteness: function (moveValue) {
-                    this.currentMoveValue = moveValue;
                     var hist = $('#prediction > span');
                     if (hist) {
 						var text = "";
@@ -198,9 +212,10 @@ GCWeb = {
 						} else if (moveValue.remoteness == 0) {
 							text = "Puzzle complete!";
 						} else {
-							if (moveValue.value >= 1 && moveValue.value <= 3) {
-								//text = ['Lose','Draw','Win'][moveValue.value-1];
-								text = "Solvable in " + moveValue.remoteness + " move" +
+							if (moveValue.value) {
+								text = puzzleMessages[moveValue.value];
+								if (!text) text = "Unsolvable";
+								text += " in " + moveValue.remoteness + " move" +
 								       (moveValue.remoteness == 1 ? "" : "s") + ".";
 							} else {
 								text = 'Puzzle not started.';

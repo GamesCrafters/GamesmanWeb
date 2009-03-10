@@ -2,7 +2,7 @@ var game;
 
 // used for coloring the table cells
 //var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
-var moveValueClasses = ['lose', 'tie', 'win'];
+var moveValueClasses = ['win', 'tie', 'lose'];
 
 // other state
 var nextMoves = [];
@@ -189,7 +189,8 @@ function updateMoveValues(nextMoves){
     });
     for(var i in nextMoves) {
     	var equivMoves = fromCardinalMove(nextMoves[i].move);
-    	value = nextMoves[i].value - 1;
+    	value = nextMoves[i].delta + 1;
+        //alert(i+":"+nextMoves[i]+"="+value+" ("+nextMoves[i].remoteness+")");
     	for(var ch in equivMoves) {
     		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass(moveValueClasses.join(" "));
     		$('#' + invertedKeyMap[equivMoves[ch]]).addClass(moveValueClasses[value]);
