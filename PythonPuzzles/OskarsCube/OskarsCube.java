@@ -42,7 +42,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 	private final static boolean USE_JAVA_SOLVER = true; //switch to false to query legal moves with the javascript server
 	private boolean display_remoteness = true;
 	private boolean display_best_move = true;
-	private boolean random_faces = false;
+	private boolean random_faces = true;
 	private boolean display_viable_insides = true;
 	private boolean display_number_viable = true;
 	public static int acheivable;
@@ -205,7 +205,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_W){
+		if(arg0.getKeyCode() == KeyEvent.VK_S){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -228,7 +228,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_S){
+		if(arg0.getKeyCode() == KeyEvent.VK_W){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -299,11 +299,16 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 		}
 		update_displays();
 		MyShape holder = (MyShape) cube;
-		System.out.println("The stick is currently at (" + holder.current_position[0] + "," + holder.current_position[1] + "," + holder.current_position[2]+")");
+		//System.out.println("The stick is currently at (" + holder.current_position[0] + "," + holder.current_position[1] + "," + holder.current_position[2]+")");
 	}
 
 	private void update_displays(){
 		MyShape holder = (MyShape) cube;
+		//catch if start or end is not valid.
+		if(!(solved_map.move_map.containsKey(622) && solved_map.move_map.containsKey(84))) {
+			System.out.println("Start or end are not legal");
+			return;
+		}
 		if(display_remoteness){
 			remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(holder.current_position)/2 + " moves"));
 			remoteness.setVisible(true);

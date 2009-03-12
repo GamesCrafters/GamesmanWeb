@@ -17,6 +17,9 @@ public class CubeGen {
 		}
 		
 		Valid = legalBoard(Blue) & legalBoard(White) & legalBoard(Red);
+		if (Valid & seed1 != 0 & seed2 != 0 & seed3 !=0) {
+			System.out.println("Board Generated: " + seed1 + " " + seed2 + " " + seed3);
+		}
 	}
 	
 	private int[][] intToSet(int seed) {

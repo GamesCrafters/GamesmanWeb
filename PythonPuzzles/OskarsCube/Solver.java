@@ -150,9 +150,9 @@ class Solver{
 		if (best_move[0] == 0 && best_move[1] == -1 && best_move[2] == 0)
 			return "towards RED";
 		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == 1)
-			return "towards WHITE";
-		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == -1)
 			return "away from WHITE";
+		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == -1)
+			return "towards WHITE";
 		return "LEFT"; //whatever
 	}
 	public static void main(String[] args){
