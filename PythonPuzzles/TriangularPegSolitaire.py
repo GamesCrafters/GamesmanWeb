@@ -92,6 +92,8 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	return (self.size * (self.size + 1) / 2)
 
     def generate_solutions(self):
+        return [self.generate_start(self.size,self.start)]
+    def real_generate_solutions(self):
         solutions = []
 	for position in range(self.__triangular__()):
 	    tmp = self.generate_start(self.size, position)
@@ -165,16 +167,18 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	return self.undo_move(move)
     
     def is_a_solution(self):
-        return self in self.generate_solutions()
+        return self in self.real_generate_solutions()
     
     def is_illegal(self):
         return False
     
     def is_deadend(self):
         return (not self.is_a_solution()) and (self.is_leaf())
+    is_a_deadend = is_deadend
 
     def is_leaf(self):
         return (len(self.generate_moves()) == 0)
+    is_a_leaf = is_leaf
 
     def reverse_move(self, move):
 	raise '''Cannot reverse move'''
@@ -187,6 +191,10 @@ class TriangularPegSolitaire(UnreversePuzzle):
     
     def __cmp__(self, other):
         return cmp(hash(self), hash(other))
+
+    def maxhash(self):
+        size = self.size
+        return (1L << (size*(size+1)/2))
 
     def __hash__(self):
 	index = 0

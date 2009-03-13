@@ -99,7 +99,7 @@ class Rubik(Puzzle):
     #We're anchoring the BLD corner, so legal moves are F, U, R (and their multiples)
     #F means rotate front face clockwise 90 degrees, F' means 90 degrees counterclockwise, F2 means 180 degrees
     def generate_moves(self):
-        return ["F", "F2", "F'", "U", "U'", "U2", "R", "R'", "R2"]
+        return ["F", "F'", "U", "U'", "R", "R'"]
 
     def cycle_pieces(self, p1, p2, pieces):
         pieces[p1], pieces[p1+4], pieces[p2], pieces[p2-4] = pieces[p2-4], pieces[p1], pieces[p1+4], pieces[p2]
