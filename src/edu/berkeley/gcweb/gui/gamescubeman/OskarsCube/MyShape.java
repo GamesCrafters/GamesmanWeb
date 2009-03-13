@@ -1,4 +1,4 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube;
 
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Shape3D;

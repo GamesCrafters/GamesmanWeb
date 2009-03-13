@@ -1,4 +1,4 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube;
 
 import java.util.Random;
 import java.awt.BorderLayout;

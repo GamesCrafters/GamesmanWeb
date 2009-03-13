@@ -1,8 +1,8 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube;
 
 import java.awt.Color;
 
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars.PolygonCollection;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube.PolygonCollection;
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
 
 public class Stick{
