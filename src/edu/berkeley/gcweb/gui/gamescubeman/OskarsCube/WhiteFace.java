@@ -1,104 +1,61 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
 
 import java.awt.Color;
 
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars.PolygonCollection;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
 
 public class WhiteFace{
 	PolygonCollection holder;
-	public WhiteFace(){
-		//the white sides polygons in here
-		Polygon3D whitemaze = new Polygon3D ();
-		whitemaze.setFillColor(Color.GRAY);
-		whitemaze.addPoint(0, 0, 0);
-		whitemaze.addPoint(0, -5, 0);
-		whitemaze.addPoint(1, -5, 0);
-		whitemaze.addPoint(1, -3, 0);
-		whitemaze.addPoint(2, -3, 0);
-		whitemaze.addPoint(2, -8, 0);
-		whitemaze.addPoint(1, -8, 0);
-		whitemaze.addPoint(1, -6, 0);
-		whitemaze.addPoint(0, -6, 0);
-		whitemaze.addPoint(0, -9, 0);
-		whitemaze.addPoint(7, -9, 0);
-		whitemaze.addPoint(7, -7, 0);
-		whitemaze.addPoint(8, -7, 0);
-		whitemaze.addPoint(8, -9, 0);
-		whitemaze.addPoint(9, -9, 0);
-		whitemaze.addPoint(9, -6, 0);
-		whitemaze.addPoint(5, -6, 0);
-		whitemaze.addPoint(5, -3, 0);
-		whitemaze.addPoint(6, -3, 0);
-		whitemaze.addPoint(6, -5, 0);
-		whitemaze.addPoint(9, -5, 0);
-		whitemaze.addPoint(9, 0, 0);
-		whitemaze.addPoint(8, 0, 0);
-		whitemaze.addPoint(8, -4, 0);
-		whitemaze.addPoint(7, -4, 0);
-		whitemaze.addPoint(7, 0, 0);
-		whitemaze.addPoint(2, 0, 0);
-		whitemaze.addPoint(2, -1, 0);
-		whitemaze.addPoint(6, -1, 0);
-		whitemaze.addPoint(6, -2, 0);
-		whitemaze.addPoint(4, -2, 0);
-		whitemaze.addPoint(4, -7, 0);
-		whitemaze.addPoint(6, -7, 0);
-		whitemaze.addPoint(6, -8, 0);
-		whitemaze.addPoint(3, -8, 0);
-		whitemaze.addPoint(3, -2, 0);
-		whitemaze.addPoint(1, -2, 0);
-		whitemaze.addPoint(1, 0, 0);
+	public WhiteFace(CubeGen cube){
 		
+		//The white sides polygons go in here.
 		Polygon3D white_border = new Polygon3D();
 		white_border.setFillColor(Color.WHITE);
-		white_border.addPoint(-1,0,0);
-		white_border.addPoint(-1, 1, 0);
-		white_border.addPoint(10, 1, 0);
-		white_border.addPoint(10, -10, 0);
-		white_border.addPoint(-1, -10, 0);
-		white_border.addPoint(-1, 0, 0);
-		white_border.addPoint(0, 0, 0);
-		white_border.addPoint(0, -5, 0);
-		white_border.addPoint(1, -5, 0);
-		white_border.addPoint(1, -3, 0);
-		white_border.addPoint(2, -3, 0);
-		white_border.addPoint(2, -8, 0);
-		white_border.addPoint(1, -8, 0);
-		white_border.addPoint(1, -6, 0);
-		white_border.addPoint(0, -6, 0);
-		white_border.addPoint(0, -9, 0);
-		white_border.addPoint(7, -9, 0);
-		white_border.addPoint(7, -7, 0);
-		white_border.addPoint(8, -7, 0);
-		white_border.addPoint(8, -9, 0);
-		white_border.addPoint(9, -9, 0);
-		white_border.addPoint(9, -6, 0);
-		white_border.addPoint(5, -6, 0);
-		white_border.addPoint(5, -3, 0);
-		white_border.addPoint(6, -3, 0);
-		white_border.addPoint(6, -5, 0);
-		white_border.addPoint(9, -5, 0);
-		white_border.addPoint(9, 0, 0);
-		white_border.addPoint(8, 0, 0);
-		white_border.addPoint(8, -4, 0);
-		white_border.addPoint(7, -4, 0);
-		white_border.addPoint(7, 0, 0);
-		white_border.addPoint(2, 0, 0);
-		white_border.addPoint(2, -1, 0);
-		white_border.addPoint(6, -1, 0);
-		white_border.addPoint(6, -2, 0);
-		white_border.addPoint(4, -2, 0);
-		white_border.addPoint(4, -7, 0);
-		white_border.addPoint(6, -7, 0);
-		white_border.addPoint(6, -8, 0);
-		white_border.addPoint(3, -8, 0);
-		white_border.addPoint(3, -2, 0);
-		white_border.addPoint(1, -2, 0);
-		white_border.addPoint(1, 0, 0);
-		Polygon3D[] input_array = {white_border/*, whitemaze*/};
+		white_border.addPoint(0,0, 0);
+		white_border.addPoint(0,0, 11);
+		white_border.addPoint(0,-11, 11);
+		white_border.addPoint(0,-11, 0);
+		white_border.addPoint(0,-1, 0);
+		white_border.addPoint(0,-1, 1);
+		white_border.addPoint(0,-10, 1);
+		white_border.addPoint(0,-10,10);
+		white_border.addPoint(0,-1, 10);
+		white_border.addPoint(0,-1, 0);
+		
+		Polygon3D green_dot = new Polygon3D();
+		green_dot.setFillColor(Color.GREEN);
+		//WHITE IS YZ so pull 1 and 2 out of end
+		int endy = cube.end[1];
+		int endz = cube.end[2];
+		green_dot.addPoint(0,-(endy +1),(endz +1.5));
+		green_dot.addPoint(0,-(endy +1.5), (endz +2));
+		green_dot.addPoint(0,-(endy +2), (endz +1.5));
+		green_dot.addPoint(0,-(endy +1.5),(endz+ 1));
+		
+		int i;
+		int x=0;
+		int y=0;
+		int z=0;
+		Object[] input_array = new Polygon3D[34];
+		for (i=0; i<32; i++) {
+			Polygon3D square = new Polygon3D();
+			square.setFillColor(Color.WHITE);
+			y=cube.White[i][0];
+			z=cube.White[i][1];
+			square.addPoint(x,-( y+1),( z+1));
+			square.addPoint(x,-( y+1),( z+2));
+			square.addPoint(x,-( y+2),( z+2));
+			square.addPoint(x,-( y+2),( z+1));
+			input_array[i] = square;			
+		}
+		
+		input_array[33]= white_border;
+		input_array[32]= green_dot;
 		
 		//create array of polygons here
 		//put them into holder
+
 
 		
 		holder = new PolygonCollection(input_array);

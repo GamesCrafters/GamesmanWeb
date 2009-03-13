@@ -1,7 +1,7 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
 
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.RotationMatrix;
 
 public class PolygonCollection{
 	private Polygon3D[] collection;
@@ -10,7 +10,7 @@ public class PolygonCollection{
 		 * Constructor for the PolygonCollection class.
 		 * 
 		 */
-		collection = new Polygon3D[50];
+		collection = new Polygon3D[20000];
 		int current_position = 0;
 		for (int i = 0; i < input_array.length; i++){
 			if (input_array[i] instanceof PolygonCollection){
@@ -30,7 +30,7 @@ public class PolygonCollection{
 			}
 		}
 	}
-
+	
 	public void rotate(char axis, int degreesCCW){
 		/**
 		 * rotate the entire set of polygons by the said number of degrees CCW
@@ -40,17 +40,17 @@ public class PolygonCollection{
 		RotationMatrix m;
 		if(axis == 'x')
 			rotation_number = 0;
-		else if(axis == 'y')
-			rotation_number = 1;
-		else
-			rotation_number = 2;
+			else if(axis == 'y')
+				rotation_number = 1;
+				else
+					rotation_number = 2;
 		m = new RotationMatrix(rotation_number, degreesCCW);
 		for (int i = 0; i < collection.length; i++){
 			if (collection[i] != null)
 				collection[i].rotate(m);
 		}
 	}
-
+	
     public void translate(double x,double y,double z){
     	/**
     	 * Translate the set of polygons position by amount (x,y,z).

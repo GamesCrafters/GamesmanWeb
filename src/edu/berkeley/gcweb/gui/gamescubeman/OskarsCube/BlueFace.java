@@ -1,181 +1,61 @@
-package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
+package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars;
 
 import java.awt.Color;
-import java.util.ArrayList;
 
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.newOskars.PolygonCollection;
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
 
-public class BlueFace{
+public class BlueFace{ // THE BLUE FACE IS XZ
 	PolygonCollection holder;
-	public BlueFace(){
+	public BlueFace(CubeGen cube){
 		//The blue sides polygons go in here.
-		Polygon3D bluemaze = new Polygon3D();
-		bluemaze.setFillColor(Color.GRAY);
-		bluemaze.addPoint(11, 0, 0);
-		bluemaze.addPoint(11, -5, 0);
-		bluemaze.addPoint(14, -5, 0);
-		bluemaze.addPoint(14, -4, 0);
-		bluemaze.addPoint(12, -4, 0);
-		bluemaze.addPoint(12, -1, 0);
-		bluemaze.addPoint(13, -1, 0);
-		bluemaze.addPoint(13, -3, 0);
-		bluemaze.addPoint(15, -3, 0);
-		bluemaze.addPoint(15, -6, 0);
-		bluemaze.addPoint(13, -6, 0);
-		bluemaze.addPoint(13, -8, 0);
-		bluemaze.addPoint(12, -8, 0);
-		bluemaze.addPoint(12, -6, 0);
-		bluemaze.addPoint(11, -6, 0);
-		bluemaze.addPoint(11, -9, 0);
-		bluemaze.addPoint(14, -9, 0);
-		bluemaze.addPoint(14, -7, 0);
-		bluemaze.addPoint(18, -7, 0);
-		bluemaze.addPoint(18, -4, 0);
-		bluemaze.addPoint(17, -4, 0);
-		bluemaze.addPoint(17, -6, 0);
-		bluemaze.addPoint(16, -6, 0);
-		bluemaze.addPoint(16, -2, 0);
-		bluemaze.addPoint(14, -2, 0);
-		bluemaze.addPoint(14, -1, 0);
-		bluemaze.addPoint(17, -1, 0);
-		bluemaze.addPoint(17, -3, 0);
-		bluemaze.addPoint(19, -3, 0);
-		bluemaze.addPoint(19, -8, 0);
-		bluemaze.addPoint(15, -8, 0);
-		bluemaze.addPoint(15, -9, 0);
-		bluemaze.addPoint(20, -9, 0);
-		bluemaze.addPoint(20, 0, 0);
-		bluemaze.addPoint(19, 0, 0);
-		bluemaze.addPoint(19, -2, 0);
-		bluemaze.addPoint(18, -2, 0);
-		bluemaze.addPoint(18, 0, 0);
-		
-		ArrayList<Polygon3D> polys = new ArrayList<Polygon3D>();
 		Polygon3D blue_border = new Polygon3D();
 		blue_border.setFillColor(Color.BLUE);
-//		blue_border.addPoint(11, 0, 0);
-		blue_border.addPoint(10, 0, 0);
-		blue_border.addPoint(10, 1, 0);
-		blue_border.addPoint(21, 1, 0);
-		blue_border.addPoint(21, 0, 0);
-		polys.add(blue_border);
-		
-		blue_border = new Polygon3D();
-		blue_border.setFillColor(Color.BLUE);
-		blue_border.addPoint(21, 0, 0);
-		blue_border.addPoint(21, -10, 0);
-		blue_border.addPoint(20, -10, 0);
-		blue_border.addPoint(20, 0, 0);
-		polys.add(blue_border);
-		
-		blue_border = new Polygon3D();
-		blue_border.setFillColor(Color.BLUE);
-		blue_border.addPoint(20, -10, 0);
-		blue_border.addPoint(10, -10, 0);
-		blue_border.addPoint(10, -9, 0);
-		blue_border.addPoint(20, -9, 0);
-		polys.add(blue_border);
-		
-		blue_border = new Polygon3D();
-		blue_border.setFillColor(Color.BLUE);
-		blue_border.addPoint(11, -9, 0);
-		blue_border.addPoint(10, -9, 0);
-		blue_border.addPoint(10, 0, 0);
+		blue_border.addPoint(0, 0, 0);
+		blue_border.addPoint(0,0, 11);
+		blue_border.addPoint(11,0, 11);
 		blue_border.addPoint(11, 0, 0);
-		polys.add(blue_border);
+		blue_border.addPoint(1, 0, 0);
+		blue_border.addPoint(1,0, 1);
+		blue_border.addPoint(10,0, 1);
+		blue_border.addPoint(10,0, 10);
+		blue_border.addPoint(1,0, 10);
+		blue_border.addPoint(1,0, 0);
 		
-		blue_border = new Polygon3D();
-		blue_border.setFillColor(Color.BLUE);
-		blue_border.addPoint(11, -5, 0);
-		blue_border.addPoint(14, -5, 0);
-		blue_border.addPoint(14, -4, 0);
-		blue_border.addPoint(12, -4, 0);
-		blue_border.addPoint(12, -1, 0);
-		blue_border.addPoint(13, -1, 0);
-		blue_border.addPoint(13, -3, 0);
-		blue_border.addPoint(15, -3, 0);
-		blue_border.addPoint(15, -6, 0);
-		blue_border.addPoint(13, -6, 0);
-		blue_border.addPoint(13, -8, 0);
-		blue_border.addPoint(12, -8, 0);
-		blue_border.addPoint(12, -6, 0);
-		blue_border.addPoint(11, -6, 0);
-		blue_border.addPoint(11, -9, 0);
-		blue_border.addPoint(14, -9, 0);
-		blue_border.addPoint(14, -7, 0);
-		blue_border.addPoint(18, -7, 0);
-		blue_border.addPoint(18, -4, 0);
-		blue_border.addPoint(17, -4, 0);
-		blue_border.addPoint(17, -6, 0);
-		blue_border.addPoint(16, -6, 0);
-		blue_border.addPoint(16, -2, 0);
-		blue_border.addPoint(14, -2, 0);
-		blue_border.addPoint(14, -1, 0);
-		blue_border.addPoint(17, -1, 0);
-		blue_border.addPoint(17, -3, 0);
-		blue_border.addPoint(19, -3, 0);
-		blue_border.addPoint(19, -8, 0);
-		blue_border.addPoint(15, -8, 0);
-		blue_border.addPoint(15, -9, 0);
-		blue_border.addPoint(20, -9, 0);
-		blue_border.addPoint(20, 0, 0);
-		blue_border.addPoint(19, 0, 0);
-		blue_border.addPoint(19, -2, 0);
-		blue_border.addPoint(18, -2, 0);
-		blue_border.addPoint(18, 0, 0);
-////		blue_border.addPoint(11, 0, 0);
-//		blue_border.addPoint(10, 0, 0);
-//		blue_border.addPoint(10, 1, 0);
-//		blue_border.addPoint(21, 1, 0);
-//		blue_border.addPoint(21, -10, 0);
-//		blue_border.addPoint(10, -10, 0);
-//		blue_border.addPoint(10, 0, 0);
-//		blue_border.addPoint(11, 0, 0);
-//		blue_border.addPoint(11, -5, 0);
-//		blue_border.addPoint(14, -5, 0);
-//		blue_border.addPoint(14, -4, 0);
-//		blue_border.addPoint(12, -4, 0);
-//		blue_border.addPoint(12, -1, 0);
-//		blue_border.addPoint(13, -1, 0);
-//		blue_border.addPoint(13, -3, 0);
-//		blue_border.addPoint(15, -3, 0);
-//		blue_border.addPoint(15, -6, 0);
-//		blue_border.addPoint(13, -6, 0);
-//		blue_border.addPoint(13, -8, 0);
-//		blue_border.addPoint(12, -8, 0);
-//		blue_border.addPoint(12, -6, 0);
-//		blue_border.addPoint(11, -6, 0);
-//		blue_border.addPoint(11, -9, 0);
-//		blue_border.addPoint(14, -9, 0);
-//		blue_border.addPoint(14, -7, 0);
-//		blue_border.addPoint(18, -7, 0);
-//		blue_border.addPoint(18, -4, 0);
-//		blue_border.addPoint(17, -4, 0);
-//		blue_border.addPoint(17, -6, 0);
-//		blue_border.addPoint(16, -6, 0);
-//		blue_border.addPoint(16, -2, 0);
-//		blue_border.addPoint(14, -2, 0);
-//		blue_border.addPoint(14, -1, 0);
-//		blue_border.addPoint(17, -1, 0);
-//		blue_border.addPoint(17, -3, 0);
-//		blue_border.addPoint(19, -3, 0);
-//		blue_border.addPoint(19, -8, 0);
-//		blue_border.addPoint(15, -8, 0);
-//		blue_border.addPoint(15, -9, 0);
-//		blue_border.addPoint(20, -9, 0);
-//		blue_border.addPoint(20, 0, 0);
-//		blue_border.addPoint(19, 0, 0);
-//		blue_border.addPoint(19, -2, 0);
-//		blue_border.addPoint(18, -2, 0);
-//		blue_border.addPoint(18, 0, 0);
+		Polygon3D green_dot = new Polygon3D();
+		green_dot.setFillColor(Color.GREEN);
+		//BLUE IS XZ so pull 0 and 2 out of end
+		int endx = cube.end[0];
+		int endz = cube.end[2];
+		green_dot.addPoint(endx +1,0,(endz +1.5));
+		green_dot.addPoint(endx +1.5,0, (endz +2));
+		green_dot.addPoint(endx +2,0, (endz +1.5));
+		green_dot.addPoint(endx +1.5,0,(endz+ 1));
 		
+		int i;
+		int x=0;
+		int y=0;
+		int z=0;
+		Object[] input_array = new Polygon3D[34];
+		for (i=0; i<32; i++) {
+			Polygon3D square = new Polygon3D();
+			square.setFillColor(Color.BLUE);
+			x=cube.Blue[i][0] +1;
+			z=cube.Blue[i][1] +1;
+			square.addPoint(x, -y, z);
+			square.addPoint(x+1, -y, z);
+			square.addPoint(x+1, -y, (z+1));
+			square.addPoint(x, -y, (z+1));
+			input_array[i] = square;			
+		}
 		
-		Polygon3D[] input_array = {/*bluemaze,*/ blue_border};
+		input_array[33]= blue_border;
+		input_array[32]= green_dot;
 		
 		//create array of polygons here
 		//put them into holder
 
-		holder = new PolygonCollection(polys.toArray(new Polygon3D[0]));
+		holder = new PolygonCollection(input_array);
 	}
 	
 	public PolygonCollection returnItem(){
