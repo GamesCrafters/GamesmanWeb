@@ -42,9 +42,10 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 	private final static boolean USE_JAVA_SOLVER = true; //switch to false to query legal moves with the javascript server
 	private boolean display_remoteness = true;
 	private boolean display_best_move = true;
-	private boolean random_faces = true;
-	private boolean display_viable_insides = true;
-	private boolean display_number_viable = true;
+	private boolean random_faces = false;
+	private boolean display_viable_insides = false;
+	private boolean display_number_viable = false;
+	private boolean find_best_start_end = false;
 	public static int acheivable;
 	public static Solver solved_map;
 	private Shape3D cube;
@@ -60,7 +61,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cubefaces = new CubeGen(0,0,0);
+					cubefaces = new CubeGen(0,0,0,find_best_start_end);
 					if (random_faces == true) {
 						random = new Random();  //can put seed here
 						boolean validfaces = false;
@@ -68,7 +69,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 							int seed1 = random.nextInt();
 							int seed2 = random.nextInt();//new randomint;
 							int seed3 = random.nextInt();//new randomint;
-							cubefaces = new CubeGen(seed1,seed2,seed3);
+							cubefaces = new CubeGen(seed1,seed2,seed3,find_best_start_end);
 							validfaces = cubefaces.Valid;
 						}
 					}
@@ -158,7 +159,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 	private boolean movement_key_held = false;
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		if(arg0.getKeyCode() == KeyEvent.VK_F){
+		if(arg0.getKeyCode() == KeyEvent.VK_D){
 			if (!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -175,14 +176,14 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 //					if(!USE_JAVA_SOLVER)						
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"010"});
 					//holder.big_red_axis.holder.translate(0, -1, 0);
-					holder.big_red_axis.xyholder.translate(2, 0,0);
-					holder.big_red_axis.xzholder.translate(2, 0,0);
+					holder.big_red_axis.xyholder.translate(0, -2,0);
+					holder.big_red_axis.xzholder.translate(0, -2,0);
 					holder.current_position[1] += 2;
 				}
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_R){
+		if(arg0.getKeyCode() == KeyEvent.VK_E){
 			if (!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -197,15 +198,15 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 				if(valid){
 //					if(!USE_JAVA_SOLVER)
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"0-10"});
-					//holder.big_red_axis.holder.translate(0, 1, 0);
-					holder.big_red_axis.xyholder.translate(-2, 0, 0);
-					holder.big_red_axis.xzholder.translate(-2, 0, 0);
+					//holder.big_red_axis.holder.translate(0, 2, 0);
+					holder.big_red_axis.xyholder.translate(0, 2, 0);
+					holder.big_red_axis.xzholder.translate(0, 2, 0);
 					holder.current_position[1] -= 2;
 				}
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_S){
+		if(arg0.getKeyCode() == KeyEvent.VK_F){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -221,14 +222,14 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 //					if(!USE_JAVA_SOLVER)
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"001"});
 					//holder.big_red_axis.holder.translate(0, 0, -1);
-					holder.big_red_axis.xyholder.translate(0, 2, 0);
-					holder.big_red_axis.yzholder.translate(0, 2, 0);
+					holder.big_red_axis.xyholder.translate(0, 0, 2);
+					holder.big_red_axis.yzholder.translate(0, 0, 2);
 					holder.current_position[2] += 2;
 				}
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_W){
+		if(arg0.getKeyCode() == KeyEvent.VK_R){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -244,14 +245,14 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 //					if(!USE_JAVA_SOLVER)
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"00-1"});
 					//holder.big_red_axis.holder.translate(0, 0, 1);
-					holder.big_red_axis.yzholder.translate(0, -2, 0);
-					holder.big_red_axis.xyholder.translate(0, -2, 0);
+					holder.big_red_axis.yzholder.translate(0, 0, -2);
+					holder.big_red_axis.xyholder.translate(0, 0, -2);
 					holder.current_position[2] -= 2;
 				}
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_E){
+		if(arg0.getKeyCode() == KeyEvent.VK_S){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -267,14 +268,14 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 //					if(!USE_JAVA_SOLVER)
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"100"});
 					//holder.big_red_axis.holder.translate(1,0,0);
-					holder.big_red_axis.yzholder.translate(0, 0, 2);
-					holder.big_red_axis.xzholder.translate(0, 0, 2);
+					holder.big_red_axis.yzholder.translate(2, 0, 0);
+					holder.big_red_axis.xzholder.translate(2, 0, 0);
 					holder.current_position[0] += 2;
 				}
 				canvas.fireCanvasChange();
 			}
 		}
-		if(arg0.getKeyCode() == KeyEvent.VK_D){
+		if(arg0.getKeyCode() == KeyEvent.VK_W){
 			if(!movement_key_held){
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
@@ -290,8 +291,8 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 //					if(!USE_JAVA_SOLVER)
 //						OskarsCube.jso.call("javaDoMove", new Object[]{"-100"});
 					//holder.big_red_axis.holder.translate(-1, 0, 0);
-					holder.big_red_axis.yzholder.translate(0, 0, -2);
-					holder.big_red_axis.xzholder.translate(0, 0, -2);
+					holder.big_red_axis.yzholder.translate(-2, 0, 0);
+					holder.big_red_axis.xzholder.translate(-2, 0, 0);
 					holder.current_position[0] -= 2;
 				}
 				canvas.fireCanvasChange();
@@ -305,8 +306,8 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener{
 	private void update_displays(){
 		MyShape holder = (MyShape) cube;
 		//catch if start or end is not valid.
-		if(!(solved_map.move_map.containsKey(622) && solved_map.move_map.containsKey(84))) {
-			System.out.println("Start or end are not legal");
+		if(!(solved_map.move_map.containsKey(solved_map.end[0]*100+ solved_map.end[1]*10+solved_map.end[2]) && solved_map.move_map.containsKey(solved_map.start[0]*100+ solved_map.start[1]*10+solved_map.start[2]))) {
+			System.out.println("Start or end are not achievable");
 			return;
 		}
 		if(display_remoteness){

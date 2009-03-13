@@ -22,13 +22,13 @@ public class Interior {
 					if (solved.move_map.containsKey(100*2*x + 10*2*y + 2*z)) {
 						//cube = new Stick(1,1).returnItem();
 						countgreen +=1;
-						//cube.translate(8-2*y,8- 2*z, 2*x);
+						//cube.translate(2*x,2*y, 2*z);
 						//int a = x*25 + y*5 + z;
 						//input_array[a] = cube;
 					} else {
 						cube = new Stick(1).returnItem();
 						countred +=1;
-						cube.translate(8-2*y, 2*z, 8-2*x);
+						cube.translate(2*x, 2*y, 2*z);
 						int a = x*25 + y*5 + z;
 						input_array[a] = cube;
 					}

@@ -12,10 +12,10 @@ public class MyShape extends Shape3D {
 		public MyShape(double x, double y, double z, CubeGen cube, Boolean show_interior) {
 			super(x, y, z);
 			current_position = new int[3];
-			current_position[0] = 0; //O is (0,8,4), X is (6,2,2)
-			current_position[1] = 8;
-			current_position[2] = 4;
-			big_red_axis = new BigRedAxis();
+			current_position[0] = cube.start[0];
+			current_position[1] = cube.start[1];
+			current_position[2] = cube.start[2];
+			big_red_axis = new BigRedAxis(cube);
 			interior = new Interior(OskarsCube.solved_map);
 			OskarsCube.acheivable = interior.acheivable;
 			Polygon3D[] interior_array = interior.extract();

@@ -4,17 +4,11 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 class Solver{
-	private static final int[] start = {0,8,4}; //I lifted the start and end positions from your code even though they aren't the ACTUAL positions, but whatever, yea?
-	private static final int[] end = {6,2,2};
-	//private static int[][] blocked_xz_face = {{3,0}, {1,1}, {2,1}, {3,1},{5,1}, {6,1}, {7,1}, {3,2}, {5,2}, {0,3}, {1,3}, {3,3}, {4,3}, {5,3}, {7,3}, {1,4}, {7,4}, {1,5}, {3,5}, {4,5},{5,5}, {6,5}, {7,5}, {1,6}, {5, 6}, {1,7}, {2,7}, {3,7}, {4,7}, {5,7}, {7,7}, {8,7}};  //copied and pasted from your code
-	//private static int[][] blocked_yz_face = {{0,1}, {1,1}, {3,1}, {4,1}, {5,1}, {6,1}, {7,1}, {1,2}, {7,2}, {1,3}, {3,3}, {4,3}, {5,3}, {6,3}, {7,3}, {8,3}, {3,4}, {7,4}, {1,5}, {2,5}, {3,5}, {5,5}, {6,5}, {7,5}, {3,6}, {5,6}, {7,6}, {0,7}, {1,7}, {3,7}, {5,7}, {7,7}};
-	//private static int[][] blocked_xy_face = {{3,0}, {1,1}, {2,1}, {3,1}, {4,1}, {5,1}, {7,1}, {8,1}, {7,2}, {1,3}, {2,3},{3,3}, {4,3}, {5,3}, {6,3}, {7,3}, {1,4}, {7,4}, {1,5}, {3,5}, {4,5}, {5,5}, {7,5}, {3,6}, {0,7}, {1,7}, {3,7}, {5,7}, {6,7}, {7,7}, {8,7}, {3,8}};
-	//private static int[][] blocked_xz_face = {{1,0}, {7,0}, {1,1}, {2,1}, {3,1}, {5,1}, {7,1}, {5,2}, {1,3}, {3,3}, {4,3}, {5,3}, {6,3}, {7,3}, {1,4}, {3,4}, {1,5}, {3,5}, {5,5}, {6,5}, {7,5}, {1,6}, {3,6}, {5,6}, {1,7}, {2,7}, {3,7}, {4,7}, {5,7}, {6,7}, {7,7}, {3,8}};
-	//private static int[][] blocked_yz_face = {{5,0}, {1,1}, {2,1}, {3,1}, {5,1}, {6,1}, {7,1}, {3,2}, {5,2}, {1,3}, {3,3}, {4,3}, {5,3}, {7,3}, {8,3}, {1,4}, {7,4}, {1,5}, {2,5}, {3,5}, {4,5}, {5,5}, {7,5}, {3,6}, {7,6}, {0,7}, {1,7}, {3,7}, {4,7}, {5,7}, {6,7}, {7,7}};
-	//private static int[][] blocked_xy_face = {{1,0}, {7,0}, {1,1}, {2,1}, {3,1}, {4,1}, {5,1}, {7,1}, {3,2}, {7,2}, {1,3}, {3,3}, {5,3}, {7,3}, {1,4}, {3,4}, {5,4}, {0,5}, {1,5}, {3,5}, {5,5}, {6,5}, {7,5}, {8,5}, {1,6}, {3,6}, {1,7}, {3,7}, {4,7}, {5,7}, {7,7}, {7,8}};
-	private static int[][] blocked_xz_face;
-	private static int[][] blocked_xy_face;
-	private static int[][] blocked_yz_face;
+	public int[] start;
+	public int[] end;
+	private int[][] blocked_xz_face;
+	private int[][] blocked_xy_face;
+	private int[][] blocked_yz_face;
 	
 	
 	private LinkedList<Node> queue;
@@ -56,15 +50,15 @@ class Solver{
 	    	return false;
 		}
 	   private boolean face_list_contains(int[] board){
-		   for (int[] blocked_face : Solver.blocked_xy_face){
+		   for (int[] blocked_face : blocked_xy_face){
 			   if (blocked_face[0] == board[0] && blocked_face[1] == board[1])
 				   return true;
 		   }
-		   for (int[] blocked_face : Solver.blocked_yz_face){
+		   for (int[] blocked_face : blocked_yz_face){
 			   if (blocked_face[0] == board[1] && blocked_face[1] == board[2])
 				   return true;
 		   }
-		   for (int[] blocked_face : Solver.blocked_xz_face){
+		   for (int[] blocked_face : blocked_xz_face){
 			   if (blocked_face[0] == board[0] && blocked_face[1] == board[2])
 				   return true;
 		   }
@@ -73,9 +67,9 @@ class Solver{
 	}
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube){
-		//first we init by declaring the hashset and queue and cubefaces.
-		//next we soooolve away
-		
+	
+		start = cube.start;
+		end = cube.end;
 		blocked_xz_face = cube.Blue;
 		blocked_xy_face = cube.Red;
 		blocked_yz_face = cube.White;
@@ -83,10 +77,63 @@ class Solver{
 		
 		move_map = new HashMap<Integer, Node>();
 		queue = new LinkedList<Node>();
-		Node goal_node = new Node(Solver.end, -1); //we initalize at -1 so that the goal remoteness is 0
+		Node goal_node = new Node(end, -1); //we initialize at -1 so that the goal remoteness is 0
 		queue.add(goal_node);
 		solvin_thang();
+		
+		if(cube.findbest) {
+		int x,y,z, max;
+		max = -2;
+		int bx=0,by=0,bz =0;
+		for(x=0; x<5; x++) {
+			for(y=0; y<5; y++) {
+				for (z=0; z<5; z++) {
+					int[] temp = {2*x,2*y,2*z};
+					if (move_map.containsKey(2*x*100 +2*y*10 + 2*z))
+						if (getRemoteness(temp) > max) {
+							max = getRemoteness(temp);
+							bx=x;
+							by=y;
+							bz=z;
+						}
+				}
+			}
+		}
+		//System.out.println(bx + " " + by + " " + bz);
+		end = new int[] {2*bx,2*by,2*bz};
+		move_map = new HashMap<Integer, Node>();
+		queue = new LinkedList<Node>();
+		goal_node = new Node(end, -1); //we initialize at -1 so that the goal remoteness is 0
+		queue.add(goal_node);
+		solvin_thang();
+		max = 0;
+		bx=0;
+		by=0;
+		bz=0;
+		for(x=0; x<5; x++) {
+			for(y=0; y<5; y++) {
+				for (z=0; z<5; z++) {
+					int[] temp = {2*x,2*y,2*z};
+					if (move_map.containsKey(2*x*100 +2*y*10 + 2*z))
+						if (getRemoteness(temp) > max) {
+							max = getRemoteness(temp);
+							bx=x;
+							by=y;
+							bz=z;
+						}
+				}
+			}
+		}
+		//System.out.println(bx + " " + by + " " + bz);
+		start = new int[] {2*bx,2*by,2*bz};
+		
+		cube.start = start;
+		cube.end = end;
+		}
+		
 	}
+	
+	
 	private void solvin_thang(){
 		//pop the first thing off the queue
 		//check if its in the hashmap
@@ -142,22 +189,22 @@ class Solver{
 			}
 		}
 		if (best_move[0] == 1 && best_move[1] == 0 && best_move[2] == 0)
-			return "towards BLUE";
-		if (best_move[0] == -1 && best_move[1] == 0 && best_move[2] == 0)
-			return "away from BLUE";
-		if (best_move[0] == 0 && best_move[1] == 1 && best_move[2] == 0)
-			return "away from RED";
-		if (best_move[0] == 0 && best_move[1] == -1 && best_move[2] == 0)
-			return "towards RED";
-		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == 1)
 			return "away from WHITE";
-		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == -1)
+		if (best_move[0] == -1 && best_move[1] == 0 && best_move[2] == 0)
 			return "towards WHITE";
+		if (best_move[0] == 0 && best_move[1] == 1 && best_move[2] == 0)
+			return "away from BLUE";
+		if (best_move[0] == 0 && best_move[1] == -1 && best_move[2] == 0)
+			return "towards BLUE";
+		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == 1)
+			return "away from RED";
+		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == -1)
+			return "towards RED";
 		return "LEFT"; //whatever
 	}
 	public static void main(String[] args){
 		//System.out.println("Starting Run");
-		CubeGen cube = new CubeGen(0,0,0);
+		CubeGen cube = new CubeGen(0,0,0, false);
 		Solver test = new Solver(cube);
 		//if (test.move_map.containsKey(0))
 		//	System.out.println("(0,0,0) is in the database");

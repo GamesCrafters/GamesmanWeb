@@ -8,6 +8,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
 public class Stick{
 	PolygonCollection holder;
 	public Stick(){
+		
 		Polygon3D cap_1 = new Polygon3D();
 		cap_1.setFillColor(Color.RED);
 		cap_1.addPoint(0, 0, 0);

@@ -22,10 +22,10 @@ public class Faces{
 		*/
 		//rotate the faces here;
 		//w_face.translate(0, 0, -11);
-		r_face.rotate('x', 90);
-		r_face.translate(0, 0, -11);
-		b_face.rotate('y', 270);
-		b_face.translate(0, 0, -11);
+		//r_face.rotate('x', 90);
+		//r_face.translate(0, 0, -11);
+		//b_face.rotate('y', 270);
+		//b_face.translate(0, 0, -11);
 		//w_face.rotate('z', 180);
 		//b_face.translate(-1, 0, 10);
 		/*r_face2.rotate('x', 90);
@@ -35,7 +35,7 @@ public class Faces{
 		*/
 		Object[] input_array = {b_face /*, b_face2 */, r_face, /*r_face2,*/ w_face /*, w_face2*/};
 		holder = new PolygonCollection(input_array);
-		holder.translate(-5.5, -5.5, 5.5);
+		holder.translate(-5.5, 5.5, -5.5);
 	}
 	public Polygon3D[] extract(){
 		return holder.extract_polygons();

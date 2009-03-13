@@ -10,30 +10,27 @@ public class BlueFace{ // THE BLUE FACE IS XZ
 	public BlueFace(CubeGen cube){
 		//The blue sides polygons go in here.
 		Polygon3D blue_border = new Polygon3D();
-		blue_border.setFillColor(Color.RED);
+		blue_border.setFillColor(Color.BLUE);
 		blue_border.addPoint(0, 0, 0);
-		blue_border.addPoint(0, 11, 0);
-		blue_border.addPoint(11, 11, 0);
+		blue_border.addPoint(0,0, 11);
+		blue_border.addPoint(11,0, 11);
 		blue_border.addPoint(11, 0, 0);
 		blue_border.addPoint(1, 0, 0);
-		blue_border.addPoint(1, 1, 0);
-		blue_border.addPoint(10, 1, 0);
-		blue_border.addPoint(10, 10, 0);
-		blue_border.addPoint(1, 10, 0);
-		blue_border.addPoint(1, 0, 0);
+		blue_border.addPoint(1,0, 1);
+		blue_border.addPoint(10,0, 1);
+		blue_border.addPoint(10,0, 10);
+		blue_border.addPoint(1,0, 10);
+		blue_border.addPoint(1,0, 0);
 		
 		Polygon3D green_dot = new Polygon3D();
 		green_dot.setFillColor(Color.GREEN);
-		/*
-		green_dot.addPoint(7, 3, 0);
-		green_dot.addPoint(7, 4, 0);
-		green_dot.addPoint(8, 4, 0);
-		green_dot.addPoint(8, 3, 0);
-		*/
-		green_dot.addPoint(7, 3.5, 0);
-		green_dot.addPoint(7.5, 4, 0);
-		green_dot.addPoint(8, 3.5, 0);
-		green_dot.addPoint(7.5, 3, 0);
+		//BLUE IS XZ so pull 0 and 2 out of end
+		int endx = cube.end[0];
+		int endz = cube.end[2];
+		green_dot.addPoint(endx +1,0,(endz +1.5));
+		green_dot.addPoint(endx +1.5,0, (endz +2));
+		green_dot.addPoint(endx +2,0, (endz +1.5));
+		green_dot.addPoint(endx +1.5,0,(endz+ 1));
 		
 		int i;
 		int x=0;
@@ -42,13 +39,13 @@ public class BlueFace{ // THE BLUE FACE IS XZ
 		Object[] input_array = new Polygon3D[34];
 		for (i=0; i<32; i++) {
 			Polygon3D square = new Polygon3D();
-			square.setFillColor(Color.RED);
+			square.setFillColor(Color.BLUE);
 			x=cube.Blue[i][0] +1;
-			y=cube.Blue[i][1] +1;
-			square.addPoint(x, y, z);
-			square.addPoint(x+1, y, z);
-			square.addPoint(x+1, y+1, z);
-			square.addPoint(x, y+1, z);
+			z=cube.Blue[i][1] +1;
+			square.addPoint(x, -y, z);
+			square.addPoint(x+1, -y, z);
+			square.addPoint(x+1, -y, (z+1));
+			square.addPoint(x, -y, (z+1));
 			input_array[i] = square;			
 		}
 		
