@@ -1,7 +1,5 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import java.util.Random;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,12 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.Label;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Random;
 
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -22,20 +17,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.TextField;
 
-//import netscape.javascript.JSObject;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Canvas3D;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.RotationMatrix;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Shape3D;
+import netscape.javascript.JSObject;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 @SuppressWarnings("serial")
 public class OskarsCube extends JApplet implements KeyListener, ActionListener {
@@ -43,21 +32,25 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// query legal moves
 															// with the
 															// javascript server
-	private boolean display_remoteness = true;
-	private boolean display_best_move = true;
-	private boolean random_faces = false;
-	private boolean display_viable_insides = false;
-	private boolean display_number_viable = false;
-	private boolean find_best_start_end = false;
+	private static final boolean display_remoteness_default = false;
+	private static final boolean display_best_move_default = false;
+	private static final boolean random_faces = true;
+	private static final boolean display_number_viable_default = false;
+	private static final boolean find_best_start_end_default = false; 
+	private static final int facesize = 5;
 	public static int acheivable;
 	public static Solver solved_map;
-	private Shape3D cube;
+	private MyShape cube;
 	private Canvas3D canvas;
-	// public static JSObject jso;
-	public static Object jso;
+	public static JSObject jso;
 	private JLabel remoteness;
 	private JLabel best_move;
 	private JLabel num_viable;
+	private JButton resetViewButton;
+	private JCheckBox display_best_move_box;
+	private JCheckBox display_remoteness_box;
+	private JCheckBox display_number_viable_box;
+	private JCheckBox display_viable_insides_box;
 	private CubeGen cubefaces;
 	private Random random;
 
@@ -65,7 +58,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cubefaces = new CubeGen(0, 0, 0, find_best_start_end);
+					cubefaces = new CubeGen(0, 0, 0, find_best_start_end_default);
 					if (random_faces == true) {
 						random = new Random(); // can put seed here
 						boolean validfaces = false;
@@ -74,15 +67,14 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 							int seed2 = random.nextInt();// new randomint;
 							int seed3 = random.nextInt();// new randomint;
 							cubefaces = new CubeGen(seed1, seed2, seed3,
-									find_best_start_end);
+									find_best_start_end_default);
 							validfaces = cubefaces.Valid;
 						}
 					}
 					if (USE_JAVA_SOLVER)
 						solved_map = new Solver(cubefaces);
 					canvas = new Canvas3D();
-					cube = new MyShape(0, 0, 50, cubefaces,
-							display_viable_insides);
+					cube = new MyShape(0, 0, 50, cubefaces);
 					cube.setCanvas(canvas);
 					canvas.addShape3D(cube);
 					canvas.addKeyListener(OskarsCube.this);
@@ -93,16 +85,39 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					buttons.setLayout(new BoxLayout(buttons,
 							BoxLayout.PAGE_AXIS));
 					remoteness = new JLabel();
+					display_viable_insides_box = new JCheckBox("Show Viable Insides");
+					cube.setInteriorVisible(display_viable_insides_box.isSelected());
+					display_viable_insides_box.setFocusable(false);
+					display_viable_insides_box.addActionListener(OskarsCube.this);
+					display_best_move_box = new JCheckBox("Show Best Move");
+					display_best_move_box.setFocusable(false);
+					display_best_move_box.addActionListener(OskarsCube.this);
+					display_remoteness_box = new JCheckBox("Show Remoteness");
+					display_remoteness_box.setFocusable(false);
+					display_remoteness_box.addActionListener(OskarsCube.this);
+					display_number_viable_box = new JCheckBox("Show Number Viable");
+					display_number_viable_box.setFocusable(false);
+					display_number_viable_box.addActionListener(OskarsCube.this);
 					best_move = new JLabel();
 					num_viable = new JLabel();
-					JButton resetView = new JButton("Reset View");
-					resetView.setMnemonic(KeyEvent.VK_R);
-					resetView.setFocusable(false);
-					resetView.addActionListener(OskarsCube.this);
-					buttons.add(resetView);
+					remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(cubefaces.start) / 2 + " moves"));
+					remoteness.setVisible(display_remoteness_default);
+					best_move.setText("The best move is to slide " + solved_map.getBestMove(cubefaces.start));
+					best_move.setVisible(display_best_move_default);
+					num_viable.setText(acheivable + " positions are achievable and "+ (125 - acheivable) + " are not");
+					num_viable.setVisible(display_number_viable_default);
+					resetViewButton = new JButton("Reset View");
+					resetViewButton.setMnemonic(KeyEvent.VK_R);
+					resetViewButton.setFocusable(false);
+					resetViewButton.addActionListener(OskarsCube.this);
+					buttons.add(resetViewButton);
 					buttons.add(remoteness);
 					buttons.add(best_move);
 					buttons.add(num_viable);
+					buttons.add(display_viable_insides_box);
+					buttons.add(display_number_viable_box);
+					buttons.add(display_best_move_box);
+					buttons.add(display_remoteness_box);
 					full_panel.add(buttons);
 					full_panel.add(canvas);
 					getContentPane().add(full_panel);
@@ -123,7 +138,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 			return;
 		comp.setBackground(bg);
 		comp.setForeground(fg);
-		for (Component child : comp.getComponents()) {
+		for (Component child : comp.getComponents())  {
 			if (child instanceof JComponent)
 				setBG_FG((JComponent) child, bg, fg);
 			else if (!(child instanceof JButton)) {
@@ -344,6 +359,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 			System.out.println("Start or end are not achievable");
 			return;
 		}
+		/*
 		if (display_remoteness) {
 			remoteness
 					.setText("The puzzle can be solved in "
@@ -367,6 +383,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		} else {
 			num_viable.setVisible(false);
 		}
+		*/
 	}
 
 	@Override
@@ -382,47 +399,29 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		set_view();
-		/*
-		 * first argument is x=0, y=1, z=2 axis to rotate Next argument is # of
-		 * degree CCW.
-		 */
-		canvas.fireCanvasChange();
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == resetViewButton) {
+			set_view();
+			canvas.fireCanvasChange();
+		} else if (e.getSource() == display_viable_insides_box) {
+			cube.setInteriorVisible(display_viable_insides_box.isSelected());
+			canvas.fireCanvasChange();
+		} else if (e.getSource() == display_number_viable_box) {
+			num_viable.setVisible(display_number_viable_box.isSelected());
+			canvas.fireCanvasChange();
+		} else if (e.getSource() == display_remoteness_box) {
+			remoteness.setVisible(display_remoteness_box.isSelected());
+			canvas.fireCanvasChange();
+		} else if (e.getSource() == display_best_move_box) {
+			best_move.setVisible(display_best_move_box.isSelected());
+			canvas.fireCanvasChange();
+		}
+		
+		
 	}
 
 	private void set_view() {
 		cube.setRotation(new RotationMatrix(0, 0));
 	}
-
-	public void turnOnRemoteness() {
-		display_remoteness = true;
-		update_displays();
-	}
-
-	public void turnOffRemoteness() {
-		display_remoteness = false;
-		update_displays();
-	}
-
-	public void turnOnBestMove() {
-		display_best_move = true;
-		update_displays();
-	}
-
-	public void turnOffBestMove() {
-		display_best_move = false;
-		update_displays();
-	}
-
-	public void turnOffRandomFaces() {
-		random_faces = false;
-		update_displays(); // Probably should make a new puzzle
-	}
-
-	public void turnOnRandomFaces() {
-		random_faces = true;
-		update_displays();// Probably should make a new puzzle
-	}
+	
 }

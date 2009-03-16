@@ -3,7 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.OskarsCube;
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.PolygonCollection;
 import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.Stick;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class Interior {
 

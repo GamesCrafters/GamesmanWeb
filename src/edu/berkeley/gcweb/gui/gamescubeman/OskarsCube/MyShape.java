@@ -1,7 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Shape3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 //import netscape.javascript.JSObject;
 
@@ -10,9 +10,9 @@ public class MyShape extends Shape3D {
 	public Faces cube_faces;
 	public Interior interior;
 	public int[] current_position;
+	private Polygon3D[] interior_array;
 
-	public MyShape(double x, double y, double z, CubeGen cube,
-			Boolean show_interior) {
+	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
 		current_position = new int[3];
 		current_position[0] = cube.start[0];
@@ -21,16 +21,16 @@ public class MyShape extends Shape3D {
 		big_red_axis = new BigRedAxis(cube);
 		interior = new Interior(OskarsCube.solved_map);
 		OskarsCube.acheivable = interior.acheivable;
-		Polygon3D[] interior_array = interior.extract();
+		interior_array = interior.extract();
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
 				addPoly(red_axis_array[i]);
 		}
-		if (show_interior) {
-			for (int i = 0; i < interior_array.length; i++) {
-				if (interior_array[i] != null)
-					addPoly(interior_array[i]);
+		for (int i = 0; i < interior_array.length; i++) {
+			if (interior_array[i] != null) {
+				interior_array[i].setVisible(false);
+				addPoly(interior_array[i]);
 			}
 		}
 		cube_faces = new Faces(cube);
@@ -40,6 +40,11 @@ public class MyShape extends Shape3D {
 				addPoly(faces[i]);
 		}
 		fireCanvasChange();
+	}
+	public void setInteriorVisible(boolean visible) {
+		for (int i = 0; i < interior_array.length; i++)
+			if (interior_array[i] != null)
+				interior_array[i].setVisible(visible);
 	}
 
 }

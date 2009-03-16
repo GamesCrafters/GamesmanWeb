@@ -1,7 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.Polygon3D;
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.ThreeD.RotationMatrix;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
 public class PolygonCollection {
 	private Polygon3D[] collection;
