@@ -184,7 +184,6 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 
 	private boolean movement_key_held = false;
 
-	@Override
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_D) {
 			if (!movement_key_held) {
@@ -386,19 +385,16 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		*/
 	}
 
-	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		movement_key_held = false;
 	}
 
-	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == resetViewButton) {
 			set_view();
