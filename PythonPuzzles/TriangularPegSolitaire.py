@@ -23,10 +23,10 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	if options == None:
 	    options = {'size': 5, 'start': 0}
 	size = int(options['size'])
+	start = int(options['start'])
 	
 	if str==None:
-		start = int(options['start'])
-		str = TriangularPegSolitaire(size=size, start=start).generate_start(size=size,start=start).serialize()
+		str = TriangularPegSolitaire(size=size, start=start)._generate_start(size=size,start=start).serialize()
 	
 	strindex = 0
 	while strindex < len(str):
@@ -37,10 +37,10 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	    elif str[strindex] == ';':
 		tmpBoard.board.append(row)
 		row = []
-	    strindex += 1
+	    strindex +=1
 	    
 	tmpBoard.size = len(tmpBoard.board)
-	tmpBoard.start = options['start']
+	tmpBoard.start = start
 	return tmpBoard
 
     def __init__(self, size = 5, board = [[False], [True, True], [True, True, True], [True, True, True, True], [True, True, True, True, True]], start = 0):
@@ -59,11 +59,7 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	    string += ';'
 	return string
     
-    def generate_start(self, size = None, start = None):
-        if not size:
-            size = self.size
-        if not start:
-            start = self.start
+    def _generate_start(self, size = 5, start = 0):
 	tmp = TriangularPegSolitaire()
 	if size < 1:
 	    tmp.board = [[False], [True, True], [True, True, True], [True, True, True, True], [True, True, True, True, True]]
@@ -95,17 +91,25 @@ class TriangularPegSolitaire(UnreversePuzzle):
     def __triangular__(self):
 	return (self.size * (self.size + 1) / 2)
 
-    def real_generate_solutions(self):
-        return [self.generate_start(self.size,self.start)]
-    def real_generate_solutions(self):
+    def primitive_score(self):
+        score = 0
+        for row in self.board:
+            for piece in row:
+                score+=piece
+        score -= 1
+        if score > 3: # Allow it to fit into 2 bits.
+            score = 3
+        return score
+
+    def generate_solutions(self):
+        return [self._generate_start(self.size,self.start)]
+    def _real_generate_solutions(self):
         solutions = []
 	for position in range(self.__triangular__()):
-	    tmp = self.generate_start(self.size, position)
+	    tmp = self._generate_start(self.size, position)
 	    tmp = tmp.__flip__()
 	    solutions.append(tmp)
         return solutions
-
-    generate_solutions = generate_start
 
     def generate_moves(self):
         moves = []
@@ -173,7 +177,7 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	return self.undo_move(move)
     
     def is_a_solution(self):
-        return self in self.real_generate_solutions()
+        return self in self._real_generate_solutions()
     
     def is_illegal(self):
         return False
@@ -211,11 +215,7 @@ class TriangularPegSolitaire(UnreversePuzzle):
 		    hash |= (1 << index)
 		index += 1
 	return hash
-
-    def maxhash(self):
-        size = len(self.board)
-        return 2**(((size+1)*size)/2)
-
+    
     def unhash(self, hash):
 	tmpBoard = copy.deepcopy(self.board)
 	index = 0
