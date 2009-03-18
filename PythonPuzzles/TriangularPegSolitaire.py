@@ -59,7 +59,11 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	    string += ';'
 	return string
     
-    def generate_start(self, size = 5, start = 0):
+    def generate_start(self, size = None, start = None):
+        if not size:
+            size = self.size
+        if not start:
+            start = self.start
 	tmp = TriangularPegSolitaire()
 	if size < 1:
 	    tmp.board = [[False], [True, True], [True, True, True], [True, True, True, True], [True, True, True, True, True]]
@@ -91,7 +95,7 @@ class TriangularPegSolitaire(UnreversePuzzle):
     def __triangular__(self):
 	return (self.size * (self.size + 1) / 2)
 
-    def generate_solutions(self):
+    def real_generate_solutions(self):
         return [self.generate_start(self.size,self.start)]
     def real_generate_solutions(self):
         solutions = []
@@ -100,6 +104,8 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	    tmp = tmp.__flip__()
 	    solutions.append(tmp)
         return solutions
+
+    generate_solutions = generate_start
 
     def generate_moves(self):
         moves = []
@@ -205,7 +211,11 @@ class TriangularPegSolitaire(UnreversePuzzle):
 		    hash |= (1 << index)
 		index += 1
 	return hash
-    
+
+    def maxhash(self):
+        size = len(self.board)
+        return 2**(((size+1)*size)/2)
+
     def unhash(self, hash):
 	tmpBoard = copy.deepcopy(self.board)
 	index = 0

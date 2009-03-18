@@ -6,9 +6,6 @@ class UnreversePuzzle(Puzzle):
     def __init__(self,  one_solution = True):
         self.one_solution = one_solution
 
-    def generate_start(self):
-        return False
-
     def generate_solutions(self):
         return []
     

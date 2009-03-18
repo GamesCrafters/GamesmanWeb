@@ -5,7 +5,7 @@ class Puzzle:
         self.one_solution = one_solution
 
     def generate_start(self):
-        return False
+        return self.generate_solutions()[0]
 
     def generate_solutions(self):
         return []
@@ -44,6 +44,9 @@ class Puzzle:
 
     def is_illegal(self):
         return False
+
+    def primitive_score(self):
+        return 0
 
     def __cmp__(self, other):
         return cmp(hash(self), hash(other))
