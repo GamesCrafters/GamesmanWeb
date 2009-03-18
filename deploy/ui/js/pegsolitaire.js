@@ -13,12 +13,12 @@ var height = 10;
 var boardSize = 5;
 var havePeg = 0;
 var seen = 0;
-var curPeg;
+var curPeg; // the mouse cursor peg.
 
 var cursor="auto";
 
 // used for coloring the table cells
-var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
+var moveValueClasses = ['win-move', 'tie-move', 'lose-move'];
 
 // other state
 var nextMoves = [];
@@ -37,6 +37,7 @@ function initBoard() {
         clearMoveValues: clearMoveValues,
         getPositionValue: getPositionValue,
         getNextMoveValues: getNextMoveValues,
+        options: {size: boardSize},
         debug: 0
     });
     // load the default board
@@ -50,7 +51,7 @@ function initBoard() {
       moves = nextMoves[i].move;
       row = moves[0];
       col = moves[1];
-      $('#r'+row+' > #p'+col).css("background-color", "0x777777");
+      //$('#r'+row+' > #p'+col).css("background-color", "#777777");
     }
     
     /*alert(nextMoves[0].board);
@@ -102,23 +103,65 @@ function onExecutingMove(moveInfo){
 */
 }
 
+var bestScore;
 function highlightMoves() { 
+    var currentScores = new Object();
+    bestScore = -1;
+    var i;
     for (i=0;i<nextMoves.length;i++) {
       moves = nextMoves[i].move;
       row = moves[0];
       col = moves[1];
-      $('#r'+row+' > #p'+col).css("background-color", "#777777");
+      var id = row+','+col;
+      if (!nextMoves[i].score) {
+        if (nextMoves[i].value=='undecided') {
+          nextMoves[i].score = -1;
+        } else if (nextMoves[i].value=='win') {
+          nextMoves[i].score = 0;
+        } else if (nextMoves[i].value=='lose') {
+          nextmoves[i].score = 2;
+        } else {
+          nextmoves[i].score = 1;
+        }
+      }
+      if (currentScores[id] == undefined) {
+        currentScores[id] = nextMoves[i].score;
+      } else if (nextMoves[i].score < currentScores[id]) {
+        currentScores[id] = nextMoves[i].score;
+      }
+      if (bestScore == -1 || currentScores[id] < bestScore) { 
+        bestScore = currentScores[id];
+      }
     }
+    for (i=0;i<nextMoves.length;i++) {
+      moves = nextMoves[i].move;
+      row = moves[0];
+      col = moves[1];
+      var id = row+','+col;
+      colorTile(row,col,currentScores[id]);
+    }
+}
+
+function toList() {
+    return arguments;
 }
 
 // called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
+    bestScore = -1;
+    for (var i=0;i<nextMoves.length;i++) {
+        var mv = nextMoves[i];
+        if (typeof mv.move == "string") {
+            mv.move = eval("toList"+mv.move);
+        }
+    }
     highlightMoves();
 }
 
 // colors the board based on move values
-function updateMoveValues(nextMoves){    
+function updateMoveValues(nextMoves){
+  onNextValuesReceived(nextMoves);
     // reset everything first
     //clearMoveValues();
          
@@ -197,7 +240,7 @@ function enterKey(aEvent) {
 
 function validateInput() {
     var tmp = $("#boardSizeNumber").val();    
-    if (tmp.indexOf(".") >= 0 || !isFinite(tmp) || tmp < 5) {
+    if (tmp.indexOf(".") >= 0 || !isFinite(tmp) || tmp < 3) {
       $("#boardSizeNumber").val("");         
       alert("Please enter a valid board size.");
     } else {
@@ -237,6 +280,20 @@ function createBoard() {
   resizePeg(resize);
 }
 
+
+function colorTile(newRow,newCol,val) {
+  var query = $('#r'+newRow+' > #p'+newCol);
+  if (val == -1 || !game.moveValues) {
+    query.css("background-color", "#777777");
+  } else if (val > bestScore) {
+    query.css("background-color", "red");
+  } else if (val == 0) {
+    query.css("background-color", "green");
+  } else if (val == bestScore) {
+    query.css("background-color", "yellow");
+  }
+}
+
 function checkPeg(peg) {  
   var img = $(peg).attr("src");  
   if (peg.nodeName == "IMG") {      
@@ -267,13 +324,7 @@ function checkPeg(peg) {
         if (oldRowNum == row && oldColNum == col) {
           var newRow = moves[4];
           var newCol = moves[5];
-          var val = nextMoves[i].value;
-          if (val == 1)
-            $('#r'+newRow+' > #p'+newCol).css("background-color", "red");
-          else if (val == 2)
-            $('#r'+newRow+' > #p'+newCol).css("background-color", "yellow");
-          else if (val == 3)
-            $('#r'+newRow+' > #p'+newCol).css("background-color", "green");
+          colorTile(newRow,newCol,nextMoves[i].score);
         }
       }
       showTrail();
@@ -362,17 +413,17 @@ var displayduration = 0; //duration in seconds image should remain visible. 0 fo
 function showTrail() {
   gettrailobj().visibility = "visible";
   document.onmousemove = followmouse;
-  document.body.style.cursor = "pointer";
+  //document.body.style.cursor = "pointer";
+  //document.body.style.cursor = "url(../"+trailimage[0]+")";
+  document.body.className = "pegcursor";
   cursor = "pointer";
   if (displayduration > 0)
     setTimeout("hidetrail()", displayduration*1000);
 }
 
 function resizePeg(size) {  
-  trailimage[1] = size;
-  trailimage[2] = size;  
-  $("#trailPeg").css("width", size+"px");
-  $("#trailPeg").css("height", size+"px");
+  trailimage[1] = 32;//size;
+  trailimage[2] = 32;//size;  
 }
 
 function gettrailobj() {
@@ -387,12 +438,15 @@ function truebody() {
 }
 
 function hideTrail() {
-  document.body.style.cursor = "auto";
+  document.body.className = "";
+  //document.body.style.cursor = "auto";
   cursor = "auto";
+  return;
   gettrailobj().visibility = "hidden";  
 }
 
 function followmouse(e) {
+  return;
   var xcoord=offsetfrommouse[0];
   var ycoord=offsetfrommouse[1];
   if (typeof e != "undefined") {
@@ -409,7 +463,9 @@ function followmouse(e) {
     gettrailobj().display="none";
   else 
     gettrailobj().display="";
-    gettrailobj().left=xcoord+"px";
-    gettrailobj().top=ycoord+"px";
+  gettrailobj().left=xcoord+"px";
+  gettrailobj().top=ycoord+"px";
+  gettrailobj().width=trailimage[1]+"px";
+  gettrailobj().height=trailimage[2]+"px";
 }
 

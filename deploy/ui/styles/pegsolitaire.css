@@ -6,3 +6,7 @@
 
 #mainBoard {display: none;}
 #mainBoard > div {text-align: center;}
+
+.pegcursor {
+	cursor: url('../images/pegsol/white96.cur'), url('images/pegsol/white96.cur'), default;
+}

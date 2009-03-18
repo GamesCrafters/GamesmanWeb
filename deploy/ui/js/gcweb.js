@@ -9,7 +9,7 @@ function waiting() {
         setTimeout(function() {
             if (waitcount) {
                 document.getElementById("waitingnotice").style.visibility = "visible";
-                document.body.style.cursor = "wait";
+                //document.body.style.cursor = "wait";
             }
         }, 10);
     }
@@ -20,7 +20,8 @@ function doneWaiting() {
     waitcount -= 1;
     if (waitcount == 0) {
         document.getElementById("waitingnotice").style.visibility = "hidden";
-        document.body.style.cursor = "auto";
+        //document.body.style.cursor = "auto";
+        //delete document.body.style['cursor'];
     }
 }
 
@@ -37,7 +38,8 @@ GCWeb = {
             g = {
                 // member variables
                 currentBoardString: null,
-                
+                moveValues: $('#option-move-values').is(':checked'),
+
                 previousMoves: new Array(),
                 
                 // board state functions
@@ -110,7 +112,7 @@ GCWeb = {
                                 if(!newMove.isSetup){
                                     game.setRemoteness(newMove);
                                 }
-                                if($('#option-move-values').is(':checked')){
+                                if(game.moveValues) {
                                     if(options.updateMoveValues){
                                         options.updateMoveValues(moveValues);
                                     }
@@ -250,12 +252,14 @@ GCWeb = {
             
             $('#option-move-values').change(function(){
                 if($('#option-move-values').is(':checked')){
+                    g.moveValues = true;
                     //if(g.previousMoves.length > 0){
                         if(options.updateMoveValues){
                             g.getNextMoveValues(g.currentBoardString, function(json){options.updateMoveValues(json);});
                         }
                     //}
                 } else {
+                    g.moveValues = false;
                     if(options.clearMoveValues){
                         options.clearMoveValues();
                     }
