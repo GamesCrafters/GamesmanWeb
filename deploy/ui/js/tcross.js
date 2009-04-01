@@ -21,7 +21,7 @@ var stp = 135;
 // piece image width/height (size)
 var sz = 50;
 
-var animationSpeed = 225; // milliseconds
+var animationSpeed = 200; // milliseconds
 
 var chosenBoard;
 
@@ -40,15 +40,19 @@ var height = 4;
 var clickables = [[0, 2], [-1, 5], [1, -1], [1, 8], [4, 2], [3, 5]];
 			  
 // used for coloring
-var moveValueClasses = ["lose-move", "tie-move", "win-move"];
+var moveValueClasses = [ "lose-move", "tie-move", "win-move" ];
 
 var nextMoves = [];
-var lastMove = -1;
 
-var options = {"circle": 0, "binArt": 0, "dots": 1, "exactSol": 1};
-var opKeys = ["circle", "binArt", "dots", "exactSol"];
+var options = { "circle": 0, "binArt": 0, "dots": 1, "exactSol": 1 };
+var opKeys = [ "circle", "binArt", "dots", "exactSol" ];
 
 $(document).ready(function() {
+	$(this).keypress(function keyDown(e) {
+		var keycode = e.which;
+		var realkey = String.fromCharCode(e.which);
+		animateMove(keyMap[realkey]);
+	});
 	// hide the gameboard while user chooses options
 	$("#board").hide();
 	// hide the board input panel while user chooses options
@@ -86,6 +90,9 @@ $(document).ready(function() {
 			alert("You must choose at least one of the three sets of pieces to play with.");
 	});
 });
+
+var KEY_LEFT = 37, KEY_UP = 38, KEY_RIGHT = 39, KEY_DOWN = 40;
+var keyMap = { 'a': "L", 'd': "R", 'w': "U", 's': "D" }
 
 function setUpImagePositions() {
 	// set up board div
@@ -306,41 +313,68 @@ function startGame() {
 
 // called when doMove executes successfully
 function onExecutingMove(moveInfo){
-    // update our own state
-    lastMove = moveInfo.move;
-	
-	var allPieceImgs = $("img[id^='cell']");
-	
-	if (lastMove == "R")
-		for (i = 0; i < allPieceImgs.length; i++) {
-			var row = (parseInt($(allPieceImgs[i]).css("top")) - stp - sz) / sz;
-			if (row == 1 || row == 2)
-				$(allPieceImgs[i]).animate({"left": "+="+sz+"px"}, animationSpeed);
-		}
-	else if (lastMove == "L")
-		for (i = 0; i < allPieceImgs.length; i++) {
-			var row = (parseInt($(allPieceImgs[i]).css("top")) - stp - sz) / sz;
-			if (row == 1 || row == 2)
-				$(allPieceImgs[i]).animate({"left": "-="+sz+"px"}, animationSpeed);
-		}
-	else if (lastMove == "D")
-		for (i = 0; i < allPieceImgs.length; i++) {
-			var col = (parseInt($(allPieceImgs[i]).css("left")) - slp - sz) / sz;
-			if (col == 2 || col == 3 )
-				$(allPieceImgs[i]).animate({"top": "+="+sz+"px"}, animationSpeed);
-			if (col == 5 || col == 6)
-				$(allPieceImgs[i]).animate({"top": "-="+sz+"px"}, animationSpeed);
-		}
-	else if (lastMove == "U")
-		for (i = 0; i < allPieceImgs.length; i++) {
-			var col = (parseInt($(allPieceImgs[i]).css("left")) - slp - sz) / sz;
-			if (col == 2 || col == 3 )
-				$(allPieceImgs[i]).animate({"top": "-="+sz+"px"}, animationSpeed);
-			if (col == 5 || col == 6)
-				$(allPieceImgs[i]).animate({"top": "+="+sz+"px"}, animationSpeed);
-		}
+    // animate move
+	animateMove(moveInfo.move);
 }
 
+var queuedMoves = [];
+var animating = 0;
+function animationDone() {
+	animating--;
+	animateMove(queuedMoves.shift());
+}
+function animateMove(move) {
+	if(move == null) return;
+	if(animating > 0) {
+		queuedMoves.push(move);
+		return;
+	}
+	var allPieceImgs = $("img[id^='cell']");
+	if (move == "R")
+		for (i = 0; i < allPieceImgs.length; i++) {
+			var row = getRow(allPieceImgs[i]);
+			if (row == 1 || row == 2) {
+				animating++;
+				$(allPieceImgs[i]).animate({"left": "+="+sz+"px"}, animationSpeed, "linear", animationDone);
+			}
+		}
+	else if (move == "L")
+		for (i = 0; i < allPieceImgs.length; i++) {
+			var row = getRow(allPieceImgs[i]);
+			if (row == 1 || row == 2) {
+				animating++;
+				$(allPieceImgs[i]).animate({"left": "-="+sz+"px"}, animationSpeed, "linear", animationDone);
+			}
+		}
+	else if (move == "D")
+		for (i = 0; i < allPieceImgs.length; i++) {
+			var col = getColumn(allPieceImgs[i]);
+			if (col == 2 || col == 3 ) {
+				animating++;
+				$(allPieceImgs[i]).animate({"top": "+="+sz+"px"}, animationSpeed, "linear", animationDone);
+			} else if (col == 5 || col == 6) {
+				animating++;
+				$(allPieceImgs[i]).animate({"top": "-="+sz+"px"}, animationSpeed, "linear", animationDone);
+			}
+		}
+	else if (move == "U")
+		for (i = 0; i < allPieceImgs.length; i++) {
+			var col = getColumn(allPieceImgs[i]);
+			if (col == 2 || col == 3 ) {
+				animating++;
+				$(allPieceImgs[i]).animate({"top": "-="+sz+"px"}, animationSpeed, "linear", animationDone);
+			} else if (col == 5 || col == 6) {
+				animating++;
+				$(allPieceImgs[i]).animate({"top": "+="+sz+"px"}, animationSpeed, "linear", animationDone);
+			}
+		}
+}
+function getRow(piece) {
+	return (parseInt($(piece).css("top")) - stp - sz) / sz;
+}
+function getColumn(piece) {
+	return (parseInt($(piece).css("left")) - slp - sz) / sz;
+}
 // called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
