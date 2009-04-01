@@ -8,7 +8,6 @@ var moveValueClasses = ['win', 'tie', 'lose'];
 var nextMoves = [];
 var lastMove = -1;
 
-var doingMove = false;
 var queuedMoves = [];
 
 function invertMap(map) {
@@ -20,30 +19,46 @@ function invertMap(map) {
 }
 
 var keyMap = { 
-		"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
-		"l": "D'", "s": "D", "w": "B", "o": "B'", "e": "L'", "d": "L", //extension turns
-		"f": "U'", "j": "U", "i": "R", "k": "R'", "g": "F'", "h": "F" //solver turns 
+		//"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
+		"W": "b", "O": "b'", "E": "l'", "D": "l", "F": "u'", "J": "u", "I": "r", "K": "r'", //solver turns 
+		"w": "B", "o": "B'", "e": "L'", "d": "L", "f": "U'", "j": "U", "i": "R", "k": "R'" //solver turns 
 	};
 var invertedKeyMap = invertMap(keyMap);
 
-//returns a list of moves equivalent to the cardinal move
-var toCardinal = { "L": "R", "D": "U", "B": "F" };
-var fromCardinal = invertMap(toCardinal);
+function appletLoaded() {
+	//TODO - applet steals scrollwheel
+	//TODO - move value history doesn't always work w/ ie and chrome when pressing scramble
+	//TODO - ie doesn't change buttons when they're clicked
+	//TODO - chrome still gives focus to the applet
+	//TODO - resizable applet would be nice (http://www.metaportaldermedienpolemik.net/processing.org/applet_resize/)
+	//TODO - checkboxes are really wierd with ie
+	//TODO - select all, select none for checkboxes (in framework)
+	//TODO - keyboard table resizes if the window is too small
+	//TODO - horizontal scrollbar in ie
+	
+	$(window).focus();
+	$('#cube').focus(function() {
+		//apparently there needs to a bit of a delay for this to work
+		setTimeout("$(window).focus();", 150);
+	});
 
-function fromCardinalMove(move) {
-	var face = move.substring(0, 1);
-	var dir = move.substring(1);
-	face2 = toCardinal[face] || fromCardinal[face]; //only one of these will be != undefined
-	return [ face + dir, face2 + dir ];
+	$("#cube").mousewheel(function(event, delta) {
+		console.log(event);
+		console.log("DELTA:");
+		console.log(delta);
+	});
 }
 
-// bootstrapping function - start up this program after the page structure loads
 $(document).ready(function(){
-	//TODO - width and height don't make sense for a 2x2x2!
+	//although the dom is ready to be traversed,
+	//our applet is not necessarily ready to be accessed
+	//we must wait until appletLoaded() is called to access the applet
+	
+	//TODO - width and height don't make sense for a pyraminx!
 	var width = 1;
 	var height = 10;
 	// create a new game
-	game = GCWeb.newPuzzleGame("rubik", width, height, {
+	game = GCWeb.newPuzzleGame("pyraminx", width, height, {
 		onNextValuesReceived: onNextValuesReceived,
 		isValidMove: isValidMove,
 		onExecutingMove: onExecutingMove,
@@ -55,15 +70,17 @@ $(document).ready(function(){
 		debug: 0
 	});
 	
-	$(this).keypress(function keyDown(e) {
+	$(this).keypress(function(e) {
+		if(e.originalEvent.altKey || e.originalEvent.ctrlKey) return;
 		var keycode = e.which;
-		var realkey = String.fromCharCode(e.which);
-		var key = realkey.toLowerCase();
+		var key = String.fromCharCode(e.which);
+		if(!(key in keyMap)) //if this key is not defined, fall back to lowercase
+			key = key.toLowerCase();
 		if(key in keyMap) {
-			$('#cube').get(0).doMove(keyMap[key]);
+			$('#cube')[0].doMove(keyMap[key]);
 		}
 	});
-	
+    
     var qwerty = [[ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ],
                   [ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';' ],
                   [ 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/' ]];
@@ -87,7 +104,7 @@ $(document).ready(function(){
 	
 	var createClickHandler = function(key) {
 		return function _handleClick() {
-			$("#cube").get(0).doMove(keyMap[key == 'semicolon' ? ';' : key]);
+			$("#cube")[0].doMove(keyMap[key == 'semicolon' ? ';' : key]);
 		};
 	};
 	
@@ -102,14 +119,12 @@ function debug(mytext) {
 }
 
 function doQuery(turn, board) {
-	$('#debug').text(board);
 	if (turn == null) {
 		game.loadBoard(board);
 		return false;
 	}
 
 	var face = turn.substring(0, 1);
-	face = toCardinal[face] || face;
 	var dir = turn.substring(1);
 	turn = face + dir;
 		
@@ -117,14 +132,17 @@ function doQuery(turn, board) {
 	for(var i in nextMoves) {
 		if(nextMoves[i].move == turn) {
 			 moveInfo.move = turn;
-			 moveInfo.remoteness =  nextMoves[i].remoteness;
+			 moveInfo.remoteness = nextMoves[i].remoteness;
 			 moveInfo.value = nextMoves[i].value;
 			 break;
 		}
 	}
+	if(!moveInfo.move)
+		return false;
 	game.doMove(moveInfo);
-	return;
+	return true;
 }
+
 function puzzleStateChanged(turn, boardState) {
 	var face = null;
 	var dir = null;
@@ -134,23 +152,13 @@ function puzzleStateChanged(turn, boardState) {
 		dir = turn.substring(1);
 	}
 	
-	if(queuedMoves.length == 0 && doingMove == false) { //this means a turn actually happened
-		doingMove = true;
+	if(queuedMoves.length == 0) { //this means a turn actually happened
 		debug("Nothing in the queue, doing move "+turn);
-		if(dir == "2") { //some nastyness to ensure that half turns get converted to quarter turns
-			turn = face;
-			queuedMoves.push(face);
-		}
-		if(!doQuery(turn, boardState)) //TODO - the return value isn't getting used at all
-			doingMove = false;
+		doQuery(turn, boardState);
 	} else {
 		// nextMoves is empty, so queue up the move request.
-		if(dir == "2") { //if we've got a half turn, make it 2 quarter turns
-			queuedMoves.push(face);
-			queuedMoves.push(face);
-		} else
-			queuedMoves.push(turn);
-		debug("already doing move "+turn+"; queue length is now "+queuedMoves.length+"; doing move is "+doingMove);
+		queuedMoves.push([turn, boardState]);
+		debug("already doing move "+queuedMoves[0]+"; queue length is now "+queuedMoves.length + "; queueing move " + turn);
 	}
 }
 
@@ -168,12 +176,15 @@ function onExecutingMove(moveInfo) {
 function onNextValuesReceived(json){
     debug("onNextValuesReceived, queue length = "+queuedMoves.length);
     nextMoves = json;
-    doingMove = false;
-    if (queuedMoves.length != 0) {
-        doingMove = true;
+    deQueue();
+}
+
+function deQueue() {
+    if(queuedMoves.length != 0) {
         debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
-        if (!doQuery(queuedMoves.shift()))
-            doingMove = false;
+        do {
+        	var turn_board = queuedMoves.shift();
+        } while(!doQuery(turn_board[0], turn_board[1]));
     }
 }
 
@@ -185,13 +196,10 @@ function updateMoveValues(nextMoves){
     	return b.remoteness - a.remoteness;
     });
     for(var i in nextMoves) {
-    	var equivMoves = fromCardinalMove(nextMoves[i].move);
     	value = nextMoves[i].delta + 1;
-        //alert(i+":"+nextMoves[i]+"="+value+" ("+nextMoves[i].remoteness+")");
-    	for(var ch in equivMoves) {
-    		$('#' + invertedKeyMap[equivMoves[ch]]).removeClass(moveValueClasses.join(" "));
-    		$('#' + invertedKeyMap[equivMoves[ch]]).addClass(moveValueClasses[value]);
-    	}
+        //debug(i+":"+nextMoves[i].move+"="+value+" ("+nextMoves[i].remoteness+")");
+    	$('#' + invertedKeyMap[nextMoves[i].move]).removeClass(moveValueClasses.join(" "));
+    	$('#' + invertedKeyMap[nextMoves[i].move]).addClass(moveValueClasses[value]);
     }
 }
 
@@ -200,9 +208,9 @@ function clearMoveValues(){
 	$('.keyboard td').removeClass(moveValueClasses.join(" "));
 }
 
-// converts our own representation of the board (2d/3d array) into a board string
+//converts our own representation of the board (2d/3d array) into a board string
 function getBoardString(board){
-	return document.getElementById('cube').getBoardString();
+	return $("#cube")[0].getBoardString();
 }
 
 // local debugging
@@ -248,30 +256,4 @@ function drawApplet(id, archive, mainClass, params, width, height) {
 	str+='      <\/object>';
 	str+='      <!--<![endif]-->';
 	document.write(str);
-}
-function getBGColor() {
-	if(typeof(getComputedStyle) != 'undefined')
-		color = getComputedStyle(document.body, "").getPropertyValue('background-color');
-	else
-		color = document.body.currentStyle['backgroundColor'];
-	if(color.charAt(0) == '#') {
-		if(color.length == 4) {
-			old = color;
-			color = "#";
-			for(i = 1; i < old.length; i++) {
-				color = color + old.charAt(i) + old.charAt(i);
-			}
-		}
-	} else { //color is in the form rgb(r, g, b)a
-		var rgb =color.match(/rgba?\(\s*([0-9]*)\s*,\s*([0-9]*)\s*,\s*([0-9]*)\s*.*\)/);
-		if (rgb && rgb.length == 4) {
-			var rgbcolor = parseInt(rgb[3]) + (parseInt(rgb[2])<<8) + (parseInt(rgb[1])<<16);
-			color = "000000" + rgbcolor.toString(16);
-			color = "#" + color.substr(color.length-6)
-		}
-	}
-	return color;
-}
-function getFGColor() {
-	return "#ffffff"
 }

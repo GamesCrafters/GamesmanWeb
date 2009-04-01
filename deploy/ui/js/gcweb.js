@@ -83,7 +83,7 @@ GCWeb = {
                             $('#min-remoteness').text(this.minRemotenessSeen);
                             //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(1));
                             $("#history-tree").html('');
-                            for(i=0;i<this.previousMoves.length;i++){
+                            for(var i=0;i<this.previousMoves.length;i++){
                                 width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
                                 $("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>&nbsp;</span></div>").scrollTop(10000);
                             }

@@ -18,7 +18,7 @@ public class CubeTurn extends PuzzleTurn {
 			cw = Utils.modulo(cw, 4);
 			if(cw == 3) cw = -1;
 		}
-		if(cw % 2 != 0 && cube.getDimensions()[face.getWidthAxis()] != cube.getDimensions()[face.getHeightAxis()]) {
+		if(cw % 2 != 0 && cube.dimensions(face.getWidthAxis()) != cube.dimensions(face.getHeightAxis())) {
 			cw = (cw > 0) ? cw + 1 : cw - 1;
 			legalTurns = cw / 2;
 		} else

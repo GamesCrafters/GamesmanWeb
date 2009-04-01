@@ -2,7 +2,6 @@ package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
 import java.awt.Color;
 
-import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.PolygonCollection;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class WhiteFace {

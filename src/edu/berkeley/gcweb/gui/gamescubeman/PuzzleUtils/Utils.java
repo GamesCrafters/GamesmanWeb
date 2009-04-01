@@ -78,7 +78,7 @@ public class Utils {
 		if(temp.length() == 0) return temp;
 		return temp.substring(join.length());
 	}
-	public static<H> H modoloAcces(H[] arr, int i) {
+	public static<H> H moduloAcces(H[] arr, int i) {
 		return arr[modulo(i, arr.length)];
 	}
 	public static int indexOf(Object o, Object[] arr) {
@@ -86,6 +86,13 @@ public class Utils {
 			if(arr[i] == o)
 				return i;
 		return -1;
+	}
+	
+	public static void reverse(int[] arr) {
+		for(int left=0, right=arr.length-1; left<right; left++, right--) {
+			// exchange the first and last
+			int temp = arr[left]; arr[left] = arr[right]; arr[right] = temp;
+		}
 	}
 	
 	public static void reverse(Object[] arr) {
@@ -134,5 +141,16 @@ public class Utils {
 		} catch(Exception e) {
 			return nullIfInvalid ? null : Color.WHITE;
 		}
+	}
+	
+	public static boolean parseBoolean(String val, boolean def) {
+		if(val == null)
+			return def;
+		if(val.equalsIgnoreCase("true"))
+			return true;
+		else if(val.equalsIgnoreCase("false"))
+			return false;
+		return def;
+	
 	}
 }

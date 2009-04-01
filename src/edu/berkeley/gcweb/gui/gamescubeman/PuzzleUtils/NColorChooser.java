@@ -74,14 +74,15 @@ public class NColorChooser extends RollingJPanel {
 			addMouseListener(this);
 			addMouseMotionListener(this);
 			addComponentListener(this);
+			setOpaque(true);
 		}
 		private HashMap<String, Rectangle2D> colorRectangles;
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
-			
-			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f));
-			g2d.setColor(Color.BLACK);
-			g2d.fillRect(0, 0, getWidth(), getHeight());
+			if(isOpaque()) {
+				g2d.setColor(Color.BLACK);
+				g2d.fillRect(0, 0, getWidth(), getHeight());
+			}
 			
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 			for(String face : colorRectangles.keySet()) {
@@ -122,6 +123,7 @@ public class NColorChooser extends RollingJPanel {
 		public void componentShown(ComponentEvent e) {}
 		public void componentResized(ComponentEvent e) {
 			boxes.recomputeRectangles();
+			repaint();
 		}
 		
 		private String selectedFace = null;
@@ -143,6 +145,7 @@ public class NColorChooser extends RollingJPanel {
 			Cursor c = selectedFace == null ? Cursor.getDefaultCursor() : createCursor(colors.get(selectedFace));
 			this.setCursor(c);
 			paintCanvas.setCursor(c);
+			repaint();
 		}
 		private static final int CURSOR_SIZE = 32;
 		private Cursor createCursor(Color c) {

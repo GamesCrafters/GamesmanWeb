@@ -78,6 +78,7 @@
 				<include name="edu/berkeley/gcweb/gui/gamescubeman/Cuboid/**"/>
 				<include name="edu/berkeley/gcweb/gui/gamescubeman/SquareOne/**"/>
 				<include name="edu/berkeley/gcweb/gui/gamescubeman/Pyraminx/**"/>
+				<include name="edu/berkeley/gcweb/gui/gamescubeman/Megaminx/**"/>
 				<exclude name="**/*.jar"/>
 				<exclude name="**/*.java" />
 			</fileset>

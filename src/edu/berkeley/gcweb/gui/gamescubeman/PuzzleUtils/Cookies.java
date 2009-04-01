@@ -1,5 +1,8 @@
 package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -35,36 +38,47 @@ public class Cookies {
 		this.category = category + "_";
 	}
 	private static String escape(String s) {
-		StringBuffer sb = new StringBuffer();
-		for(int i=0; i<s.length(); i++) {
-			char c = s.charAt(i);
-			if(c == '\\')
-				sb.append("\\\\");
-			else if(c == '=')
-				sb.append("\\e");
-			else if(c == ';')
-				sb.append("\\s");
-			else
-				sb.append(c);
+		try {
+			return URLEncoder.encode(s, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
 		}
-		return sb.toString();
+//		StringBuffer sb = new StringBuffer();
+//		for(int i=0; i<s.length(); i++) {
+//			char c = s.charAt(i);
+//			if(c == '\\')
+//				sb.append("\\\\");
+//			else if(c == '=')
+//				sb.append("\\e");
+//			else if(c == ';')
+//				sb.append("\\s");
+//			else
+//				sb.append(c);
+//		}
+//		return sb.toString();
 	}
 	private static String unescape(String s) {
-		if(s == null) return null;
-		StringBuffer sb = new StringBuffer();
-		for(int i=0; i<s.length(); i++) {
-			char c = s.charAt(i);
-			if(c == '\\') {
-				if(i == s.length())
-					return null;
-				c = s.charAt(++i);
-				if(c == 'e') c = '=';
-				else if(c == 's') c = ';';
-				sb.append(c);
-			} else
-				sb.append(c);
+		try {
+			return URLDecoder.decode(s, "utf-8");
+		} catch(Exception e) {
+			return null;
 		}
-		return sb.toString();
+//		if(s == null) return null;
+//		StringBuffer sb = new StringBuffer();
+//		for(int i=0; i<s.length(); i++) {
+//			char c = s.charAt(i);
+//			if(c == '\\') {
+//				if(i == s.length())
+//					return null;
+//				c = s.charAt(++i);
+//				if(c == 'e') c = '=';
+//				else if(c == 's') c = ';';
+//				sb.append(c);
+//			} else
+//				sb.append(c);
+//		}
+//		return sb.toString();
 	}
 	
 	public String get(String key) {

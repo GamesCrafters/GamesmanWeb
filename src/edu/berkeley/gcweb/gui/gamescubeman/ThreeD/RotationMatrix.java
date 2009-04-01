@@ -38,7 +38,7 @@ public class RotationMatrix {
 		double lx2 = lx*lx; double ly2 = ly*ly; double lz2 = lz*lz;
 		double scale = Math.sqrt(lx2 + ly2 + lz2);
 		lx /= scale; ly /= scale; lz /= scale;
-		 lx2 = lx*lx; ly2 = ly*ly; lz2 = lz*lz;
+		lx2 = lx*lx; ly2 = ly*ly; lz2 = lz*lz;
 		//this math is coming straight from wikipedia, i don't claim to understand it at all
 		double c = Math.cos(Math.toRadians(degreesCCW));
 		double s = Math.sin(Math.toRadians(degreesCCW));
@@ -63,7 +63,7 @@ public class RotationMatrix {
 		}
 		return result;
 	}
-	public double[] multiply(double[] point) {
+	public double[] multiply(double... point) {
 		return transpose(multiply(new RotationMatrix(transpose(new double[][]{point}))).data)[0];
 	}
 	private double[][] transpose(double[][] m) {

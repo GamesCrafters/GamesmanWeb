@@ -4,40 +4,27 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.Timer;
 
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
-public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener {
+public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener, PuzzleOptionChangeListener {
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
 		addStateChangeListener(this);
-	}
-
-	protected double stickerGap = getDefaultStickerGap();
-	public double getStickerGap() {
-		return stickerGap;
-	}
-	protected double getDefaultStickerGap() {
-		return 0.1;
-	}
-	//spacing can range from 0->.5
-	public void setStickerGap(double spacing) {
-		this.stickerGap = spacing;
-		createPolys(true);
 	}
 
 	public void resetPuzzle() {
 		scrambling = false;
 		resetTimer();
 		createPolys(false);
+		fireStateChanged(null);
 	}
 
 	private ArrayList<PuzzleTurn> turns = new ArrayList<PuzzleTurn>();
@@ -53,7 +40,6 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 			turns.add(nextTurn);
 		} else if(!newTurn.isNullTurn())
 			turns.add(newTurn);
-		
 		if(animationQueue.isEmpty())
 			animationQueue.add(new TurnAnimation(this));
 		TurnAnimation lastAnim = animationQueue.get(animationQueue.size() - 1);
@@ -110,42 +96,15 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		fireCanvasChange();
 	}
 
-	private String variation;
-	{
-		String[] vars = getPuzzleVariations();
-		if(vars != null && vars.length > 0)
-			variation = vars[0];
-	}
-	public void setPuzzleVariation(String variation) {
-		this.variation = variation;
-	}
-	public final String getPuzzleVariation() {
-		return variation;
-	}
-
-	protected int[] dimensions = null;
-	public int[] getDimensions() {
-		return dimensions;
-	}
-	public void setDimensions(int dimX, int dimY, int dimZ) {
-		setDimensions(new int[] { dimX, dimY, dimZ });
-	}
-	public void setDimensions(int[] dims) {
-		dimensions = dims;
-		createPolys(false);
+	private final TurnAnimation END_SCRAMBLING = new TurnAnimation(this);
+	private boolean scrambling = false;
+	public final void scramble() {
+		resetPuzzle();
+		scrambling = true;
+		_scramble();
+		animationQueue.add(END_SCRAMBLING);
 	}
 	
-	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
-	//may not contain spaces!
-	public abstract String getPuzzleName();
-	
-	//something like a cuboid would have this, whereas square one wouldn't
-	protected int[] getDefaultXYZDimensions() {
-		return null;
-	}
-	protected String[] getPuzzleVariations() {
-		return null;
-	}
 	public final void createPolys(boolean copyOld) {
 		if(!copyOld) {
 			turns.clear();
@@ -153,52 +112,33 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 			turner.stop();
 		}
 		clearPolys();
-		createPolys2(copyOld);
-		fireStateChanged(null);
+		_createPolys(copyOld);
 	}
-	protected abstract void createPolys2(boolean copyOld);
-	private final TurnAnimation END_SCRAMBLING = new TurnAnimation(this);
-	private boolean scrambling = false;
-	public final void scramble() {
-		resetPuzzle();
-		scrambling = true;
-		scramble2();
-		animationQueue.add(END_SCRAMBLING);
-	}
-	protected abstract void scramble2();
+	
+	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
+	protected abstract String getPuzzleName();
+	
+	protected abstract void _createPolys(boolean copyOld);
+	protected abstract void _scramble();
+	protected abstract boolean _doTurn(String turn);
+	
+	public abstract PuzzleOption<?>[] getDefaultOptions();
+
+	public abstract String getState();
 	public abstract boolean isSolved();
 	public abstract HashMap<String, Color> getDefaultColorScheme();
-	//this sets the default angle to view the puzzle from (using Shape3D's setRotation() method)
-	public abstract void resetRotation();
+	//this should set the default angle to view the puzzle from (using Shape3D's setRotation() method)
+	public abstract RotationMatrix getPreferredViewAngle();
 	
-	private Properties keyProps = null;
-	public Properties getKeyboardLayout() {
-		if(keyProps == null) {
-			keyProps = new Properties();
-			try {
-				keyProps.load(this.getClass().getResourceAsStream("keys.properties"));
-			} catch(FileNotFoundException e) {
-				e.printStackTrace();
-			} catch(IOException e) {
-				e.printStackTrace();
-			} catch(NullPointerException e) {
-				System.err.println("keys.properties not found!");
-				e.printStackTrace();
-			}
-		}
-		return keyProps;
-	}
-	public void setKeyboardLayout(Properties props) {
-		keyProps = props;
+	//*** END TWISTY PUZZLE IMPLEMENTATION ***
+	
+	private KeyCustomizerPanel keyPanel;
+	public void setKeyCustomizerPanel(KeyCustomizerPanel keyPanel) {
+		this.keyPanel = keyPanel;
 	}
 	public final void doTurn(KeyEvent e) {
-		if(e.isAltDown()) return;
-		String character = ""+e.getKeyChar();
-		String turn = (String) getKeyboardLayout().get(character);
-		if(turn == null)
-			turn = (String) getKeyboardLayout().get(character.toLowerCase());
-		if(turn == null) return;
-		doTurn(turn);
+		if(keyPanel != null)
+			doTurn(keyPanel.getTurnForKey(e));
 	}
 	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {
 		//this will start the timer if we're currently inspecting
@@ -252,13 +192,12 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	private Timer timer = new Timer(100, this);
 	//returns true if the String was recognized as a turn
 	public final boolean doTurn(String turn) {
-		if(scrambling) return false;
+		if(turn == null || scrambling) return false;
 		if(turn.equals("scramble")) {
+			
 			scramble();
 			return true;
 		}
-		return doTurn2(turn);
+		return _doTurn(turn);
 	}
-	protected abstract boolean doTurn2(String turn);
-	public abstract String getState();
 }

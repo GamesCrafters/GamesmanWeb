@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.Utils;
 
 public class PolygonCollection<P extends Polygon3D> extends ArrayList<P> {
-	public PolygonCollection() {}
+	public PolygonCollection(P... src) {
+		for(P p : src)
+			add(p);
+	}
 	public PolygonCollection<P> clone() {
 		PolygonCollection<P> clone = new PolygonCollection<P>();
 		for(P poly : this)

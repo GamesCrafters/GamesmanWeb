@@ -1,8 +1,8 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
-import java.util.LinkedList;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 class Solver {
 	public int[] start;

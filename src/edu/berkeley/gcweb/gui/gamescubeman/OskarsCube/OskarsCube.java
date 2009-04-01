@@ -18,13 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 @SuppressWarnings("serial")
 public class OskarsCube extends JApplet implements KeyListener, ActionListener {

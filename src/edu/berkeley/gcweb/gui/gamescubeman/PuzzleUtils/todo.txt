@@ -20,8 +20,12 @@
 +create a help that shows the legal turns and the move-values of each
 +don't stop inspection when doing cube rotations
 +pyraminx
++key customizer is broken
 
 TODO:
+-adjusting gap broken in cuboid and sq1
+-storing cookies doesn't work for nick
+-babyface + timing is broken?
 -generalize to an animation simulator
 	-generators, solves, pre-moves,
 	-color schemes/key layouts

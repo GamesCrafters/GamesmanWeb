@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.DoubleSliderOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleSticker;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleTurn;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.TwistyPuzzle;
@@ -30,8 +32,10 @@ public class Pyraminx extends TwistyPuzzle {
 	}
 
 	public String getState() {
-		// TODO Auto-generated method stub
-		return "";
+		// TODO - make this work with cube rotations and sticker changes
+		return Utils.join(",", edgeLocations.toArray()) + ";"
+				+ Utils.join(",", edgeOrientations.toArray()) + ";"
+				+ Utils.join(",", centerOrientations.toArray());
 	}
 
 	public boolean isSolved() {
@@ -44,12 +48,27 @@ public class Pyraminx extends TwistyPuzzle {
 		return true;
 	}
 
-	public void resetRotation() {
-		setRotation(new RotationMatrix());
+	private PuzzleOption<Double> gap = new DoubleSliderOption("gap", 10, 0, 50, 100);
+
+	@Override
+	public PuzzleOption<?>[] getDefaultOptions() {
+		return new PuzzleOption<?>[] { gap };
+	}
+	
+	public void puzzleOptionChanged(PuzzleOption<?> src) {
+		if(src == gap) {
+			createPolys(true);
+			fireStateChanged(null);
+		}
+	}
+	
+	@Override
+	public RotationMatrix getPreferredViewAngle() {
+		return new RotationMatrix();
 //		setRotation(new RotationMatrix(0, faceDegree).multiply(new RotationMatrix(1, 60)));
 	}
-
-	protected void scramble2() {
+	
+	protected void _scramble() {
 		// TODO more valid scrambles?
 		Random r = new Random();
 		for(int i=0; i<25; i++) {
@@ -79,8 +98,9 @@ public class Pyraminx extends TwistyPuzzle {
 	private double layerHeight = Math.cos(Math.toRadians(faceDegree)) * stickerHeight;
 	private double puzzleHeight = 3*layerHeight;
 	private double centerHeight = (puzzleHeight - radius*radius/2.0)/2.0;
-	protected void createPolys2(boolean copyOld) {
+	protected void _createPolys(boolean copyOld) {
 		PuzzleSticker ts = new PuzzleSticker();
+		double stickerGap = gap.getValue();
 		ts.addPoint(0, stickerHeight - stickerGap, 0);
 		ts.addPoint(halfSticker - stickerGap*cos30, stickerGap*sin30, 0);
 		ts.addPoint(-halfSticker + stickerGap*cos30, stickerGap*sin30, 0);
@@ -216,7 +236,7 @@ public class Pyraminx extends TwistyPuzzle {
 	}
 	
 	//TODO - do puzzle rotations! how?
-	protected boolean doTurn2(String turn) {
+	protected boolean _doTurn(String turn) {
 		boolean ccw = turn.endsWith("'");
 		if(ccw)	turn = turn.substring(0, turn.length()-1);
 		if(turn.length() != 1) return false;
@@ -239,8 +259,8 @@ public class Pyraminx extends TwistyPuzzle {
 		return true;
 	}
 	
-	private static final String AXES="ULRB";
-	private static final int UP=0, LEFT=1, RIGHT=2, BACK=3;
+	private static final String AXES="URLB";
+	private static final int UP=0, RIGHT=1, LEFT=2, BACK=3;
 	private class PyraminxTurn extends PuzzleTurn {
 		private int axis, dir, layer;
 		public PyraminxTurn(int axis, int dir, int layer) {
@@ -341,9 +361,9 @@ public class Pyraminx extends TwistyPuzzle {
 			}
 		}
 		private void cycle(ArrayList<Integer> arr, Integer[] indices, int offset) {
-			ArrayList<Integer> clone = (ArrayList<Integer>) arr.clone();
+			ArrayList<Integer> clone = new ArrayList<Integer>(arr);
 			for(int i=0; i<indices.length; i++) {
-				arr.set(Utils.modoloAcces(indices, i+offset), clone.get(indices[i])); 
+				arr.set(Utils.moduloAcces(indices, i+offset), clone.get(indices[i])); 
 			}
 		}
 	}

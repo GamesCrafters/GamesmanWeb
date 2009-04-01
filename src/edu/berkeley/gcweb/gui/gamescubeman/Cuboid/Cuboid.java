@@ -8,7 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.ComboOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.DoubleSliderOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleSticker;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.SpinnerOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.TwistyPuzzle;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.Utils;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
@@ -26,37 +30,41 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		return "Cuboid";
 	}
 	
-	public void resetRotation() {
-		setRotation(new RotationMatrix(0, -45));
+	public RotationMatrix getPreferredViewAngle() {
+		return new RotationMatrix(0, -45);
 	}
-	protected int[] getDefaultXYZDimensions() {
-		return new int[] { 3, 3, 3 };
-	}
-	
+
 	private static final String NORMAL = "Normal";
 	private static final String VOID = "Void";
 	private static final String BABYFACE = "Babyface";
-	public String[] getPuzzleVariations() {
-		return new String[] { NORMAL, VOID, BABYFACE };
+	
+	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", 10, 0, 100, 100);
+	private PuzzleOption<Integer> dimXOption = new SpinnerOption("dim_x", 3, 1, null, 1);
+	private PuzzleOption<Integer> dimYOption = new SpinnerOption("dim_y", 3, 1, null, 1);
+	private PuzzleOption<Integer> dimZOption = new SpinnerOption("dim_z", 3, 1, null, 1);
+	private PuzzleOption<String> variationOption = new ComboOption("variation", NORMAL, new String[] { NORMAL, VOID, BABYFACE });
+	
+	public PuzzleOption<?>[] getDefaultOptions() {
+		return new PuzzleOption[] { gapOption, dimXOption, dimYOption, dimZOption, variationOption };
 	}
-	public void setPuzzleVariation(String variation) {
-		super.setPuzzleVariation(variation);
-		for(int f = 0; f < cubeStickers.length; f++) {
-			int width = cubeStickers[f].length;
-			int height = cubeStickers[f][0].length;
-			for(int w = 0; w < width; w++)
-				for(int h = 0; h < height; h++)
-					cubeStickers[f][w][h].setVisible(true);
-			if(variation.equals(VOID))
-				for(int w = 1; w < width - 1; w++)
-					for(int h = 1; h < height - 1; h++)
-						cubeStickers[f][w][h].setVisible(false);
-			else if(variation.equals(BABYFACE))
-				for(int w = 0; w < width; w++)
-					for(int h = 0; h < height; h++)
-						if(w == 0 || w == width - 1 || h == 0 || h == height - 1)
-							cubeStickers[f][w][h].setVisible(false);
+	
+	public int dimensions(int axis) {
+		switch(axis) {
+		case 0:
+			return dimXOption.getValue();
+		case 1:
+			return dimYOption.getValue();
+		case 2:
+			return dimZOption.getValue();
+		default:
+			throw new RuntimeException();
 		}
+	}
+	public void puzzleOptionChanged(PuzzleOption<?> src) {
+		boolean copyOld = src == gapOption || src == variationOption;
+		createPolys(copyOld);
+		
+		//notify anyone who's interested that something about this puzzle has changed
 		fireStateChanged(null);
 	}
 	
@@ -65,10 +73,10 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	//and faces[1] is a 6 element array of half the F, U, B, D stickers
 	//The return value is structured like this to facilitate cycling stickers as necessary
 	public int[][][] getLayerIndices(CubeFace face, int layer) {
-		int width = dimensions[face.getWidthAxis()];
-		int height = dimensions[face.getHeightAxis()];
-		int depth = dimensions[face.getRotationAxis()];
-		if(layer >= depth) //deal with hand postitioning
+		int width = dimensions(face.getWidthAxis());
+		int height = dimensions(face.getHeightAxis());
+		int depth = dimensions(face.getRotationAxis());
+		if(layer >= depth) //deal with hand positioning
 			layer = depth - 1;
 		else if(layer == 0)
 			layer = 1;
@@ -225,7 +233,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	private void doTurn(CubeFace face, int layer, int cw) {
-		layer = Math.min(layer, dimensions[face.getRotationAxis()] - 1);
+		layer = Math.min(layer, dimensions(face.getRotationAxis()) - 1);
 		appendTurn(new CubeTurn(this, face, layer, cw));
 	}
 	
@@ -234,20 +242,21 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public PuzzleSticker[][][] cubeStickers;
-	protected void createPolys2(boolean copyOld) {
+	protected void _createPolys(boolean copyOld) {
+		//TODO - doesn't work quite right with adjusting gap during animation
 		if(!copyOld)
 			resetHandPositions();
 		PuzzleSticker[][][] cubeStickersOld = cubeStickers;
 		cubeStickers = new PuzzleSticker[6][][];
 		double[] point = new double[3];
-		double scale = 2. / Utils.max(dimensions);
+		double scale = 2. / Utils.max(dimensions(0), dimensions(1), dimensions(2));
 
 		for(CubeFace f1 : CubeFace.faces) {
 			if(f1.isCWWithAxis()) continue;
 			CubeFace f2 = f1.getOppositeFace();
-			int height = dimensions[f1.getHeightAxis()];
-			int width = dimensions[f1.getWidthAxis()];
-			int depth = dimensions[f1.getRotationAxis()];
+			int height = dimensions(f1.getHeightAxis());
+			int width = dimensions(f1.getWidthAxis());
+			int depth = dimensions(f1.getRotationAxis());
 			double halfHeight = height / 2.;
 			double halfWidth = width / 2.;
 			double halfDepth = depth / 2.;
@@ -256,6 +265,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			for(int h = 0; h < height; h++) {
 				for(int w = 0; w < width; w++) {
 					PuzzleSticker sticker = new PuzzleSticker();
+					double stickerGap = gapOption.getValue();
 					List<Double> spaces1 = Arrays.asList(stickerGap, 1 - stickerGap);
 					List<Double> spaces2 = new ArrayList<Double>(spaces1);
 					for(double hh : spaces1) {
@@ -292,6 +302,24 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 				}
 			}
 		}
+
+		String variation = variationOption.getValue();
+		for(int f = 0; f < cubeStickers.length; f++) {
+			int width = cubeStickers[f].length;
+			int height = cubeStickers[f][0].length;
+			for(int w = 0; w < width; w++)
+				for(int h = 0; h < height; h++)
+					cubeStickers[f][w][h].setVisible(true);
+			if(variation.equals(VOID))
+				for(int w = 1; w < width - 1; w++)
+					for(int h = 1; h < height - 1; h++)
+						cubeStickers[f][w][h].setVisible(false);
+			else if(variation.equals(BABYFACE))
+				for(int w = 0; w < width; w++)
+					for(int h = 0; h < height; h++)
+						if(w == 0 || w == width - 1 || h == 0 || h == height - 1)
+							cubeStickers[f][w][h].setVisible(false);
+		}
 	}
 	
 	private static class InvertableHashMap<K, V> {
@@ -314,7 +342,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	//look for LD stickers and deduce F color
 	//look for BD stickers and deduce R color
 	public String getState() {
-		if(dimensions[0] != 2 || dimensions[1] != 2 || dimensions[2] != 2)
+		if(dimensions(0) != 2 || dimensions(1) != 2 || dimensions(2) != 2)
 			return "Not a 2x2x2!";
 		int[] values = new int[CubeFace.faces.size()];
 		values[CubeFace.FRONT.index()] = 0;
@@ -414,25 +442,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	private void resetHandPositions() {
 		Arrays.fill(handPositions, 1);
 	}
-	//TODO - improve hand indicators
-//	private void refreshHandPositions() {
-//		for(Polygon3D[][] face : cubeStickers)
-//			for(Polygon3D[] polys: face)
-//				for(Polygon3D poly: polys)
-//					poly.setOpacity(.8f);
-//		int[][][] stickerCycles = getLayerIndices(Face.LEFT, left);
-//		for(int[][] stickerCycle : stickerCycles) {
-//			for(int[] stickers : stickerCycle) {
-//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
-//			}
-//		}
-//		stickerCycles = getLayerIndices(Face.RIGHT, right);
-//		for(int[][] stickerCycle : stickerCycles) {
-//			for(int[] stickers : stickerCycle) {
-//				cubeStickers[stickers[0]][stickers[1]][stickers[2]].setOpacity(1f);
-//			}
-//		}
-//	}
 
 	private static final HashMap<String, Integer> TURN_DIRECTION = new HashMap<String, Integer>();
 	public static final HashMap<Integer, String> DIRECTION_TURN = new HashMap<Integer, String>();
@@ -446,12 +455,12 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		DIRECTION_TURN.put(-2, "2'");
 		DIRECTION_TURN.put(2, "2");
 	}
-	public boolean doTurn2(String turn) {
+	public boolean _doTurn(String turn) {
 		char ch = turn.charAt(0);
 		CubeFace face = CubeFace.decodeFace(ch);
 		Integer direction = TURN_DIRECTION.get(turn.substring(1));
 		if(direction == null) { //hand shift
-			int leftRightWidth = dimensions[CubeFace.RIGHT.getRotationAxis()];
+			int leftRightWidth = dimensions(CubeFace.RIGHT.getRotationAxis());
 			direction = 0;
 			if("<<".equals(turn.substring(1)))
 				direction = -1;
@@ -473,12 +482,12 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			return true;
 		}
 	}
-	public void scramble2() {
+	public void _scramble() {
 		CubeFace[] faces = CubeFace.faces();
 		Random r = new Random();
-		for(int ch = 0; ch < 3*(dimensions[0]+dimensions[1]+dimensions[2]); ch++) {
+		for(int ch = 0; ch < 3*(dimensions(0)+dimensions(1)+dimensions(2)); ch++) {
 			CubeFace f = faces[r.nextInt(faces.length)];
-			doTurn(f, r.nextInt(Math.max(1, dimensions[f.getRotationAxis()]-1))+1, (r.nextInt(2)+1));
+			doTurn(f, r.nextInt(Math.max(1, dimensions(f.getRotationAxis())-1))+1, (r.nextInt(2)+1));
 		}
 	}
 

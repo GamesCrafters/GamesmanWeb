@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.CheckBoxOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.ComboOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.DoubleSliderOption;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleSticker;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleTurn;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.TwistyPuzzle;
@@ -22,30 +26,35 @@ public class SquareOne extends TwistyPuzzle {
 		return "SquareOne";
 	}
 	
+	// http://twistypuzzles.com/forum/viewtopic.php?t=7493
 	private static final String NORMAL = "Square 1",
-								TWO_LAYER = "Two Layer Square 1",
 								UNBANDAGED = "Square 2",
-								THREE_FLOWER = "3 Layer Flower",
-								TWO_FLOWER = "2 Layer Flower",
+								THREE_FLOWER = "Flower",
 								BARREL = "Barrel"; //edges only, w/ matching middle layer
-	protected String[] getPuzzleVariations() {
-		//http://twistypuzzles.com/forum/viewtopic.php?t=7493
-		return new String[] { NORMAL, TWO_LAYER, UNBANDAGED };//, THREE_FLOWER, TWO_FLOWER, BARREL };
+	
+	private PuzzleOption<String> variation = new ComboOption("variation", NORMAL, new String[] { NORMAL, UNBANDAGED });
+	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", 5, 0, 35, 100);
+	private PuzzleOption<Boolean> two_layer = new CheckBoxOption("two_layer", false);
+	public PuzzleOption<?>[] getDefaultOptions() {
+		return new PuzzleOption<?>[] { variation, gapOption, two_layer };
 	}
-	public void setPuzzleVariation(String variation) {
-		super.setPuzzleVariation(variation);
-		createPolys(false);
+	
+	public void puzzleOptionChanged(PuzzleOption<?> src) {
+		createPolys(src == two_layer || src == gapOption);
+		fireStateChanged(null);
 	}
+
 	protected double getDefaultStickerGap() {
 		return 0.05;
 	}
-	public void resetRotation() {
-		setRotation(new RotationMatrix(0, -45).multiply(new RotationMatrix(1, -15)));
+	
+	public RotationMatrix getPreferredViewAngle() {
+		return new RotationMatrix(0, -45).multiply(new RotationMatrix(1, -15));
 	}
 	
 	//these are the pieces on top arranged counterclockwise, and null if the second part of a corner
 	//the bottom is the same as the top, but starting in the back, such that a slash turn will switch the 0th indices
-	private PolygonCollection<PuzzleSticker>[] ogTopLayerPolys, ogBottomLayerPolys;
+//	private PolygonCollection<PuzzleSticker>[] ogTopLayerPolys, ogBottomLayerPolys;
 	private PolygonCollection<PuzzleSticker>[] topLayerPolys, bottomLayerPolys;
 	private Iterable<PolygonCollection<PuzzleSticker>> getHalfPolys(boolean rightHalf) {
 		ArrayList<PolygonCollection<PuzzleSticker>> polys = new ArrayList<PolygonCollection<PuzzleSticker>>();
@@ -66,8 +75,8 @@ public class SquareOne extends TwistyPuzzle {
 	private Boolean[] topLayer, bottomLayer;
 	//this keeps track of how many times the left and right halves have been twisted
 	private boolean leftHalfEven, rightHalfEven, leftRightSwitched;
-	protected void createPolys2(boolean copyOld) {
-		double gap = super.getStickerGap();
+	protected void _createPolys(boolean copyOld) {
+		double gap = gapOption.getValue();
 		double sin15 = Math.sin(Math.toRadians(15));
 		double sin30 = Math.sin(Math.toRadians(30));
 		double tan37_5 = Math.tan(Math.toRadians(37.5));
@@ -102,7 +111,7 @@ public class SquareOne extends TwistyPuzzle {
 		
 		ArrayList<PolygonCollection<PuzzleSticker>> topCorners = new ArrayList<PolygonCollection<PuzzleSticker>>();
 		PolygonCollection<PuzzleSticker> corner = new PolygonCollection<PuzzleSticker>();
-		boolean bandagedCorners = !getPuzzleVariation().equals(UNBANDAGED);
+		boolean bandagedCorners = !variation.getValue().equals(UNBANDAGED);
 		if(!bandagedCorners) {
 			sticker = new PuzzleSticker();
 			sticker.addPoint(gap/sin30/Math.sqrt(2), 1, gap/sin30/Math.sqrt(2)+gap);
@@ -132,18 +141,13 @@ public class SquareOne extends TwistyPuzzle {
 			topCorners.add(corner);
 		}	
 		
-		boolean twoLayer = getPuzzleVariation().equals(TWO_LAYER) || getPuzzleVariation().equals(TWO_FLOWER);
+		boolean twoLayer = two_layer.getValue();
 		if(twoLayer) {
 			for(PolygonCollection<PuzzleSticker> topCorner : topCorners) {
 				topCorner.translate(0, -.5*layerHeight, 0);
 			}
 			topEdge.translate(0, -.5*layerHeight, 0);
 		} else {
-			RotationMatrix leftRotate = null, rightRotate = null;
-			if(copyOld) {
-				leftRotate = leftHalfPolys.getNetRotations();
-				rightRotate = rightHalfPolys.getNetRotations();
-			}
 			leftHalfPolys = new PolygonCollection<PuzzleSticker>();
 			sticker = new PuzzleSticker();
 			sticker.addPoint(1-gap, -layerHeight/2.+gap, -1);
@@ -176,11 +180,6 @@ public class SquareOne extends TwistyPuzzle {
 			rightHalfPolys.get(0).setFace("B");
 			rightHalfPolys.get(1).setFace("F");
 			rightHalfPolys.get(2).setFace("R");
-			if(copyOld) {
-				//this is some nasty stuff to get the puzzle to not reset when the gap size is changed
-				leftHalfPolys.rotate(leftRotate);
-				rightHalfPolys.rotate(rightRotate);
-			}
 		}
 		
 		PolygonCollection<PuzzleSticker> downEdge = topEdge.clone().mirror(1);
@@ -267,47 +266,48 @@ public class SquareOne extends TwistyPuzzle {
 		leftHalfPolys.rotate(m, false);
 		rightHalfPolys.rotate(m, false);
 
-		PolygonCollection<PuzzleSticker>[] oldOgTopLayerPolys = ogTopLayerPolys, oldOgBottomLayerPolys = ogBottomLayerPolys;
-		ogTopLayerPolys = Utils.copyOf(topLayerPolys, topLayerPolys.length);
-		ogBottomLayerPolys = Utils.copyOf(bottomLayerPolys, bottomLayerPolys.length);
+//		PolygonCollection<PuzzleSticker>[] oldOgTopLayerPolys = ogTopLayerPolys, oldOgBottomLayerPolys = ogBottomLayerPolys;
+//		ogTopLayerPolys = Utils.copyOf(topLayerPolys, topLayerPolys.length);
+//		ogBottomLayerPolys = Utils.copyOf(bottomLayerPolys, bottomLayerPolys.length);
 		if(copyOld) {
+			//TODO - fix sq1 w/ gap & cleanup updateinternalrepresentation()!!!
 			//this is some nasty stuff to get the puzzle to not reset when the gap size is changed
-			for(int i=0; i<ogTopLayerPolys.length; i++) {
-				if(ogTopLayerPolys[i] != null) {
-					ogTopLayerPolys[i].rotate(oldOgTopLayerPolys[i].getNetRotations());
-					
-					PolygonCollection<PuzzleSticker>[] searchLayer = oldTopLayer, destLayer = topLayerPolys;
-					int currPosition;
-					while((currPosition = Utils.indexOf(oldOgTopLayerPolys[i], searchLayer)) == -1) {
-						searchLayer = oldBottomLayer; destLayer = bottomLayerPolys;
-					}
-					destLayer[currPosition] = ogTopLayerPolys[i];
-					if(ogTopLayerPolys[(i+1)%ogTopLayerPolys.length] == null)
-						destLayer[(currPosition+1)%destLayer.length] = null;
-				}
-				if(ogBottomLayerPolys[i] != null) {
-					ogBottomLayerPolys[i].rotate(oldOgBottomLayerPolys[i].getNetRotations());
-					
-					int currPosition = -1;
-					PolygonCollection<PuzzleSticker>[] searchLayer = oldTopLayer, destLayer = topLayerPolys;
-					while((currPosition = Utils.indexOf(oldOgBottomLayerPolys[i], searchLayer)) == -1) {
-						searchLayer = oldBottomLayer; destLayer = bottomLayerPolys;
-					}
-					destLayer[currPosition] = ogBottomLayerPolys[i];
-					if(ogBottomLayerPolys[(i+1)%ogBottomLayerPolys.length] == null)
-						destLayer[(currPosition+1)%destLayer.length] = null;
-				}
-			}
+//			for(int i=0; i<ogTopLayerPolys.length; i++) {
+//				if(ogTopLayerPolys[i] != null) {
+//					ogTopLayerPolys[i].rotate(oldOgTopLayerPolys[i].getNetRotations());
+//					
+//					PolygonCollection<PuzzleSticker>[] searchLayer = oldTopLayer, destLayer = topLayerPolys;
+//					int currPosition;
+//					while((currPosition = Utils.indexOf(oldOgTopLayerPolys[i], searchLayer)) == -1) {
+//						searchLayer = oldBottomLayer; destLayer = bottomLayerPolys;
+//					}
+//					destLayer[currPosition] = ogTopLayerPolys[i];
+//					if(ogTopLayerPolys[(i+1)%ogTopLayerPolys.length] == null)
+//						destLayer[(currPosition+1)%destLayer.length] = null;
+//				}
+//				if(ogBottomLayerPolys[i] != null) {
+//					ogBottomLayerPolys[i].rotate(oldOgBottomLayerPolys[i].getNetRotations());
+//					
+//					int currPosition = -1;
+//					PolygonCollection<PuzzleSticker>[] searchLayer = oldTopLayer, destLayer = topLayerPolys;
+//					while((currPosition = Utils.indexOf(oldOgBottomLayerPolys[i], searchLayer)) == -1) {
+//						searchLayer = oldBottomLayer; destLayer = bottomLayerPolys;
+//					}
+//					destLayer[currPosition] = ogBottomLayerPolys[i];
+//					if(ogBottomLayerPolys[(i+1)%ogBottomLayerPolys.length] == null)
+//						destLayer[(currPosition+1)%destLayer.length] = null;
+//				}
+//			}
+		} else {
+			topLayer = new Boolean[topLayerPolys.length];
+			for(int i=0; i<topLayer.length; i++)
+				topLayer[i] = (topLayerPolys[i] != null);
+			bottomLayer = new Boolean[bottomLayerPolys.length];
+			for(int i=0; i<bottomLayer.length; i++)
+				bottomLayer[i] = (bottomLayerPolys[i] != null);
+			leftHalfEven = rightHalfEven = true;
+			leftRightSwitched = false;
 		}
-		
-		topLayer = new Boolean[topLayerPolys.length];
-		for(int i=0; i<topLayer.length; i++)
-			topLayer[i] = (topLayerPolys[i] != null);
-		bottomLayer = new Boolean[bottomLayerPolys.length];
-		for(int i=0; i<bottomLayer.length; i++)
-			bottomLayer[i] = (bottomLayerPolys[i] != null);
-		leftHalfEven = rightHalfEven = true;
-		leftRightSwitched = copyOld ? leftRightSwitched : false;
 	}
 	
 	private class SquareOneTurn extends PuzzleTurn {
@@ -483,7 +483,7 @@ public class SquareOne extends TwistyPuzzle {
 	}
 
 	private Pattern turnPattern = Pattern.compile("(-?\\d*), *(-?\\d*)");
-	public boolean doTurn2(String turn) {
+	public boolean _doTurn(String turn) {
 		Matcher m;
 		SquareOneTurn s1turn = null;
 		if(turn.startsWith("/"))
@@ -532,10 +532,9 @@ public class SquareOne extends TwistyPuzzle {
 		return null;
 	}
 
-	//TODO - is solved doesn't work for 2 layer sq1 and square 2
 	public boolean isSolved() {
-		boolean twoLayer = getPuzzleVariation().equals(TWO_LAYER) || getPuzzleVariation().equals(TWO_FLOWER);
-		boolean unbandaged = getPuzzleVariation().equals(UNBANDAGED);
+		boolean twoLayer = two_layer.getValue();
+		boolean unbandaged = variation.getValue().equals(UNBANDAGED);
 		Color side = null;
 		for(PolygonCollection<PuzzleSticker> piece : topLayerPolys)
 			if(piece != null) {
@@ -568,9 +567,9 @@ public class SquareOne extends TwistyPuzzle {
 				for(int ch : new int[]{ 0, -1, 1 }) {
 					PolygonCollection<PuzzleSticker> topPiece, bottomPiece;
 					int index = i+ch;
-					while((topPiece = Utils.modoloAcces(topLayerPolys, index)) == null) index--;
+					while((topPiece = Utils.moduloAcces(topLayerPolys, index)) == null) index--;
 					index = i+ch;
-					while((bottomPiece = Utils.modoloAcces(bottomLayerPolys, -index+5)) == null) index++;
+					while((bottomPiece = Utils.moduloAcces(bottomLayerPolys, -index+5)) == null) index++;
 
 					//check that the pieces are the same type (corner corner, or edge edge)
 					if(topPiece.size() != bottomPiece.size())
@@ -597,13 +596,13 @@ public class SquareOne extends TwistyPuzzle {
 			Color[] faces = new Color[4]; //F R B L
 			for(int i=0; i<topLayerPolys.length; i+=3) {
 				int index = rightHalfEven ? i : i-1;
-				PolygonCollection<PuzzleSticker> topEdge = Utils.modoloAcces(topLayerPolys, index);
-				PolygonCollection<PuzzleSticker> topCorner1 = Utils.modoloAcces(topLayerPolys, index+1);
-				PolygonCollection<PuzzleSticker> topCorner2 = Utils.modoloAcces(topLayerPolys, index+2);
+				PolygonCollection<PuzzleSticker> topEdge = Utils.moduloAcces(topLayerPolys, index);
+				PolygonCollection<PuzzleSticker> topCorner1 = Utils.moduloAcces(topLayerPolys, index+1);
+				PolygonCollection<PuzzleSticker> topCorner2 = Utils.moduloAcces(topLayerPolys, index+2);
 				index = rightHalfEven ? i : i+1;
-				PolygonCollection<PuzzleSticker> bottomCorner1 = Utils.modoloAcces(bottomLayerPolys, index);
-				PolygonCollection<PuzzleSticker> bottomCorner2 = Utils.modoloAcces(bottomLayerPolys, index+1);
-				PolygonCollection<PuzzleSticker> bottomEdge = Utils.modoloAcces(bottomLayerPolys, index+2);
+				PolygonCollection<PuzzleSticker> bottomCorner1 = Utils.moduloAcces(bottomLayerPolys, index);
+				PolygonCollection<PuzzleSticker> bottomCorner2 = Utils.moduloAcces(bottomLayerPolys, index+1);
+				PolygonCollection<PuzzleSticker> bottomEdge = Utils.moduloAcces(bottomLayerPolys, index+2);
 				
 				if(topEdge == null || topCorner1 == null || bottomEdge == null || bottomCorner1 == null || 
 						(!unbandaged && (topCorner2 != null || bottomCorner2 != null)))
@@ -658,7 +657,7 @@ public class SquareOne extends TwistyPuzzle {
 	}
 
 	private static final int SCRAMBLE_LENGTH = 40;
-	public void scramble2() {
+	public void _scramble() {
 		boolean top = true, bottom = true, slash = true;
 		for(int i=0; i<SCRAMBLE_LENGTH; i++) {
 			ArrayList<SquareOneTurn> legalTurns = new ArrayList<SquareOneTurn>();
