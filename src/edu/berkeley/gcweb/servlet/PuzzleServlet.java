@@ -37,9 +37,6 @@ public class PuzzleServlet {
     @Context
     private static ServletContext servletContext; // why do I need this?
     
-    public static final String REMOTE_HOST = "patrickhorn.dyndns.org";
-    public static final int PORT = 1055;
-    
     @GET @Path("/{puzzle}/getMoveValue")
     @Produces("text/plain")
     public String getMoveValue(@PathParam("puzzle") String puzzle,
@@ -82,6 +79,12 @@ public class PuzzleServlet {
     private String executeRemoteQuery(String gamename, String message) {
         String response = null;
         Socket conn = null;
+        try {
+            message += ";game=" + URLEncoder.encode(gamename, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Failed to URL-encode the gamename " + gamename + ".");
+            e.printStackTrace();
+        }
         try {
             // create a new TCP socket connection to the server
             conn = connectToRemote(gamename);

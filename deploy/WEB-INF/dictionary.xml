@@ -1,7 +1,7 @@
  <game-dictionary>
     <game internal-name="1210puzzle" canonical-name="1,2,...,10 (Puzzle version)" puzzle="puzzle"/>
     <game internal-name="connect4" canonical-name="Connect 4" ui="grid">
-        <server host="localhost" port="2778" />
+        <server host="localhost" port="4242" />
     </game>
     <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid">
         <server host="localhost" port="2777" />
@@ -30,6 +30,6 @@
         <server host="localhost" port="1915" />
     </game>
     <game internal-name="rubik" canonical-name="Rubik's cube" puzzle="puzzle">
-        <server host="localhost" port="1815" />
+        <server host="localhost" port="4242" />
     </game>
 </game-dictionary>
