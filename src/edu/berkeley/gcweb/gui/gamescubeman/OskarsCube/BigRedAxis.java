@@ -24,7 +24,7 @@ public class BigRedAxis {
 		int x = cube.start[0] + 1;
 		int y = -cube.start[1] - 1;
 		int z = cube.start[2] + 1;
-		double s = 5.5;
+		double s = cube.boardsize +.5;
 
 		Polygon3D yellowdot1 = new Polygon3D(); // THIS IS WHITE
 		yellowdot1.setFillColor(Color.yellow);

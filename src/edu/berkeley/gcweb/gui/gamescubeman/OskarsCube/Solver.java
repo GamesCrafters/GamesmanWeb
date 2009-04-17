@@ -10,6 +10,7 @@ class Solver {
 	private int[][] blocked_xz_face;
 	private int[][] blocked_xy_face;
 	private int[][] blocked_yz_face;
+	public int boardsize = 5;
 
 	private LinkedList<Node> queue;
 	public HashMap<Integer, Node> move_map;
@@ -46,11 +47,11 @@ class Solver {
 				return true;
 			if (test_board[2] < 0)
 				return true;
-			if (test_board[0] > 8)
+			if (test_board[0] > (boardsize-1)*2)
 				return true;
-			if (test_board[1] > 8)
+			if (test_board[1] > (boardsize-1)*2)
 				return true;
-			if (test_board[2] > 8)
+			if (test_board[2] > (boardsize-1)*2)
 				return true;
 			if (face_list_contains(test_board))
 				return true;
@@ -76,7 +77,7 @@ class Solver {
 
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube) {
-
+		int boardsize = cube.boardsize;
 		start = cube.start;
 		end = cube.end;
 		blocked_xz_face = cube.Blue;
@@ -94,11 +95,11 @@ class Solver {
 			int x, y, z, max;
 			max = -2;
 			int bx = 0, by = 0, bz = 0;
-			for (x = 0; x < 5; x++) {
-				for (y = 0; y < 5; y++) {
-					for (z = 0; z < 5; z++) {
+			for (x = 0; x < boardsize; x++) {
+				for (y = 0; y < boardsize; y++) {
+					for (z = 0; z < boardsize; z++) {
 						int[] temp = { 2 * x, 2 * y, 2 * z };
-						if (move_map.containsKey(2 * x * 100 + 2 * y * 10 + 2
+						if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2
 								* z))
 							if (getRemoteness(temp) > max) {
 								max = getRemoteness(temp);
@@ -121,11 +122,11 @@ class Solver {
 			bx = 0;
 			by = 0;
 			bz = 0;
-			for (x = 0; x < 5; x++) {
-				for (y = 0; y < 5; y++) {
-					for (z = 0; z < 5; z++) {
+			for (x = 0; x < boardsize; x++) {
+				for (y = 0; y < boardsize; y++) {
+					for (z = 0; z < boardsize; z++) {
 						int[] temp = { 2 * x, 2 * y, 2 * z };
-						if (move_map.containsKey(2 * x * 100 + 2 * y * 10 + 2
+						if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2
 								* z))
 							if (getRemoteness(temp) > max) {
 								max = getRemoteness(temp);
@@ -154,7 +155,7 @@ class Solver {
 		// add those nodes to the queue
 		while (!queue.isEmpty()) {
 			Node head = queue.removeFirst();
-			int the_key = head.board[0] * 100 + head.board[1] * 10
+			int the_key = head.board[0] * boardsize*boardsize*4 + head.board[1] * boardsize*2
 					+ head.board[2];
 			if (move_map.containsKey(the_key))
 				continue;
@@ -165,7 +166,7 @@ class Solver {
 				int[] new_board = { head.board[0] + legal_move[0],
 						head.board[1] + legal_move[1],
 						head.board[2] + legal_move[2] };
-				int new_key = new_board[0] * 100 + new_board[1] * 10
+				int new_key = new_board[0] * boardsize*boardsize*4 + new_board[1] * boardsize*2
 						+ new_board[2];
 				if (move_map.containsKey(new_key))
 					continue;
@@ -176,7 +177,7 @@ class Solver {
 	}
 
 	public boolean isValidMove(int[] board, int[] move) {
-		int key = board[0] * 100 + board[1] * 10 + board[2];
+		int key = board[0] * boardsize*boardsize*4 + board[1] * boardsize*2 + board[2];
 		if (move_map.containsKey(key)) {
 			for (int[] legal_move : move_map.get(key).moves) {
 				if (legal_move[0] == move[0] && legal_move[1] == move[1]
@@ -188,18 +189,21 @@ class Solver {
 	}
 
 	public int getRemoteness(int[] board) {
-		int key = board[0] * 100 + board[1] * 10 + board[2];
-		return move_map.get(key).remoteness;
+		int key = board[0] * boardsize*boardsize*4 + board[1] * boardsize*2 + board[2];
+		if(move_map.containsKey(key)) {
+			return move_map.get(key).remoteness;
+		}
+		return 0;
 	}
 
 	public String getBestMove(int[] board) {
-		int key = board[0] * 100 + board[1] * 10 + board[2];
+		int key = board[0] * boardsize*boardsize*4 + board[1] * boardsize*2 + board[2];
 		int[] best_move = { -5, -5, -5 };
 		int least_remoteness = 99999999;
 		for (int[] legal_move : move_map.get(key).moves) {
 			int[] new_board = { board[0] + legal_move[0],
 					board[1] + legal_move[1], board[2] + legal_move[2] };
-			int new_key = new_board[0] * 100 + new_board[1] * 10 + new_board[2];
+			int new_key = new_board[0] * boardsize*boardsize*4 + new_board[1] *  boardsize*2 + new_board[2];
 			int new_remoteness = move_map.get(new_key).remoteness;
 			if (new_remoteness < least_remoteness) {
 				least_remoteness = new_remoteness;
@@ -223,7 +227,7 @@ class Solver {
 
 	public static void main(String[] args) {
 		// System.out.println("Starting Run");
-		CubeGen cube = new CubeGen(0, 0, 0, false);
+		CubeGen cube = new CubeGen(0, 0, 0, false,5);
 		Solver test = new Solver(cube);
 		// if (test.move_map.containsKey(0))
 		// System.out.println("(0,0,0) is in the database");

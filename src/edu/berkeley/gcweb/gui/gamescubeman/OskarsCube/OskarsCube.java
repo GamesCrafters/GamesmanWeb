@@ -31,10 +31,10 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = true;
+	private static final boolean random_faces = false;
 	private static final boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = false; 
-	private static final int facesize = 5;
+	private static final int boardsize = 5;
 	public static int acheivable;
 	public static Solver solved_map;
 	private MyShape cube;
@@ -55,7 +55,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cubefaces = new CubeGen(0, 0, 0, find_best_start_end_default);
+					cubefaces = new CubeGen(0, 0, 0, find_best_start_end_default, boardsize);
 					if (random_faces == true) {
 						random = new Random(); // can put seed here
 						boolean validfaces = false;
@@ -63,8 +63,8 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 							int seed1 = random.nextInt();
 							int seed2 = random.nextInt();// new randomint;
 							int seed3 = random.nextInt();// new randomint;
-							cubefaces = new CubeGen(seed1, seed2, seed3,
-									find_best_start_end_default);
+							cubefaces = new CubeGen(seed1, seed2, seed3, 
+									find_best_start_end_default, boardsize);
 							validfaces = cubefaces.Valid;
 						}
 					}
@@ -97,11 +97,19 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					display_number_viable_box.addActionListener(OskarsCube.this);
 					best_move = new JLabel();
 					num_viable = new JLabel();
-					remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(cubefaces.start) / 2 + " moves"));
-					remoteness.setVisible(display_remoteness_default);
-					best_move.setText("The best move is to slide " + solved_map.getBestMove(cubefaces.start));
-					best_move.setVisible(display_best_move_default);
-					num_viable.setText(acheivable + " positions are achievable and "+ (125 - acheivable) + " are not");
+					if (solved_map.getRemoteness(cubefaces.start) !=0) {
+						remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(cubefaces.start) / 2 + " moves"));
+						remoteness.setVisible(display_remoteness_default);
+						best_move.setText("The best move is to slide " + solved_map.getBestMove(cubefaces.start));
+						best_move.setVisible(display_best_move_default);
+					} else {
+						remoteness.setText("The puzzle cannot be solved");
+						remoteness.setVisible(display_remoteness_default);
+						best_move.setText("There are no moves to win");
+						best_move.setVisible(display_best_move_default);
+						
+					}
+					num_viable.setText(acheivable + " positions are achievable and "+ (boardsize*boardsize*boardsize - acheivable) + " are not");
 					num_viable.setVisible(display_number_viable_default);
 					resetViewButton = new JButton("Reset View");
 					resetViewButton.setMnemonic(KeyEvent.VK_R);
@@ -338,6 +346,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
+		
 		update_displays();
 		MyShape holder = (MyShape) cube;
 		// System.out.println("The stick is currently at (" +
@@ -348,38 +357,16 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private void update_displays() {
 		MyShape holder = (MyShape) cube;
 		// catch if start or end is not valid.
-		if (!(solved_map.move_map.containsKey(solved_map.end[0] * 100
-				+ solved_map.end[1] * 10 + solved_map.end[2]) && solved_map.move_map
-				.containsKey(solved_map.start[0] * 100 + solved_map.start[1]
-						* 10 + solved_map.start[2]))) {
+		if (!(solved_map.move_map.containsKey(solved_map.end[0] * boardsize*boardsize*4
+				+ solved_map.end[1] * boardsize*2 + solved_map.end[2]) && solved_map.move_map
+				.containsKey(solved_map.start[0] * boardsize*boardsize*4 + solved_map.start[1]
+						* boardsize*2 + solved_map.start[2]))) {
 			System.out.println("Start or end are not achievable");
 			return;
 		}
-		/*
-		if (display_remoteness) {
-			remoteness
-					.setText("The puzzle can be solved in "
-							+ (solved_map
-									.getRemoteness(holder.current_position) / 2 + " moves"));
-			remoteness.setVisible(true);
-		} else {
-			remoteness.setVisible(false);
-		}
-		if (display_best_move) {
-			best_move.setText("The best move is to slide "
-					+ solved_map.getBestMove(holder.current_position));
-			best_move.setVisible(true);
-		} else {
-			best_move.setVisible(false);
-		}
-		if (display_number_viable) {
-			num_viable.setText(acheivable + " positions are achievable and "
-					+ (125 - acheivable) + " are not");
-			num_viable.setVisible(true);
-		} else {
-			num_viable.setVisible(false);
-		}
-		*/
+		remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(holder.current_position) / 2 + " moves"));
+		best_move.setText("The best move is to slide " + solved_map.getBestMove(holder.current_position));
+		
 	}
 
 	public void keyReleased(KeyEvent e) {

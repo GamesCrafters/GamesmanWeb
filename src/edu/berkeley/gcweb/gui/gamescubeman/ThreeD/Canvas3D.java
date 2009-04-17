@@ -241,6 +241,10 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		s.setCanvas(this);
 		shapes.add(s);
 	}
+	
+	public void clearShape3D() {
+		shapes.clear();
+	}
 
 	private boolean antialiasing = true;
 	public void setAntialiasing(boolean aa) {

@@ -32,8 +32,9 @@ public class Faces {
 		 */
 		Object[] input_array = { b_face /* , b_face2 */, r_face, /* r_face2, */
 				w_face /* , w_face2 */};
+		double adjust = cube.boardsize + .5;
 		holder = new PolygonCollection(input_array);
-		holder.translate(-5.5, 5.5, -5.5);
+		holder.translate(-adjust, adjust, -adjust);
 	}
 
 	public Polygon3D[] extract() {

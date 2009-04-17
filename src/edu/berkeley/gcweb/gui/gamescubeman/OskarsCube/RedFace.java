@@ -9,17 +9,20 @@ public class RedFace {
 
 	public RedFace(CubeGen cube) {
 		// The red sides polygons go in here.
+		int max = cube.boardsize*2 +1;
+		
+		
 		Polygon3D red_border = new Polygon3D();
 		red_border.setFillColor(Color.RED);
 		red_border.addPoint(0, 0, 0);
-		red_border.addPoint(0, -11, 0);
-		red_border.addPoint(11, -11, 0);
-		red_border.addPoint(11, 0, 0);
+		red_border.addPoint(0, -max, 0);
+		red_border.addPoint(max, -max, 0);
+		red_border.addPoint(max, 0, 0);
 		red_border.addPoint(1, 0, 0);
 		red_border.addPoint(1, -1, 0);
-		red_border.addPoint(10, -1, 0);
-		red_border.addPoint(10, -10, 0);
-		red_border.addPoint(1, -10, 0);
+		red_border.addPoint(max-1, -1, 0);
+		red_border.addPoint(max-1, -max+1, 0);
+		red_border.addPoint(1, -max+1, 0);
 		red_border.addPoint(1, 0, 0);
 
 		Polygon3D green_dot = new Polygon3D();
@@ -36,8 +39,8 @@ public class RedFace {
 		int x = 0;
 		int y = 0;
 		int z = 0;
-		Object[] input_array = new Polygon3D[34];
-		for (i = 0; i < 32; i++) {
+		Object[] input_array = new Polygon3D[2*(cube.boardsize-1)*(cube.boardsize-1)+2];
+		for (i = 0; i < 2*(cube.boardsize-1)*(cube.boardsize-1); i++) {
 			Polygon3D square = new Polygon3D();
 			square.setFillColor(Color.RED);
 			x = cube.Red[i][0];
@@ -49,8 +52,8 @@ public class RedFace {
 			input_array[i] = square;
 		}
 
-		input_array[33] = red_border;
-		input_array[32] = green_dot;
+		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)+1] = red_border;
+		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)] = green_dot;
 
 		// create array of polygons here
 		// put them into holder

@@ -19,7 +19,7 @@ public class MyShape extends Shape3D {
 		current_position[1] = cube.start[1];
 		current_position[2] = cube.start[2];
 		big_red_axis = new BigRedAxis(cube);
-		interior = new Interior(OskarsCube.solved_map);
+		interior = new Interior(OskarsCube.solved_map, cube);
 		OskarsCube.acheivable = interior.acheivable;
 		interior_array = interior.extract();
 		Polygon3D[] red_axis_array = big_red_axis.extract();

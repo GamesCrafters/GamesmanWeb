@@ -9,17 +9,19 @@ public class BlueFace { // THE BLUE FACE IS XZ
 
 	public BlueFace(CubeGen cube) {
 		// The blue sides polygons go in here.
+		int max = cube.boardsize*2 +1;
+		
 		Polygon3D blue_border = new Polygon3D();
 		blue_border.setFillColor(Color.BLUE);
 		blue_border.addPoint(0, 0, 0);
-		blue_border.addPoint(0, 0, 11);
-		blue_border.addPoint(11, 0, 11);
-		blue_border.addPoint(11, 0, 0);
+		blue_border.addPoint(0, 0, max);
+		blue_border.addPoint(max, 0, max);
+		blue_border.addPoint(max, 0, 0);
 		blue_border.addPoint(1, 0, 0);
 		blue_border.addPoint(1, 0, 1);
-		blue_border.addPoint(10, 0, 1);
-		blue_border.addPoint(10, 0, 10);
-		blue_border.addPoint(1, 0, 10);
+		blue_border.addPoint(max-1, 0, 1);
+		blue_border.addPoint(max-1, 0, max-1);
+		blue_border.addPoint(1, 0, max-1);
 		blue_border.addPoint(1, 0, 0);
 
 		Polygon3D green_dot = new Polygon3D();
@@ -36,8 +38,8 @@ public class BlueFace { // THE BLUE FACE IS XZ
 		int x = 0;
 		int y = 0;
 		int z = 0;
-		Object[] input_array = new Polygon3D[34];
-		for (i = 0; i < 32; i++) {
+		Object[] input_array = new Polygon3D[2*(cube.boardsize-1)*(cube.boardsize-1)+2];
+		for (i = 0; i < 2*(cube.boardsize-1)*(cube.boardsize-1); i++) {
 			Polygon3D square = new Polygon3D();
 			square.setFillColor(Color.BLUE);
 			x = cube.Blue[i][0] + 1;
@@ -49,8 +51,8 @@ public class BlueFace { // THE BLUE FACE IS XZ
 			input_array[i] = square;
 		}
 
-		input_array[33] = blue_border;
-		input_array[32] = green_dot;
+		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)+1] = blue_border;
+		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)] = green_dot;
 
 		// create array of polygons here
 		// put them into holder
