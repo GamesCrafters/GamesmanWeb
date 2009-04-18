@@ -37,7 +37,7 @@ function initBoard() {
         clearMoveValues: clearMoveValues,
         getPositionValue: getPositionValue,
         getNextMoveValues: getNextMoveValues,
-        options: {size: boardSize},
+        options: {size: boardSize, start: 0},
         debug: 0
     });
     // load the default board
@@ -119,9 +119,9 @@ function highlightMoves() {
         } else if (nextMoves[i].value=='win') {
           nextMoves[i].score = 0;
         } else if (nextMoves[i].value=='lose') {
-          nextmoves[i].score = 2;
+          nextMoves[i].score = 2;
         } else {
-          nextmoves[i].score = 1;
+          nextMoves[i].score = 1;
         }
       }
       if (currentScores[id] == undefined) {
@@ -259,9 +259,18 @@ function validateInput() {
         board += ";";
       }
       defaultBoard = board;
+      window.location.hash = '#' + boardSize;
       initBoard();
     }
 }
+$(document).ready(function() {
+  if (location.hash != '') {
+    var num = parseInt(location.hash.substr(1));
+    $("#boardSizeNumber").val(""+num);
+    validateInput();
+  }
+});
+
 
 function createBoard() {
   $(document.body).click(function(){checkPeg(this)});

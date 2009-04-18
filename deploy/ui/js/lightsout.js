@@ -2,6 +2,9 @@
 var EMPTY = ' ';
 var FILLED = 'X';
 
+//var piecechars = {'X':"\u25A0",' ':' '};
+var piecechars = {'X':"\u2600",' ':' '}; //2605",' ':' '};
+
 // custom representation of the board, will be different for different games
 var currentBoard;
 var defaultBoard = [];
@@ -26,6 +29,7 @@ function createboard(val) {
     }
     width = height = s;
     $("#boardSizeInput").hide();
+    window.location.hash = '#' + s;
     // create a new game
     var game = GCWeb.newPuzzleGame("lightsout", width, height, {
         onNextValuesReceived: onNextValuesReceived,
@@ -99,7 +103,7 @@ function createboard(val) {
         for(var col=0;col<width;col++) {
             var htmlcell = document.createElement("td");
             htmlcell.setAttribute("id", "cell-"+row+"-"+col);
-            htmlcell.appendChild(document.createTextNode(defaultBoard[row][col]));
+            htmlcell.appendChild(document.createTextNode(piecechars[defaultBoard[row][col]]));
             htmlrow.appendChild(htmlcell);
             // what happens when you click a table cell
             $('#cell-'+row+'-'+col).click(function(row, col){
@@ -117,6 +121,13 @@ function createboard(val) {
     }
 }
 //);
+$(document).ready(function() {
+  if (location.hash != '') {
+    var num = parseInt(location.hash.substr(1));
+    $("#boardSizeInput").val(""+num);
+    createboard(""+num);
+  }
+});
 
 // check to see whether the current move is valid
 function isValidMove(moveInfo)
@@ -139,7 +150,7 @@ function onExecutingMove(moveInfo){
                 s = EMPTY;
             }
             currentBoard[row][col] = s;
-            $('#cell-'+row+'-'+col).text(currentBoard[row][col]);
+            $('#cell-'+row+'-'+col).text(piecechars[currentBoard[row][col]]);
         }
     }
 }

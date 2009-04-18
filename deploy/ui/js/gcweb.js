@@ -1,4 +1,7 @@
 var puzzleMessages = {
+        1:'Solvable',
+        2:'Tie',
+        3:'Solvable',
 	'lose':'Imperfect solution',
 	'tie':'Tie',
 	'draw':'Draw',
@@ -24,7 +27,13 @@ function doneWaiting() {
         //delete document.body.style['cursor'];
     }
 }
-
+function toggleTimer() {
+    if ($('#option-timer').is(':checked')) {
+        $('#timer').show();
+    } else {
+        $('#timer').hide();
+    }
+}
 GCWeb = {
     newPuzzleGame: function(gameName, width, height, options) {
 
@@ -56,6 +65,8 @@ GCWeb = {
                     
                     this.maxRemotenessSeen = 0;
                     this.minRemotenessSeen = 0;
+                    this.numMoves = 0;
+                    this.timer = null;
                     //$('#max-remoteness').text(this.maxRemotenessSeen);
                     //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
                     //$('#min-remoteness').text(this.minRemotenessSeen);
@@ -102,6 +113,24 @@ GCWeb = {
                     this.currentBoardString = newMove.board;
                     if(!newMove.isSetup){
                         this.previousMoves.push(newMove);
+                        this.numMoves += 1;
+                        if (this.numMoves == 1) {
+                          $('#timer').text("0:00");
+                          $('#nr-moves').text("1 move");
+                          var mythis=this;
+                          (function() {
+                            var time = 0;
+                            mythis.timer = setInterval(function() {
+                                time+=1;
+                                min = (time/60)>>0; // integer
+                                sec = time%60;
+                                secStr = (sec<10?('0'+sec):''+sec);
+                                $('#timer').text(min+":"+secStr);
+                            },1000);
+                          })();
+                        } else {
+                          $('#nr-moves').text(this.numMoves + " moves");
+                        }
                     }
                     
                     // grab the next values
@@ -198,6 +227,10 @@ GCWeb = {
                                     mv.delta = mv.remoteness - thisRemoteness;
                                     //alert(mv.delta+";"+mv.remoteness+";"+thisRemoteness);
                                 }
+                            if (moveValues.length == 0 && mythis.timer != null) {
+                                clearInterval(mythis.timer);
+                                mythis.timer = null;
+                            }
                             onMoveValuesReceived(moveValues);
                         }
                     });
@@ -212,6 +245,11 @@ GCWeb = {
 						if (moveValue.remoteness < 0) {
 							text = "Prediction unavailable.";
 						} else if (moveValue.remoteness == 0) {
+                            if (this.timer != null) {
+                                clearInterval(this.timer);
+                                this.timer = null;
+                                this.numMoves = 0;
+                            }
 							text = "Puzzle complete!";
 						} else {
 							if (moveValue.value) {

@@ -84,6 +84,8 @@ String uifile = gameDictionary.getUI(internalName);
 	</script>
   </head> 
   <body> 
+        <p id="timer">&nbsp;</p>
+        <p id="nr-moves">&nbsp;</p>
     <div class="header">
       <img src="images/gamescrafters-logo.png" alt="GamesCrafters">
       <h1>GamesmanWeb</h1> 
@@ -92,7 +94,8 @@ String uifile = gameDictionary.getUI(internalName);
       <!-- game commands --> 
       <div class="nav">
         <ul> 
-          <li><a href="">New <%= gameclass %></a></li>
+          <li><a href="">Change Options</li>
+          <li><a href="javascript:location.reload();">Reset <%= gameclass %></a></li>
           <!--<li><a href="#">Rules</a></li>
           <li><a href="#">Load Puzzle</a></li>
           <li><a href="#">Save Puzzle</a></li>
@@ -102,8 +105,9 @@ String uifile = gameDictionary.getUI(internalName);
         <ul id="options">
           <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
         <% if (puzzle) { %>
-          <li><label><input type="checkbox" id="option-move-value-history"> Move-value History</label></li>
+          <li><label><input type="checkbox" id="option-move-value-history"> Value History</label></li>
           <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
+          <li><label><input type="checkbox" id="option-timer" onclick="toggleTimer()"> Show Timer</label></li>
           <!--<li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>-->
         <% } %>
         </ul>
@@ -126,7 +130,7 @@ String uifile = gameDictionary.getUI(internalName);
             </tr>
             <tr>
               <% if (puzzle) { %>
-              <td>to move towards solution</td><td>to maintain remoteness</td><td>to move away from solution</td>
+              <td>move towards solution</td><td>maintain remoteness</td><td>move away from solution</td>
               <% } else { %>
               <td>winning move</td><td>cause a tie</td><td>losing move</td>
               <% } %>

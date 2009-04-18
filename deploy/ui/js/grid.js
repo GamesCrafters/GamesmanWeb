@@ -3,8 +3,15 @@ var width = 4;
 var height = 4;
 var puzzletype = "ttt";
 
-// used only in games.
-var pieces = ['X', 'O'];
+// N-ARY TIMES OPERATOR vs. LARGE CIRCLE
+//var piecechars = {'X':"\u2A2F", 'O':"\u3007",' ':' '};
+var piecechars = {'X':"\u00D7", 'O':"O",' ':' '};
+// 2A09
+// white/black smiley:
+//var piecechars = {'X':"\u263A", 'O':"\u263B",' ':' '};
+
+
+var playerpieces = ['X', 'O'];
 var currentPlayer = 0;
 
 var defaultBoard = ""; //new Array(width*height);
@@ -14,7 +21,7 @@ var moveValueNames = {1:'lose',2:'tie',3:'win','lose':'lose','tie':'tie','win':'
 var moveValueClasses = {'lose':'lose-move', 'tie':'tie-move', 'win':'win-move','draw':'tie-move'};
 var nextMoves = [];
 
-var urlParams = window.location.toString().split("?")[1].split("&");
+var urlParams = window.location.toString().split("#")[0].split("?")[1].split("&");
 for (var i = 0; i < urlParams.length; i++) {
     var key = unescape(urlParams[i].split("=")[0]);
     var value = unescape(urlParams[i].split("=")[1]);
@@ -35,7 +42,7 @@ for (var i = 0; i < urlParams.length; i++) {
     }
 }
 $(document).ready(function(){
-  $("#startbutton").click(function(){
+  function startGame(){
     var mywidth = parseInt($("#widthinput").val());
     var myheight = parseInt($("#heightinput").val());
     var pieces = parseInt($("#piecesinput").val());
@@ -46,6 +53,7 @@ $(document).ready(function(){
     width = mywidth;
     height = myheight;
     $("#optionsform").hide();
+    window.location.hash="#"+width+","+height+","+pieces;
 
     defaultBoard = ""; //new Array(width*height);
     for (var i = 0; i < width*height; i++) {
@@ -86,20 +94,38 @@ $(document).ready(function(){
                             thisrow = height-nextMoves[i].move.substr(1);
                         var thiscol = getMoveColumn(nextMoves[i].move);
                         if(row == thisrow && col == thiscol){
-                            game.doMove(nextMoves[i])
+                            game.doMove(nextMoves[i]);
+                            nextMoves = [];
+                            break;
                         }
                     }
                 }
             }(row, col));
         }
     }
-    $('#turn').text("It's "+pieces[currentPlayer]+"'s turn!");
-  });
+  };
+  $("#startbutton").click(startGame);
+  if (location.hash != '') {
+    var args = location.hash.substr(1).split(',');
+    if (args.length >= 3) {
+      var wid=parseInt(args[0]);
+      var hei=parseInt(args[1]);
+      var pcs=parseInt(args[2]);
+      $("#widthinput").val(""+wid);
+      $("#heightinput").val(""+hei);
+      $("#piecesinput").val(""+pcs);
+      startGame();
+    }
+  }
 });
 
 // called on intiial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
     nextMoves = json;
+    $('#turn').text("It's "+piecechars[playerpieces[currentPlayer]]+"'s turn!");
+    if (nextMoves.length == 0) {
+        $('#turn').text("Game Over!");
+     }
 }
 
 function isValidMove(moveInfo)
@@ -159,11 +185,11 @@ function updateBoard(game, moveInfo) {
 	var newBoard = (moveInfo.board);
     for(row=0;row<height;row++) {
         for(col=0;col<width;col++) {
-            $('#cell-'+(height-row-1)+'-'+col).text(newBoard[row*width+col]);
+            $('#cell-'+(height-row-1)+'-'+col).text(piecechars[newBoard[row*width+col]]);
         }
     }
     currentPlayer = (currentPlayer+1)%2;
-    $('#turn').text("It's "+pieces[currentPlayer]+"'s turn!");
+    $('#turn').text("It's "+piecechars[playerpieces[currentPlayer]]+"'s turn!");
  }
 
 function getBoardString(board){

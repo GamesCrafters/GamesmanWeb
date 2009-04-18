@@ -47,6 +47,9 @@ body > .header h1 {
 #moves h1 { }
 #moves * + h1 { margin-top: 0.5em }
 
+#timer { float: right; margin: 2px; padding-left: 1em; padding-right: 0.5em; font-size: 2.5em; text-align: center}
+#nr-moves { float: right; margin: 2px; padding: 0.5em; font-size: 1.5em; text-align: left}
+
 #move-value-key { margin-top: 0.5em }
 #move-value-key table { margin-left: 0.5em; list-style: none; font-size: 0.9em; text-align: center; width: 100% }
 #move-value-key td { width: 33% }
