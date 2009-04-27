@@ -110,7 +110,6 @@ class Solver {
 					}
 				}
 			}
-			// System.out.println(bx + " " + by + " " + bz);
 			end = new int[] { 2 * bx, 2 * by, 2 * bz };
 			move_map = new HashMap<Integer, Node>();
 			queue = new LinkedList<Node>();
@@ -137,7 +136,6 @@ class Solver {
 					}
 				}
 			}
-			// System.out.println(bx + " " + by + " " + bz);
 			start = new int[] { 2 * bx, 2 * by, 2 * bz };
 
 			cube.start = start;
@@ -160,8 +158,6 @@ class Solver {
 			if (move_map.containsKey(the_key))
 				continue;
 			move_map.put(the_key, head);
-			// System.out.println("New node found: (" +
-			// head.board[0]+","+head.board[1]+","+head.board[2]+")");
 			for (int[] legal_move : head.moves) {
 				int[] new_board = { head.board[0] + legal_move[0],
 						head.board[1] + legal_move[1],
@@ -196,6 +192,23 @@ class Solver {
 		return 0;
 	}
 
+	public int[] getNextBestMove(int[] board) {
+		int key = board[0] * boardsize*boardsize*4 + board[1] * boardsize*2 + board[2];
+		int[] best_move = { -5, -5, -5 };
+		int least_remoteness = 99999999;
+		for (int[] legal_move : move_map.get(key).moves) {
+			int[] new_board = { board[0] + legal_move[0],
+					board[1] + legal_move[1], board[2] + legal_move[2] };
+			int new_key = new_board[0] * boardsize*boardsize*4 + new_board[1] *  boardsize*2 + new_board[2];
+			int new_remoteness = move_map.get(new_key).remoteness;
+			if (new_remoteness < least_remoteness) {
+				least_remoteness = new_remoteness;
+				best_move = legal_move;
+			}
+		}
+		return best_move;
+	}
+	
 	public String getBestMove(int[] board) {
 		int key = board[0] * boardsize*boardsize*4 + board[1] * boardsize*2 + board[2];
 		int[] best_move = { -5, -5, -5 };
@@ -222,15 +235,13 @@ class Solver {
 			return "away from RED";
 		if (best_move[0] == 0 && best_move[1] == 0 && best_move[2] == -1)
 			return "towards RED";
-		return "LEFT"; // whatever
+		return "LEFT"; //This means failure
 	}
 
 	public static void main(String[] args) {
-		// System.out.println("Starting Run");
+	
 		CubeGen cube = new CubeGen(false, false,5);
 		Solver test = new Solver(cube);
-		// if (test.move_map.containsKey(0))
-		// System.out.println("(0,0,0) is in the database");
-		// System.out.println("Run Finished");
+		
 	}
 }

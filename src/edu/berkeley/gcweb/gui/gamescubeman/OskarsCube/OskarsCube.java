@@ -31,10 +31,10 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = false;
+	private static final boolean random_faces = true;
 	private static final boolean display_number_viable_default = false;
-	private static final boolean find_best_start_end_default = false; 
-	private static final int boardsize = 5;
+	private static final boolean find_best_start_end_default = true; 
+	private static final int boardsize = 6;
 	public static int acheivable;
 	public static Solver solved_map;
 	private MyShape cube;
@@ -48,18 +48,28 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private JCheckBox display_remoteness_box;
 	private JCheckBox display_number_viable_box;
 	private JCheckBox display_viable_insides_box;
+	private JCheckBox display_solution_path_box;
 	private CubeGen cubefaces;
-	private Random random;
-
+	
 	public void init() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
+					
 					cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+					
 					if (USE_JAVA_SOLVER)
 						solved_map = new Solver(cubefaces);
+					while(!(solved_map.move_map.containsKey(solved_map.end[0] * boardsize*boardsize*4 + solved_map.end[1] * boardsize*2 + solved_map.end[2]) && solved_map.move_map.containsKey(solved_map.start[0] * boardsize*boardsize*4 + solved_map.start[1]
+						* boardsize*2 + solved_map.start[2]))) {
+						System.out.println("failed");
+						cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+						solved_map = new Solver(cubefaces);
+						
+					}
+					int zoom = 25 + (5-boardsize)*(5-boardsize);
 					canvas = new Canvas3D();
-					cube = new MyShape(0, 0, 50, cubefaces);
+					cube = new MyShape(0, 0, zoom, cubefaces);
 					cube.setCanvas(canvas);
 					canvas.addShape3D(cube);
 					canvas.addKeyListener(OskarsCube.this);
@@ -69,22 +79,32 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					JPanel buttons = new JPanel();
 					buttons.setLayout(new BoxLayout(buttons,
 							BoxLayout.PAGE_AXIS));
+					
+					best_move = new JLabel();
+					num_viable = new JLabel();
 					remoteness = new JLabel();
-					display_viable_insides_box = new JCheckBox("Show Viable Insides");
+					display_viable_insides_box = new JCheckBox("Show Unachievable Insides");
 					cube.setInteriorVisible(display_viable_insides_box.isSelected());
 					display_viable_insides_box.setFocusable(false);
 					display_viable_insides_box.addActionListener(OskarsCube.this);
+					
+					display_solution_path_box = new JCheckBox("Show Solution Path");
+					cube.setIntSolVisible(display_solution_path_box.isSelected());
+					display_solution_path_box.setFocusable(false);
+					display_solution_path_box.addActionListener(OskarsCube.this);
+					
 					display_best_move_box = new JCheckBox("Show Best Move");
 					display_best_move_box.setFocusable(false);
 					display_best_move_box.addActionListener(OskarsCube.this);
+					
 					display_remoteness_box = new JCheckBox("Show Remoteness");
 					display_remoteness_box.setFocusable(false);
 					display_remoteness_box.addActionListener(OskarsCube.this);
-					display_number_viable_box = new JCheckBox("Show Number Viable");
+					
+					display_number_viable_box = new JCheckBox("Show Number Achievable");
 					display_number_viable_box.setFocusable(false);
 					display_number_viable_box.addActionListener(OskarsCube.this);
-					best_move = new JLabel();
-					num_viable = new JLabel();
+					
 					if (solved_map.getRemoteness(cubefaces.start) !=0) {
 						remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(cubefaces.start) / 2 + " moves"));
 						remoteness.setVisible(display_remoteness_default);
@@ -99,6 +119,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					}
 					num_viable.setText(acheivable + " positions are achievable and "+ (boardsize*boardsize*boardsize - acheivable) + " are not");
 					num_viable.setVisible(display_number_viable_default);
+					
 					resetViewButton = new JButton("Reset View");
 					resetViewButton.setMnemonic(KeyEvent.VK_R);
 					resetViewButton.setFocusable(false);
@@ -111,6 +132,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					buttons.add(display_number_viable_box);
 					buttons.add(display_best_move_box);
 					buttons.add(display_remoteness_box);
+					buttons.add(display_solution_path_box);
 					full_panel.add(buttons);
 					full_panel.add(canvas);
 					getContentPane().add(full_panel);
@@ -383,8 +405,10 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		} else if (e.getSource() == display_best_move_box) {
 			best_move.setVisible(display_best_move_box.isSelected());
 			canvas.fireCanvasChange();
+		} else if (e.getSource() == display_solution_path_box) {
+			cube.setIntSolVisible(display_solution_path_box.isSelected());
+			canvas.fireCanvasChange();
 		}
-		
 		
 	}
 

@@ -11,6 +11,8 @@ public class MyShape extends Shape3D {
 	public Interior interior;
 	public int[] current_position;
 	private Polygon3D[] interior_array;
+	private Polygon3D[] intSol_array;
+	public InteriorSolutionPath intSol;
 
 	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
@@ -20,8 +22,10 @@ public class MyShape extends Shape3D {
 		current_position[2] = cube.start[2];
 		big_red_axis = new BigRedAxis(cube);
 		interior = new Interior(OskarsCube.solved_map, cube);
+		intSol = new InteriorSolutionPath(OskarsCube.solved_map, cube);
 		OskarsCube.acheivable = interior.acheivable;
 		interior_array = interior.extract();
+		intSol_array = intSol.extract();
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
@@ -31,6 +35,12 @@ public class MyShape extends Shape3D {
 			if (interior_array[i] != null) {
 				interior_array[i].setVisible(false);
 				addPoly(interior_array[i]);
+			}
+		}
+		for (int i = 0; i < intSol_array.length; i++) {
+			if (intSol_array[i] != null) {
+				intSol_array[i].setVisible(false);
+				addPoly(intSol_array[i]);
 			}
 		}
 		cube_faces = new Faces(cube);
@@ -45,6 +55,11 @@ public class MyShape extends Shape3D {
 		for (int i = 0; i < interior_array.length; i++)
 			if (interior_array[i] != null)
 				interior_array[i].setVisible(visible);
+	}
+	public void setIntSolVisible(boolean visible) {
+		for (int i = 0; i < intSol_array.length; i++)
+			if (intSol_array[i] != null)
+				intSol_array[i].setVisible(visible);
 	}
 
 }
