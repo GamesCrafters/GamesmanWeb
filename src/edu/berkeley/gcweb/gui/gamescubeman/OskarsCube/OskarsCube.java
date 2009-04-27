@@ -31,10 +31,10 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = true;
+	private static final boolean random_faces = false;
 	private static final boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = true; 
-	private static final int boardsize = 6;
+	private static final int boardsize = 5;
 	public static int acheivable;
 	public static Solver solved_map;
 	private MyShape cube;
@@ -67,7 +67,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 						solved_map = new Solver(cubefaces);
 						
 					}
-					int zoom = 25 + (5-boardsize)*(5-boardsize);
+					int zoom = 25 + 2*(5-boardsize)*(5-boardsize);
 					canvas = new Canvas3D();
 					cube = new MyShape(0, 0, zoom, cubefaces);
 					cube.setCanvas(canvas);
