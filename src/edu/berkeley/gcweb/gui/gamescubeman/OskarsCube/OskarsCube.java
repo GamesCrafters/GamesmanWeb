@@ -31,7 +31,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = false;
+	private static final boolean random_faces = true;
 	private static final boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = false; 
 	private static final int boardsize = 5;
@@ -55,19 +55,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					cubefaces = new CubeGen(0, 0, 0, find_best_start_end_default, boardsize);
-					if (random_faces == true) {
-						random = new Random(); // can put seed here
-						boolean validfaces = false;
-						while (!validfaces) {
-							int seed1 = random.nextInt();
-							int seed2 = random.nextInt();// new randomint;
-							int seed3 = random.nextInt();// new randomint;
-							cubefaces = new CubeGen(seed1, seed2, seed3, 
-									find_best_start_end_default, boardsize);
-							validfaces = cubefaces.Valid;
-						}
-					}
+					cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
 					if (USE_JAVA_SOLVER)
 						solved_map = new Solver(cubefaces);
 					canvas = new Canvas3D();

@@ -227,7 +227,7 @@ class Solver {
 
 	public static void main(String[] args) {
 		// System.out.println("Starting Run");
-		CubeGen cube = new CubeGen(0, 0, 0, false,5);
+		CubeGen cube = new CubeGen(false, false,5);
 		Solver test = new Solver(cube);
 		// if (test.move_map.containsKey(0))
 		// System.out.println("(0,0,0) is in the database");

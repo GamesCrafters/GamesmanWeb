@@ -1,30 +1,64 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class CubeGen {
 
-	public CubeGen(int seed1, int seed2, int seed3, boolean findbest, int boardsize) {
+	public CubeGen(boolean random, boolean findbest, int boardsize) {
 		this.findbest = findbest;
 		this.boardsize = boardsize;
-		if (seed1 == 0 & seed2 == 0 & seed3 == 0) {
+		if (!random) {
 			// set to classic board
 			Blue = blocked_xz_face;
 			White = blocked_yz_face;
 			Red = blocked_xy_face;
 			boardsize=5;
+			validB = true;
+			validR = true;
+			validW = true;
 
 		} else {
-			// else we generate the appropriate board if legal
-			Blue = intToSet(seed1);
-			White = intToSet(seed2);
-			Red = intToSet(seed3);
+			randomGen = new Random();
+			Blue = intToSet(randomGen.nextInt());
+			White = intToSet(randomGen.nextInt());
+			Red = intToSet(randomGen.nextInt());
 		}
-
-		Valid = legalBoard(Blue) & legalBoard(White) & legalBoard(Red);
-		if (Valid & seed1 != 0 & seed2 != 0 & seed3 != 0) {
-			System.out.println("Board Generated: " + seed1 + " " + seed2 + " "
-					+ seed3);
+		edges_blue = makeEdges(Blue);
+		edges_white = makeEdges(White);
+		edges_red = makeEdges(Red);
+		
+		while(!validB) {
+			if (legalBoard(Blue, edges_blue)) {
+				validB =true;
+				
+			} else {
+				Blue = intToSet(randomGen.nextInt());
+				edges_blue = makeEdges(Blue);
+				
+			}
+		}
+		while(!validR) {
+			if (legalBoard(Red, edges_red)) {
+				validR =true;
+				
+			} else {
+				Red = intToSet(randomGen.nextInt());
+				edges_red = makeEdges(Red);
+				
+				
+			}
+		}
+		while(!validW) {
+			if (legalBoard(White, edges_white)) {
+				validW =true;
+				
+			} else {
+				White = intToSet(randomGen.nextInt());
+				edges_white = makeEdges(White);
+				
+			}
 		}
 	}
 
@@ -32,13 +66,13 @@ public class CubeGen {
 		// alg from int to face
 		// for any two bits 00 is [ -], 01 is [ ' ], 10 is [- ], 11 is [ , ] ie
 		// arc from 0 to e^(i*pi/2x)
-		random = new Random();
+		
 		int numpieces = (boardsize-1)*(boardsize-1)*2;
 		int[][] face = new int[numpieces][2];
 		int i = 0;
 		for (; i < numpieces/2; i++) {
 			if(i%16==0 && i!=0) {
-				seed = random.nextInt();
+				seed = randomGen.nextInt();
 			}
 			int horz = 1;
 			int vert = 1;
@@ -61,8 +95,58 @@ public class CubeGen {
 
 		return face;
 	}
+	
+	private HashMap<Integer, Boolean> makeEdges(int[][] face) {
+		HashMap<Integer, Boolean> list = new HashMap<Integer, Boolean>();
+		int adj = 2*boardsize;
+		int max = 2*boardsize -1;
+		int len = face.length;
+		int i=0;
+		for(i=0; i< boardsize*2-1;i++) {
+			list.put(i*2+1, true);
+			list.put(adj*max*2 +2*i+1, true);
+			list.put(adj*2*i, true);
+			list.put(adj*i*2 + 2*max, true);
+		}
+		for(i=0; i< face.length && face[i]!=null;i++) {
+			int x= face[i][0];
+			int y= face[i][1];
+			if (x < adj) {
+				if(list.get(2*(adj*x +y)) != null) {
+					list.put(2*(adj*x +y), !list.get(2*(adj*x +y)));
+				} else {
+					list.put(2*(adj*x +y), true);
+				}
+			}
+			if (y < adj) {
+				if(list.get(2*(adj*x +y) +1) != null) {
+					list.put(2*(adj*x +y) +1, !list.get(2*(adj*x +y) +1));
+				} else {
+					list.put(2*(adj*x +y)+1, true);
+				}
+			}
+			if (x +1< adj) {
+				if(list.get(2*(adj*(x+1) +y)+1) != null) {
+					list.put(2*(adj*(x+1) +y)+1, !list.get(2*(adj*(x+1) +y)+1));
+				} else {
+					list.put(2*(adj*(x+1) +y)+1, true);
+				}
+			}
+			if (y +1< adj) {
+				if(list.get(2*(adj*x +y+1)) != null) {
+					list.put(2*(adj*x +y+1), !list.get(2*(adj*x +y+1)));
+				} else {
+					list.put(2*(adj*x +y+1), true);
+				}
+			}
+			              
+		}
+		//System.out.println(list.toString());
+		return list;
+	}
+	
 
-	private boolean legalBoard(int[][] face) {
+	private boolean legalBoard(int[][] face, HashMap<Integer, Boolean> edges) {
 		// check if legal board
 		// two properties
 		// one, no value repeats:
@@ -75,15 +159,58 @@ public class CubeGen {
 				}
 			}
 		}
-		// two, no squares ie floating pieces
-
+		//two, no cycles:
+		HashMap<Integer, Boolean> check = new HashMap<Integer, Boolean>();
+		check.putAll(edges);
+		int adj = 2*boardsize;
+		int max = 2*boardsize -1;
+		int count =0;
+		int x0=0;
+		int y0=0;
+		for(; count <check.size(); count++) {
+			if(check.containsKey(2*x0*adj + 2*y0) && x0<max) {
+				if (check.get(2*x0*adj + 2*y0)==true) {
+					check.put(adj*2*x0 + 2*y0, false);
+					x0 = x0+1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*y0 +1)&& y0<max) {
+				if (check.get(2*x0*adj + 2*y0+1)==true) {
+					check.put(2*x0*adj + 2*y0 +1, false);
+					x0 = x0;
+					y0= y0 +1;
+					continue;
+				}
+			}
+			if(check.containsKey(2*(x0-1)*adj + 2*y0)&& x0>0) {
+				if (check.get(2*(x0-1)*adj + 2*y0)==true) {
+					check.put(2*(x0-1)*adj + 2*y0, false);
+					x0 = x0-1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*(y0-1) +1)&& y0>0) {
+				if (check.get(2*x0*adj + 2*(y0-1)+1)==true) {
+					check.put(2*x0*adj + 2*(y0-1) +1, false);
+					x0 = x0;
+					y0= y0 -1;
+					continue;
+				}
+			}
+			
+			
+		}
+		if(check.containsValue(true)) {
+			return false;
+		}
+		
 		return true;
 	}
 
-	public int[][] Blue;
-	public int[][] White;
-	public int[][] Red;
-	public boolean Valid;
+	
 	
 	// private static int[][] blocked_xz_face = {{1,0}, {7,0}, {1,1}, {2,1},
 	// {3,1}, {5,1}, {7,1}, {5,2}, {1,3}, {3,3}, {4,3}, {5,3}, {6,3}, {7,3},
@@ -129,6 +256,17 @@ public class CubeGen {
 	public int[] end = { 4, 8, 8 };
 	public boolean findbest = false;
 	public int boardsize = 5;
-	private Random random;
+	private Random randomGen;
+	public HashMap<Integer, Boolean> edges_blue;
+	public HashMap<Integer, Boolean> edges_red;
+	public HashMap<Integer, Boolean> edges_white;
+	
+	public int[][] Blue;
+	public int[][] White;
+	public int[][] Red;
+	public boolean validB;
+	public boolean validR;
+	public boolean validW;
+	
 
 }
