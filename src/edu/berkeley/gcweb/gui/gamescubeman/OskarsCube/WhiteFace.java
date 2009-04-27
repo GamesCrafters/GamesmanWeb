@@ -1,6 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
 import java.awt.Color;
+import java.util.HashMap;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
@@ -9,21 +10,61 @@ public class WhiteFace {
 
 	public WhiteFace(CubeGen cube) {
 		
-		int max = cube.boardsize*2 +1;
+		int max2 = cube.boardsize*2 +1;
 
 		// The white sides polygons go in here.
 		Polygon3D white_border = new Polygon3D();
 		white_border.setFillColor(Color.WHITE);
 		white_border.addPoint(0, 0, 0);
-		white_border.addPoint(0, 0, max);
-		white_border.addPoint(0, -max, max);
-		white_border.addPoint(0, -max, 0);
-		white_border.addPoint(0, -1, 0);
-		white_border.addPoint(0, -1, 1);
-		white_border.addPoint(0, -max+1, 1);
-		white_border.addPoint(0, -max+1, max-1);
-		white_border.addPoint(0, -1, max-1);
-		white_border.addPoint(0, -1, 0);
+		white_border.addPoint(0, 0, max2);
+		white_border.addPoint(0, -max2, max2);
+		white_border.addPoint(0, -max2, 0);
+		white_border.addPoint(0, -0, 0);
+		HashMap<Integer, Boolean> check = new HashMap<Integer, Boolean>();
+		check.putAll(cube.edges_white);
+		int adj = 2*cube.boardsize;
+		int max = 2*cube.boardsize -1;
+		int count =0;
+		int x0=0;
+		int y0=0;
+		for(; count <check.size(); count++) {
+			white_border.addPoint(0,-x0-1,y0+1);
+			if(check.containsKey(2*x0*adj + 2*y0) && x0<max) {
+				if (check.get(2*x0*adj + 2*y0)==true) {
+					check.put(adj*2*x0 + 2*y0, false);
+					x0 = x0+1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*y0 +1)&& y0<max) {
+				if (check.get(2*x0*adj + 2*y0+1)==true) {
+					check.put(2*x0*adj + 2*y0 +1, false);
+					x0 = x0;
+					y0= y0 +1;
+					continue;
+				}
+			}
+			if(check.containsKey(2*(x0-1)*adj + 2*y0)&& x0>0) {
+				if (check.get(2*(x0-1)*adj + 2*y0)==true) {
+					check.put(2*(x0-1)*adj + 2*y0, false);
+					x0 = x0-1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*(y0-1) +1)&& y0>0) {
+				if (check.get(2*x0*adj + 2*(y0-1)+1)==true) {
+					check.put(2*x0*adj + 2*(y0-1) +1, false);
+					x0 = x0;
+					y0= y0 -1;
+					continue;
+				}
+			}
+			
+			
+		}
+		
 
 		Polygon3D green_dot = new Polygon3D();
 		green_dot.setFillColor(Color.GREEN);
@@ -35,25 +76,9 @@ public class WhiteFace {
 		green_dot.addPoint(0, -(endy + 2), (endz + 1.5));
 		green_dot.addPoint(0, -(endy + 1.5), (endz + 1));
 
-		int i;
-		int x = 0;
-		int y = 0;
-		int z = 0;
-		Object[] input_array = new Polygon3D[2*(cube.boardsize-1)*(cube.boardsize-1)+2];
-		for (i = 0; i < 2*(cube.boardsize-1)*(cube.boardsize-1); i++) {
-			Polygon3D square = new Polygon3D();
-			square.setFillColor(Color.WHITE);
-			y = cube.White[i][0];
-			z = cube.White[i][1];
-			square.addPoint(x, -(y + 1), (z + 1));
-			square.addPoint(x, -(y + 1), (z + 2));
-			square.addPoint(x, -(y + 2), (z + 2));
-			square.addPoint(x, -(y + 2), (z + 1));
-			input_array[i] = square;
-		}
-
-		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)+1] = white_border;
-		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)] = green_dot;
+		Object[] input_array = new Polygon3D[2];
+		input_array[0] = white_border;
+		input_array[1] = green_dot;
 
 		// create array of polygons here
 		// put them into holder

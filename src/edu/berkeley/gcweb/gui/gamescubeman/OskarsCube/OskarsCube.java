@@ -31,7 +31,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = true;
+	private static final boolean random_faces = false;
 	private static final boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = false; 
 	private static final int boardsize = 5;

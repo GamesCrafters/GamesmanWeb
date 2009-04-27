@@ -1,6 +1,7 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
 import java.awt.Color;
+import java.util.HashMap;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
@@ -9,20 +10,63 @@ public class BlueFace { // THE BLUE FACE IS XZ
 
 	public BlueFace(CubeGen cube) {
 		// The blue sides polygons go in here.
-		int max = cube.boardsize*2 +1;
+		int max2 = cube.boardsize*2 +1;
 		
 		Polygon3D blue_border = new Polygon3D();
 		blue_border.setFillColor(Color.BLUE);
 		blue_border.addPoint(0, 0, 0);
-		blue_border.addPoint(0, 0, max);
-		blue_border.addPoint(max, 0, max);
-		blue_border.addPoint(max, 0, 0);
-		blue_border.addPoint(1, 0, 0);
-		blue_border.addPoint(1, 0, 1);
-		blue_border.addPoint(max-1, 0, 1);
-		blue_border.addPoint(max-1, 0, max-1);
-		blue_border.addPoint(1, 0, max-1);
-		blue_border.addPoint(1, 0, 0);
+		blue_border.addPoint(0, 0, max2);
+		blue_border.addPoint(max2, 0, max2);
+		blue_border.addPoint(max2, 0, 0);
+		blue_border.addPoint(0, 0, 0);
+		//blue_border.addPoint(0, 0, 1);
+		
+		HashMap<Integer, Boolean> check = new HashMap<Integer, Boolean>();
+		check.putAll(cube.edges_blue);
+		int adj = 2*cube.boardsize;
+		int max = 2*cube.boardsize -1;
+		int count =0;
+		int x0=0;
+		int y0=0;
+		for(; count <check.size(); count++) {
+			blue_border.addPoint(x0+1,0,y0+1);
+			if(check.containsKey(2*x0*adj + 2*y0) && x0<max) {
+				if (check.get(2*x0*adj + 2*y0)==true) {
+					check.put(adj*2*x0 + 2*y0, false);
+					x0 = x0+1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*y0 +1)&& y0<max) {
+				if (check.get(2*x0*adj + 2*y0+1)==true) {
+					check.put(2*x0*adj + 2*y0 +1, false);
+					x0 = x0;
+					y0= y0 +1;
+					continue;
+				}
+			}
+			if(check.containsKey(2*(x0-1)*adj + 2*y0)&& x0>0) {
+				if (check.get(2*(x0-1)*adj + 2*y0)==true) {
+					check.put(2*(x0-1)*adj + 2*y0, false);
+					x0 = x0-1;
+					y0= y0;
+					continue;
+				}
+			}
+			if(check.containsKey(2*x0*adj + 2*(y0-1) +1)&& y0>0) {
+				if (check.get(2*x0*adj + 2*(y0-1)+1)==true) {
+					check.put(2*x0*adj + 2*(y0-1) +1, false);
+					x0 = x0;
+					y0= y0 -1;
+					continue;
+				}
+			}
+			
+			
+		}
+		
+		
 
 		Polygon3D green_dot = new Polygon3D();
 		green_dot.setFillColor(Color.GREEN);
@@ -34,25 +78,9 @@ public class BlueFace { // THE BLUE FACE IS XZ
 		green_dot.addPoint(endx + 2, 0, (endz + 1.5));
 		green_dot.addPoint(endx + 1.5, 0, (endz + 1));
 
-		int i;
-		int x = 0;
-		int y = 0;
-		int z = 0;
-		Object[] input_array = new Polygon3D[2*(cube.boardsize-1)*(cube.boardsize-1)+2];
-		for (i = 0; i < 2*(cube.boardsize-1)*(cube.boardsize-1); i++) {
-			Polygon3D square = new Polygon3D();
-			square.setFillColor(Color.BLUE);
-			x = cube.Blue[i][0] + 1;
-			z = cube.Blue[i][1] + 1;
-			square.addPoint(x, -y, z);
-			square.addPoint(x + 1, -y, z);
-			square.addPoint(x + 1, -y, (z + 1));
-			square.addPoint(x, -y, (z + 1));
-			input_array[i] = square;
-		}
-
-		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)+1] = blue_border;
-		input_array[2*(cube.boardsize-1)*(cube.boardsize-1)] = green_dot;
+		Object[] input_array = new Polygon3D[2];
+		input_array[0] = blue_border;
+		input_array[1] = green_dot;
 
 		// create array of polygons here
 		// put them into holder

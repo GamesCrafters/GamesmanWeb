@@ -15,9 +15,6 @@ public class CubeGen {
 			White = blocked_yz_face;
 			Red = blocked_xy_face;
 			boardsize=5;
-			validB = true;
-			validR = true;
-			validW = true;
 
 		} else {
 			randomGen = new Random();
