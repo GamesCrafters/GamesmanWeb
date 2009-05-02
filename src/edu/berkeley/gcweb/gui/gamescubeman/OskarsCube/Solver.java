@@ -78,12 +78,16 @@ class Solver {
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube) {
 		int boardsize = cube.boardsize;
-		start = cube.start;
-		end = cube.end;
+		
 		blocked_xz_face = cube.Blue;
 		blocked_xy_face = cube.Red;
 		blocked_yz_face = cube.White;
-
+		
+		start = cube.start;
+		end = cube.end;
+		//int numnodes = (2*cube.boardsize-1)*(2*cube.boardsize-1)*(2*cube.boardsize-1);
+		//HashMap<Node, Boolean> seen_map = new HashMap<Node, Boolean>();
+		
 		move_map = new HashMap<Integer, Node>();
 		queue = new LinkedList<Node>();
 		Node goal_node = new Node(end, -1); // we initialize at -1 so that the

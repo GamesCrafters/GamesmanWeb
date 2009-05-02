@@ -31,10 +31,11 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 															// javascript server
 	private static final boolean display_remoteness_default = false;
 	private static final boolean display_best_move_default = false;
-	private static final boolean random_faces = false;
+	private static final boolean random_faces = true;
 	private static final boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = true; 
 	private static final int boardsize = 5;
+	private static final int goalremoteness = 0;
 	public static int acheivable;
 	public static Solver solved_map;
 	private MyShape cube;
@@ -66,6 +67,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 						cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
 						solved_map = new Solver(cubefaces);
 						
+					}
+					int tries =0;
+					while (solved_map.getRemoteness(solved_map.start)/2 < goalremoteness) {
+							System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start) );
+							cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+							solved_map = new Solver(cubefaces);
+							tries++;
 					}
 					int zoom = 25 + 2*(5-boardsize)*(5-boardsize);
 					canvas = new Canvas3D();
@@ -198,27 +206,22 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	}
 
 	private boolean movement_key_held = false;
+	private int tW = KeyEvent.VK_W;
+	private int aW = KeyEvent.VK_S;
+	private int tB = KeyEvent.VK_E;
+	private int aB = KeyEvent.VK_D;
+	private int tR = KeyEvent.VK_R;
+	private int aR = KeyEvent.VK_F;
+	
 
 	public void keyPressed(KeyEvent arg0) {
-		if (arg0.getKeyCode() == KeyEvent.VK_D) {
+		if (arg0.getKeyCode() == aB) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER) {
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid= solved_map.isValidMove(holder.current_position,
 							new int[] { 0, 1, 0 });
-				} else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"010"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"010"});
-					// holder.big_red_axis.holder.translate(0, -1, 0);
 					holder.big_red_axis.xyholder.translate(0, -2, 0);
 					holder.big_red_axis.xzholder.translate(0, -2, 0);
 					holder.current_position[1] += 2;
@@ -226,25 +229,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		if (arg0.getKeyCode() == KeyEvent.VK_E) {
+		if (arg0.getKeyCode() == tB) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER)
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid = solved_map.isValidMove(holder.current_position,
 							new int[] { 0, -1, 0 });
-				else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"0-10"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"0-10"});
-					// holder.big_red_axis.holder.translate(0, 2, 0);
 					holder.big_red_axis.xyholder.translate(0, 2, 0);
 					holder.big_red_axis.xzholder.translate(0, 2, 0);
 					holder.current_position[1] -= 2;
@@ -252,25 +243,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		if (arg0.getKeyCode() == KeyEvent.VK_F) {
+		if (arg0.getKeyCode() == aR) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER)
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid = solved_map.isValidMove(holder.current_position,
 							new int[] { 0, 0, 1 });
-				else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"001"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"001"});
-					// holder.big_red_axis.holder.translate(0, 0, -1);
 					holder.big_red_axis.xyholder.translate(0, 0, 2);
 					holder.big_red_axis.yzholder.translate(0, 0, 2);
 					holder.current_position[2] += 2;
@@ -278,25 +257,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		if (arg0.getKeyCode() == KeyEvent.VK_R) {
+		if (arg0.getKeyCode() == tR) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER)
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid = solved_map.isValidMove(holder.current_position,
 							new int[] { 0, 0, -1 });
-				else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"00-1"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"00-1"});
-					// holder.big_red_axis.holder.translate(0, 0, 1);
 					holder.big_red_axis.yzholder.translate(0, 0, -2);
 					holder.big_red_axis.xyholder.translate(0, 0, -2);
 					holder.current_position[2] -= 2;
@@ -304,25 +271,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		if (arg0.getKeyCode() == KeyEvent.VK_S) {
+		if (arg0.getKeyCode() == aW) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER)
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid = solved_map.isValidMove(holder.current_position,
 							new int[] { 1, 0, 0 });
-				else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"100"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"100"});
-					// holder.big_red_axis.holder.translate(1,0,0);
 					holder.big_red_axis.yzholder.translate(2, 0, 0);
 					holder.big_red_axis.xzholder.translate(2, 0, 0);
 					holder.current_position[0] += 2;
@@ -330,25 +285,13 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		if (arg0.getKeyCode() == KeyEvent.VK_W) {
+		if (arg0.getKeyCode() == tW) {
 			if (!movement_key_held) {
 				movement_key_held = true;
 				MyShape holder = (MyShape) cube;
-				boolean valid;
-				if (USE_JAVA_SOLVER)
-					valid = solved_map.isValidMove(holder.current_position,
+				boolean valid= solved_map.isValidMove(holder.current_position,
 							new int[] { -1, 0, 0 });
-				else {
-					// Boolean js_call = (Boolean)
-					// OskarsCube.jso.call("javaIsValidMove", new Object[]
-					// {"-100"});
-					// valid = js_call.booleanValue();
-					valid = true;
-				}
 				if (valid) {
-					// if(!USE_JAVA_SOLVER)
-					// OskarsCube.jso.call("javaDoMove", new Object[]{"-100"});
-					// holder.big_red_axis.holder.translate(-1, 0, 0);
 					holder.big_red_axis.yzholder.translate(-2, 0, 0);
 					holder.big_red_axis.xzholder.translate(-2, 0, 0);
 					holder.current_position[0] -= 2;
@@ -356,12 +299,30 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				canvas.fireCanvasChange();
 			}
 		}
-		
+		cube.setAwayBVisible(false);
+		cube.setAwayRVisible(false);
+		cube.setAwayWVisible(false);
+		cube.setTowardBVisible(false);
+		cube.setTowardRVisible(false);
+		cube.setTowardWVisible(false);
+		if(display_best_move_box.isSelected()) {
+			if(solved_map.getBestMove(cube.current_position) == "away from RED") {
+				cube.setAwayRVisible(true);
+			} else if (solved_map.getBestMove(cube.current_position) == "towards RED") {
+				cube.setTowardRVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "away from BLUE") {
+				cube.setAwayBVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "towards BLUE") {
+				cube.setTowardBVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "towards WHITE") {
+				cube.setTowardWVisible(true);
+			} else {
+				cube.setAwayWVisible(true);
+			}
+		}
+		canvas.fireCanvasChange();
 		update_displays();
 		MyShape holder = (MyShape) cube;
-		// System.out.println("The stick is currently at (" +
-		// holder.current_position[0] + "," + holder.current_position[1] + "," +
-		// holder.current_position[2]+")");
 	}
 
 	private void update_displays() {
@@ -404,6 +365,19 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 			canvas.fireCanvasChange();
 		} else if (e.getSource() == display_best_move_box) {
 			best_move.setVisible(display_best_move_box.isSelected());
+			if(solved_map.getBestMove(cube.current_position) == "away from RED") {
+				cube.setAwayRVisible(true);
+			} else if (solved_map.getBestMove(cube.current_position) == "towards RED") {
+				cube.setTowardRVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "away from BLUE") {
+				cube.setAwayBVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "towards BLUE") {
+				cube.setTowardBVisible(true);
+			}else if (solved_map.getBestMove(cube.current_position) == "towards WHITE") {
+				cube.setTowardWVisible(true);
+			} else {
+				cube.setAwayWVisible(true);
+			}
 			canvas.fireCanvasChange();
 		} else if (e.getSource() == display_solution_path_box) {
 			cube.setIntSolVisible(display_solution_path_box.isSelected());

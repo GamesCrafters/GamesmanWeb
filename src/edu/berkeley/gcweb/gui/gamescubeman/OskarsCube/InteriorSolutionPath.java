@@ -20,8 +20,8 @@ public class InteriorSolutionPath {
 			PolygonCollection cube1= new Stick(1,1).returnItem();
 			PolygonCollection cube2= new Stick(1,1).returnItem();
 			
-			cube1.translate(current[0] + nmove[0],current[1]+ nmove[1],current[2]+nmove[2]);
-			cube2.translate(current[0], current[1],current[2]);
+			cube1.translate(current[0] + nmove[0],-current[1]- nmove[1],current[2]+nmove[2]);
+			cube2.translate(current[0], -current[1],current[2]);
 			input_array[2*crem] = cube1;
 			input_array[2*crem+1] =cube2;
 			int[] next = {current[0]+2*nmove[0], current[1]+2*nmove[1],current[2]+2*nmove[2]};
@@ -30,13 +30,13 @@ public class InteriorSolutionPath {
 		}
 		//Note the end square never gets added so fix that
 		PolygonCollection cubefinal = new Stick(1,1).returnItem();
-		cubefinal.translate(current[0], current[1], current[2]);
+		cubefinal.translate(current[0], -current[1], current[2]);
 		input_array[crem*2] = cubefinal;
 		
 		
 		
 		holder = new PolygonCollection(input_array);
-		holder.translate(-boardsize+.5, -boardsize+.5, -boardsize+.5);
+		holder.translate(-boardsize+.5, boardsize-1.5, -boardsize+.5);
 	}
 
 	

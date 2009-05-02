@@ -50,7 +50,7 @@ public class CubeGen {
 		while(!validW) {
 			if (legalBoard(White, edges_white)) {
 				validW =true;
-				
+				//System.out.println("Legal board made");
 			} else {
 				White = intToSet(randomGen.nextInt());
 				edges_white = makeEdges(White);

@@ -27,7 +27,7 @@ public class Interior {
 					} else {
 						cube = new Stick(1).returnItem();
 						countred += 1;
-						cube.translate(2 * x, 2 * y, 2 * z);
+						cube.translate(2 * x, 2 * -y, 2 * z);
 						int a = x * boardsize*boardsize + boardsize * y + z;
 						input_array[a] = cube;
 					}
@@ -36,7 +36,7 @@ public class Interior {
 			}
 		}
 		holder = new PolygonCollection(input_array);
-		holder.translate(-boardsize+.5, -boardsize+.5, -boardsize+.5);
+		holder.translate(-boardsize+.5, boardsize-1.5, -boardsize+.5);
 		// System.out.println("viable: " + countgreen + " unviable: " +
 		// countred);
 		acheivable = countgreen;
