@@ -305,6 +305,12 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		cube.setTowardBVisible(false);
 		cube.setTowardRVisible(false);
 		cube.setTowardWVisible(false);
+		cube.setAwayRBVisible(false);
+		cube.setAwayRRVisible(false);
+		cube.setAwayRWVisible(false);
+		cube.setTowardRBVisible(false);
+		cube.setTowardRRVisible(false);
+		cube.setTowardRWVisible(false);
 		if(display_best_move_box.isSelected()) {
 			if(solved_map.getBestMove(cube.current_position) == "away from RED") {
 				cube.setAwayRVisible(true);
@@ -319,6 +325,31 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 			} else {
 				cube.setAwayWVisible(true);
 			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,0,1}) &&
+					solved_map.getBestMove(cube.current_position) != "away from RED"	) {
+				cube.setAwayRRVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,0,-1}) &&
+					solved_map.getBestMove(cube.current_position) != "towards RED"	) {
+				cube.setTowardRRVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,1,0}) &&
+					solved_map.getBestMove(cube.current_position) != "away from BLUE"	) {
+				cube.setAwayRBVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,-1,0}) &&
+					solved_map.getBestMove(cube.current_position) != "towards BLUE"	) {
+				cube.setTowardRBVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {1,0,0}) &&
+					solved_map.getBestMove(cube.current_position) != "away from WHITE"	) {
+				cube.setAwayRWVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {-1,0,0}) &&
+					solved_map.getBestMove(cube.current_position) != "towards WHITE"	) {
+				cube.setTowardRWVisible(true);
+			}
+			
 		}
 		canvas.fireCanvasChange();
 		update_displays();
@@ -377,6 +408,30 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 				cube.setTowardWVisible(true);
 			} else {
 				cube.setAwayWVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,0,1}) &&
+					solved_map.getBestMove(cube.current_position) != "away from RED"	) {
+				cube.setAwayRRVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,0,-1}) &&
+					solved_map.getBestMove(cube.current_position) != "towards RED"	) {
+				cube.setTowardRRVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,1,0}) &&
+					solved_map.getBestMove(cube.current_position) != "away from BLUE"	) {
+				cube.setAwayRBVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {0,-1,0}) &&
+					solved_map.getBestMove(cube.current_position) != "towards BLUE"	) {
+				cube.setTowardRBVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {1,0,0}) &&
+					solved_map.getBestMove(cube.current_position) != "away from WHITE"	) {
+				cube.setAwayRWVisible(true);
+			}
+			if(solved_map.isValidMove(cube.current_position, new int[] {-1,0,0}) &&
+					solved_map.getBestMove(cube.current_position) != "towards WHITE"	) {
+				cube.setTowardRWVisible(true);
 			}
 			canvas.fireCanvasChange();
 		} else if (e.getSource() == display_solution_path_box) {

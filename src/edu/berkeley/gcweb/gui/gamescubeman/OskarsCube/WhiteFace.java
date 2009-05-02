@@ -66,19 +66,35 @@ public class WhiteFace {
 		}
 		
 
-		Polygon3D green_dot = new Polygon3D();
-		green_dot.setFillColor(Color.GREEN);
+		Polygon3D end_dot = new Polygon3D();
+		end_dot.setFillColor(Color.green);
 		// WHITE IS YZ so pull 1 and 2 out of end
 		int endy = cube.end[1];
 		int endz = cube.end[2];
-		green_dot.addPoint(0, -(endy + 1), (endz + 1.5));
-		green_dot.addPoint(0, -(endy + 1.5), (endz + 2));
-		green_dot.addPoint(0, -(endy + 2), (endz + 1.5));
-		green_dot.addPoint(0, -(endy + 1.5), (endz + 1));
-
-		Object[] input_array = new Polygon3D[2];
+		end_dot.addPoint(0, -(endy + 1), (endz + 1.5));
+		end_dot.addPoint(0, -(endy + 1.5), (endz + 2));
+		end_dot.addPoint(0, -(endy + 2), (endz + 1.5));
+		end_dot.addPoint(0, -(endy + 1.5), (endz + 1));
+		
+		Object[] input_array = new Polygon3D[3];
+		
+		Polygon3D start_dot = new Polygon3D();
+		start_dot.setFillColor(Color.white);
+		start_dot.setOpacity(0);
+		// WHITE IS YZ so pull 1 and 2 out of end
+		int starty = cube.start[1];
+		int startz = cube.start[2];
+		if (starty != endy || startz != endz) {
+		start_dot.addPoint(0, -(starty + 1), (startz + 1.5));
+		start_dot.addPoint(0, -(starty + 1.5), (startz + 2));
+		start_dot.addPoint(0, -(starty + 2), (startz + 1.5));
+		start_dot.addPoint(0, -(starty + 1.5), (startz + 1));
+		input_array[2] = start_dot;
+		}
+		
 		input_array[0] = white_border;
-		input_array[1] = green_dot;
+		input_array[1] = end_dot;
+		
 
 		// create array of polygons here
 		// put them into holder

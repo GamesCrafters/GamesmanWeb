@@ -19,6 +19,12 @@ public class MyShape extends Shape3D {
 	private Polygon3D[] towardR;
 	private Polygon3D[] awayB;
 	private Polygon3D[] towardB;
+	private Polygon3D[] RawayW;
+	private Polygon3D[] RtowardW;
+	private Polygon3D[] RawayR;
+	private Polygon3D[] RtowardR;
+	private Polygon3D[] RawayB;
+	private Polygon3D[] RtowardB;
 
 	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
@@ -38,6 +44,12 @@ public class MyShape extends Shape3D {
 		towardW = big_red_axis.extractTW();
 		towardB = big_red_axis.extractTB();
 		towardR = big_red_axis.extractTR();
+		RawayW= big_red_axis.extractRAW();
+		RawayR= big_red_axis.extractRAR();
+		RawayB= big_red_axis.extractRAB();
+		RtowardW = big_red_axis.extractRTW();
+		RtowardB = big_red_axis.extractRTB();
+		RtowardR = big_red_axis.extractRTR();
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
@@ -67,6 +79,12 @@ public class MyShape extends Shape3D {
 		setTowardWVisible(false);
 		setTowardRVisible(false);
 		setTowardBVisible(false);
+		setAwayRWVisible(false);
+		setAwayRBVisible(false);
+		setAwayRRVisible(false);
+		setTowardRWVisible(false);
+		setTowardRRVisible(false);
+		setTowardRBVisible(false);
 		fireCanvasChange();
 	}
 	public void setInteriorVisible(boolean visible) {
@@ -109,6 +127,35 @@ public class MyShape extends Shape3D {
 			if (towardR[i] != null)
 				towardR[i].setVisible(visible);
 	}
-	
+	public void setAwayRWVisible(boolean visible) {
+		for (int i = 0; i < RawayW.length; i++)
+			if (RawayW[i] != null)
+				RawayW[i].setVisible(visible);
+	}
+	public void setAwayRRVisible(boolean visible) {
+		for (int i = 0; i < RawayR.length; i++)
+			if (RawayR[i] != null)
+				RawayR[i].setVisible(visible);
+	}
+	public void setAwayRBVisible(boolean visible) {
+		for (int i = 0; i < RawayB.length; i++)
+			if (RawayB[i] != null)
+				RawayB[i].setVisible(visible);
+	}
+	public void setTowardRWVisible(boolean visible) {
+		for (int i = 0; i < RtowardW.length; i++)
+			if (RtowardW[i] != null)
+				RtowardW[i].setVisible(visible);
+	}
+	public void setTowardRBVisible(boolean visible) {
+		for (int i = 0; i < RtowardB.length; i++)
+			if (RtowardB[i] != null)
+				RtowardB[i].setVisible(visible);
+	}
+	public void setTowardRRVisible(boolean visible) {
+		for (int i = 0; i < RtowardR.length; i++)
+			if (RtowardR[i] != null)
+				RtowardR[i].setVisible(visible);
+	}
 
 }

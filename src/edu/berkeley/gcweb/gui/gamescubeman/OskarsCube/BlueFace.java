@@ -78,9 +78,25 @@ public class BlueFace { // THE BLUE FACE IS XZ
 		green_dot.addPoint(endx + 2, 0, (endz + 1.5));
 		green_dot.addPoint(endx + 1.5, 0, (endz + 1));
 
-		Object[] input_array = new Polygon3D[2];
+		Object[] input_array = new Polygon3D[3];
+		
+		Polygon3D start_dot = new Polygon3D();
+		start_dot.setFillColor(Color.white);
+		start_dot.setOpacity(0);
+		int startx = cube.start[0];
+		int startz = cube.start[2];
+		if (startx != endx || startz != endz) {
+			start_dot.addPoint(startx + 1, 0, (startz + 1.5));
+			start_dot.addPoint(startx + 1.5, 0, (startz + 2));
+			start_dot.addPoint(startx + 2, 0, (startz + 1.5));
+			start_dot.addPoint(startx + 1.5, 0, (startz + 1));
+			input_array[2] = start_dot;
+		}
+		
+		
 		input_array[0] = blue_border;
 		input_array[1] = green_dot;
+		
 
 		// create array of polygons here
 		// put them into holder

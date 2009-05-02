@@ -75,11 +75,26 @@ public class RedFace {
 		green_dot.addPoint(endx + 1.5, -(endy + 2), 0);
 		green_dot.addPoint(endx + 2, -(endy + 1.5), 0);
 		green_dot.addPoint(endx + 1.5, -(endy + 1), 0);
-
 		
-		Object[] input_array = new Polygon3D[2];
+		Object[] input_array = new Polygon3D[3];
+		
+		Polygon3D start_dot = new Polygon3D();
+		start_dot.setFillColor(Color.white);
+		start_dot.setOpacity(0);
+		int startx = cube.start[0];
+		int starty = cube.start[1];
+		if (startx != endx || starty != endy) {
+		start_dot.addPoint(startx + 1, -(starty + 1.5), 0);
+		start_dot.addPoint(startx + 1.5, -(starty + 2), 0);
+		start_dot.addPoint(startx + 2, -(starty + 1.5), 0);
+		start_dot.addPoint(startx + 1.5, -(starty + 1), 0);
+		input_array[2] = start_dot;
+		}
+		
+		
 		input_array[0] = red_border;
 		input_array[1] = green_dot;
+		
 
 		// create array of polygons here
 		// put them into holder
