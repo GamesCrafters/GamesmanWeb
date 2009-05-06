@@ -2,13 +2,19 @@ package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 public abstract class PuzzleOption<H> {
-	private String name;
+	private final String name;
+	private final boolean guify;
 	
-	public PuzzleOption(String name) {
+	public PuzzleOption(String name, boolean guify) {
 		this.name = name;
+		this.guify = guify;
+	}
+	
+	public boolean isGuifiable() {
+		return guify;
 	}
 	
 	public String getName() {
@@ -17,9 +23,10 @@ public abstract class PuzzleOption<H> {
 	
 	//this could come from anywhere, possibly as an applet parameter or a url argument
 	public abstract void setValue(String val);
+	public abstract String valueToString();
 	
 	public abstract H getValue();
-	public abstract JPanel getComponent();
+	public abstract JComponent getComponent();
 	
 	private ArrayList<PuzzleOptionChangeListener> listeners = new ArrayList<PuzzleOptionChangeListener>();
 	
@@ -32,7 +39,7 @@ public abstract class PuzzleOption<H> {
 			l.puzzleOptionChanged(this);
 	}
 	
-	public abstract interface PuzzleOptionChangeListener {
+	public static abstract interface PuzzleOptionChangeListener {
 		public abstract void puzzleOptionChanged(PuzzleOption<?> src);
 	}
 }

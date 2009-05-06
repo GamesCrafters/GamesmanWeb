@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 public class ComboOption extends PuzzleOption<String> implements ActionListener {
 	private JPanel pane;
 	private JComboBox dropdown;
-	public ComboOption(String name, String def, String[] choices) {
-		super(name);
+	public ComboOption(String name, boolean guify, String def, String[] choices) {
+		super(name, guify);
 		
 		dropdown = new JComboBox(choices);
 		dropdown.setFocusable(false);
@@ -28,6 +28,11 @@ public class ComboOption extends PuzzleOption<String> implements ActionListener 
 	@Override
 	public String getValue() {
 		return (String) dropdown.getSelectedItem();
+	}
+	
+	@Override
+	public String valueToString() {
+		return getValue();
 	}
 
 	@Override

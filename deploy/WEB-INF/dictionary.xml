@@ -32,4 +32,7 @@
     <game internal-name="rubik" canonical-name="Rubik's cube" puzzle="puzzle">
         <server host="localhost" port="4242" />
     </game>
+    <game internal-name="pyraminx" canonical-name="Pyraminx" puzzle="puzzle">
+        <server host="localhost" port="4242" />
+    </game>
 </game-dictionary>

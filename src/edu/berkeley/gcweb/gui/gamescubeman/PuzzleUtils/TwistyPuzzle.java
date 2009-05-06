@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.Timer;
 
@@ -75,17 +76,6 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		canvas.repaint();
 	}
 
-	private int framesPerAnimation = 5; //this is the number of animations per turn (less -> faster animation)
-	public int getMaxFramesPerAnimation() {
-		return 20;
-	}
-	public int getFramesPerAnimation() {
-		return framesPerAnimation;
-	}
-	public void setFramesPerAnimation(int newRate) {
-		framesPerAnimation = newRate;
-	}
-	
 	private ArrayList<PuzzleStateChangeListener> stateListeners = new ArrayList<PuzzleStateChangeListener>();
 	public void addStateChangeListener(PuzzleStateChangeListener l) {
 		stateListeners.add(l);
@@ -115,6 +105,18 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		_createPolys(copyOld);
 	}
 	
+	private SliderOption frames_animation = new SliderOption("frames/animation", true, 5, 1, 20);
+	
+	public int getFramesPerAnimation() {
+		return frames_animation.getValue();
+	}
+	
+	public final List<PuzzleOption<?>> getDefaultOptions() {
+		List<PuzzleOption<?>> options = _getDefaultOptions();
+		options.add(0, frames_animation);
+		return options;
+	}
+	
 	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
 	protected abstract String getPuzzleName();
 	
@@ -122,7 +124,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	protected abstract void _scramble();
 	protected abstract boolean _doTurn(String turn);
 	
-	public abstract PuzzleOption<?>[] getDefaultOptions();
+	public abstract List<PuzzleOption<?>> _getDefaultOptions();
 
 	public abstract String getState();
 	public abstract boolean isSolved();

@@ -10,8 +10,8 @@ public class DoubleSliderOption extends PuzzleOption<Double> implements ChangeLi
 	private JPanel pane;
 	private JSlider slider;
 	private Integer denominator;
-	public DoubleSliderOption(String name, Integer defNumerator, Integer min, Integer max, Integer denominator) {
-		super(name);
+	public DoubleSliderOption(String name, boolean guify, Integer defNumerator, Integer min, Integer max, Integer denominator) {
+		super(name, guify);
 		this.denominator = denominator;
 		
 		slider = new JSlider(min, max, defNumerator);
@@ -34,8 +34,13 @@ public class DoubleSliderOption extends PuzzleOption<Double> implements ChangeLi
 	@Override
 	public void setValue(String val) {
 		try {
-			slider.setValue((int) Double.parseDouble(val)*denominator);
+			slider.setValue(Integer.parseInt(val));
 		} catch(NumberFormatException e) {}
+	}
+
+	@Override
+	public String valueToString() {
+		return slider.getValue()+"";
 	}
 
 	public void stateChanged(ChangeEvent e) {

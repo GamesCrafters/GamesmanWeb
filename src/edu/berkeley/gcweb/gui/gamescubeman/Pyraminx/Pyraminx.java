@@ -3,6 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.Pyraminx;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.DoubleSliderOption;
@@ -48,11 +49,13 @@ public class Pyraminx extends TwistyPuzzle {
 		return true;
 	}
 
-	private PuzzleOption<Double> gap = new DoubleSliderOption("gap", 10, 0, 50, 100);
+	private PuzzleOption<Double> gap = new DoubleSliderOption("gap", true, 10, 0, 50, 100);
 
 	@Override
-	public PuzzleOption<?>[] getDefaultOptions() {
-		return new PuzzleOption<?>[] { gap };
+	public List<PuzzleOption<?>> _getDefaultOptions() {
+		ArrayList<PuzzleOption<?>> options = new ArrayList<PuzzleOption<?>>();
+		options.add(gap);
+		return options;
 	}
 	
 	public void puzzleOptionChanged(PuzzleOption<?> src) {

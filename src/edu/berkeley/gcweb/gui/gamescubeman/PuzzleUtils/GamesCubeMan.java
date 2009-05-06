@@ -12,8 +12,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.net.URLDecoder;
-import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
 import javax.swing.JApplet;
@@ -21,25 +19,20 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import netscape.javascript.JSObject;
+import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 
 @SuppressWarnings("serial")
-public class GamesCubeMan extends JApplet implements ChangeListener, ActionListener, PuzzleStateChangeListener, MouseWheelListener {
+public class GamesCubeMan extends JApplet implements ActionListener, PuzzleStateChangeListener, MouseWheelListener {
 	private TwistyPuzzle puzzle;
 	private PuzzleCanvas puzzleCanvas;
 	private Canvas3D canvas;
-	private JSlider scale, distance, turningRate;
-	private JCheckBox antialiasing, showTurnHistory, freeRotation;
 	private JCheckBox[] tabBoxes;
 	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox;
 	private RollingJPanel optionsPanel;
@@ -48,47 +41,17 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	private JTextField turnHistoryField;
 
 	private String puzzle_class = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
-	private Color bg_color = Color.GRAY, fg_color = Color.WHITE;
-	private boolean show_options = true, focus_indicator = true, draw_axis = false, free_rotation = true;
-	private void parseParameters() {
-		puzzle_class = getArgument("puzzle_class", puzzle_class);
-		bg_color = getColor("bg_color", bg_color);
-		fg_color = getColor("fg_color", fg_color);
-		show_options = getBoolean("show_options", show_options);
-		focus_indicator = getBoolean("focus_indicator", focus_indicator);
-		draw_axis = getBoolean("draw_axis", draw_axis);
-		free_rotation = getBoolean("free_rotation", free_rotation);
-	}
 	
-	private String getArgument(String key, String def) {
-		//anything specified in the url takes precedence
-		String value = urlArguments.get(key);
-		if(value != null)
-			return value;
-		try {
-			value = getParameter(key);
-			if(value != null)
-				return value;
-		} catch(NullPointerException e) {
-			//this indicates that we're not running as an applet
-		}
-		return def;
-	}
-	
-	private Color getColor(String key, Color def) {
-		String val = getArgument(key, null);
-		if(val == null)
-			return def;
-		try {
-			return Color.decode(val);
-		} catch(NumberFormatException e) {
-			return def;
-		}
-	}
-	
-	private Boolean getBoolean(String key, boolean def) {
-		return Utils.parseBoolean(getArgument(key, null), def);
-	}
+	private ColorOption bg_color = new ColorOption("bg_color", false, Color.GRAY);
+	private ColorOption fg_color = new ColorOption("fg_color", false, Color.WHITE);
+	private CheckBoxOption show_options = new CheckBoxOption("show_options", false, true);
+	private CheckBoxOption focus_indicator = new CheckBoxOption("focus_indicator", true, true);
+	private CheckBoxOption draw_axis = new CheckBoxOption("draw_axis", false, false);
+	private CheckBoxOption free_rotation = new CheckBoxOption("free_rotation", true, true);
+	private CheckBoxOption antialiasing = new CheckBoxOption("antialiasing", true, true);
+	private CheckBoxOption show_history = new CheckBoxOption("show_history", true, false);
+	private SliderOption scale = new SliderOption("scale", true, (int) Canvas3D.DEFAULT_SCALE, 0, 10000);
+	private SliderOption distance = new SliderOption("distance", true, 4, 4, 100);
 	
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -97,8 +60,7 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 	}
 	
 	private JSObject jso;
-	private Hashtable<String, String> urlArguments = new Hashtable<String, String>();;
-	public static Cookies cookies = new Cookies();
+	private AppletSettings settings = new AppletSettings(this, null); //this is a just a default until we can load the url arguments
 	public void init() {
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -111,27 +73,16 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				public void run() {
 					try {
 						jso = JSObject.getWindow(GamesCubeMan.this);
-						cookies = new Cookies(jso);
-						
-						//this will read the arguments passed via the url
-						String argString = ((String) ((JSObject) jso.getMember("location")).getMember("search"));
-						if(argString.length() > 0) {
-							argString = argString.substring(1);
-							for(String param : argString.split("&")) {
-								String[] key_val = param.split("=");
-								if(key_val.length != 2) throw new Exception("Expected key=value not found in " + param);
-								urlArguments.put(URLDecoder.decode(key_val[0], "utf-8"), URLDecoder.decode(key_val[1], "utf-8"));
-							}
-						}
+						settings = new AppletSettings(GamesCubeMan.this, jso);
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
-					parseParameters();
 					
 					try {
+						puzzle_class = settings.get("puzzle_class", puzzle_class);
 						Class<? extends TwistyPuzzle> puzzleClass = Class.forName(puzzle_class).asSubclass(TwistyPuzzle.class);
 						puzzle = puzzleClass.getConstructor().newInstance();
-						cookies.setCategory(puzzle.getPuzzleName());
+						settings.loadCookies(puzzle.getPuzzleName());
 					} catch (Exception e) {
 						System.err.println("Error loading puzzle class " + puzzle_class);
 						e.printStackTrace();
@@ -140,14 +91,12 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					
 					optionsPanel = new RollingJPanel();
 					optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
-					keysPanel = new KeyCustomizerPanel(puzzle);
+					keysPanel = new KeyCustomizerPanel(puzzle, settings);
 					
 					puzzle.addStateChangeListener(GamesCubeMan.this);
 
-					puzzleCanvas = new PuzzleCanvas(puzzle, optionsPanel, keysPanel);
+					puzzleCanvas = new PuzzleCanvas(settings, puzzle, optionsPanel, keysPanel);
 					canvas = puzzleCanvas.getCanvas();
-					canvas.setFocusIndicator(focus_indicator);
-					canvas.setDrawAxis(draw_axis);
 					resetRotation();
 					
 					resetView = new JButton("Reset View");
@@ -181,48 +130,48 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					keysCheckBox.setMnemonic(KeyEvent.VK_K);
 					keysCheckBox.setFocusable(false);
 					keysCheckBox.addActionListener(GamesCubeMan.this);
-					
-					distance = new JSlider(4, 200, (int) (puzzle.getCenter()[2]));
-					distance.setFocusable(false);
-					distance.addChangeListener(GamesCubeMan.this);
-					
-					antialiasing = new JCheckBox("Antialiasing", canvas.isAntialiasing());
-					antialiasing.setMnemonic(KeyEvent.VK_A);
-					antialiasing.setFocusable(false);
-					antialiasing.addActionListener(GamesCubeMan.this);
-					
-					showTurnHistory = new JCheckBox("Show history", false);
-					showTurnHistory.setFocusable(false);
-					showTurnHistory.addActionListener(GamesCubeMan.this);
-					
-					freeRotation = new JCheckBox("Free rotation", free_rotation);
-					freeRotation.setFocusable(false);
-					freeRotation.addActionListener(GamesCubeMan.this);
-					canvas.setFreeRotation(free_rotation);
-					optionsPanel.add(Utils.sideBySide(antialiasing, showTurnHistory, freeRotation));
-					
-					turningRate = new JSlider(1, puzzle.getMaxFramesPerAnimation(), puzzle.getFramesPerAnimation());
-					turningRate.setMajorTickSpacing(1);
-					turningRate.setMinorTickSpacing(1);
-					turningRate.setPaintTicks(true);
-					turningRate.setFocusable(false);
-					turningRate.addChangeListener(GamesCubeMan.this);
-					optionsPanel.add(Utils.sideBySide(new JLabel("Frames/Animation"), turningRate));
-					
-					scale = new JSlider(0, 10000, (int) canvas.getScale());
-					scale.setFocusable(false);
-					scale.addChangeListener(GamesCubeMan.this);
-					optionsPanel.add(Utils.sideBySide(new JLabel("Scale"), scale, new JLabel("Distance"), distance));
 
-					for(PuzzleOption<?> option : puzzle.getDefaultOptions()) {
-						String override = getArgument(option.getName(), null);
-						if(override != null)
-							option.setValue(override);
-						if(show_options)
-							optionsPanel.add(option.getComponent());
-						option.addChangeListener(puzzle);
+
+					PuzzleOptionChangeListener pl = new PuzzleOptionChangeListener() {
+						public void puzzleOptionChanged(PuzzleOption<?> src) {
+							if(src != null)
+								settings.set(src.getName(), src.valueToString());
+
+							canvas.setFocusIndicator(focus_indicator.getValue());
+							canvas.setDrawAxis(draw_axis.getValue());
+							canvas.setFreeRotation(free_rotation.getValue());
+							turnHistoryField.setVisible(show_history.getValue());
+							GamesCubeMan.this.validate();
+							canvas.setAntialiasing(antialiasing.getValue());
+							canvas.setFreeRotation(free_rotation.getValue());
+							double[] center = puzzle.getCenter();
+							puzzle.setCenter(center[0], center[1], distance.getValue());
+							canvas.setScale(scale.getValue());
+						}
+					};
+					
+					PuzzleOption<?>[] options = new PuzzleOption<?>[] { bg_color, fg_color, show_options, focus_indicator, draw_axis, free_rotation, antialiasing, show_history, scale, distance };
+					for(PuzzleOption<?> option : options) {
+						String val = settings.get(option.getName(), null);
+						if(val != null)
+							option.setValue(val);
+						option.addChangeListener(pl);
+					}
+					if(show_options.getValue()) {
+						optionsPanel.add(Utils.sideBySide(antialiasing.getComponent(), show_history.getComponent(), free_rotation.getComponent()));
+						optionsPanel.add(Utils.sideBySide(scale.getComponent(), distance.getComponent()));
 					}
 					
+					for(PuzzleOption<?> option : puzzle.getDefaultOptions()) {
+						if(show_options.getValue() && option.isGuifiable())
+							optionsPanel.add(option.getComponent());
+						String val = settings.get(option.getName(), null);
+						if(val != null)
+							option.setValue(val);
+						option.addChangeListener(puzzle);
+						option.addChangeListener(pl);
+					}
+
 					//now that all the options have been set, we can create the puzzle!
 					puzzle.createPolys(false);
 					
@@ -237,7 +186,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					
 					turnHistoryField = new JTextField();
 					turnHistoryField.setEditable(false);
-					turnHistoryField.setVisible(showTurnHistory.isSelected());
 					topHalf.add(turnHistoryField, BorderLayout.CENTER);
 
 					JPanel pane = new JPanel(new BorderLayout());
@@ -248,7 +196,8 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 					canvas.requestFocusInWindow();
 					
 					setMouseWheelListener(pane, GamesCubeMan.this);
-					setBG_FG(pane, bg_color, fg_color);
+					setBG_FG(pane, bg_color.getValue(), fg_color.getValue());
+					pl.puzzleOptionChanged(null);
 				}
 			});
 		} catch (Throwable e) {
@@ -287,19 +236,6 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 		}
 	}
 
-	public void stateChanged(ChangeEvent e) {
-		Object src = e.getSource();
-		if(src == distance) {
-			double[] center = puzzle.getCenter();
-			center[2] = distance.getValue();
-			puzzle.setCenter(center[0], center[1], center[2]);
-		} else if(src == scale) {
-			canvas.setScale(scale.getValue());
-		} else if(e.getSource() == turningRate) {
-			puzzle.setFramesPerAnimation(turningRate.getValue());
-		}
-	}
-
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == resetView)
 			resetRotation();
@@ -307,22 +243,15 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 			puzzle.scramble();
 		else if(e.getSource() == resetPuzzle)
 			puzzle.resetPuzzle();
-		else if(e.getSource() == antialiasing)
-			canvas.setAntialiasing(antialiasing.isSelected());
-		else if(e.getSource() == freeRotation) {
-			canvas.setFreeRotation(freeRotation.isSelected());
-			resetRotation();
-		} else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
+		else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
 			for(JCheckBox box : tabBoxes)
 				if(box != e.getSource())
 					box.setSelected(false);
 			puzzleCanvas.setColorEditing(colorChooserCheckBox.isSelected());
 			optionsPanel.setVisible(optionsCheckBox.isSelected());
 			keysPanel.setVisible(keysCheckBox.isSelected());
-		} else if(e.getSource() == showTurnHistory) {
-			turnHistoryField.setVisible(showTurnHistory.isSelected());
-			this.validate();
-		}
+		} else
+			throw new RuntimeException();
 	}
 
 	private void resetRotation() {
@@ -353,7 +282,9 @@ public class GamesCubeMan extends JApplet implements ChangeListener, ActionListe
 				public void run() {
 					//we do this in a separate thread because the call() method will
 					//hang for the javascript
-					jso.call("puzzleStateChanged", new Object[] { turn, src.getState() });
+					try {
+						jso.call("puzzleStateChanged", new Object[] { turn, src.getState() });
+					} catch (Exception e) {}
 				}
 			}.start();
 		}

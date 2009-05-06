@@ -137,6 +137,8 @@ public class Utils {
 	}
 	public static Color stringToColor(String s, boolean nullIfInvalid) {
 		try {
+			if(s.startsWith("#"))
+				s = s.substring(1);
 			return new Color(Integer.parseInt(s, 16));
 		} catch(Exception e) {
 			return nullIfInvalid ? null : Color.WHITE;

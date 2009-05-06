@@ -18,8 +18,6 @@ import java.awt.event.MouseMotionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -73,7 +71,9 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 	private final JButton reset;
 	private final KeyEditor[][][] lowerUpperKeyEditors;
 	private final ButtonGroup keyLayoutButtons;
-	public KeyCustomizerPanel(TwistyPuzzle puzzle) {
+	private final AppletSettings settings;
+	public KeyCustomizerPanel(TwistyPuzzle puzzle, AppletSettings settings) {
+		this.settings = settings;
 		puzzle.setKeyCustomizerPanel(this);
 		qwertyKeyLayout = new Properties();
 		try {
@@ -88,7 +88,7 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 		}
 		keyLayoutBackup = (Properties) qwertyKeyLayout.clone();
 		
-		loadCookie();
+		loadKeys();
 				
 		JTabbedPane lowerUpperPane = new JTabbedPane();
 		lowerUpperKeyEditors = new KeyEditor[2][KEYBOARD_HEIGHT][KEYBOARD_WIDTH];
@@ -115,7 +115,7 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 			public void actionPerformed(ActionEvent e) {
 				qwertyKeyLayout = (Properties) keyLayoutBackup.clone();
 				keysChanged();
-				saveCookie();
+				saveKeys();
 			}
 		});
 		
@@ -202,21 +202,31 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 		}
 	}
 	
-	private static final String COOKIE_NAME = "keys";
 	//attempts to load the cookie with the previous keyboard layout, if it exists
-	private void loadCookie() {
-		Dictionary<String, String> cookie = GamesCubeMan.cookies.getMap(COOKIE_NAME);
-		if(cookie != null) {
-			qwertyKeyLayout = new Properties();
-			Enumeration<String> keys = cookie.keys();
-			while(keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				qwertyKeyLayout.setProperty(key, cookie.get(key));
+	private void loadKeys() {
+		Properties newQwertyKeyLayout = null;
+		for(char[][] keyboard : KEYBOARD_LAYOUTS.get(QWERTY_LAYOUT)) {
+			for(char[] row : keyboard) {
+				for(char key : row) {
+					String turn = settings.get("key_" + key, null);
+					if(turn != null) {
+						if(newQwertyKeyLayout == null) newQwertyKeyLayout = new Properties();
+						newQwertyKeyLayout.setProperty(key + "", turn);
+					}
+				}
 			}
 		}
+		if(newQwertyKeyLayout != null)
+			qwertyKeyLayout = newQwertyKeyLayout;
 	}
-	private void saveCookie() {
-		GamesCubeMan.cookies.setMap(COOKIE_NAME, qwertyKeyLayout);
+	private void saveKeys() {
+		for(char[][] keyboard : KEYBOARD_LAYOUTS.get(QWERTY_LAYOUT)) {
+			for(char[] row : keyboard) {
+				for(char key : row) {
+					settings.set("key_" + key, qwertyKeyLayout.getProperty("" + key));
+				}
+			}
+		}
 	}
 	
 	private String getSelectedLayout() {
@@ -278,7 +288,7 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 						String turn = editor.getText();
 						qwertyKeyLayout.setProperty(""+toQwerty(key, false), turn);
 						setTurn(turn);
-						saveCookie();
+						saveKeys();
 					} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 						setEditing(false);
 				}

@@ -18,28 +18,25 @@ import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.DoubleSliderOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleSticker;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleTurn;
-import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.SpinnerOption;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.TwistyPuzzle;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.Utils;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.PolygonCollection;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
-public class Megaminx extends TwistyPuzzle {
+public class CopyOfMegaminx extends TwistyPuzzle {
 
-	public Megaminx() {
+	public CopyOfMegaminx() {
 		super(0, 0, 4);
 	}
 
 	private PuzzleOption<Double> stickerGap = new DoubleSliderOption("gap", true, 30, 0, 100, 1000);
 	private PuzzleOption<Double> cut_depth = new DoubleSliderOption("cut_depth", true, 50, 0, 100, 100);
-	private PuzzleOption<Integer> layers = new SpinnerOption("layers", true, 1, 1, null, 1);
 	
 	@Override
 	public ArrayList<PuzzleOption<?>> _getDefaultOptions() {
 		ArrayList<PuzzleOption<?>> options = new ArrayList<PuzzleOption<?>>();
 		options.add(stickerGap);
 		options.add(cut_depth);
-		options.add(layers);
 		return options;
 	}
 
@@ -164,36 +161,129 @@ public class Megaminx extends TwistyPuzzle {
 		//this is to order the faces according to ABCDEFabcdef
 		ArrayList<PolygonCollection<PuzzleSticker>> faces = new ArrayList<PolygonCollection<PuzzleSticker>>();
 
-		PolygonCollection<PuzzleSticker> Fface = topHalf.get(1);
-		faces.add(Fface);
-		PolygonCollection<PuzzleSticker> Uface = topHalf.get(0);
-		faces.add(Uface);
-		PolygonCollection<PuzzleSticker> Rface = topHalf.get(5);
-		faces.add(Rface);
-		PolygonCollection<PuzzleSticker> DRface = bottomHalf.get(1);
-		faces.add(DRface);
-		PolygonCollection<PuzzleSticker> DLface = bottomHalf.get(2);
-		faces.add(DLface);
-		PolygonCollection<PuzzleSticker> Lface = topHalf.get(2);
-		faces.add(Lface);
-		PolygonCollection<PuzzleSticker> Bface = bottomHalf.get(4);
+		PolygonCollection<PuzzleSticker> Aface = topHalf.get(1);
+		faces.add(Aface);
+		PolygonCollection<PuzzleSticker> Bface = topHalf.get(0);
 		faces.add(Bface);
-		PolygonCollection<PuzzleSticker> Dface = bottomHalf.get(0);
+		PolygonCollection<PuzzleSticker> Cface = topHalf.get(5);
+		faces.add(Cface);
+		PolygonCollection<PuzzleSticker> Dface = bottomHalf.get(1);
 		faces.add(Dface);
-		PolygonCollection<PuzzleSticker> BLDface = bottomHalf.get(3);
-		faces.add(BLDface);
-		PolygonCollection<PuzzleSticker> BLface = topHalf.get(3);
-		faces.add(BLface);
-		PolygonCollection<PuzzleSticker> BRface = topHalf.get(4);
-		faces.add(BRface);
-		PolygonCollection<PuzzleSticker> BRDface = bottomHalf.get(5);
-		faces.add(BRDface);
+		PolygonCollection<PuzzleSticker> Eface = bottomHalf.get(2);
+		faces.add(Eface);
+		PolygonCollection<PuzzleSticker> Fface = topHalf.get(2);
+		faces.add(Fface);
+		PolygonCollection<PuzzleSticker> aface = bottomHalf.get(4);
+		faces.add(aface);
+		PolygonCollection<PuzzleSticker> bface = bottomHalf.get(0);
+		faces.add(bface);
+		PolygonCollection<PuzzleSticker> cface = bottomHalf.get(3);
+		faces.add(cface);
+		PolygonCollection<PuzzleSticker> dface = topHalf.get(3);
+		faces.add(dface);
+		PolygonCollection<PuzzleSticker> eface = topHalf.get(4);
+		faces.add(eface);
+		PolygonCollection<PuzzleSticker> fface = bottomHalf.get(5);
+		faces.add(fface);
 		
-		addPolys(Fface);
-//		for(PolygonCollection<PuzzleSticker> f : faces)
-//			addPolys(f);
+		for(PolygonCollection<PuzzleSticker> f : faces)
+			addPolys(f);
+		
+		ArrayList<PolygonCollection<PuzzleSticker>> oldCenterStickers = centerStickers;
+		centerStickers = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		for(int i = 0; i < faces.size(); i++) {
+			PuzzleSticker cent = faces.get(i).get(10);
+			PolygonCollection<PuzzleSticker> c = new PolygonCollection<PuzzleSticker>();
+			c.add(cent);
+			centerStickers.add(c);
+		}
+		
+		ArrayList<PolygonCollection<PuzzleSticker>> oldEdgeStickers = edgeStickers;
+		edgeStickers = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(1), Bface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(3), Cface.get(9)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(5), Dface.get(7)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(7), Eface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(9), Fface.get(3)));
+		
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(7), Fface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(3), Cface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Cface.get(7), Dface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Dface.get(9), Eface.get(3)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Eface.get(7), Fface.get(5)));
+		
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(9), dface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(1), eface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Cface.get(3), eface.get(9)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Cface.get(5), fface.get(7)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Dface.get(3), fface.get(9)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Dface.get(1), bface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Eface.get(1), bface.get(7)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Eface.get(9), cface.get(3)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Fface.get(7), cface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(Fface.get(9), dface.get(3)));
+		
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(dface.get(9), eface.get(3)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(eface.get(7), fface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(fface.get(1), bface.get(3)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(bface.get(9), cface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(cface.get(7), dface.get(5)));
+		
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(5), dface.get(7)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(7), eface.get(5)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(9), fface.get(3)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(1), bface.get(1)));
+		edgeStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(3), cface.get(9)));
+
+		ArrayList<PolygonCollection<PuzzleSticker>> oldCornerStickers = cornerStickers;
+		cornerStickers = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(0), Fface.get(2), Bface.get(6)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(2), Bface.get(4), Cface.get(0)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(4), Cface.get(8), Dface.get(6)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(6), Dface.get(8), Eface.get(4)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Aface.get(8), Eface.get(6), Fface.get(4)));
+
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(8), Fface.get(0), dface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(0), dface.get(0), eface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Bface.get(2), eface.get(0), Cface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Cface.get(4), eface.get(8), fface.get(6)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Cface.get(6), fface.get(8), Dface.get(4)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Dface.get(2), fface.get(0), bface.get(4)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Dface.get(0), bface.get(6), Eface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Eface.get(0), bface.get(8), cface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Eface.get(8), cface.get(4), Fface.get(6)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(Fface.get(8), cface.get(6), dface.get(4)));
+		
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(6), eface.get(4), dface.get(8)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(8), fface.get(4), eface.get(6)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(0), bface.get(2), fface.get(2)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(2), cface.get(0), bface.get(0)));
+		cornerStickers.add(new PolygonCollection<PuzzleSticker>(aface.get(4), dface.get(6), cface.get(8)));
+		
+		//setting polygons to solved state
+		for(int i = 0; i < faces.size(); i++)
+			for(int c = 0; c < faces.get(i).size(); c++)
+				faces.get(i).get(c).setFace(FACES[i]);
+		if(!copyOld) {
+			//refreshing our internal representation
+			centerPermutation = enumerate(12);
+			cornerPermutation = enumerate(20);
+			cornerOrientation = new int[20];
+			edgePermutation = enumerate(30);
+			edgeOrientation = new int[30];
+		} else {
+			//rotating stickers to where they were before
+			syncRotations(oldCenterStickers, centerStickers);
+			syncRotations(oldEdgeStickers, edgeStickers);
+			syncRotations(oldCornerStickers, cornerStickers);
+		}
 	}
 	
+	private void syncRotations(ArrayList<PolygonCollection<PuzzleSticker>> src, ArrayList<PolygonCollection<PuzzleSticker>> dest) {
+		for(int i = 0; i < dest.size(); i++)
+			dest.get(i).rotate(src.get(i).getNetRotations());
+	}
+
 	//to make things easier, we are only looking for face to start with the actual face
 	private static int getAxis(String face) {
 		int matchLength = -1, match = -1;

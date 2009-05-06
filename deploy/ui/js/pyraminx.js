@@ -111,6 +111,7 @@ $(document).ready(function(){
 	for (var key in keyMap) {
 		$("#" + (key == ';' ? 'semicolon' : key)).addClass("move-key").click(createClickHandler(key));
 	}
+	game.loadBoard(getBoardString());
 });
 
 function debug(mytext) {
@@ -119,7 +120,7 @@ function debug(mytext) {
 }
 
 function doQuery(turn, board) {
-	if (turn == null) {
+	if (turn == null || !nextMoves) {
 		game.loadBoard(board);
 		return false;
 	}

@@ -29,8 +29,8 @@ import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public class Canvas3D extends JComponent implements KeyListener, ActionListener, MouseListener, MouseMotionListener, FocusListener {
+	public static final double DEFAULT_SCALE = 600;
 	private static final double VIEWPORT = 1;
-	private double DEFAULT_SCALE = 600;
 	private final int DEFAULT_HEIGHT = 500;
 	private final int DEFAULT_WIDTH = 400;
 	private double scale = DEFAULT_SCALE;
@@ -58,15 +58,13 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public double getScale() {
 		return scale;
 	}
-	public void setScale(double newScale) {
-		DEFAULT_SCALE = newScale;
-		scale = DEFAULT_SCALE * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT);
+	public void setScale(double scale) {
+		this.scale = scale;
 		fireCanvasChange();
 	}
 	
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
-		setScale(DEFAULT_SCALE);
 		fireCanvasChange();
 	}
 	
@@ -107,7 +105,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 					if(!poly.isVisible())
 						polyProjection.add(null);
 					else {
-						Shape proj = poly.projectXYPlane(VIEWPORT, scale);
+						Shape proj = poly.projectXYPlane(VIEWPORT, scale * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT));
 						polyProjection.add(proj);
 					}
 				}

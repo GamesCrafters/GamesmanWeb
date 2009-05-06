@@ -32,11 +32,15 @@ public class SquareOne extends TwistyPuzzle {
 								THREE_FLOWER = "Flower",
 								BARREL = "Barrel"; //edges only, w/ matching middle layer
 	
-	private PuzzleOption<String> variation = new ComboOption("variation", NORMAL, new String[] { NORMAL, UNBANDAGED });
-	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", 5, 0, 35, 100);
-	private PuzzleOption<Boolean> two_layer = new CheckBoxOption("two_layer", false);
-	public PuzzleOption<?>[] getDefaultOptions() {
-		return new PuzzleOption<?>[] { variation, gapOption, two_layer };
+	private PuzzleOption<String> variation = new ComboOption("variation", true, NORMAL, new String[] { NORMAL, UNBANDAGED });
+	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", true, 5, 0, 35, 100);
+	private PuzzleOption<Boolean> two_layer = new CheckBoxOption("two_layer", true, false);
+	public ArrayList<PuzzleOption<?>> _getDefaultOptions() {
+		ArrayList<PuzzleOption<?>> options = new ArrayList<PuzzleOption<?>>();
+		options.add(variation);
+		options.add(gapOption);
+		options.add(two_layer);
+		return options;
 	}
 	
 	public void puzzleOptionChanged(PuzzleOption<?> src) {

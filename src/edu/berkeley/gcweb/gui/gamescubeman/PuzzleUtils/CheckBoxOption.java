@@ -4,30 +4,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
 
 public class CheckBoxOption extends PuzzleOption<Boolean> implements ActionListener {
-	private JPanel pane;
 	private JCheckBox slider;
-	public CheckBoxOption(String name, Boolean def) {
-		super(name);
+	public CheckBoxOption(String name, boolean guify, Boolean def) {
+		super(name, guify);
 		
 		slider = new JCheckBox(name, def);
 		slider.setFocusable(false);
 		slider.addActionListener(this);
-		
-		pane = new JPanel();
-		pane.add(slider);
 	}
 	
 	@Override
-	public JPanel getComponent() {
-		return pane;
+	public JCheckBox getComponent() {
+		return slider;
 	}
 
 	@Override
 	public Boolean getValue() {
 		return slider.isSelected();
+	}
+	
+	@Override
+	public String valueToString() {
+		return getValue().toString();
 	}
 
 	@Override

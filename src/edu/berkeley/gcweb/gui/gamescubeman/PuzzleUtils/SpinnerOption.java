@@ -10,8 +10,8 @@ import javax.swing.event.ChangeListener;
 public class SpinnerOption extends PuzzleOption<Integer> implements ChangeListener {
 	private JPanel pane;
 	private JSpinner spinner;
-	public SpinnerOption(String name, Integer def, Integer min, Integer max, Integer step) {
-		super(name);
+	public SpinnerOption(String name, boolean guify, Integer def, Integer min, Integer max, Integer step) {
+		super(name, guify);
 		
 		spinner = new JSpinner(new SpinnerNumberModel(def, min, max, step));
 		((JSpinner.NumberEditor)spinner.getEditor()).getTextField().setFocusable(false);
@@ -30,6 +30,11 @@ public class SpinnerOption extends PuzzleOption<Integer> implements ChangeListen
 		return (Integer) spinner.getValue();
 	}
 
+	@Override
+	public String valueToString() {
+		return getValue().toString();
+	}
+	
 	@Override
 	public void setValue(String val) {
 		try {

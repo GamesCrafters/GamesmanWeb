@@ -38,14 +38,20 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	private static final String VOID = "Void";
 	private static final String BABYFACE = "Babyface";
 	
-	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", 10, 0, 100, 100);
-	private PuzzleOption<Integer> dimXOption = new SpinnerOption("dim_x", 3, 1, null, 1);
-	private PuzzleOption<Integer> dimYOption = new SpinnerOption("dim_y", 3, 1, null, 1);
-	private PuzzleOption<Integer> dimZOption = new SpinnerOption("dim_z", 3, 1, null, 1);
-	private PuzzleOption<String> variationOption = new ComboOption("variation", NORMAL, new String[] { NORMAL, VOID, BABYFACE });
+	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", true, 10, 0, 100, 100);
+	private PuzzleOption<Integer> dimXOption = new SpinnerOption("dim_x", true, 3, 1, null, 1);
+	private PuzzleOption<Integer> dimYOption = new SpinnerOption("dim_y", true, 3, 1, null, 1);
+	private PuzzleOption<Integer> dimZOption = new SpinnerOption("dim_z", true, 3, 1, null, 1);
+	private PuzzleOption<String> variationOption = new ComboOption("variation", true, NORMAL, new String[] { NORMAL, VOID, BABYFACE });
 	
-	public PuzzleOption<?>[] getDefaultOptions() {
-		return new PuzzleOption[] { gapOption, dimXOption, dimYOption, dimZOption, variationOption };
+	public List<PuzzleOption<?>> _getDefaultOptions() {
+		ArrayList<PuzzleOption<?>> options = new ArrayList<PuzzleOption<?>>();
+		options.add(gapOption);
+		options.add(dimXOption);
+		options.add(dimYOption);
+		options.add(dimZOption);
+		options.add(variationOption);
+		return options;
 	}
 	
 	public int dimensions(int axis) {

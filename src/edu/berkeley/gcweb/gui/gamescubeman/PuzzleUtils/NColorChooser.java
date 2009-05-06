@@ -20,10 +20,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -36,8 +33,10 @@ public class NColorChooser extends RollingJPanel {
 	private ColorBoxes boxes;
 	private HashMap<String, Color> colors, backupColors;
 	private JComponent paintCanvas;
-	public NColorChooser(HashMap<String, Color> colorScheme, JComponent paintCanvas) {
+	private AppletSettings settings;
+	public NColorChooser(AppletSettings settings, HashMap<String, Color> colorScheme, JComponent paintCanvas) {
 		this.paintCanvas = paintCanvas;
+		this.settings = settings;
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
@@ -56,7 +55,7 @@ public class NColorChooser extends RollingJPanel {
 		boxes = new ColorBoxes();
 		add(boxes, BorderLayout.CENTER);
 		
-		backupColors = (HashMap<String, Color>) colorScheme.clone();
+		backupColors = new HashMap<String, Color>(colorScheme);
 		colors = colorScheme;
 		loadCookie();
 		setColors(colors);
@@ -173,21 +172,16 @@ public class NColorChooser extends RollingJPanel {
 	}
 	
 	private void loadCookie() {
-		Dictionary<String, String> cookie = GamesCubeMan.cookies.getMap("colors");
-		if(cookie != null) {
-			colors = new HashMap<String, Color>();
-			Enumeration<String> keys = cookie.keys();
-			while(keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				colors.put(key, Utils.stringToColor(cookie.get(key), true));
-			}
+		HashMap<String, Color> newColors = new HashMap<String, Color>(colors);
+		for(String face : colors.keySet()) {
+			Color c = settings.getColor("color_" + face, null);
+			if(c != null)
+				newColors.put(face, c);
 		}
 	}
 	private void saveCookie() {
-		Hashtable<Object, Object> map = new Hashtable<Object, Object>();
 		for(String face : colors.keySet())
-			map.put(face, Utils.colorToString(colors.get(face)));
-		GamesCubeMan.cookies.setMap("colors", map);
+			settings.setColor("color_" + face, colors.get(face));
 	}
 
 	public String getSelectedFace() {

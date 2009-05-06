@@ -57,6 +57,8 @@ public class RollingJPanel extends JPanel {
 	private double visible;
 	private int direction;
 	public void setVisible(boolean visible) {
+		if(getParent() != null) //this is to get the jpanel rolling down on top
+			getParent().setComponentZOrder(this, visible ? 0 : 1);
 		direction = visible ? 1 : -1;
 		if(visible != isVisible()) {
 			if(visible) {

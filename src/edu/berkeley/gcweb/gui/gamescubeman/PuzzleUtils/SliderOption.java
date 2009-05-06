@@ -9,8 +9,8 @@ import javax.swing.event.ChangeListener;
 public class SliderOption extends PuzzleOption<Integer> implements ChangeListener {
 	private JPanel pane;
 	private JSlider slider;
-	public SliderOption(String name, Integer def, Integer min, Integer max) {
-		super(name);
+	public SliderOption(String name, boolean guify, Integer def, Integer min, Integer max) {
+		super(name, guify);
 		
 		slider = new JSlider(min, max, def);
 		slider.setFocusable(false);
@@ -34,6 +34,11 @@ public class SliderOption extends PuzzleOption<Integer> implements ChangeListene
 		try {
 			slider.setValue(Integer.parseInt(val));
 		} catch(NumberFormatException e) {}
+	}
+	
+	@Override
+	public String valueToString() {
+		return getValue().toString();
 	}
 
 	public void stateChanged(ChangeEvent e) {
