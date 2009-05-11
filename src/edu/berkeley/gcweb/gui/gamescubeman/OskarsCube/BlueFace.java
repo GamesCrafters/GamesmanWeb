@@ -62,14 +62,12 @@ public class BlueFace { // THE BLUE FACE IS XZ
 					continue;
 				}
 			}
-			
-			
 		}
 		
 		
 
 		Polygon3D green_dot = new Polygon3D();
-		green_dot.setFillColor(Color.GREEN);
+		green_dot.setFillColor(Color.MAGENTA);
 		// BLUE IS XZ so pull 0 and 2 out of end
 		int endx = cube.end[0];
 		int endz = cube.end[2];

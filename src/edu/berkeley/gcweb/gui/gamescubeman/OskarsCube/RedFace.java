@@ -67,7 +67,7 @@ public class RedFace {
 		}
 
 		Polygon3D green_dot = new Polygon3D();
-		green_dot.setFillColor(Color.GREEN);
+		green_dot.setFillColor(Color.MAGENTA);
 		// RED IS XY so pull 0 and 1 out of end
 		int endx = cube.end[0];
 		int endy = cube.end[1];

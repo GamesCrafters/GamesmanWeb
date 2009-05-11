@@ -2,6 +2,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
+import java.awt.Color;
 
 //import netscape.javascript.JSObject;
 
@@ -19,12 +20,6 @@ public class MyShape extends Shape3D {
 	private Polygon3D[] towardR;
 	private Polygon3D[] awayB;
 	private Polygon3D[] towardB;
-	private Polygon3D[] RawayW;
-	private Polygon3D[] RtowardW;
-	private Polygon3D[] RawayR;
-	private Polygon3D[] RtowardR;
-	private Polygon3D[] RawayB;
-	private Polygon3D[] RtowardB;
 
 	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
@@ -44,12 +39,6 @@ public class MyShape extends Shape3D {
 		towardW = big_red_axis.extractTW();
 		towardB = big_red_axis.extractTB();
 		towardR = big_red_axis.extractTR();
-		RawayW= big_red_axis.extractRAW();
-		RawayR= big_red_axis.extractRAR();
-		RawayB= big_red_axis.extractRAB();
-		RtowardW = big_red_axis.extractRTW();
-		RtowardB = big_red_axis.extractRTB();
-		RtowardR = big_red_axis.extractRTR();
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
@@ -73,18 +62,12 @@ public class MyShape extends Shape3D {
 			if (faces[i] != null)
 				addPoly(faces[i]);
 		}
-		setAwayWVisible(false);
-		setAwayBVisible(false);
-		setAwayRVisible(false);
-		setTowardWVisible(false);
-		setTowardRVisible(false);
-		setTowardBVisible(false);
-		setAwayRWVisible(false);
-		setAwayRBVisible(false);
-		setAwayRRVisible(false);
-		setTowardRWVisible(false);
-		setTowardRRVisible(false);
-		setTowardRBVisible(false);
+		setAwayWVisible(false, false, false);
+		setAwayBVisible(false, false, false);
+		setAwayRVisible(false, false, false);
+		setTowardWVisible(false, false, false);
+		setTowardRVisible(false, false, false);
+		setTowardBVisible(false, false, false);
 		fireCanvasChange();
 	}
 	public void setInteriorVisible(boolean visible) {
@@ -97,65 +80,77 @@ public class MyShape extends Shape3D {
 			if (intSol_array[i] != null)
 				intSol_array[i].setVisible(visible);
 	}
-	public void setAwayWVisible(boolean visible) {
+	public void setAwayWVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < awayW.length; i++)
-			if (awayW[i] != null)
+			if (awayW[i] != null) {
+				awayW[i].setFillColor(col);
 				awayW[i].setVisible(visible);
+			}
 	}
-	public void setAwayRVisible(boolean visible) {
+	public void setAwayRVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < awayR.length; i++)
-			if (awayR[i] != null)
+			if (awayR[i] != null) {
 				awayR[i].setVisible(visible);
+				awayR[i].setFillColor(col);
+			}
 	}
-	public void setAwayBVisible(boolean visible) {
+	public void setAwayBVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < awayB.length; i++)
-			if (awayB[i] != null)
+			if (awayB[i] != null) {
+				awayB[i].setFillColor(col);
 				awayB[i].setVisible(visible);
+			}
 	}
-	public void setTowardWVisible(boolean visible) {
+	public void setTowardWVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < towardW.length; i++)
-			if (towardW[i] != null)
+			if (towardW[i] != null) {
 				towardW[i].setVisible(visible);
+				towardW[i].setFillColor(col);
+			}
 	}
-	public void setTowardBVisible(boolean visible) {
+	public void setTowardBVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < towardB.length; i++)
-			if (towardB[i] != null)
+			if (towardB[i] != null) {
 				towardB[i].setVisible(visible);
+				towardB[i].setFillColor(col);
+			}
 	}
-	public void setTowardRVisible(boolean visible) {
+	public void setTowardRVisible(boolean best, boolean visible, boolean color) {
+		Color col = Color.cyan;
+		if(best && color)
+			col = Color.green;
+		if(!best && color) 
+			col = Color.red;
 		for (int i = 0; i < towardR.length; i++)
-			if (towardR[i] != null)
+			if (towardR[i] != null) {
 				towardR[i].setVisible(visible);
-	}
-	public void setAwayRWVisible(boolean visible) {
-		for (int i = 0; i < RawayW.length; i++)
-			if (RawayW[i] != null)
-				RawayW[i].setVisible(visible);
-	}
-	public void setAwayRRVisible(boolean visible) {
-		for (int i = 0; i < RawayR.length; i++)
-			if (RawayR[i] != null)
-				RawayR[i].setVisible(visible);
-	}
-	public void setAwayRBVisible(boolean visible) {
-		for (int i = 0; i < RawayB.length; i++)
-			if (RawayB[i] != null)
-				RawayB[i].setVisible(visible);
-	}
-	public void setTowardRWVisible(boolean visible) {
-		for (int i = 0; i < RtowardW.length; i++)
-			if (RtowardW[i] != null)
-				RtowardW[i].setVisible(visible);
-	}
-	public void setTowardRBVisible(boolean visible) {
-		for (int i = 0; i < RtowardB.length; i++)
-			if (RtowardB[i] != null)
-				RtowardB[i].setVisible(visible);
-	}
-	public void setTowardRRVisible(boolean visible) {
-		for (int i = 0; i < RtowardR.length; i++)
-			if (RtowardR[i] != null)
-				RtowardR[i].setVisible(visible);
+				towardR[i].setFillColor(col);
+			}
 	}
 
 }

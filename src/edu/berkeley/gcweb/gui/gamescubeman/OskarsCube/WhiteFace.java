@@ -67,7 +67,7 @@ public class WhiteFace {
 		
 
 		Polygon3D end_dot = new Polygon3D();
-		end_dot.setFillColor(Color.green);
+		end_dot.setFillColor(Color.MAGENTA);
 		// WHITE IS YZ so pull 1 and 2 out of end
 		int endy = cube.end[1];
 		int endz = cube.end[2];
