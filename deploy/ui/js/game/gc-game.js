@@ -200,6 +200,12 @@ GCWeb.Game.prototype.start = function() {
       if (data.status == "ok") {
         var moveValue = data.response;
         self.moveHistory.push(moveValue);
+		
+		if (moveValue.remoteness !== undefined) {
+			$("#prediction span").text(moveValue.value + " in " +
+									   moveValue.remoteness + " moves");
+		}
+		
         self.getNextMoveValues(moveValue.board);
       } else {
         GCWeb.alert("The GamesCrafters server could not handle the request (" + data.status + ").");
@@ -364,7 +370,7 @@ GCWeb.Game.prototype.handleGameOver = function() {
   }
   prompt += " Would you like to reset the game and play again?";
   var onAccept = function() {
-    GCWeb.alert("Game reset is not yet implemented.");
+    window.location.reload();
   };
   GCWeb.confirm(prompt, onAccept);
 };
