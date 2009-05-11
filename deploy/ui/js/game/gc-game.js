@@ -201,10 +201,7 @@ GCWeb.Game.prototype.start = function() {
         var moveValue = data.response;
         self.moveHistory.push(moveValue);
 		
-		if (moveValue.remoteness !== undefined) {
-			$("#prediction span").text(moveValue.value + " in " +
-									   moveValue.remoteness + " moves");
-		}
+		self.updatePrediction(moveValue);
 		
         self.getNextMoveValues(moveValue.board);
       } else {
@@ -328,6 +325,7 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   
   // Request the next move values.
   if (!this.local) {
+    this.updatePrediction(moveValue);
     this.getNextMoveValues(moveValue.board);
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
@@ -469,6 +467,13 @@ GCWeb.Game.prototype.isValidMove = function(move) {
   }
   return false;
 }
+
+GCWeb.Game.updatePrediction = function(moveValue) {
+  if (moveValue.remoteness !== undefined) {
+    $("#prediction span").text(
+      moveValue.value + " in " + moveValue.remoteness + " moves");
+  }
+};
 
 /**
  * Returns the default board string for this game.
