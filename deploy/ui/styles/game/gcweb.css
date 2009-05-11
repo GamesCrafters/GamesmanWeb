@@ -2,7 +2,7 @@
 
 .gc-dialog {
   position: fixed; z-index: 1001; border: medium outset #006;
-  padding: 0 1em; max-width: 50%;
+  padding: 0 1em; max-width: 50%; color: #006;
   border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;
 }
 .gc-dialog p { margin: 1em 0 }
