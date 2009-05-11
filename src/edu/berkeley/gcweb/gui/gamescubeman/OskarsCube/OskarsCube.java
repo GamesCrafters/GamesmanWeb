@@ -7,24 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
-import javax.swing.JMenu;
-
 
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
@@ -46,7 +43,6 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private Canvas3D canvas;
 	public static JSObject jso;
 	
-	private JFrame frame;
 	private JMenuBar menu_bar;
 	private JMenu new_puzzle, display;
 	private JLabel remoteness;
@@ -85,7 +81,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 						solved_map = new Solver(cubefaces);
 						
 					}
-					int tries =0;
+					int tries = 0;
 					while (solved_map.getRemoteness(solved_map.start)/2 < goalremoteness) {
 							System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start) );
 							cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
@@ -94,6 +90,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					}
 					int zoom = 25 + 2*(5-boardsize)*(5-boardsize);
 					canvas = new Canvas3D();
+					canvas.setLightBorders(true);
 					cube = new MyShape(0, 0, zoom, cubefaces);
 					cube.setCanvas(canvas);
 					canvas.addShape3D(cube);

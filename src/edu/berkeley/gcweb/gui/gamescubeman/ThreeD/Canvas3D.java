@@ -54,6 +54,11 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public void setFocusIndicator(boolean focusIndicator) {
 		this.focusIndicator = focusIndicator;
 	}
+	private boolean lightBorders;
+	//this will draw borders lightly, but will disable the focus indicator
+	public void setLightBorders(boolean lightBorders) {
+		this.lightBorders = lightBorders;
+	}
 	
 	public double getScale() {
 		return scale;
@@ -261,7 +266,7 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 		Graphics2D g2d = (Graphics2D) g;
-		if(!isFocusOwner() && focusIndicator) {
+		if(!isFocusOwner() && focusIndicator || lightBorders) {
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 			g2d.setComposite(ac);
 		}
