@@ -468,7 +468,7 @@ GCWeb.Game.prototype.isValidMove = function(move) {
   return false;
 }
 
-GCWeb.Game.updatePrediction = function(moveValue) {
+GCWeb.Game.prototype.updatePrediction = function(moveValue) {
   if (moveValue.remoteness !== undefined) {
     $("#prediction span").text(
       moveValue.value + " in " + moveValue.remoteness + " moves");
