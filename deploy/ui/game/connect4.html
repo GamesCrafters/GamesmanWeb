@@ -1,10 +1,12 @@
-$(function() {
-  var config = {
-    width: 3, height: 3,
-    options: {pieces: 3}
-  }
-  var game = new ConnectFour(config);
-  game.board.appendTo("#game");
-  game.start();
-});
+<script type="text/javascript">
+  $(function() {
+    var config = {
+      width: 3, height: 3,
+      options: {pieces: 3}
+    }
+    var game = new ConnectFour(config);
+    game.board.appendTo("#game");
+    game.start();
+  });
+</script>
 <div id="game"></div>
