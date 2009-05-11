@@ -75,7 +75,7 @@ String uifile = gameDictionary.getUI(internalName);
     <link rel="stylesheet" href="styles/game/gcweb.css">
     <link rel="stylesheet" href="styles/game/<%= uifile %>.css">
     <script type="text/javascript" src="js/game/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="js/game/gcweb.js"></script>
+    <script type="text/javascript" src="js/game/gc-game.js"></script>
     <script type="text/javascript" src="js/game/<%= uifile %>.js"></script>
     <script type="text/javascript">
 	  $(document).ready(function() {
