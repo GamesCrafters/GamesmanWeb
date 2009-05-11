@@ -52,7 +52,7 @@ void dynamicInclude(JspWriter out, String internalName) {
 }
 %><%
 String internalName = request.getParameter("game");
-String canonicalName = gameDictionary.getCanonicalName(internalName)
+String canonicalName = gameDictionary.getCanonicalName(internalName);
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
 	out.println("Terminating because internalname is "+internalName+" and canonincalName is "+canonicalName);
