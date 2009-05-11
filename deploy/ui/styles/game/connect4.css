@@ -1,0 +1,22 @@
+.connect-four-grid {
+  border: 14px inset #5578c7; border-top-style: none; margin: 1em auto 0;
+  border-collapse: collapse; border-spacing: 0
+}
+.connect-four-grid td { margin: 0; padding: 0; line-height: 0 }
+.connect-four-grid td[colspan] { vertical-align: top }
+.connect-four-grid td img { z-index: 3; position: relative }
+
+.connect-four-grid td.win { outline: medium solid #0f0 }
+.connect-four-grid td.tie { outline: medium solid #ff0 }
+.connect-four-grid td.lose { outline: medium solid #c00 }
+
+.piece { z-index: 2; position: absolute }
+
+/* Testing aliases */
+.connect4-grid {
+  border: 14px inset #5578c7; border-top-style: none; margin: 1em auto 0;
+  border-collapse: collapse; border-spacing: 0
+}
+.connect4-grid td { margin: 0; padding: 0; line-height: 0 }
+.connect4-grid td[colspan] { vertical-align: top }
+.connect4-grid td img { z-index: 3; position: relative }

@@ -1,0 +1,14 @@
+.piece { position: absolute }
+
+.gc-dialog {
+  position: fixed; z-index: 1001; border: medium outset #006;
+  padding: 0 1em; max-width: 50%;
+  border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;
+}
+.gc-dialog p { margin: 1em 0 }
+.gc-dialog-prompt {  }
+.gc-dialog-controls { text-align: center }
+.gc-dialog-controls button { margin: 0 0.25em }
+.gc-dialog-screen {
+  width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000
+}

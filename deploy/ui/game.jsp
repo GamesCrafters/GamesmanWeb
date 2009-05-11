@@ -51,10 +51,8 @@ void dynamicInclude(JspWriter out, String internalName) {
 	}
 }
 %><%
-String internalName = request.getParameter("puzzle");
-String canonicalName = gameDictionary.getCanonicalName(internalName);
-boolean puzzle = gameDictionary.getIsPuzzle(internalName);
-String gameclass = puzzle ? "Puzzle" : "Game";
+String internalName = request.getParameter("game");
+String canonicalName = gameDictionary.getCanonicalName(internalName)
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
 	out.println("Terminating because internalname is "+internalName+" and canonincalName is "+canonicalName);
@@ -66,8 +64,7 @@ String uifile = gameDictionary.getUI(internalName);
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-    <title><%= canonicalName %> - <%= gameclass %>s - GamesmanWeb</title> 
+    <title><%= canonicalName %> - Games - GamesmanWeb</title> 
     <!--[if lte IE 7]>
     <style type="text/css">
       html > body > .header > h1 { display: inline }
@@ -75,10 +72,11 @@ String uifile = gameDictionary.getUI(internalName);
     </style>
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/<%= uifile %>.css">
-    <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
-    <script type="text/javascript" src="js/gcweb.js"></script>
-    <script type="text/javascript" src="js/<%= uifile %>.js"></script>
+    <link rel="stylesheet" href="styles/game/gcweb.css">
+    <link rel="stylesheet" href="styles/game/<%= uifile %>.css">
+    <script type="text/javascript" src="js/game/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="js/game/gcweb.js"></script>
+    <script type="text/javascript" src="js/game/<%= uifile %>.js"></script>
     <script type="text/javascript">
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
@@ -97,30 +95,19 @@ String uifile = gameDictionary.getUI(internalName);
       <div class="nav">
         <ul> 
           <li><a href="">Change Options</li>
-          <li><a href="javascript:location.reload();">Reset <%= gameclass %></a></li>
-          <!--<li><a href="#">Rules</a></li>
-          <li><a href="#">Load Puzzle</a></li>
-          <li><a href="#">Save Puzzle</a></li>
-          <li><a href="#">Game Selection</a></li>-->
+          <li><a href="javascript:location.reload();">Reset Game</a></li>
         </ul>
         <h2>Display Options</h2>
         <ul id="options">
           <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
-        <% if (puzzle) { %>
-          <li><label><input type="checkbox" id="option-move-value-history"> Value History</label></li>
           <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
-          <li><label><input type="checkbox" id="option-timer" onclick="toggleTimer()"> Show Timer</label></li>
-          <!--<li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>-->
-        <% } %>
         </ul>
       </div> 
       <div id="main">
         <h1 id="gameheader"><%= canonicalName %></h1>
         <div id="game">
-          <% dynamicInclude(out, uifile); %>
+          <% dynamicInclude(out, "game/" + uifile); %>
         </div>
-        <div id="turn" <%= (puzzle ? " style=\"display: none\"" : "") %> ></div>
-        <p id="waitingnotice" style="visibility: hidden">Please wait...</p>
       </div> 
       <!-- sidebar --> 
       <div id="moves" class="aside">
@@ -131,29 +118,13 @@ String uifile = gameDictionary.getUI(internalName);
               <td><img src="images/win.png" alt="Green"></td><td><img src="images/tie.png" alt="Yellow"></td><td><img src="images/lose.png" alt="Red"></td>
             </tr>
             <tr>
-              <% if (puzzle) { %>
-              <td>move towards solution</td><td>maintain remoteness</td><td>move away from solution</td>
-              <% } else { %>
               <td>winning move</td><td>cause a tie</td><td>losing move</td>
-              <% } %>
             </tr>
           </table>
         </div>
         <div id="prediction">
           <h1>Prediction</h1>
-          <span><%= gameclass %> not started</span>
-        </div>
-        <div id="move-value-history">
-          <h1>Move-value History</h1>
-          <table id="move-value-history-labels">
-            <tr>
-              <td id="min-remoteness"></td>
-              <td id="mid-remoteness"></td>
-              <td id="max-remoteness"></td>
-            </tr>
-          </table>
-          <div id="history-tree">
-          </div>
+          <span>Game not started</span>
         </div>
       </div> 
     </div> 
