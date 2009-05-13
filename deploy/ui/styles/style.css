@@ -64,6 +64,9 @@ body > .header h1 {
 #mid-remoteness {text-align: center;}
 #max-remoteness {text-align: right;}
 
+#history-graph-container { width: 160px; height: 20em; overflow-y: scroll; border: 2px #88f inset; background: #116; padding: 0; }
+#history-graph { width: 143px;}
+
 body > .footer {
   clear: both; color: #fc3; text-align: center; background: #006;
   padding: 0.5em 0; border-top: 2px #0f4d92 solid

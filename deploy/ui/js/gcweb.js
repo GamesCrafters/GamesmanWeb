@@ -27,6 +27,7 @@ function doneWaiting() {
         //delete document.body.style['cursor'];
     }
 }
+
 function toggleTimer() {
     if ($('#option-timer').is(':checked')) {
         $('#timer').show();
@@ -34,6 +35,34 @@ function toggleTimer() {
         $('#timer').hide();
     }
 }
+
+var flot_data = [ { xaxis : 2 }, { xaxis: 1 } ];
+var flot_opts = {
+    lines: { show: true },
+    points: { show : true },
+    yaxis: { minTickSize: 1, tickDecimals: 0, min: 0,
+             tickFormatter: function(val, axis) {
+                 return (axis.max - val).toFixed(axis.tickDecimals);
+             }},
+    x2axis: { minTickSize: 1, tickDecimals: 0, min: 0, ticks: 5 },
+    xaxis: { minTickSize: 1, tickDecimals: 0, min: 0, ticks: 5 },
+    grid: { hoverable: true, clickable: true }
+};
+
+function showTooltip(x, y, contents) {
+   $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            color: 'rgb(0, 0, 102)',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+}
+
 GCWeb = {
     newPuzzleGame: function(gameName, width, height, options) {
 
@@ -50,6 +79,8 @@ GCWeb = {
                 moveValues: $('#option-move-values').is(':checked'),
 
                 previousMoves: new Array(),
+                
+                valueHistory: new Array(),
                 
                 // board state functions
                 loadBoard: function(newBoardString){
@@ -70,10 +101,31 @@ GCWeb = {
                     //$('#max-remoteness').text(this.maxRemotenessSeen);
                     //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
                     //$('#min-remoteness').text(this.minRemotenessSeen);
+                    
+                    $("#history-graph").bind("plothover", function (event, pos, item) {
+                        //$("#x").text(pos.x.toFixed(2));
+                        //$("#y").text(pos.y.toFixed(2));
+
+                        //if ($("#enableTooltip:checked").length > 0) {
+                        if (item) {
+                            if (previousPoint != item.datapoint) {
+                                previousPoint = item.datapoint;
+
+                                $("#tooltip").remove();
+                                showTooltip(item.pageX, item.pageY, item.datapoint[0].toFixed(0));
+                                        //"value " + x + "at move " + window.plot.getAxes().yaxis.max - y);
+                            }
+                        } else {
+                            $("#tooltip").remove();
+                            previousPoint = null;            
+                        }
+                    });
+                    $("#history-graph").bind("mouseout", function(){$("#tooltip").remove();});
                 },
                 
                 // move functions
                 doMove: function(newMove){
+                    
                     // if this is an invalid move, return and do not continue
                     if(options.isValidMove && !newMove.isSetup){
                         if(!options.isValidMove(newMove))
@@ -86,6 +138,7 @@ GCWeb = {
                         options.onExecutingMove(newMove);
                     }
                     if(newMove.remoteness != undefined){
+						/*//
 						// fragile, but measures the width of the history tree without the scrollbar
                         this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
                         if(newMove.remoteness > this.maxRemotenessSeen){
@@ -104,9 +157,38 @@ GCWeb = {
                         } else {
                             width = 10;
                         }
+                        *///
                         text = newMove.remoteness;
                         text = '&nbsp;';
-						$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
+                        setTimeout(function(pMoves) {
+                            /* find maximum remoteness */
+                            var m = pMoves[0].remoteness;
+                            for (var i = 1; i < pMoves.length; i++) {m = Math.max(m, pMoves[i].remoteness)};
+                            window.flot_opts.x2axis.max = m;
+                            window.flot_opts.xaxis.max = m;
+                            window.flot_opts.yaxis.max = (pMoves.length > 9) ? pMoves.length - 1 : 9; //(Math.floor(vals.length / 5) + 1) * 5 - 1;
+                            window.flot_opts.yaxis.ticks = window.flot_opts.yaxis.max + 1;
+                            $("#history-graph").height(window.flot_opts.yaxis.max * 15 + 15);
+                            var data = Array();
+                            for (i = 0; i < pMoves.length; i++) {
+                                data.push([pMoves[i].remoteness, window.flot_opts.yaxis.max - i]);
+                            }
+                            window.flot_data[0].data = data;
+                            
+                            
+                            // Draw graph
+                            $.plot($("#history-graph"), window.flot_data, window.flot_opts);
+                            // Scroll to bottom
+                            $("#history-graph-container").scrollTop(10000);
+                            
+                            
+                        }, 10, this.previousMoves);
+                        /*
+                        console.error(value_history);
+                        this.valueHistory.push(newMove.remoteness);
+                        console.error("newMove.remoteness != undefined")
+                        setTimeout(function(v){graph(v);}, 10, this.valueHistory);*/
+						//$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
                     }
                     
                     // update the current board string and the move stack

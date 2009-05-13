@@ -77,6 +77,7 @@ String uifile = gameDictionary.getUI(internalName);
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/<%= uifile %>.css">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+    <script type="text/javascript" src="js/jquery.flot.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
     <script type="text/javascript" src="js/<%= uifile %>.js"></script>
     <script type="text/javascript">
@@ -145,6 +146,7 @@ String uifile = gameDictionary.getUI(internalName);
         </div>
         <div id="move-value-history">
           <h1>Move-value History</h1>
+          <!--
           <table id="move-value-history-labels">
             <tr>
               <td id="min-remoteness"></td>
@@ -153,6 +155,9 @@ String uifile = gameDictionary.getUI(internalName);
             </tr>
           </table>
           <div id="history-tree">
+          </div> -->
+          <div id="history-graph-container">
+              <div id="history-graph"></div>
           </div>
         </div>
       </div> 
@@ -164,4 +169,4 @@ String uifile = gameDictionary.getUI(internalName);
       </ul>
     </div> 
   </body> 
-</html> 
+</html>
