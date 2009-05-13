@@ -1,6 +1,6 @@
  <game-dictionary>
     <game internal-name="1210puzzle" canonical-name="1,2,...,10 (Puzzle version)" puzzle="puzzle"/>
-    <game internal-name="connect4" canonical-name="Connect 4" ui="connect4">
+    <game internal-name="connect4" canonical-name="Connect 4" ui="connect4" visible="visible">
         <server host="localhost" port="4242" />
     </game>
     <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid">
@@ -11,28 +11,28 @@
     <game internal-name="mago" canonical-name="Mago">
         <server host="localhost" port="3460" />
     </game>
-    <game internal-name="pegsolitaire" canonical-name="Peg Solitaire" puzzle="puzzle">
+    <game internal-name="pegsolitaire" canonical-name="Peg Solitaire" puzzle="puzzle" visible="visible">
         <server host="localhost" port="4242" />
     </game>
     <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)" puzzle="puzzle">
         <server host="localhost" port="1466" />
     </game>
-    <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle">
+    <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle" visible="visible">
         <server host="localhost" port="1234" />
     </game>
-    <game internal-name="lightsoutpm" canonical-name="LightsOut (Gamesman+-)" puzzle="puzzle" ui="grid">
+    <game internal-name="lightsoutpm" canonical-name="Lights Out (Gamesman+-)" puzzle="puzzle" ui="grid">
         <server host="localhost" port="2779" />
     </game>
-    <game internal-name="lightsout" canonical-name="LightsOut" puzzle="puzzle">
+    <game internal-name="lightsout" canonical-name="Lights Out" puzzle="puzzle" visible="visible">
         <server host="localhost" port="1055" />
     </game>
-    <game internal-name="oskarscube" canonical-name="Oskar's cube" puzzle="puzzle">
+    <game internal-name="oskarscube" canonical-name="Oskar's Cube" puzzle="puzzle" visible="visible">
         <server host="localhost" port="1915" />
     </game>
-    <game internal-name="rubik" canonical-name="Rubik's cube" puzzle="puzzle">
+    <game internal-name="rubik" canonical-name="Rubik's Cube" puzzle="puzzle" visible="visible">
         <server host="localhost" port="4242" />
     </game>
-    <game internal-name="pyraminx" canonical-name="Pyraminx" puzzle="puzzle">
+    <game internal-name="pyraminx" canonical-name="Pyraminx" puzzle="puzzle" visible="visible">
         <server host="localhost" port="4242" />
     </game>
 </game-dictionary>

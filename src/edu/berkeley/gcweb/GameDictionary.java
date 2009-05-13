@@ -270,7 +270,13 @@ public class GameDictionary {
         }
         return ispuzzle;
     }
-    
+    public synchronized boolean getIsVisible(String internalName) {
+        boolean isvisible = false;
+        if (gameInfo.containsKey(internalName)) {
+            isvisible = gameInfo.get(internalName).visible;
+        }
+        return ispuzzle;
+    }    
     public synchronized String getUI(String internalName) {
         String uifile = internalName;
         if (gameInfo.containsKey(internalName)) {

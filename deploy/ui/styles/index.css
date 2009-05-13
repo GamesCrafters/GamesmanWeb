@@ -1,0 +1,88 @@
+* { 
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    border: 0;
+}
+#container { 
+    margin: 100px auto;
+    padding: 5px 0 0 0;
+    width: 912px;
+    text-align: center;
+}
+
+#logo { 
+    margin-left: auto; margin-right: auto; display: block;
+}
+
+#game-browser {
+    position: relative; /* to turn into containing block for absolute positioning */
+    display: inline-block;
+    margin-left: auto; margin-right: auto;
+    margin-top: 10px;
+}
+
+#game-browser > * {
+    margin: 20px 0;
+}
+
+#game-list-container {
+    display: block;
+    position: relative;
+    float: left;
+    margin-left: auto; margin-right: auto;
+    width: 656px; /* 164 * 4 */
+}
+
+#game-list {
+    width: 656px; /* 165 * 4 */
+    height: 192px; /* 152 + 40 */
+    margin: 0; padding: 0;
+}
+
+#game-list > a {
+    display: block;
+    float: left;
+    width: 160px; height: 152px;
+    margin: 0; padding: 20px 2px;
+    text-align: center;
+    text-decoration: none;
+    color: rgb(0, 103, 172);
+    line-height: 2em;
+}
+
+#game-list > a img, #game-list > a span {
+    display: block;
+    margin-left: auto; margin-right: auto;
+}
+
+#game-browser > a.arrow {
+    display: block;
+    float: left;
+    width: 64px; height: 192px;
+    padding: 0;
+}
+.arrow#left { margin-left: 48px; margin-right: 16px; }
+.arrow#right { margin-right: 48px; margin-left: 16px; }
+
+#game-browser > .arrow img {
+    padding-top: 20px;
+    padding-bottom: 22px;
+}
+
+#game-list > a:hover {
+    background-color: rgb(255, 204, 102);
+}
+
+#game-list > a .games-desc {
+    clear: both; margin-left: auto; margin-right: auto;
+}
+
+#browser-container {
+    position: absolute;
+    top: 0px; left: 0px;
+    margin: 0;
+    display: none;
+}
+.arrow, .arrow img { display: none; }
+
+.nohand { cursor: pointer; }
