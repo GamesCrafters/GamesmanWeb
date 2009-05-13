@@ -51,11 +51,9 @@ function createboard(val) {
     }
     
     /* Randomly press buttons */
-    clicked = 0;
     for (var row = 0; row < height; row++) {
         for (var col = 0; col < width; col++) {
             if (Math.random() > 0.5) {
-                clicked++;
                 if (defaultBoard[row][col] == EMPTY) {
                     defaultBoard[row][col] = FILLED;
                 } else {
