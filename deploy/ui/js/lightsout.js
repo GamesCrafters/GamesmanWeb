@@ -15,6 +15,7 @@ var height = 4;
 
 // used for coloring the table cells
 var moveValueClasses = ['lose-move', 'tie-move', 'win-move'];
+var moveValueNames = ['lose', 'tie', 'win'];
 
 // other state
 var nextMoves = [];
@@ -95,13 +96,24 @@ function createboard(val) {
     currentBoard = defaultBoard;
    
     var gametable = document.getElementById("gametable"); 
+    
+    var on_image = document.createElement("img");
+    on_image.src = "images/lightsout-on.png";
+    var off_image = document.createElement("img");
+    off_image.src = "images/lightsout-off.png";
+    
     for(var row=0;row<height;row++) {
         var htmlrow = document.createElement("tr");
         gametable.appendChild(htmlrow);
         for(var col=0;col<width;col++) {
             var htmlcell = document.createElement("td");
             htmlcell.setAttribute("id", "cell-"+row+"-"+col);
-            htmlcell.appendChild(document.createTextNode(piecechars[defaultBoard[row][col]]));
+            if (defaultBoard[row][col] == 'X') {
+                htmlcell.appendChild(on_image.cloneNode(true));
+            } else {
+                htmlcell.appendChild(off_image.cloneNode(true));
+            }
+            //htmlcell.appendChild(document.createTextNode(piecechars[defaultBoard[row][col]]));
             htmlrow.appendChild(htmlcell);
             // what happens when you click a table cell
             $('#cell-'+row+'-'+col).click(function(row, col){
@@ -113,6 +125,52 @@ function createboard(val) {
 							
                         }
                     }
+                }
+            }(row, col));
+            $('#cell-'+row+'-'+col).mousedown(function(row, col) {
+                return function() {
+                    var new_url = "images/lightsout-"
+                    if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('on') != -1) {
+                        new_url += "on-";
+                    } else {
+                        new_url += "off-";
+                    }
+                    
+                    new_url += "pressed";
+                    
+                    if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('win') != -1) {
+                        new_url += "-win.png";
+                    } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('tie') != -1) {
+                        new_url += "-tie.png";
+                    } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('lose') != -1) {
+                        new_url += "-lose.png";
+                    } else {
+                        new_url += ".png";
+                    }
+                    
+                    $('#cell-'+row+'-'+col + ' img')[0].src = new_url;
+                }
+            }(row, col));
+            $('#cell-'+row+'-'+col).mouseup(function(row, col) {
+                return function() {
+                    var new_url = "images/lightsout-"
+                    if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('on') != -1) {
+                        new_url += "on";
+                    } else {
+                        new_url += "off";
+                    }
+                    
+                    if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('win') != -1) {
+                        new_url += "-win.png";
+                    } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('tie') != -1) {
+                        new_url += "-tie.png";
+                    } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('lose') != -1) {
+                        new_url += "-lose.png";
+                    } else {
+                        new_url += ".png";
+                    }
+                    
+                    $('#cell-'+row+'-'+col + ' img')[0].src = new_url;
                 }
             }(row, col));
         }
@@ -148,7 +206,28 @@ function onExecutingMove(moveInfo){
                 s = EMPTY;
             }
             currentBoard[row][col] = s;
-            $('#cell-'+row+'-'+col).text(piecechars[currentBoard[row][col]]);
+            if (currentBoard[row][col] == 'X') {
+                if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('win') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-on-win.png";
+                } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('tie') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-on-tie.png";
+                } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('lose') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-on-lose.png";
+                } else {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-on.png";
+                }
+            } else {
+                if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('win') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-off-win.png";
+                } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('tie') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-off-tie.png";
+                } else if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('lose') != -1) {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-off-lose.png";
+                } else {
+                    $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-off.png";
+                }
+            }
+            //$('#cell-'+row+'-'+col).text(piecechars[currentBoard[row][col]]);
         }
     }
 }
@@ -173,8 +252,11 @@ function updateMoveValues(nextMoves){
         //row = nextMoves[i].move;
         //col = 0;
         
+        $('#cell-'+row+'-'+col + ' img')[0].src = $('#cell-'+row+'-'+col + ' img')[0].src.split('.')[0] 
+                                                    + '-' + moveValueNames[nextMoves[i].value-1] + '.png';
+                                                    
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
-        $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
+        //  $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
     }
 }
 
@@ -183,8 +265,14 @@ function clearMoveValues(){
     // clear background color
     for(row=0;row<height;row++) {
         for(col=0;col<width;col++) {
+            if ($('#cell-'+row+'-'+col + ' img')[0].src.indexOf('on') != -1) {
+                $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-on.png";
+            } else {
+                $('#cell-'+row+'-'+col + ' img')[0].src = "images/lightsout-off.png";
+            }
+            
             // resets the css classes on this table cell
-            $('#cell-'+row+'-'+col).removeClass();
+            //$('#cell-'+row+'-'+col).removeClass();
         }
     }
 }
