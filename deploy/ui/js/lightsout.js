@@ -252,8 +252,8 @@ function updateMoveValues(nextMoves){
         //row = nextMoves[i].move;
         //col = 0;
         
-        $('#cell-'+row+'-'+col + ' img')[0].src = $('#cell-'+row+'-'+col + ' img')[0].src.split('.')[0] 
-                                                    + '-' + moveValueNames[nextMoves[i].value-1] + '.png';
+        $('#cell-'+row+'-'+col + ' img')[0].src = $('#cell-'+row+'-'+col + ' img')[0].src.substr(0, 
+            $('#cell-'+row+'-'+col + ' img')[0].src.lastIndexOf('.')) + '-' + moveValueNames[nextMoves[i].value-1] + '.png';
                                                     
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
         //  $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
