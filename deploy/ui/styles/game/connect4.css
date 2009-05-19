@@ -6,10 +6,6 @@
 .connect-four-grid td[colspan] { vertical-align: top }
 .connect-four-grid td img { z-index: 3; position: relative }
 
-.connect-four-grid td.win { outline: medium solid #0f0 }
-.connect-four-grid td.tie { outline: medium solid #ff0 }
-.connect-four-grid td.lose { outline: medium solid #c00 }
-
 .piece { z-index: 2; position: absolute }
 
 /* Testing aliases */
@@ -20,3 +16,8 @@
 .connect4-grid td { margin: 0; padding: 0; line-height: 0 }
 .connect4-grid td[colspan] { vertical-align: top }
 .connect4-grid td img { z-index: 3; position: relative }
+
+.connect4-grid .win-marker { background: url("../../images/game/connect4/win-marker.png") no-repeat top center }
+.connect4-grid .tie-marker { background: url("../../images/game/connect4/tie-marker.png") no-repeat top center }
+.connect4-grid .lose-marker { background: url("../../images/game/connect4/lose-marker.png") no-repeat top center }
+

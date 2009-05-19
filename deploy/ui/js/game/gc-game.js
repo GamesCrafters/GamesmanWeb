@@ -186,6 +186,16 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
  * should call this method.
  */
 GCWeb.Game.prototype.start = function() {
+  this.showingMoveValues = $("#options-move-values:checked").length > 0;
+  var self = this;
+  $("#options-move-values").click(function() {
+    self.showingMoveValues = $("#options-move-values:checked").length > 0;
+	if (self.showingMoveValues) {
+		self.showMoveValues();
+	} else {
+		self.hideMoveValues();
+	}
+  });
   // Prevent the user from making any moves (move-making will be restored
   // in the callback from getNextMoveValues).
   this.handlingDoMove = true;
@@ -326,7 +336,10 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   // Request the next move values.
   if (!this.local) {
     this.updatePrediction(moveValue);
-    this.getNextMoveValues(moveValue.board);
+    var nextMoves = this.getNextMoveValues(moveValue.board);
+	if (this.showingMoveValues) {
+		this.showMoveValues(nextMoves);
+	}
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
     if (this.nextMoves.length == 0) {
@@ -392,6 +405,9 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
         self.handleGameOver();
       } else {
         self.fireEvent("nextvaluesreceived", self.nextMoves);
+		if (self.showingMoveValues) {
+		  self.showMoveValues(self.nextMoves);
+		}
         // Finally, handle pending doMove calls
         self._dequeueDoMoveRequest();
       }
@@ -484,19 +500,14 @@ GCWeb.Game.prototype.getDefaultBoardString;
  * Displays the win-loss-tie values of the next moves so that the player may
  * view the most up-to-date view.
  */
-GCWeb.Game.prototype.showMoveValues;
+GCWeb.Game.prototype.showMoveValues = function() { };
 
 /**
  * Hides the win-loss-tie values of the next moves. If they are already hidden,
  * this method does nothing.
  */
-GCWeb.Game.prototype.hideMoveValues;
+GCWeb.Game.prototype.hideMoveValues = function() { };
 
-/**
- * Updates the move values if they are currently displayed.
- * If they are currently hidden, the values should not be displayed.
- */
-GCWeb.Game.prototype.updateMoveValues;
 
 /**
  * Removes a callback function so that it will not be invoked when the

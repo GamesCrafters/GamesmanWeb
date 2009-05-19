@@ -80,6 +80,7 @@ String uifile = gameDictionary.getUI(internalName);
     <script type="text/javascript">
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
+        //$("#options-predictions").
 	  });
 	</script>
   </head> 

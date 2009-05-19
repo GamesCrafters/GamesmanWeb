@@ -273,9 +273,10 @@ public class GameDictionary {
     public synchronized boolean getIsVisible(String internalName) {
         boolean isvisible = false;
         if (gameInfo.containsKey(internalName)) {
-            isvisible = gameInfo.get(internalName).visible;
+            // I commented this out because GameInfo didn't have a 'visible' field.
+            isvisible = true;//gameInfo.get(internalName).visible;
         }
-        return ispuzzle;
+        return isvisible;
     }    
     public synchronized String getUI(String internalName) {
         String uifile = internalName;
