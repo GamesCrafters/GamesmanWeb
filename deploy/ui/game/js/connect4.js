@@ -334,7 +334,7 @@ function ConnectFourPiece(game, player) {
       imgSrc = "blank-piece.png";
       break;
   }
-  imgSrc = "images/game/" + ConnectFour.NAME + "/" + imgSrc;
+  imgSrc = "game/images/" + ConnectFour.NAME + "/" + imgSrc;
   GCWeb.Piece.prototype.constructor.call(this, game, player, {image: imgSrc});
   var column = parseInt(game.width / 2);
   this.resize();
