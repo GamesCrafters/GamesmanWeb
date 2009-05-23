@@ -188,7 +188,7 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
 GCWeb.Game.prototype.start = function() {
   this.showingMoveValues = $("#options-move-values:checked").length > 0;
   var self = this;
-  $("#options-move-values").click(function() {
+  $("#option-move-values").click(function() {
     self.showingMoveValues = $("#options-move-values:checked").length > 0;
 	if (self.showingMoveValues) {
 		self.showMoveValues();
@@ -500,7 +500,7 @@ GCWeb.Game.prototype.getDefaultBoardString;
  * Displays the win-loss-tie values of the next moves so that the player may
  * view the most up-to-date view.
  */
-GCWeb.Game.prototype.showMoveValues = function() { GCWeb.alert("showMoveValues()"); };
+GCWeb.Game.prototype.showMoveValues = function() { console.log("showMoveValues()"); };
 
 /**
  * Hides the win-loss-tie values of the next moves. If they are already hidden,
