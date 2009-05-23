@@ -308,14 +308,14 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
 
 ConnectFour.prototype.showMoveValues = function() {
   for (var i = 0; i < this.nextMoves.length; i++) {
-    this.board.find("tr[colspan] + tr td")
-	    .removeClass().addClass("win-marker");
+    this.board.find("td[colspan] + td")
+	     .removeClass().addClass("win-marker");
   }
 };
 
 ConnectFour.prototype.hideMoveValues = function() {
   for (var i = 0; i < this.nextMoves.length; i++) {
-    this.board.find("tr[colspan] + tr td").removeClass();
+    this.board.find("td[colspan] + td").removeClass();
   }
 };
 
