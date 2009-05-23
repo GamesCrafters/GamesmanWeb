@@ -307,6 +307,7 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
 };
 
 ConnectFour.prototype.showMoveValues = function() {
+  console.log(this.nextMoves);
   for (var i = 0; i < this.nextMoves.length; i++) {
     this.board.find("td[colspan] + td")
 	     .removeClass().addClass("win-marker");
