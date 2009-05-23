@@ -186,10 +186,10 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
  * should call this method.
  */
 GCWeb.Game.prototype.start = function() {
-  this.showingMoveValues = $("#options-move-values:checked").length > 0;
   var self = this;
+  this.showingMoveValues = $("#option-move-values:checked").length > 0;
   $("#option-move-values").click(function() {
-    self.showingMoveValues = $("#options-move-values:checked").length > 0;
+    self.showingMoveValues = $("#option-move-values:checked").length > 0;
 	if (self.showingMoveValues) {
 		self.showMoveValues();
 	} else {
