@@ -307,7 +307,6 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
 };
 
 ConnectFour.prototype.showMoveValues = function() {
-  GCWeb.alert("Showing move values");
   for (var i = 0; i < this.nextMoves.length; i++) {
     this.board.find("tr[colspan] + tr td")
 	    .removeClass().addClass("win-marker");

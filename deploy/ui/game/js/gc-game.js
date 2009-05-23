@@ -336,10 +336,7 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   // Request the next move values.
   if (!this.local) {
     this.updatePrediction(moveValue);
-    var nextMoves = this.getNextMoveValues(moveValue.board);
-	if (this.showingMoveValues) {
-		this.showMoveValues(nextMoves);
-	}
+    this.getNextMoveValues(moveValue.board);
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
     if (this.nextMoves.length == 0) {
@@ -500,7 +497,7 @@ GCWeb.Game.prototype.getDefaultBoardString;
  * Displays the win-loss-tie values of the next moves so that the player may
  * view the most up-to-date view.
  */
-GCWeb.Game.prototype.showMoveValues = function() { console.log("showMoveValues()"); };
+GCWeb.Game.prototype.showMoveValues = function() { };
 
 /**
  * Hides the win-loss-tie values of the next moves. If they are already hidden,
