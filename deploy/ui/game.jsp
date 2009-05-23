@@ -94,8 +94,8 @@ String uifile = gameDictionary.getUI(internalName);
     <div id="container"> 
       <!-- game commands --> 
       <div class="nav">
-        <ul> 
-          <li><a href="">Change Options</li>
+        <ul>
+          <li><a href="#">Change Options</a></li>
           <li><a href="javascript:location.reload();">Reset Game</a></li>
         </ul>
         <h2>Display Options</h2>
@@ -116,7 +116,9 @@ String uifile = gameDictionary.getUI(internalName);
           <h1>Move-value Key</h1>
           <table>
             <tr>
-              <td><img src="images/win.png" alt="Green"></td><td><img src="images/tie.png" alt="Yellow"></td><td><img src="images/lose.png" alt="Red"></td>
+              <td><img src="images/win.png" alt="Green"></td>
+              <td><img src="images/tie.png" alt="Yellow"></td>
+              <td><img src="images/lose.png" alt="Red"></td>
             </tr>
             <tr>
               <td>winning move</td><td>cause a tie</td><td>losing move</td>

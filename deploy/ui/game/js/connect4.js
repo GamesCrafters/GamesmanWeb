@@ -22,11 +22,11 @@ ConnectFour.DEFAULT_WIDTH = 7;
 ConnectFour.DEFAULT_IN_A_ROW = 4;
 ConnectFour.DEFAULT_SIZE = 500;
 ConnectFour.GRID_CLASS_NAME = ConnectFour.NAME + "-grid";
-ConnectFour.TOP_TILE_IMAGE = "images/game/" + ConnectFour.NAME + "/top-tile.png";
-ConnectFour.TILE_IMAGE = "images/game/" + ConnectFour.NAME + "/tile.png";
-ConnectFour.WIN_MARKER_IMAGE = "images/game/" + ConnectFour.NAME + "/win-marker.png";
-ConnectFour.TIE_MARKER_IMAGE = "images/game/" + ConnectFour.NAME + "/tie-marker.png";
-ConnectFour.LOSE_MARKER_IMAGE = "images/game/" + ConnectFour.NAME + "/lose-marker.png";
+ConnectFour.TOP_TILE_IMAGE = "game/images/" + ConnectFour.NAME + "/top-tile.png";
+ConnectFour.TILE_IMAGE = "game/images/" + ConnectFour.NAME + "/tile.png";
+ConnectFour.WIN_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/win-marker.png";
+ConnectFour.TIE_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/tie-marker.png";
+ConnectFour.LOSE_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/lose-marker.png";
 
 ConnectFour.prototype.constructor = function(config) {
   config = config || {};

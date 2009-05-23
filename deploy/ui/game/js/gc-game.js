@@ -500,7 +500,7 @@ GCWeb.Game.prototype.getDefaultBoardString;
  * Displays the win-loss-tie values of the next moves so that the player may
  * view the most up-to-date view.
  */
-GCWeb.Game.prototype.showMoveValues = function() { };
+GCWeb.Game.prototype.showMoveValues = function() { GCWeb.alert("showMoveValues()"); };
 
 /**
  * Hides the win-loss-tie values of the next moves. If they are already hidden,
