@@ -72,11 +72,11 @@ String uifile = gameDictionary.getUI(internalName);
     </style>
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/game/gcweb.css">
-    <link rel="stylesheet" href="styles/game/<%= uifile %>.css">
-    <script type="text/javascript" src="js/game/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="js/game/gc-game.js"></script>
-    <script type="text/javascript" src="js/game/<%= uifile %>.js"></script>
+    <link rel="stylesheet" href="game/styles/gcweb.css">
+    <link rel="stylesheet" href="game/styles/<%= uifile %>.css">
+    <script type="text/javascript" src="game/js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="game/js/gc-game.js"></script>
+    <script type="text/javascript" src="game/js/<%= uifile %>.js"></script>
     <script type="text/javascript">
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
