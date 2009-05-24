@@ -80,14 +80,14 @@ String uifile = gameDictionary.getUI(internalName);
     <script type="text/javascript">
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
-	    if ($("#options-predictions:checked").length == 0) {
-		    $("#predictions").hide();
+	    if ($("#options-prediction:checked").length == 0) {
+		    $("#prediction").hide();
 	    }
-        $("#options-predictions").click(function() {
-        	if ($("#options-predictions:checked").length > 0) {
-                $("#predictions").slideDown(250);
+        $("#options-prediction").click(function() {
+        	if ($("#options-prediction:checked").length > 0) {
+                $("#prediction").slideDown(250);
             } else {
-            	$("#predictions").slideUp(250);
+            	$("#prediction").slideUp(250);
             }
         });
 	  });
@@ -110,7 +110,7 @@ String uifile = gameDictionary.getUI(internalName);
         <h2>Display Options</h2>
         <ul id="options">
           <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
-          <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
+          <li><label><input type="checkbox" id="option-prediction"> Prediction</label></li>
         </ul>
       </div> 
       <div id="main">

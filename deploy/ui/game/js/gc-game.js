@@ -477,6 +477,7 @@ GCWeb.Game.prototype.updatePrediction = function(moveValue) {
   var text = (moveValue.remoteness !== undefined) ?
 	moveValue.value + " in " + moveValue.remoteness + " moves" :
     "Prediction not available.";
+  $("#prediction span").text(text);
 };
 
 /**
