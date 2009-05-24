@@ -1,11 +1,16 @@
 <script type="text/javascript">
   $(function() {
+    function getInputInt(input) {
+      var raw = parseInt(input.val());
+      return raw > 0 ? raw : 1;
+    }
+	
 	var form = $("#connect4-options");
     form.find("button").click(function() {
       var config = {
-        width: parseInt(form.find("[name=width]").val()),
-        height: parseInt(form.find("[name=width]").val()),
-        options: { pieces: parseInt(form.find("[name=pieces]").val()) }
+        width: getInputInt(form.find("[name=width]")),
+        height: getInputInt(form.find("[name=height]")),
+        options: { pieces: getInputInt(form.find("[name=pieces]")) }
       }
 
       var game = new ConnectFour(config);
@@ -21,7 +26,7 @@
         <td><input name="height" size="3" value="4"></td>
         <td></td></tr>
     <tr><td>Columns:</td>
-        <td><input name="width" size="3" value="4"></td>
+        <td><input name="width" size="3" value="5"></td>
         <td></td></tr>
     <tr><td>In a Row:</td>
         <td><input name="pieces" size="3" value="4"></td>

@@ -307,17 +307,19 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
 };
 
 ConnectFour.prototype.showMoveValues = function() {
-  console.log(this.nextMoves);
+  var topGameRow = this.board.find("tr:nth-child(2)");
+  topGameRow.children("td").removeClass();
   for (var i = 0; i < this.nextMoves.length; i++) {
-    this.board.find("td[colspan] + td")
-	     .removeClass().addClass("win-marker");
+    var move = this.nextMoves[i];
+    if (move.value && move.move) {
+      topGameRow.children("td:nth-child(" + move.move + ")")
+        .addClass(move.value + "-marker");
+    }
   }
 };
 
 ConnectFour.prototype.hideMoveValues = function() {
-  for (var i = 0; i < this.nextMoves.length; i++) {
-    this.board.find("td[colspan] + td").removeClass();
-  }
+  this.board.find("tr:nth-child(2) td").removeClass();
 };
 
 /** Represents a Connect Four piece. */
