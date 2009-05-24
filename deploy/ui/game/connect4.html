@@ -1,11 +1,24 @@
 <script type="text/javascript">
   $(function() {
-    var config = {
-      width: 3, height: 3,
-      options: {pieces: 3}
-    }
-    var game = new ConnectFour(config);
-    game.board.appendTo("#game");
-    game.start();
+	var form = $("#connect4-options");
+    form.find("button").click(function() {
+      var config = {
+        width: parseInt(form.find("[name=width]").val()),
+        height: parseInt(form.find("[name=width]").val()),
+        options: { pieces: parseInt(form.find("[name=pieces]").val()) }
+      }
+
+      var game = new ConnectFour(config);
+      $("#game").empty().append(game.board);
+      game.start();
+    });
   });
 </script>
+
+<div class="connect4-options">
+  <label>Rows: <input name="height" size="3" value="4"></label>
+  <label>Columns: <input name="width" size="3" value="5"></label><br>
+  <label>In a Row: <input name="pieces" size="3" value="4"></label>
+  (the number of pieces in a row needed to win)<br>
+  <button type="button">Play!</button>
+</div>
