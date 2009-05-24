@@ -321,7 +321,7 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
     }
   }
   
-  if ((moveValue == null) || !this.isValidMove(moveValue)) {
+  if (moveValue == null) {
     this.fireEvent("invalidmove");
     this._clearDoMoveRequests();
     return false;
@@ -333,7 +333,14 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   
   // Request the next move values.
   if (!this.local) {
-    this.updatePrediction(moveValue);
+	// Reverse the move value so that it's from the next player's perspective.
+	var reversed = { value: moveValue.value, remoteness: moveValue.remoteness };
+	if (reversed.value == "win") {
+	  reversed.value = "lose";
+	} else if (reversed.value == "lose") {
+      reversed.value = "win";
+	}
+    this.updatePrediction(reversed);
     this.getNextMoveValues(moveValue.board);
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
@@ -465,20 +472,6 @@ GCWeb.Game.prototype.fireEvent = function(name) {
     }
   }
 };
-
-/** Returns true if there is an entry in the nextMoves list that
- * has the specified move as a property value.
- * @param move the move whose validity to check. It is a move-value object
- *        that contains the move-delta, board string, value, etc...
- */
-GCWeb.Game.prototype.isValidMove = function(moveValue) {
-  for (var i = 0; i < this.nextMoves.length; i++) {
-    if (moveValue == this.nextMoves[i].move) {
-      return true;
-    }
-  }
-  return false;
-}
 
 GCWeb.Game.prototype.updatePrediction = function(moveValue) {
   var text = (moveValue.remoteness !== undefined) ?
