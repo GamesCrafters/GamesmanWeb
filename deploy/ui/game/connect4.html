@@ -15,10 +15,17 @@
   });
 </script>
 
-<div class="connect4-options">
-  <label>Rows: <input name="height" size="3" value="4"></label>
-  <label>Columns: <input name="width" size="3" value="5"></label><br>
-  <label>In a Row: <input name="pieces" size="3" value="4"></label>
-  (the number of pieces in a row needed to win)<br>
+<div id="connect4-options">
+  <table>
+    <tr><td>Rows:</td>
+        <td><input name="height" size="3" value="4"></td>
+        <td></td></tr>
+    <tr><td>Columns:</td>
+        <td><input name="width" size="3" value="4"></td>
+        <td></td></tr>
+    <tr><td>In a Row:</td>
+        <td><input name="pieces" size="3" value="4"></td>
+        <td>(the number of pieces in a row needed to win)</td></tr>
+  </table>
   <button type="button">Play!</button>
 </div>
