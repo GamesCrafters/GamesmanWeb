@@ -311,8 +311,9 @@ ConnectFour.prototype.showMoveValues = function() {
   topGameRow.children("td").removeClass();
   for (var i = 0; i < this.nextMoves.length; i++) {
     var move = this.nextMoves[i];
-    if (move.value && move.move) {
-      topGameRow.children("td:nth-child(" + move.move + ")")
+    if ((move.value !== undefined) && (move.move !== undefined)) {
+      var cssColumn = parseInt(move.move) + 1;
+      topGameRow.children("td:nth-child(" + cssColumn + ")")
         .addClass(move.value + "-marker");
     }
   }

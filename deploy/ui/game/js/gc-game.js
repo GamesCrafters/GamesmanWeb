@@ -210,9 +210,7 @@ GCWeb.Game.prototype.start = function() {
       if (data.status == "ok") {
         var moveValue = data.response;
         self.moveHistory.push(moveValue);
-		
 		self.updatePrediction(moveValue);
-		
         self.getNextMoveValues(moveValue.board);
       } else {
         GCWeb.alert("The GamesCrafters server could not handle the request (" + data.status + ").");
@@ -364,7 +362,7 @@ GCWeb.Game.prototype.handleGameOver = function() {
       prompt = this.player.name + " won the game!";
       break;
     case "lose":
-      prompt = this.player.name + "lost the game.";
+      prompt = this.player.name + " lost the game.";
       break;
     case "tie":
       prompt = "The game has ended in a tie!";
@@ -397,14 +395,16 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
     if (data.status == "ok") {
       var moveValues = data.response;
       self.nextMoves = moveValues;
+      
+      if (self.showingMoveValues) {
+		  self.showMoveValues(self.nextMoves);
+      }
+      
       // If there are no more next moves, the game is over.
       if (self.nextMoves.length == 0) {
         self.handleGameOver();
       } else {
         self.fireEvent("nextvaluesreceived", self.nextMoves);
-		if (self.showingMoveValues) {
-		  self.showMoveValues(self.nextMoves);
-		}
         // Finally, handle pending doMove calls
         self._dequeueDoMoveRequest();
       }
@@ -471,10 +471,9 @@ GCWeb.Game.prototype.fireEvent = function(name) {
  * @param move the move whose validity to check. It is a move-value object
  *        that contains the move-delta, board string, value, etc...
  */
-GCWeb.Game.prototype.isValidMove = function(move) {
-  return true;  // for now
+GCWeb.Game.prototype.isValidMove = function(moveValue) {
   for (var i = 0; i < this.nextMoves.length; i++) {
-    if (move == this.nextMoves[i].move) {
+    if (moveValue == this.nextMoves[i].move) {
       return true;
     }
   }
@@ -482,10 +481,9 @@ GCWeb.Game.prototype.isValidMove = function(move) {
 }
 
 GCWeb.Game.prototype.updatePrediction = function(moveValue) {
-  if (moveValue.remoteness !== undefined) {
-    $("#prediction span").text(
-      moveValue.value + " in " + moveValue.remoteness + " moves");
-  }
+  var text = (moveValue.remoteness !== undefined) ?
+	moveValue.value + " in " + moveValue.remoteness + " moves" :
+    "Prediction not available.";
 };
 
 /**

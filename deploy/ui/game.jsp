@@ -81,13 +81,13 @@ String uifile = gameDictionary.getUI(internalName);
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
 	    if ($("#options-predictions:checked").length == 0) {
-		    $("#options-predictions").hide();
+		    $("#predictions").hide();
 	    }
         $("#options-predictions").click(function() {
         	if ($("#options-predictions:checked").length > 0) {
-                $("#options-predictions").slideDown(250);
+                $("#predictions").slideDown(250);
             } else {
-            	$("#options-predictions").slideUp(250);
+            	$("#predictions").slideUp(250);
             }
         });
 	  });
