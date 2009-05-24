@@ -80,11 +80,11 @@ String uifile = gameDictionary.getUI(internalName);
     <script type="text/javascript">
 	  $(document).ready(function() {
 	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
-	    if ($("#options-prediction:checked").length == 0) {
+	    if ($("#option-prediction:checked").length == 0) {
 		    $("#prediction").hide();
 	    }
-        $("#options-prediction").click(function() {
-        	if ($("#options-prediction:checked").length > 0) {
+        $("#option-prediction").click(function() {
+        	if ($("#option-prediction:checked").length > 0) {
                 $("#prediction").slideDown(250);
             } else {
             	$("#prediction").slideUp(250);
