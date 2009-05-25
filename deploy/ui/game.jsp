@@ -105,7 +105,7 @@ String uifile = gameDictionary.getUI(internalName);
       <!-- game commands --> 
       <div class="nav">
         <ul>
-          <li><a href="#">Change Options</a></li>
+          <li><a href="javascript:location.reload();">Change Options</a></li>
           <li><a href="javascript:location.reload();">Reset Game</a></li>
         </ul>
         <h2>Display Options</h2>
