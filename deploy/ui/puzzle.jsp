@@ -76,6 +76,7 @@ String uifile = gameDictionary.getUI(internalName);
     <![endif]-->
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/<%= uifile %>.css">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
     <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>

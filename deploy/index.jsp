@@ -14,9 +14,10 @@ public void jspInit() {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="description" content="Gamesman Web is a web-based remote Gamesman database.">
+        <meta name="description" content="Gamesman Web is a web-based remote Gamesman database.">
 	<title>Gamesman Web</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="ui/styles/index.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="ui/styles/index.css" />
+        <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
 	<script src="ui/js/jquery.js" type="text/javascript"></script>
 	<script src="ui/js/index.js" type="text/javascript"></script>
 </head>

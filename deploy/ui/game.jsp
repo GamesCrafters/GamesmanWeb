@@ -74,6 +74,7 @@ String uifile = gameDictionary.getUI(internalName);
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="game/styles/gcweb.css">
     <link rel="stylesheet" href="game/styles/<%= uifile %>.css">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
     <script type="text/javascript" src="game/js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="game/js/gc-game.js"></script>
     <script type="text/javascript" src="game/js/<%= uifile %>.js"></script>
