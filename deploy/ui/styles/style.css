@@ -18,9 +18,9 @@ body > .header h1 {
 #container { padding-left: 10em; padding-right: 15em }
 .nav, #main, #moves { float: left; padding-bottom: 1em }
 #main { width: 100%; padding-left: 1.5em; padding-right: 1.5em; margin-right: -3em }
-#moves { margin: 1em 0 }
+#moves { margin: 1em 0; font-size: 0.85em }
 
-.nav { left: -10em; width: 9.9em; padding: 2.5em 0 3em 0.1em; position: relative }   
+.nav { font-size: 0.85em; left: -10em; width: 9.9em; padding: 2.5em 0 3em 0.1em; position: relative }   
 .nav h2 { margin-top: 0.5em } 
 .nav > ul { list-style: none; margin: 0 0.5em 0 1em }
 .nav h2, #moves h1 {
@@ -51,7 +51,7 @@ body > .header h1 {
 #nr-moves { float: right; margin: 2px; padding: 0.5em; font-size: 1.5em; text-align: left}
 
 #move-value-key { margin-top: 0.5em }
-#move-value-key table { margin-left: 0.5em; list-style: none; font-size: 0.9em; text-align: center; width: 100% }
+#move-value-key table { margin-left: 0.5em; list-style: none; text-align: center; width: 100% }
 #move-value-key td { width: 33% }
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }
 
