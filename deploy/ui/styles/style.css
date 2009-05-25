@@ -19,7 +19,7 @@ body > .header h1 {
 .nav, #main, #moves { float: left; padding-bottom: 1em }
 #main { width: 100%; padding-left: 1.5em; padding-right: 1.5em; margin-right: -3em }
 #moves { margin: 1em 0 }
-.nav *, #moves * { font-size: 0.85em }
+.nav > *, #moves > * { font-size: 0.85em }
 
 .nav { left: -10em; width: 9.9em; padding: 2.5em 0 3em 0.1em; position: relative }
 .nav h2 { margin-top: 0.5em } 
