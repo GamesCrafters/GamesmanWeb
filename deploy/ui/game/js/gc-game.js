@@ -215,7 +215,6 @@ GCWeb.Game.prototype.start = function() {
         if (moveValue.value !== undefined) {
           $("#option-move-values").removeAttr("disabled");
         } else {
-          GCWeb.alert("Disabling move values");
           $("#option-move-values").attr("disabled", "disabled");
         }
 		self.updatePrediction(moveValue);
