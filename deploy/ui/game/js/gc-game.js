@@ -210,6 +210,13 @@ GCWeb.Game.prototype.start = function() {
       if (data.status == "ok") {
         var moveValue = data.response;
         self.moveHistory.push(moveValue);
+        
+        // Check if the value (win/lose/tie) information is available.
+        if (moveValue.value !== undefined) {
+          $("#option-move-values").removeAttr("disabled");
+        } else {
+          $("#option-move-values").attr("disabled", "disabled");
+        }
 		self.updatePrediction(moveValue);
         self.getNextMoveValues(moveValue.board);
       } else {

@@ -18,9 +18,10 @@ body > .header h1 {
 #container { padding-left: 10em; padding-right: 15em }
 .nav, #main, #moves { float: left; padding-bottom: 1em }
 #main { width: 100%; padding-left: 1.5em; padding-right: 1.5em; margin-right: -3em }
-#moves { margin: 1em 0; font-size: 0.85em }
+#moves { margin: 1em 0 }
+.nav *, #moves * { font-size: 0.85em }
 
-.nav { font-size: 0.85em; left: -10em; width: 9.9em; padding: 2.5em 0 3em 0.1em; position: relative }   
+.nav { left: -10em; width: 9.9em; padding: 2.5em 0 3em 0.1em; position: relative }
 .nav h2 { margin-top: 0.5em } 
 .nav > ul { list-style: none; margin: 0 0.5em 0 1em }
 .nav h2, #moves h1 {
