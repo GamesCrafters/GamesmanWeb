@@ -40,6 +40,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private JButton resetView, scramble, resetPuzzle;
 	private JTextField turnHistoryField;
 
+	
 	private String puzzle_class = "edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid";
 	
 	private ColorOption bg_color = new ColorOption("bg_color", false, Color.GRAY);
