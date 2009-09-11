@@ -35,8 +35,9 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private boolean random_faces = true;
 	private boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = true; 
-	private int boardsize = 5;
-	private int goalremoteness = 10;
+	private static final boolean find_best_subcomponent = true;
+	private int boardsize = 8;
+	private int goalremoteness = 40;
 	public static int acheivable;
 	public static Solver solved_map;
 	public MyShape cube;
@@ -181,21 +182,25 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	}
 	
 	private void make_new_puzzle() {
-		cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+		cubefaces = new CubeGen(random_faces, find_best_start_end_default, find_best_subcomponent, boardsize);
 		
 		if (USE_JAVA_SOLVER)
 			solved_map = new Solver(cubefaces);
-		while(!(solved_map.move_map.containsKey(solved_map.end[0] * boardsize*boardsize*4 + solved_map.end[1] * boardsize*2 + solved_map.end[2]) && solved_map.move_map.containsKey(solved_map.start[0] * boardsize*boardsize*4 + solved_map.start[1]
+		/*while(!(solved_map.move_map.containsKey(solved_map.end[0] * boardsize*boardsize*4 + solved_map.end[1] * boardsize*2 + solved_map.end[2]) && solved_map.move_map.containsKey(solved_map.start[0] * boardsize*boardsize*4 + solved_map.start[1]
 			* boardsize*2 + solved_map.start[2]))) {
 			System.out.println("failed");
-			cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+			cubefaces = new CubeGen(random_faces, find_best_start_end_default, find_best_subcomponent, boardsize);
 			solved_map = new Solver(cubefaces);
-			
 		}
+		*/
 		int tries = 0;
+		int maxseen =0;
 		while (solved_map.getRemoteness(solved_map.start)/2 < goalremoteness) {
-				System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start) );
-				cubefaces = new CubeGen(random_faces, find_best_start_end_default, boardsize);
+			if (maxseen < solved_map.getRemoteness(solved_map.start)/2) {
+				maxseen = solved_map.getRemoteness(solved_map.start)/2;
+			}
+				System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start)/2 + " " + maxseen);
+				cubefaces = new CubeGen(random_faces, find_best_start_end_default, find_best_subcomponent, boardsize);
 				solved_map = new Solver(cubefaces);
 				tries++;
 		}

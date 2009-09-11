@@ -14,6 +14,7 @@ class Solver {
 
 	private LinkedList<Node> queue;
 	public HashMap<Integer, Node> move_map;
+	public boolean[][][] seen;
 
 	private class Node {
 		public int[] board; // the current board [x, y, z]
@@ -77,16 +78,29 @@ class Solver {
 
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube) {
+		
+		System.out.println("Solving");
+		
 		int boardsize = cube.boardsize;
 		
 		blocked_xz_face = cube.Blue;
 		blocked_xy_face = cube.Red;
 		blocked_yz_face = cube.White;
 		
+		seen = new boolean[cube.boardsize][cube.boardsize][cube.boardsize];
+		int a=0, b=0, c=0;
+		for (a =0; a < boardsize; a++) {
+			for (b=0; b < boardsize; b++) {
+				for (c=0; c < boardsize; c++) {
+					seen[a][b][c] =false;
+				}
+			}
+		}
+		
 		start = cube.start;
 		end = cube.end;
-		//int numnodes = (2*cube.boardsize-1)*(2*cube.boardsize-1)*(2*cube.boardsize-1);
-		//HashMap<Node, Boolean> seen_map = new HashMap<Node, Boolean>();
+		
+		
 		
 		move_map = new HashMap<Integer, Node>();
 		queue = new LinkedList<Node>();
@@ -94,56 +108,98 @@ class Solver {
 											// goal remoteness is 0
 		queue.add(goal_node);
 		solvin_thang();
-
+		
 		if (cube.findbest) {
-			int x, y, z, max;
-			max = -2;
-			int bx = 0, by = 0, bz = 0;
-			for (x = 0; x < boardsize; x++) {
-				for (y = 0; y < boardsize; y++) {
-					for (z = 0; z < boardsize; z++) {
-						int[] temp = { 2 * x, 2 * y, 2 * z };
-						if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2
-								* z))
-							if (getRemoteness(temp) > max) {
-								max = getRemoteness(temp);
-								bx = x;
-								by = y;
-								bz = z;
+			int xp, yp, zp;
+			int xbests=0, ybests=0, zbests=0, xbeste=0, ybeste=0, zbeste=0;
+			int maxoverallends = -2;
+			int count=0;
+			for (xp = 0; xp < boardsize; xp++) {
+				for (yp = 0; yp < boardsize; yp++) {
+					for (zp = 0; zp < boardsize; zp++) {
+						if (seen[xp][yp][zp] == true) {
+							continue;
+						} else if (!cube.findbestc) {
+							xp = boardsize;
+							yp = boardsize;
+							zp = boardsize;
+						} else {
+							end = new int[] { 2 * xp, 2 * yp, 2 * zp };
+							count +=1;
+						}
+						int x, y, z, max;
+						max = -2;
+						int bx = 0, by = 0, bz = 0; //stores max remoteness for this start
+						for (x = 0; x < boardsize; x++) {
+							for (y = 0; y < boardsize; y++) {
+								for (z = 0; z < boardsize; z++) {
+									int[] temp = { 2 * x, 2 * y, 2 * z };
+									if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2
+											* z)) {
+										seen[x][y][z] = true;
+										if (getRemoteness(temp) > max) {
+											max = getRemoteness(temp);
+											bx = x;
+											by = y;
+											bz = z;
+										}
+									}
+								}
 							}
+						}
+						end = new int[] { 2 * bx, 2 * by, 2 * bz };
+						move_map = new HashMap<Integer, Node>();
+						queue = new LinkedList<Node>();
+						goal_node = new Node(end, -1); // we initialize at -1 so that the
+						// goal remoteness is 0
+						//We then resolve from here to find the longest possible path
+						queue.add(goal_node);
+						solvin_thang();
+						max = -2;
+						int bpx = 0;
+						int bpy = 0;
+						int bpz = 0;
+						for (x = 0; x < boardsize; x++) {
+							for (y = 0; y < boardsize; y++) {
+								for (z = 0; z < boardsize; z++) {
+									int[] temp = { 2 * x, 2 * y, 2 * z };
+									if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2* z))
+										if (getRemoteness(temp) > max) {
+											max = getRemoteness(temp);
+											bpx = x;
+											bpy = y;
+											bpz = z;
+										}
+								}
+							}
+						}
+						if (max > maxoverallends) {
+							xbests = bx;
+							ybests = by;
+							zbests = bz;
+							xbeste = bpx;
+							ybeste = bpy;
+							zbeste = bpz;
+							maxoverallends = max;
+							//System.out.println("(" + bx+ "," +by +"," + bz+ ") (" + bpx+ "," + bpy + "," + bpz + ")");
+						}
 					}
 				}
 			}
-			end = new int[] { 2 * bx, 2 * by, 2 * bz };
+		
+			end = new int[] { 2 * xbests, 2 * ybests, 2 * zbests };
+			start = new int[] {2 * xbeste, 2 * ybeste, 2 * zbeste};
+			//This start and end is the longest in this piece of the puzzle.
+			cube.start = start;
+			cube.end = end;
 			move_map = new HashMap<Integer, Node>();
 			queue = new LinkedList<Node>();
 			goal_node = new Node(end, -1); // we initialize at -1 so that the
-											// goal remoteness is 0
+												// goal remoteness is 0
 			queue.add(goal_node);
 			solvin_thang();
-			max = 0;
-			bx = 0;
-			by = 0;
-			bz = 0;
-			for (x = 0; x < boardsize; x++) {
-				for (y = 0; y < boardsize; y++) {
-					for (z = 0; z < boardsize; z++) {
-						int[] temp = { 2 * x, 2 * y, 2 * z };
-						if (move_map.containsKey(2 * x * boardsize*boardsize*4 + 2 * y * boardsize*2 + 2
-								* z))
-							if (getRemoteness(temp) > max) {
-								max = getRemoteness(temp);
-								bx = x;
-								by = y;
-								bz = z;
-							}
-					}
-				}
-			}
-			start = new int[] { 2 * bx, 2 * by, 2 * bz };
-
-			cube.start = start;
-			cube.end = end;
+			int[] temp = { 2 * xbeste, 2 * ybeste, 2 * zbeste };
+			System.out.println("Searched " + count + " subcomponents, best remoteness " + maxoverallends/2);
 		}
 
 	}
@@ -244,7 +300,7 @@ class Solver {
 
 	public static void main(String[] args) {
 	
-		CubeGen cube = new CubeGen(false, false,5);
+		CubeGen cube = new CubeGen(false, false, false, 5);
 		Solver test = new Solver(cube);
 		
 	}

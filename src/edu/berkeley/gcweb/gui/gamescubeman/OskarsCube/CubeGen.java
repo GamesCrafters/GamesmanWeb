@@ -6,8 +6,9 @@ import java.util.Random;
 
 public class CubeGen {
 
-	public CubeGen(boolean random, boolean findbest, int boardsize) {
+	public CubeGen(boolean random, boolean findbest, boolean findbestc, int boardsize) {
 		this.findbest = findbest;
+		this.findbestc = findbestc;
 		this.boardsize = boardsize;
 		if (!random) {
 			// set to classic board
@@ -252,6 +253,7 @@ public class CubeGen {
 	public int[] start = { 2, 2, 2 };
 	public int[] end = { 4, 8, 8 };
 	public boolean findbest = false;
+	public boolean findbestc = false;
 	public int boardsize = 5;
 	private Random randomGen;
 	public HashMap<Integer, Boolean> edges_blue;
