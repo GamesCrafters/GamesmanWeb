@@ -70,4 +70,5 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 			puzzle.fireStateChanged(null);
 		}
 	}
+	
 }

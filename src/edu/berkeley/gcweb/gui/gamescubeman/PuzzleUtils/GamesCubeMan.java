@@ -34,7 +34,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private PuzzleCanvas puzzleCanvas;
 	private Canvas3D canvas;
 	private JCheckBox[] tabBoxes;
-	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox;
+	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox,colorChooserBox;
 	private RollingJPanel optionsPanel;
 	private KeyCustomizerPanel keysPanel;
 	private JButton resetView, scramble, resetPuzzle;
@@ -76,7 +76,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 						jso = JSObject.getWindow(GamesCubeMan.this);
 						settings = new AppletSettings(GamesCubeMan.this, jso);
 					} catch(Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 					
 					try {
@@ -118,9 +118,21 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					scramble.addActionListener(GamesCubeMan.this);
 					
 					colorChooserCheckBox = new JCheckBox("Choose colors", false);
-					colorChooserCheckBox.setMnemonic(KeyEvent.VK_C);
+					colorChooserCheckBox.setMnemonic(KeyEvent.VK_T);
 					colorChooserCheckBox.setFocusable(false);
 					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
+					
+//					JCheckBox puzzleOption = puzzle.puzzleOption();
+					
+						colorChooserBox = new JCheckBox("Color Test", false);
+						colorChooserBox.setMnemonic(KeyEvent.VK_C);
+						colorChooserBox.setFocusable(false);
+						colorChooserBox.addActionListener(GamesCubeMan.this);
+						if(!puzzle.piecePickerSupport()){
+							colorChooserBox.setVisible(false);
+					}
+						//colorChooserBox.setEnabled(false);
+
 					
 					optionsCheckBox = new JCheckBox("Options", false);
 					optionsCheckBox.setMnemonic(KeyEvent.VK_O);
@@ -156,8 +168,9 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 						String val = settings.get(option.getName(), null);
 						if(val != null)
 							option.setValue(val);
-						option.addChangeListener(pl);
-					}
+							option.addChangeListener(pl);
+
+						}
 					if(show_options.getValue()) {
 						optionsPanel.add(Utils.sideBySide(antialiasing.getComponent(), show_history.getComponent(), free_rotation.getComponent()));
 						optionsPanel.add(Utils.sideBySide(scale.getComponent(), distance.getComponent()));
@@ -169,8 +182,10 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 						String val = settings.get(option.getName(), null);
 						if(val != null)
 							option.setValue(val);
+
 						option.addChangeListener(puzzle);
 						option.addChangeListener(pl);
+
 					}
 
 					//now that all the options have been set, we can create the puzzle!
@@ -178,11 +193,11 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					
-					tabBoxes = new JCheckBox[] { colorChooserCheckBox, optionsCheckBox, keysCheckBox };
+					tabBoxes = new JCheckBox[] { colorChooserCheckBox, optionsCheckBox, keysCheckBox, colorChooserBox };
 					JPanel tabs = new JPanel();
 					tabs.setLayout(new BoxLayout(tabs, BoxLayout.PAGE_AXIS));
 					tabs.add(Utils.sideBySide(true, resetView, resetPuzzle, scramble));
-					tabs.add(Utils.sideBySide(false, colorChooserCheckBox, optionsCheckBox, keysCheckBox));
+					tabs.add(Utils.sideBySide(false, tabBoxes));
 					topHalf.add(tabs, BorderLayout.PAGE_START);
 					
 					turnHistoryField = new JTextField();
@@ -238,6 +253,14 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		// check if option is changed
+		if (!(e.getSource() != optionsCheckBox && !optionsCheckBox.isSelected())){
+			System.out.print("haha");
+			if(puzzle.piecePickerSupport())
+				colorChooserBox.setVisible(true);
+			else
+				colorChooserBox.setVisible(false);
+		}
 		if(e.getSource() == resetView)
 			resetRotation();
 		else if(e.getSource() == scramble)
@@ -246,9 +269,14 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 			puzzle.resetPuzzle();
 		else if(Utils.indexOf(e.getSource(), tabBoxes) != -1) {
 			for(JCheckBox box : tabBoxes)
-				if(box != e.getSource())
+				if(box != e.getSource() && box != null)
 					box.setSelected(false);
 			puzzleCanvas.setColorEditing(colorChooserCheckBox.isSelected());
+			//puzzleCanvas.setColorEditing(colorChooserBox.isSelected());
+			if(e.getSource()==colorChooserBox){
+				System.out.print("haha");
+				puzzleCanvas.setColorEditing(colorChooserBox.isSelected());
+			}
 			optionsPanel.setVisible(optionsCheckBox.isSelected());
 			keysPanel.setVisible(keysCheckBox.isSelected());
 		} else

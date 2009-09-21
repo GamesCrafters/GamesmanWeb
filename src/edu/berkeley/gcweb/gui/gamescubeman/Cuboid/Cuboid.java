@@ -504,4 +504,15 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		}
 		return colors;
 	}
+	
+	public void piecePicker(){
+		
+		
+	}
+	
+	public boolean piecePickerSupport(){
+		if(dimensions(0) != 3 || dimensions(1) != 3 || dimensions(2) != 3)
+			return false;
+		return true;
+	}
 }

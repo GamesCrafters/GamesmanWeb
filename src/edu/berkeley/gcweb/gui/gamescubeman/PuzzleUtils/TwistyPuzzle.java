@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JCheckBox;
 import javax.swing.Timer;
 
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
@@ -132,6 +133,10 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	//this should set the default angle to view the puzzle from (using Shape3D's setRotation() method)
 	public abstract RotationMatrix getPreferredViewAngle();
 	
+	public JCheckBox puzzleOption() {
+		return null;
+	}
+	
 	//*** END TWISTY PUZZLE IMPLEMENTATION ***
 	
 	private KeyCustomizerPanel keyPanel;
@@ -201,5 +206,13 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 			return true;
 		}
 		return _doTurn(turn);
+	}
+	public void piecePicker(){
+		return;
+	}
+	
+	public boolean piecePickerSupport(){
+		//if 2x2x2 return true
+		return false;
 	}
 }

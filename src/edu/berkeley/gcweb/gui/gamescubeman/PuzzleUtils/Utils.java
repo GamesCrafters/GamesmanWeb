@@ -118,7 +118,8 @@ public class Utils {
 			p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
 		p.setBackground(Color.WHITE);
 		for(JComponent c : cs)
-			p.add(c);
+			if (c != null)
+				p.add(c);
 		return p;
 	}
 	
