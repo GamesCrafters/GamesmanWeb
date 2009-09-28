@@ -275,7 +275,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 			//puzzleCanvas.setColorEditing(colorChooserBox.isSelected());
 			if(e.getSource()==colorChooserBox){
 				System.out.print("haha");
-				puzzleCanvas.setColorEditing(colorChooserBox.isSelected());
+				puzzleCanvas.setColorEditingBeta(colorChooserBox.isSelected());
 			}
 			optionsPanel.setVisible(optionsCheckBox.isSelected());
 			keysPanel.setVisible(keysCheckBox.isSelected());
