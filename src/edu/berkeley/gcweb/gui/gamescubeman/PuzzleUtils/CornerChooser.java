@@ -36,7 +36,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private JComponent paintCanvas;
 	private AppletSettings settings;
 	private HashMap<GeneralPath, Color[]> StickerColor;
-	private Color[] selectedCorner = null;
+	private Color[] selectedCorner = new Color[3];
 	//private HashMap<GeneralPath, >
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, JComponent paintCanvas) {
@@ -46,9 +46,12 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
 		colors = colorScheme;
-		System.out.print(colors);
 		//setColors(colors);
 		GeneralPath p = new GeneralPath();
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addComponentListener(this);
+		setOpaque(true);
 	}
 	private GeneralPath drawSticker(Graphics2D g2d, float x, float y, double theta, Color c){
 		GeneralPath p = new GeneralPath();
@@ -116,6 +119,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	}
 	private Color[] getClickedFace() {
 		Point p = getMousePosition();
+		System.out.println(p);
 		if(p == null) return null;
 		for(GeneralPath face : StickerColor.keySet())
 			if(face.contains(p)){
@@ -124,17 +128,30 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			}
 		return null;
 	}
-/*	private void refreshCursor() {
-		Cursor c = selectedCorner == null ? Cursor.getDefaultCursor() : createCursor(colors.get("F"));
+	
+	private void refreshCursor() {
+		Cursor c = selectedCorner == null ? Cursor.getDefaultCursor() : createCursor(selectedCorner);
 		this.setCursor(c);
 		paintCanvas.setCursor(c);
 		repaint();
-	}*/
+	}
+	
+	private static final int CURSOR_SIZE = 32;
+	private Cursor createCursor(Color[] c) {
+		BufferedImage buffer = new BufferedImage((int) (2*CURSOR_SIZE*Math.cos(Math.PI/6)), (int) (3*CURSOR_SIZE*Math.sin(Math.PI/6)), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) buffer.createGraphics();
+		
+		drawCorner(g2d, (float)(CURSOR_SIZE*Math.cos(Math.PI/6)), (float)(CURSOR_SIZE*Math.sin(Math.PI/6)), c[0], c[1], c[2]);
+		
+		Toolkit tool = Toolkit.getDefaultToolkit();
+		return tool.createCustomCursor(buffer, new Point(0, 0), "bucket");
+	}
+
 	public void mouseClicked(MouseEvent e) {
 		Color[] face = getClickedFace();
 		if(face != null) {
 			selectedCorner = face;
-			//refreshCursor();
+			refreshCursor();
 		}
 	}
 	public void mouseEntered(MouseEvent e) {
