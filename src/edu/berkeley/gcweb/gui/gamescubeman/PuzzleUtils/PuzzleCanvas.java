@@ -50,9 +50,9 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		colorChooser.setVisible(colorEditing);
 	}
 	
-	public void setColorEditingBeta(boolean colorEditing) {
-		canvas.setColorEditing(colorEditing);
-		cc3.setVisible(colorEditing);
+	public void setPieceEditing(boolean pieceEditing) {
+		canvas.setColorEditing(pieceEditing);
+		cc3.setVisible(pieceEditing);
 	}
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {

@@ -34,7 +34,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private PuzzleCanvas puzzleCanvas;
 	private Canvas3D canvas;
 	private JCheckBox[] tabBoxes;
-	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox,colorChooserBox;
+	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox,cornerChooserBox;
 	private RollingJPanel optionsPanel;
 	private KeyCustomizerPanel keysPanel;
 	private JButton resetView, scramble, resetPuzzle;
@@ -122,17 +122,11 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					colorChooserCheckBox.setFocusable(false);
 					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
 					
-//					JCheckBox puzzleOption = puzzle.puzzleOption();
 					
-						colorChooserBox = new JCheckBox("Color Test", false);
-						colorChooserBox.setMnemonic(KeyEvent.VK_C);
-						colorChooserBox.setFocusable(false);
-						colorChooserBox.addActionListener(GamesCubeMan.this);
-						if(!puzzle.piecePickerSupport()){
-							colorChooserBox.setVisible(false);
-					}
-						//colorChooserBox.setEnabled(false);
-
+					cornerChooserBox = new JCheckBox("Corner Chooser", false);
+					cornerChooserBox.setMnemonic(KeyEvent.VK_C);
+					cornerChooserBox.setFocusable(false);
+					cornerChooserBox.addActionListener(GamesCubeMan.this);
 					
 					optionsCheckBox = new JCheckBox("Options", false);
 					optionsCheckBox.setMnemonic(KeyEvent.VK_O);
@@ -160,6 +154,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 							double[] center = puzzle.getCenter();
 							puzzle.setCenter(center[0], center[1], distance.getValue());
 							canvas.setScale(scale.getValue());
+							updatePiecePicker();
 						}
 					};
 					
@@ -193,7 +188,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					
-					tabBoxes = new JCheckBox[] { colorChooserCheckBox, optionsCheckBox, keysCheckBox, colorChooserBox };
+					tabBoxes = new JCheckBox[] { colorChooserCheckBox, optionsCheckBox, keysCheckBox, cornerChooserBox };
 					JPanel tabs = new JPanel();
 					tabs.setLayout(new BoxLayout(tabs, BoxLayout.PAGE_AXIS));
 					tabs.add(Utils.sideBySide(true, resetView, resetPuzzle, scramble));
@@ -252,15 +247,14 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 		}
 	}
 
+	private void updatePiecePicker() {
+		if(puzzle.piecePickerSupport())
+			cornerChooserBox.setVisible(true);
+		else
+			cornerChooserBox.setVisible(false);
+	}
+	
 	public void actionPerformed(ActionEvent e) {
-		// check if option is changed
-		if (!(e.getSource() != optionsCheckBox && !optionsCheckBox.isSelected())){
-			System.out.print("haha");
-			if(puzzle.piecePickerSupport())
-				colorChooserBox.setVisible(true);
-			else
-				colorChooserBox.setVisible(false);
-		}
 		if(e.getSource() == resetView)
 			resetRotation();
 		else if(e.getSource() == scramble)
@@ -272,10 +266,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 				if(box != e.getSource() && box != null)
 					box.setSelected(false);
 			puzzleCanvas.setColorEditing(colorChooserCheckBox.isSelected());
-			//puzzleCanvas.setColorEditing(colorChooserBox.isSelected());
-			if(e.getSource()==colorChooserBox){
-				puzzleCanvas.setColorEditingBeta(colorChooserBox.isSelected());
-			}
+			puzzleCanvas.setPieceEditing(cornerChooserBox.isSelected());
 			optionsPanel.setVisible(optionsCheckBox.isSelected());
 			keysPanel.setVisible(keysCheckBox.isSelected());
 		} else

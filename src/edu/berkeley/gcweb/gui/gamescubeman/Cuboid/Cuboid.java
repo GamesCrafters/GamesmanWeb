@@ -39,9 +39,9 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	private static final String BABYFACE = "Babyface";
 	
 	private PuzzleOption<Double> gapOption = new DoubleSliderOption("gap", true, 10, 0, 100, 100);
-	private PuzzleOption<Integer> dimXOption = new SpinnerOption("dim_x", true, 3, 1, null, 1);
-	private PuzzleOption<Integer> dimYOption = new SpinnerOption("dim_y", true, 3, 1, null, 1);
-	private PuzzleOption<Integer> dimZOption = new SpinnerOption("dim_z", true, 3, 1, null, 1);
+	private PuzzleOption<Integer> dimXOption = new SpinnerOption("dim_x", true, 2, 1, null, 1);
+	private PuzzleOption<Integer> dimYOption = new SpinnerOption("dim_y", true, 2, 1, null, 1);
+	private PuzzleOption<Integer> dimZOption = new SpinnerOption("dim_z", true, 2, 1, null, 1);
 	private PuzzleOption<String> variationOption = new ComboOption("variation", true, NORMAL, new String[] { NORMAL, VOID, BABYFACE });
 	
 	public List<PuzzleOption<?>> _getDefaultOptions() {
@@ -511,7 +511,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public boolean piecePickerSupport(){
-		if(dimensions(0) != 3 || dimensions(1) != 3 || dimensions(2) != 3)
+		if(dimensions(0) != 2 || dimensions(1) != 2 || dimensions(2) != 2)
 			return false;
 		return true;
 	}

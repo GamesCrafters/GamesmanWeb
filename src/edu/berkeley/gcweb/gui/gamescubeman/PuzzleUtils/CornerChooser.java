@@ -1,7 +1,5 @@
 package edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -10,8 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -19,27 +15,24 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 
-public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener{
+public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, PolyClickListener{
 	private static final int PREFERRED_HEIGHT = 50;
 	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
 	private HashMap<String, Color> colors;
-	private JComponent paintCanvas;
+	private Canvas3D paintCanvas;
 	private AppletSettings settings;
 	private HashMap<GeneralPath, Color[]> StickerColor;
 	private Color[] selectedCorner = new Color[3];
 	//private HashMap<GeneralPath, >
 	
-	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, JComponent paintCanvas) {
+	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas) {
 		this.paintCanvas = paintCanvas;
 		this.settings = settings;
 		setLayout(new BorderLayout());
@@ -51,6 +44,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addComponentListener(this);
+		this.paintCanvas.addPolyClickListener(this);
 		setOpaque(true);
 	}
 	private GeneralPath drawSticker(Graphics2D g2d, float x, float y, double theta, Color c){
@@ -180,6 +174,12 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	public void componentMoved(ComponentEvent e) {}
 	public void componentResized(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
+	public void polyClicked(Polygon3D clicked) {
+		// TODO Auto-generated method stub
+		System.out.println("poop");
+		//paintCanvas
+		//this.paintCanvas
+	}
 	
 }
 	
