@@ -17,19 +17,10 @@ public void jspInit() {
         <meta name="description" content="Gamesman Web is a web-based remote Gamesman database.">
 	<title>Gamesman Web</title>
         <link rel="stylesheet" type="text/css" media="screen" href="ui/styles/index.css" />
-        <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
-	<script src="ui/js/jquery.js" type="text/javascript"></script>
-	<script src="ui/js/index.js" type="text/javascript"></script>
 </head>
 <body>
    <div id="container">
     <img id="logo" src="ui/images/logo.png" name="logo">
-    <div id="game-browser">
-        <a href="#" id="left" class="arrow">
-            <img src="ui/images/left.png">
-        </a>
-        <div id="game-list-container">
-            <div id="game-list">
 <%
     String[] canonicalNames = gameDictionary.getCanonicalNames();
     for (int i = 0; i < canonicalNames.length; i++) {
@@ -50,13 +41,6 @@ public void jspInit() {
         }
     }
 %>
-            </div>
-        </div>
-        <a href="#" id="right" class="arrow">
-            <img src="ui/images/right.png">
-        </a>
-        <img src="ui/images/container.png" id="browser-container" />
-    </div>
 </div>
 </body>
 </html>
