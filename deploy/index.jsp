@@ -21,6 +21,8 @@ public void jspInit() {
 <body>
    <div id="container">
     <img id="logo" src="ui/images/logo.png" name="logo">
+        <div id="game-list-container">
+            <div id="game-list">
 <%
     String[] canonicalNames = gameDictionary.getCanonicalNames();
     for (int i = 0; i < canonicalNames.length; i++) {
@@ -41,6 +43,8 @@ public void jspInit() {
         }
     }
 %>
+</div>
+</div>
 </div>
 </body>
 </html>
