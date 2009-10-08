@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
@@ -22,14 +23,15 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 
-public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, PolyClickListener{
+public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener{
 	private static final int PREFERRED_HEIGHT = 50;
 	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
 	private HashMap<String, Color> colors;
 	private Canvas3D paintCanvas;
 	private AppletSettings settings;
-	private HashMap<GeneralPath, Color[]> StickerColor;
-	private Color[] selectedCorner = new Color[3];
+	private HashMap<GeneralPath, String> StickerColor;
+	private String selectedCorner = null;
+	private HashMap<String, Rectangle2D> colorRectangles;
 	//private HashMap<GeneralPath, >
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas) {
@@ -44,7 +46,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addComponentListener(this);
-		this.paintCanvas.addPolyClickListener(this);
+		//this.paintCanvas.addPolyClickListener(this);
 		setOpaque(true);
 	}
 	private GeneralPath drawSticker(Graphics2D g2d, float x, float y, double theta, Color c){
@@ -65,23 +67,24 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		
 		return p;
 	}
-	private void drawCorner(Graphics2D g2d, float x, float y, Color a, Color b, Color c){
+	private void drawCorner(Graphics2D g2d, float x, float y, String a, String b, String c){
 		GeneralPath p;
 		Color[] stickers = new Color[3];
-		stickers[0]=a;
-		stickers[1]=b;
-		stickers[2]=c;
-		p=drawSticker(g2d,x,y,0,a);
-		StickerColor.put(p, stickers);
-		p=drawSticker(g2d,x,y,Math.PI/3*2,b);
-		StickerColor.put(p, stickers);
-		p=drawSticker(g2d,x,y,Math.PI/3*4,c);
-		StickerColor.put(p, stickers);
+		String faces = a+","+b+","+c;
+		stickers[0]=colors.get(a);
+		stickers[1]=colors.get(b);
+		stickers[2]=colors.get(c);
+		p=drawSticker(g2d,x,y,0,stickers[0]);
+		StickerColor.put(p, faces);
+		p=drawSticker(g2d,x,y,Math.PI/3*2,stickers[1]);
+		StickerColor.put(p, faces);
+		p=drawSticker(g2d,x,y,Math.PI/3*4,stickers[2]);
+		StickerColor.put(p, faces);
 		
 		
 	}
 	protected void paintComponent(Graphics g) {
-		StickerColor = new HashMap<GeneralPath, Color[]>();
+		StickerColor = new HashMap<GeneralPath, String>();
 		
 		Graphics2D g2d = (Graphics2D) g;
 		if(isOpaque()) {
@@ -90,28 +93,32 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		}
 		double gap = (double) getWidth() / 9;
 		int x = 30;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("U"),colors.get("F"),colors.get("L"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","F","L");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("R"),colors.get("F"),colors.get("U"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"R","F","U");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("D"),colors.get("F"),colors.get("R"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","R");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("L"),colors.get("F"),colors.get("D"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"L","F","D");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("U"),colors.get("L"),colors.get("B"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","L","B");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("R"),colors.get("U"),colors.get("B"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"R","U","B");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("D"),colors.get("R"),colors.get("B"));
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","R","B");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,colors.get("L"),colors.get("D"),colors.get("B"));
-		
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"L","D","B");
+		/*
+		colorRectangles = new HashMap<String, Rectangle2D>();
+		for(String face : colors.keySet()) {
+			colorRectangles.put(face, new Rectangle2D.Double());
+		}	*/ 
 		
 	}
 	private void recomputeStickers() {
-		
+
 	}
-	private Color[] getClickedFace() {
+	public String getClickedFace() {
 		Point p = getMousePosition();
 		System.out.println(p);
 		if(p == null) return null;
@@ -131,20 +138,25 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	}
 	
 	private static final int CURSOR_SIZE = 32;
-	private Cursor createCursor(Color[] c) {
+	private Cursor createCursor(String c) {
+		String[] faces =getClickedFace().split(",");
 		BufferedImage buffer = new BufferedImage((int) (2*CURSOR_SIZE*Math.cos(Math.PI/6)), (int) (3*CURSOR_SIZE*Math.sin(Math.PI/6)), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) buffer.createGraphics();
 		
-		drawCorner(g2d, (float)(CURSOR_SIZE*Math.cos(Math.PI/6)), (float)(CURSOR_SIZE*Math.sin(Math.PI/6)), c[0], c[1], c[2]);
+		drawCorner(g2d, (float)(CURSOR_SIZE*Math.cos(Math.PI/6)), (float)(CURSOR_SIZE*Math.sin(Math.PI/6)), faces[0],faces[1], faces[2]);
 		
 		Toolkit tool = Toolkit.getDefaultToolkit();
 		return tool.createCustomCursor(buffer, new Point(0, 0), "bucket");
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		Color[] face = getClickedFace();
+		String[] faces = getClickedFace().split(",");
+		Color[] face = new Color[3];
+		face[0]=colors.get(faces[0]);
+		face[1]=colors.get(faces[1]);
+		face[2]=colors.get(faces[2]);		
 		if(face != null) {
-			selectedCorner = face;
+			selectedCorner = getClickedFace();
 			refreshCursor();
 		}
 	}
@@ -174,12 +186,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	public void componentMoved(ComponentEvent e) {}
 	public void componentResized(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
-	public void polyClicked(Polygon3D clicked) {
-		// TODO Auto-generated method stub
-		System.out.println("poop");
-		//paintCanvas
-		//this.paintCanvas
-	}
+
 	
 }
 	

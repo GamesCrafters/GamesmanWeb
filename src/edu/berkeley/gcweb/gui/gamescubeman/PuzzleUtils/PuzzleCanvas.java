@@ -74,11 +74,20 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	}
 	
 	public void polyClicked(Polygon3D clicked) {
+		System.out.println("polyclicked");
 		PuzzleSticker sticker = (PuzzleSticker) clicked;
+		String c3 = cc3.getClickedFace();
+		if(c3 != null) {
+			String[] faces = c3.split(",");
+			//sticker.setFillColor(c3[0]);
+			sticker.setFace(faces[0]);
+			puzzle.fireStateChanged(null);
+		}
+		/*PuzzleSticker sticker = (PuzzleSticker) clicked;
 		if(colorChooser.getSelectedFace() != null) {
 			sticker.setFace(colorChooser.getSelectedFace());
 			puzzle.fireStateChanged(null);
-		}
-	}
+		}*/
 	
+	}
 }
