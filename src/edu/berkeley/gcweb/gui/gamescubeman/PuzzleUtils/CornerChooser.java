@@ -160,6 +160,11 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			refreshCursor();
 		}
 	}
+	
+	public String getSelectedFace() {
+		return selectedCorner;
+	}
+	
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
