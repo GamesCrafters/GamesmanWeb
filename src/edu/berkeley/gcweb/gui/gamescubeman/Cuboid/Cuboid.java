@@ -247,7 +247,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		appendTurn(new CubeTurn(this, face, -1, cw));
 	}
 	
-	public PuzzleSticker[][][] cubeStickers;
+	
 	protected void _createPolys(boolean copyOld) {
 		//TODO - doesn't work quite right with adjusting gap during animation
 		if(!copyOld)
@@ -303,6 +303,86 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 						sticker.setFace(cubeStickersOld[f2.index()][h][w].getFace());
 					else
 						sticker.setFace(f2.toString());
+					cubeStickers[f2.index()][h][w] = sticker;
+					addPoly(sticker);
+				}
+			}
+		}
+
+		String variation = variationOption.getValue();
+		for(int f = 0; f < cubeStickers.length; f++) {
+			int width = cubeStickers[f].length;
+			int height = cubeStickers[f][0].length;
+			for(int w = 0; w < width; w++)
+				for(int h = 0; h < height; h++)
+					cubeStickers[f][w][h].setVisible(true);
+			if(variation.equals(VOID))
+				for(int w = 1; w < width - 1; w++)
+					for(int h = 1; h < height - 1; h++)
+						cubeStickers[f][w][h].setVisible(false);
+			else if(variation.equals(BABYFACE))
+				for(int w = 0; w < width; w++)
+					for(int h = 0; h < height; h++)
+						if(w == 0 || w == width - 1 || h == 0 || h == height - 1)
+							cubeStickers[f][w][h].setVisible(false);
+		}
+	}
+	
+	protected void _nullPoly(boolean copyOld){
+		//mostly copied from _creatPoly, if that is changed, change this too.
+		if(!copyOld)
+			resetHandPositions();
+		PuzzleSticker[][][] cubeStickersOld = cubeStickers;
+		cubeStickers = new PuzzleSticker[6][][];
+		double[] point = new double[3];
+		double scale = 2. / Utils.max(dimensions(0), dimensions(1), dimensions(2));
+
+		for(CubeFace f1 : CubeFace.faces) {
+			if(f1.isCWWithAxis()) continue;
+			CubeFace f2 = f1.getOppositeFace();
+			int height = dimensions(f1.getHeightAxis());
+			int width = dimensions(f1.getWidthAxis());
+			int depth = dimensions(f1.getRotationAxis());
+			double halfHeight = height / 2.;
+			double halfWidth = width / 2.;
+			double halfDepth = depth / 2.;
+			cubeStickers[f1.index()] = new PuzzleSticker[height][width];
+			cubeStickers[f2.index()] = new PuzzleSticker[height][width];
+			for(int h = 0; h < height; h++) {
+				for(int w = 0; w < width; w++) {
+					PuzzleSticker sticker = new PuzzleSticker();
+					double stickerGap = gapOption.getValue();
+					List<Double> spaces1 = Arrays.asList(stickerGap, 1 - stickerGap);
+					List<Double> spaces2 = new ArrayList<Double>(spaces1);
+					for(double hh : spaces1) {
+						for(double ww : spaces2) {
+							point[f1.getHeightAxis()] = h + hh;
+							point[f1.getWidthAxis()] = w + ww;
+							point[f1.getRotationAxis()] = 0;
+							sticker.addPoint(point);
+						}
+						Collections.reverse(spaces2); //want to form a box, not an x
+					}
+
+					double[] translate = new double[3];
+					translate[f1.getWidthAxis()] = -halfWidth;
+					translate[f1.getHeightAxis()] = -halfHeight;
+					translate[f1.getRotationAxis()] = -halfDepth;
+					sticker.translate(translate).scale(scale, scale, scale);
+					if(copyOld)
+						sticker.setFace(cubeStickersOld[f1.index()][h][w].getFace());
+					else
+						sticker.setFace("U");
+					cubeStickers[f1.index()][h][w] = sticker;
+					addPoly(sticker);
+
+					translate = new double[3];
+					translate[f1.getRotationAxis()] = scale*depth;
+					sticker = (PuzzleSticker) sticker.clone().translate(translate);
+					if(copyOld)
+						sticker.setFace(cubeStickersOld[f2.index()][h][w].getFace());
+					else
+						sticker.setFace("U");
 					cubeStickers[f2.index()][h][w] = sticker;
 					addPoly(sticker);
 				}

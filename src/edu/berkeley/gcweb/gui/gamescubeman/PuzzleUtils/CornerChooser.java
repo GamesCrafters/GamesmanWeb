@@ -8,8 +8,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -19,36 +23,65 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import javax.swing.JButton;
+
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 
-public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener{
+public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener{
 	private static final int PREFERRED_HEIGHT = 50;
 	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
+	private JButton nullset;
 	private HashMap<String, Color> colors;
 	private Canvas3D paintCanvas;
 	private AppletSettings settings;
 	private HashMap<GeneralPath, String> StickerColor;
 	private String selectedCorner = null;
 	private HashMap<String, Rectangle2D> colorRectangles;
+	private PuzzleCanvas puzzlecanvas;
 	//private HashMap<GeneralPath, >
 	
-	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas) {
+	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas) {
 		this.paintCanvas = paintCanvas;
 		this.settings = settings;
+		this.puzzlecanvas = puzzlecanvas;
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
+		
+		
+		nullset = new JButton("Clear");
+		nullset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				uniColor();
+			}
+		});
+		nullset.setFocusable(false);
+		nullset.setBounds(0, 0, 40, 20);
+		add(nullset, BorderLayout.LINE_START);
+		
 		colors = colorScheme;
 		//setColors(colors);
 		GeneralPath p = new GeneralPath();
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addComponentListener(this);
+		addKeyListener(this);
 		//this.paintCanvas.addPolyClickListener(this);
 		setOpaque(true);
 	}
+	
+	private void uniColor(){
+		for (PuzzleSticker[][] a : puzzlecanvas.getPuzzle().cubeStickers)
+			for(PuzzleSticker[] b: a)
+				for (PuzzleSticker c: b){
+					c.setFace("U");
+					puzzlecanvas.getPuzzle().fireStateChanged(null);
+				}
+	}
+	
+
 	private GeneralPath drawSticker(Graphics2D g2d, float x, float y, double theta, Color c){
 		GeneralPath p = new GeneralPath();
 		p.moveTo(x,y);
@@ -91,8 +124,8 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			g2d.setColor(Color.BLACK);
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
-		double gap = (double) getWidth() / 9;
-		int x = 30;
+		double gap = (double) getWidth() / 15;
+		int x = 90;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","F","L");
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"R","F","U");
@@ -108,17 +141,31 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","R","B");
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"L","D","B");
-		/*
+		
 		colorRectangles = new HashMap<String, Rectangle2D>();
 		for(String face : colors.keySet()) {
 			colorRectangles.put(face, new Rectangle2D.Double());
-		}	*/ 
+		}
+		colorRectangles.put("null", new Rectangle2D.Double());
 		
 	}
 	private void recomputeStickers() {
 
 	}
+	private GeneralPath getClickedGP(){
+		Point p = getMousePosition();
+		if(p == null) return null;
+		for(GeneralPath face : StickerColor.keySet())
+			if(face.contains(p)){
+				return face;
+			}
+		return null;
+	}
 	public String getClickedFace() {
+		GeneralPath g = getClickedGP();
+		if (g == null) return null;
+		return StickerColor.get(g);
+		/*
 		Point p = getMousePosition();
 		System.out.println(p);
 		if(p == null) return null;
@@ -127,9 +174,17 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 				System.out.println(StickerColor.get(face));
 				return StickerColor.get(face);
 			}
-		return null;
+		return null;*/
 	}
 	
+	private void pieceRotate(GeneralPath g){
+		if(StickerColor.containsKey(g)){
+			String[] swap = StickerColor.get(g).split(",");
+			System.out.print(StickerColor.get(g));
+			StickerColor.put(g, swap[1]+","+swap[2]+","+swap[0]);
+			System.out.print(StickerColor.get(g));
+		}	
+	}
 	private void refreshCursor() {
 		Cursor c = selectedCorner == null ? Cursor.getDefaultCursor() : createCursor(selectedCorner);
 		this.setCursor(c);
@@ -150,14 +205,23 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		String face = getClickedFace();
+		if(face != null)/*
 		String[] faces = getClickedFace().split(",");
 		Color[] face = new Color[3];
 		face[0]=colors.get(faces[0]);
 		face[1]=colors.get(faces[1]);
 		face[2]=colors.get(faces[2]);		
-		if(face != null) {
-			selectedCorner = getClickedFace();
+		if(face != null) */{
+			System.out.println("face is "+face);
+			if (!face.equals(selectedCorner))
+				selectedCorner = face;
+			else{
+				pieceRotate(getClickedGP());
+				selectedCorner = getClickedFace();
+			}
 			refreshCursor();
+			System.out.println("Is corner changed?"+ getClickedFace());
 		}
 	}
 	
@@ -191,6 +255,23 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	public void componentMoved(ComponentEvent e) {}
 	public void componentResized(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void keyReleased(KeyEvent arg0) {
+		
+		if(arg0.getKeyLocation() == arg0.VK_C)
+			System.out.println(arg0);
+		if (arg0.isControlDown())
+			System.out.println("key r");
+		// TODO Auto-generated method stub
+		
+	}
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }

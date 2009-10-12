@@ -17,15 +17,24 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener, PuzzleOptionChangeListener {
+	public PuzzleSticker[][][] cubeStickers;
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
 		addStateChangeListener(this);
+		
 	}
 
 	public void resetPuzzle() {
 		scrambling = false;
 		resetTimer();
 		createPolys(false);
+		fireStateChanged(null);
+	}
+	
+	public void nullPuzzle(){
+		scrambling = false;
+		resetTimer();
+		_nullPoly(false);
 		fireStateChanged(null);
 	}
 
@@ -215,4 +224,6 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		//if 2x2x2 return true
 		return false;
 	}
+	protected abstract void _nullPoly(boolean copyOld);
+	
 }

@@ -370,4 +370,9 @@ public class Pyraminx extends TwistyPuzzle {
 			}
 		}
 	}
+	@Override
+	protected void _nullPoly(boolean copyOld) {
+		// TODO Auto-generated method stub
+		
+	}
 }

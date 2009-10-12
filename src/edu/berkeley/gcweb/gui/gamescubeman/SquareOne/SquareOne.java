@@ -699,4 +699,10 @@ public class SquareOne extends TwistyPuzzle {
 		colors.put("D", Color.WHITE);
 		return colors;
 	}
+
+	@Override
+	protected void _nullPoly(boolean copyOld) {
+		// TODO Auto-generated method stub
+		
+	}
 }

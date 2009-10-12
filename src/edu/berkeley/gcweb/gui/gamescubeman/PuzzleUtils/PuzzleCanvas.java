@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
+import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
@@ -33,7 +34,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		colorChooser.setVisible(false);
 		this.add(colorChooser, new Integer(1));
 		
-		cc3 = new CornerChooser(settings, puzzle.getDefaultColorScheme(), canvas);
+		cc3 = new CornerChooser(settings, puzzle.getDefaultColorScheme(), canvas, this);
 		cc3.setVisible(false);
 		this.add(cc3, new Integer(1));
 		for(JPanel p : options)
@@ -45,6 +46,10 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		});
 	}
 	
+	public TwistyPuzzle getPuzzle(){
+		return puzzle;
+	}
+	
 	public void setColorEditing(boolean colorEditing) {
 		canvas.setColorEditing(colorEditing);
 		colorChooser.setVisible(colorEditing);
@@ -53,6 +58,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	public void setPieceEditing(boolean pieceEditing) {
 		canvas.setColorEditing(pieceEditing);
 		cc3.setVisible(pieceEditing);
+		//puzzle.nullPuzzle();
 	}
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {
@@ -82,6 +88,8 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 			//sticker.setFillColor(c3[0]);
 			sticker.setFace(faces[0]);
 			puzzle.fireStateChanged(null);
+			
+						
 		}
 		/*
 		PuzzleSticker sticker = (PuzzleSticker) clicked;

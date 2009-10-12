@@ -547,4 +547,10 @@ public class Megaminx extends TwistyPuzzle {
 					arr[cycles.get(c)[Utils.modulo(i + dir, cycles.get(c).length)]] = copy[cycles.get(c)[i]];
 		}
 	}
+
+	@Override
+	protected void _nullPoly(boolean copyOld) {
+		// TODO Auto-generated method stub
+		
+	}
 }
