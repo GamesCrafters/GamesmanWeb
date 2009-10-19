@@ -16,8 +16,16 @@ public class CubeGen {
 			White = blocked_yz_face;
 			Red = blocked_xy_face;
 			boardsize=5;
-
-		} else {
+			validB = true;
+			validW = true;
+			validR = true;
+			start[0] = 2;
+			start[1] = 2;
+			start[2] = 2;
+			end[0] = 4;
+			end[1] = 8;
+			end[2] = 8;
+		}else {
 			randomGen = new Random();
 			Blue = intToSet(randomGen.nextInt());
 			White = intToSet(randomGen.nextInt());
@@ -250,8 +258,13 @@ public class CubeGen {
 	 * standard; }
 	 */
 
-	public int[] start = { 2, 2, 2 };
-	public int[] end = { 4, 8, 8 };
+	public int[] start = { 0,0,0 };
+	public int[] end = { 1,1,1 };
+	public int bushiness =0;
+	public int branches = 0;
+	public int brfactor = 0;
+	public int subcomponents = 0;
+	public int maxbrfactor = 0;
 	public boolean findbest = false;
 	public boolean findbestc = false;
 	public int boardsize = 5;

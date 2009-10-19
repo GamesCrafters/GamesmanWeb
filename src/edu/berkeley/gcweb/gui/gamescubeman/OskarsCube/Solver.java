@@ -21,8 +21,12 @@ class Solver {
 		ArrayList<int[]> moves; // possible moves such as [-1,0,0], [0,1,0],
 								// etc...
 		public int remoteness; // the distance from the solution
-
-		public Node(int[] this_board, int old_remoteness) {
+		public int branches;
+		public int bushiness=0;
+		
+		public Node(int[] this_board, int old_remoteness, int branch) {
+			branches = branch;
+			
 			remoteness = old_remoteness + 1;
 			board = this_board;
 			moves = generate_moves(this_board);
@@ -81,7 +85,7 @@ class Solver {
 		
 		System.out.println("Solving");
 		
-		int boardsize = cube.boardsize;
+		boardsize = cube.boardsize;
 		
 		blocked_xz_face = cube.Blue;
 		blocked_xy_face = cube.Red;
@@ -104,10 +108,26 @@ class Solver {
 		
 		move_map = new HashMap<Integer, Node>();
 		queue = new LinkedList<Node>();
-		Node goal_node = new Node(end, -1); // we initialize at -1 so that the
+		Node goal_node = new Node(end, -1, 0); // we initialize at -1 so that the
 											// goal remoteness is 0
 		queue.add(goal_node);
-		solvin_thang();
+		solvin_thang(cube);
+		
+		if (!cube.findbest) {
+			
+			queue = new LinkedList<Node>();
+			int start_key = start[0] * boardsize*boardsize*4 + start[1] * boardsize*2 + start[2];
+			queue.add(move_map.get(start_key));
+			HashMap<Integer, Boolean> seen_map = new HashMap<Integer, Boolean>();
+			resolvin_thang(cube, seen_map);
+			
+			move_map = new HashMap<Integer, Node>();
+			queue = new LinkedList<Node>();
+			queue.add(goal_node);
+			solvin_thang(cube);
+			System.out.println("Searched " + 0 + " subcomponents, best remoteness " + 0 + " bushiness " + cube.bushiness + " branches " + cube.branches + "largest branch" + cube.brfactor);
+
+		}
 		
 		if (cube.findbest) {
 			int xp, yp, zp;
@@ -150,11 +170,11 @@ class Solver {
 						end = new int[] { 2 * bx, 2 * by, 2 * bz };
 						move_map = new HashMap<Integer, Node>();
 						queue = new LinkedList<Node>();
-						goal_node = new Node(end, -1); // we initialize at -1 so that the
+						goal_node = new Node(end, -1,0); // we initialize at -1 so that the
 						// goal remoteness is 0
 						//We then resolve from here to find the longest possible path
 						queue.add(goal_node);
-						solvin_thang();
+						solvin_thang(cube);
 						max = -2;
 						int bpx = 0;
 						int bpy = 0;
@@ -194,30 +214,89 @@ class Solver {
 			cube.end = end;
 			move_map = new HashMap<Integer, Node>();
 			queue = new LinkedList<Node>();
-			goal_node = new Node(end, -1); // we initialize at -1 so that the
-												// goal remoteness is 0
+			goal_node = new Node(end, -1,0); // we initialize at -1 so that the
+											// goal remoteness is 0
 			queue.add(goal_node);
-			solvin_thang();
+			solvin_thang(cube);
+			
+			queue = new LinkedList<Node>();
+			int start_key = start[0] * boardsize*boardsize*4 + start[1] * boardsize*2 + start[2];
+			queue.add(move_map.get(start_key));
+			HashMap<Integer, Boolean> seen_map = new HashMap<Integer, Boolean>();
+			resolvin_thang(cube, seen_map);
+			
 			int[] temp = { 2 * xbeste, 2 * ybeste, 2 * zbeste };
-			System.out.println("Searched " + count + " subcomponents, best remoteness " + maxoverallends/2);
+			cube.subcomponents = count;
+			System.out.println("(subcomponents " + count + ") (best remoteness " + maxoverallends/2 + ") (bushiness " + cube.bushiness + ") (branches " + cube.branches + ") (branch-by-degree " + cube.brfactor + ") (max-branch-degree " + cube.maxbrfactor + ")");
 		}
-
+			
+			
+	}
+	private void resolvin_thang(CubeGen cube, HashMap<Integer, Boolean> seen_map) {
+		//this time we already have the movemap but need to fix the bushiness values
+		int bushiness=0;
+		while (!queue.isEmpty()) {
+			Node head = queue.removeFirst();
+			int the_key = head.board[0] * boardsize*boardsize*4 + head.board[1] * boardsize*2
+					+ head.board[2];
+			seen_map.put(the_key, true);
+			int newB = 0;
+			int count = 0;
+			count = head.moves.size();
+			if (count >=3) {
+				newB =1;
+			}
+			for (int[] legal_move : head.moves) {
+				int[] new_board = { head.board[0] + 2*legal_move[0],
+						head.board[1] + 2*legal_move[1],
+						head.board[2] + 2*legal_move[2] };
+				int new_key = new_board[0] * boardsize*boardsize*4 + new_board[1] * boardsize*2
+						+ new_board[2];
+				if (seen_map.containsKey(new_key))
+					continue;
+				else if (getRemoteness(new_board) < getRemoteness(head.board)) {
+					queue.add(move_map.get(new_key));
+					continue;					
+				} else {
+				bushiness += head.branches + head.bushiness;
+				move_map.get(new_key).bushiness = head.branches + head.bushiness;
+				System.out.println("headb " + head.branches + " " + head.bushiness);
+				queue.add(move_map.get(new_key));
+				}
+			}
+		}
+		cube.bushiness = bushiness;
 	}
 
-	private void solvin_thang() {
+	private void solvin_thang(CubeGen cube) {
 		// pop the first thing off the queue
 		// check if its in the hashmap
 		// if it is, just continue
 		// otherwise, start by adding it to the hash map
 		// then create nodes for each of its children not in the hash map
 		// add those nodes to the queue
+		int branchfactor = 0;
+		int maxbranch =0;
+		int branches=0;
 		while (!queue.isEmpty()) {
 			Node head = queue.removeFirst();
 			int the_key = head.board[0] * boardsize*boardsize*4 + head.board[1] * boardsize*2
 					+ head.board[2];
+			int newB = 0;
+			int count = 0;
 			if (move_map.containsKey(the_key))
 				continue;
 			move_map.put(the_key, head);
+			count = head.moves.size();
+			if (count >=3) {
+				branches += 1;
+				branchfactor += count-2;
+				if(count-2 > maxbranch) {
+					maxbranch = count-2;
+				}
+				newB =1;
+				head.branches= newB;
+			}
 			for (int[] legal_move : head.moves) {
 				int[] new_board = { head.board[0] + legal_move[0],
 						head.board[1] + legal_move[1],
@@ -226,10 +305,13 @@ class Solver {
 						+ new_board[2];
 				if (move_map.containsKey(new_key))
 					continue;
-				Node new_node = new Node(new_board, head.remoteness);
+				Node new_node = new Node(new_board, head.remoteness, newB);
 				queue.add(new_node);
 			}
 		}
+		cube.branches = branches;
+		cube.brfactor = branchfactor;
+		cube.maxbrfactor = maxbranch;
 	}
 
 	public boolean isValidMove(int[] board, int[] move) {

@@ -36,8 +36,15 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private boolean display_number_viable_default = false;
 	private static final boolean find_best_start_end_default = true; 
 	private static final boolean find_best_subcomponent = true;
-	private int boardsize = 8;
-	private int goalremoteness = 40;
+	private int boardsize = 5;
+	private int goalRemoteness = 0;
+	private int goalBushiness = 0; //Too large and maze has too many open lines == easy routes to visualize
+	private int goalSubcomponents = 100; //NOTE, this is at most!!
+	private int goalBranches = 0;
+	private int goalBranchbyDegree =0;
+	private int goalMaxBrDegree = 0;
+	
+	
 	public static int acheivable;
 	public static Solver solved_map;
 	public MyShape cube;
@@ -194,15 +201,24 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		}
 		*/
 		int tries = 0;
-		int maxseen =0;
-		while (solved_map.getRemoteness(solved_map.start)/2 < goalremoteness) {
-			if (maxseen < solved_map.getRemoteness(solved_map.start)/2) {
-				maxseen = solved_map.getRemoteness(solved_map.start)/2;
+		int maxremotenessseen =0;
+		int maxbushinessseen = 0;
+		boolean found = true;
+		while (found) {
+			if (maxremotenessseen < solved_map.getRemoteness(solved_map.start)/2) {
+				maxremotenessseen = solved_map.getRemoteness(solved_map.start)/2;
 			}
-				System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start)/2 + " " + maxseen);
+			if (maxbushinessseen < cubefaces.bushiness) {
+				maxbushinessseen = cubefaces.bushiness;
+			}
+				System.out.println("failed " + tries + " " + solved_map.getRemoteness(solved_map.start)/2 + " " + maxremotenessseen + " " + maxbushinessseen);
 				cubefaces = new CubeGen(random_faces, find_best_start_end_default, find_best_subcomponent, boardsize);
 				solved_map = new Solver(cubefaces);
 				tries++;
+				found = (solved_map.getRemoteness(solved_map.start)/2 < goalRemoteness) || (cubefaces.branches < goalBranches) ||
+					(cubefaces.brfactor < goalBranchbyDegree) || (cubefaces.maxbrfactor < goalMaxBrDegree) || (cubefaces.bushiness < goalBushiness) 
+					|| (cubefaces.subcomponents > goalSubcomponents);
+				//System.out.println("found" + found + " " + cubefaces.maxbrfactor);
 		}
 		int zoom = 25 + 2*(5-boardsize)*(5-boardsize);
 		canvas.setLightBorders(true);
@@ -210,6 +226,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		cube.setCanvas(canvas);
 		canvas.addShape3D(cube);
 		canvas.addKeyListener(OskarsCube.this);
+		
 		
 		
 		
