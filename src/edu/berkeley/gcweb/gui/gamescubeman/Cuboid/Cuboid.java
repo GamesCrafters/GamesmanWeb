@@ -247,7 +247,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		appendTurn(new CubeTurn(this, face, -1, cw));
 	}
 	
-	
+	public PuzzleSticker[][][] cubeStickers;
 	protected void _createPolys(boolean copyOld) {
 		//TODO - doesn't work quite right with adjusting gap during animation
 		if(!copyOld)
@@ -511,13 +511,14 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public boolean isSolved() {
+		if(cubeStickers == null) return false;
 		for(Polygon3D[][] face : cubeStickers) {
 			Color c = null;
 			for(int i = 0; i < face.length; i++)
 				for(int j = 0; j < face[i].length; j++) {
 					if(c == null && face[i][j].isVisible())
 						c = face[i][j].getFillColor();
-					if(face[i][j].isVisible() && !face[i][j].getFillColor().equals(c))
+					if(face[i][j].getFillColor() == null || (face[i][j].isVisible() && !face[i][j].getFillColor().equals(c)))
 						return false;
 				}
 		}

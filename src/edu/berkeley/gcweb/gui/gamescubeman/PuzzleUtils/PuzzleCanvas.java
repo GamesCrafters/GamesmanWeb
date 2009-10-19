@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
-import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
@@ -56,9 +55,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	}
 	
 	public void setPieceEditing(boolean pieceEditing) {
-		canvas.setColorEditing(pieceEditing);
 		cc3.setVisible(pieceEditing);
-		//puzzle.nullPuzzle();
 	}
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {

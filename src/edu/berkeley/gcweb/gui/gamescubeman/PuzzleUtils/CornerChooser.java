@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import javax.swing.JButton;
 
+import edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
@@ -45,12 +46,15 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private HashMap<String, Rectangle2D> colorRectangles;
 	private PuzzleCanvas puzzlecanvas;
 	private HashMap<String,Color[]> cornermap;
+	private Cuboid cuboid;
 	//private HashMap<GeneralPath, >
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
 		this.paintCanvas = paintCanvas;
 		this.settings = settings;
 		this.puzzlecanvas = puzzlecanvas;
+		this.cuboid = (Cuboid) puzzlecanvas.getPuzzle();
+		cornermap = new HashMap<String,Color[]>();
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
@@ -103,15 +107,15 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			      }
 	}
 	private void uniColor(){
-		for (PuzzleSticker[][] a : puzzlecanvas.getPuzzle().cubeStickers)
+		for (PuzzleSticker[][] a : cuboid.cubeStickers)
 			for(PuzzleSticker[] b: a)
 				for (PuzzleSticker c: b){
-					c.setFace("U");
-					puzzlecanvas.getPuzzle().fireStateChanged(null);
+					c.setFace(null);
 				}
-		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(0,45));
-		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(1,45));
-		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(0,-45));
+		RotationMatrix rm = new RotationMatrix(1, 45);
+		rm = new RotationMatrix(0,-45).multiply(rm);
+		cuboid.setRotation(rm);
+		cuboid.fireStateChanged(null);
 	}
 	
 
@@ -342,6 +346,17 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		System.out.println("key r");
 	}
 
-	
+	private int currentCorner;
+	public void setVisible(boolean visible){
+		super.setVisible(visible);
+		if (visible) {
+			uniColor();
+			cuboid.setDisabled(true);
+			//cuboid.
+		} else {
+			cuboid.setRotation(cuboid.getPreferredViewAngle());
+			cuboid.fireStateChanged(null);
+		}
+	}
 }
 	

@@ -17,11 +17,9 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
 public abstract class TwistyPuzzle extends Shape3D implements ActionListener, PuzzleStateChangeListener, PuzzleOptionChangeListener {
-	public PuzzleSticker[][][] cubeStickers;
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
 		addStateChangeListener(this);
-	
 	}
 
 	public void resetPuzzle() {
@@ -153,8 +151,14 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	public void setKeyCustomizerPanel(KeyCustomizerPanel keyPanel) {
 		this.keyPanel = keyPanel;
 	}
+	
+	private boolean disabled = false;
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+	
 	public final void doTurn(KeyEvent e) {
-		if(keyPanel != null)
+		if(!disabled && keyPanel != null)
 			doTurn(keyPanel.getTurnForKey(e));
 	}
 	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {

@@ -28,8 +28,8 @@ public class RollingJPanel extends JPanel {
 						t.stop();
 					} else if(visible <= 0) {
 						visible = 0;
+//						RollingJPanel.this.super.setVisible(false);
 						t.stop();
-						RollingJPanel.this.setVisible(false);
 					}
 					updateSize();
 				}
@@ -66,8 +66,8 @@ public class RollingJPanel extends JPanel {
 				super.setVisible(true);
 			}
 			else if(getParent() != null) getParent().setCursor(Cursor.getDefaultCursor());
-			t.start();
 		}
+		t.start();
 	}
 	
 	private void updateSize() {
