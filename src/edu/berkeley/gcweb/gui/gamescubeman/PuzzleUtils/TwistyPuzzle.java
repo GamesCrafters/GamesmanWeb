@@ -21,7 +21,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	public TwistyPuzzle(double x, double y, double z) {
 		super(x, y, z);
 		addStateChangeListener(this);
-		
+	
 	}
 
 	public void resetPuzzle() {
@@ -125,6 +125,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		List<PuzzleOption<?>> options = _getDefaultOptions();
 		options.add(0, frames_animation);
 		return options;
+		
 	}
 	
 	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***

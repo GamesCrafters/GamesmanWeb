@@ -21,12 +21,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import javax.swing.JButton;
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 
 public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener{
@@ -40,9 +44,10 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private String selectedCorner = null;
 	private HashMap<String, Rectangle2D> colorRectangles;
 	private PuzzleCanvas puzzlecanvas;
+	private HashMap<String,Color[]> cornermap;
 	//private HashMap<GeneralPath, >
 	
-	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas) {
+	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
 		this.paintCanvas = paintCanvas;
 		this.settings = settings;
 		this.puzzlecanvas = puzzlecanvas;
@@ -70,8 +75,33 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		addKeyListener(this);
 		//this.paintCanvas.addPolyClickListener(this);
 		setOpaque(true);
+
 	}
-	
+	public Color[] keyColors(String s){
+		System.out.println(s);
+		if (cornermap.containsKey(s))
+			return cornermap.get(s);
+		System.out.println("I fail");
+		return null;
+	}
+	private void getInput(){
+		
+	    String CurLine = ""; // Line read from standard in
+	       System.out.println("Enter a line of text (type 'quit' to exit): ");
+			       InputStreamReader converter = new InputStreamReader(System.in);
+			       BufferedReader in = new BufferedReader(converter);
+			     while (!(CurLine.equals("quit"))){
+			            try {
+							CurLine = in.readLine();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			            if (!(CurLine.equals("quit"))){
+			              System.out.println("You typed: " + CurLine);
+			            }
+			      }
+	}
 	private void uniColor(){
 		for (PuzzleSticker[][] a : puzzlecanvas.getPuzzle().cubeStickers)
 			for(PuzzleSticker[] b: a)
@@ -79,6 +109,9 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 					c.setFace("U");
 					puzzlecanvas.getPuzzle().fireStateChanged(null);
 				}
+		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(0,45));
+		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(1,45));
+		puzzlecanvas.getPuzzle().rotate(new RotationMatrix(0,-45));
 	}
 	
 
@@ -116,8 +149,22 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		
 		
 	}
+	private void paintkeyChar(String k, int x, int y, Graphics2D g2d){
+		g2d.setColor(Color.WHITE);
+		g2d.drawString(k, x-2, y);
+	}
+	
+	private void cornertableUpdate(String a, String b, String c, String idx){
+		Color[] stickers = new Color[3];
+		stickers[0]=colors.get("U");
+		stickers[1]=colors.get("F");
+		stickers[2]=colors.get("B");
+		cornermap.put(idx, stickers);
+		
+	}
 	protected void paintComponent(Graphics g) {
 		StickerColor = new HashMap<GeneralPath, String>();
+		cornermap = new HashMap<String, Color[]>();
 		
 		Graphics2D g2d = (Graphics2D) g;
 		if(isOpaque()) {
@@ -125,22 +172,43 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
 		double gap = (double) getWidth() / 15;
-		int x = 90;
+		int x = 40;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","F","L");
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"R","F","U");
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","R","F");
+		paintkeyChar("A", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U","R","F","a");
+		
+		
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","R");
-		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"L","F","D");
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","B","R");
+		paintkeyChar("S", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U","B","R","s");
+		
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","L","B");
+		paintkeyChar("D", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U","L","B","d");
+		
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"R","U","B");
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","L","F");
+		paintkeyChar("J", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D","L","F","j");
+		
+		x +=STICKER_LENGTH+gap;
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","R");
+		paintkeyChar("K", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D","F","R","k");
+		
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","R","B");
+		paintkeyChar("L", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D","R","B","l");
+		
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"L","D","B");
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","L");
+		paintkeyChar(";", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D","F","L",";");
 		
 		colorRectangles = new HashMap<String, Rectangle2D>();
 		for(String face : colors.keySet()) {
@@ -257,9 +325,10 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	public void componentShown(ComponentEvent e) {}
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("key a");
 	}
 	public void keyReleased(KeyEvent arg0) {
+		System.out.println("key r");
 		
 		if(arg0.getKeyLocation() == arg0.VK_C)
 			System.out.println(arg0);
@@ -270,7 +339,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	}
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("key r");
 	}
 
 	

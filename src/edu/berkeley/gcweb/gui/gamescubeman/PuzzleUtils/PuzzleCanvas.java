@@ -73,6 +73,10 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	//TODO - undo-redo
 	//TODO - bounds on left hand & right hand, and some visual indicator of where they are
 	public void keyPressed(KeyEvent e) {
+		if (true){
+			System.out.println(cc3.keyColors(e.getKeyChar()+""));
+		System.out.println("puzzlecanvas");
+		}
 		puzzle.doTurn(e);
 	}
 	public void keyReleased(KeyEvent e) {}
