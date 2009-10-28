@@ -75,8 +75,8 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	public void keyPressed(KeyEvent e) {
 		if (keylock){
 			switch(e.getKeyCode()){
-			case KeyEvent.VK_SPACE: pieceN+=1; break;
-			case KeyEvent.VK_BACK_SPACE: pieceN-=1; break;
+			case KeyEvent.VK_SPACE: pieceN+=1; cc3.lcach=""; break;
+			case KeyEvent.VK_BACK_SPACE: pieceN-=1; cc3.lcach=""; break;
 			//case(t == e.VK_SPACE): ;
 			//case(e.VK_BACK_SPACE): pieceN-=1;
 			default: cc3.keyColors(e.getKeyChar()+"",pieceN%8);

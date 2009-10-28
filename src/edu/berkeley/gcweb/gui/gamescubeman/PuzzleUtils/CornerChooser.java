@@ -44,7 +44,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private HashMap<String,String> cornermap;
 	private Cuboid cuboid;
 	private int flip;
-	private String lcach;
+	public String lcach;
 	//private HashMap<GeneralPath, >
 
 	
