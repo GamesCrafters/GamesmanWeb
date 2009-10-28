@@ -43,9 +43,6 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private PuzzleCanvas puzzlecanvas;
 	private HashMap<String,String> cornermap;
 	private Cuboid cuboid;
-	private int flip;
-	public String lcach;
-	//private HashMap<GeneralPath, >
 
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
@@ -57,9 +54,6 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
-		flip=0;
-		lcach="";
-
 		
 		colors = colorScheme;
 		addMouseListener(this);
@@ -69,27 +63,27 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		setOpaque(true);
 	}
 
-	public void keyColors(String s, int pieceN){
-		System.out.println(s+" "+pieceN);
-		if (cornermap.containsKey(s)){
-			String[] cs = cornermap.get(s).split(",");
-			PuzzleSticker[] ps = cuboid.getCorner(pieceN);//new PuzzleSticker[3];
-			if (lcach.equals(s))
-				flip+=1;
-			else{
-				flip = 0;
-				lcach = s;
-			}
-			System.out.println(flip+lcach);
-			for (int i = 0; i < ps.length; i++){
-				ps[i].setFace(cs[(i+flip)%3]);
-			}
-			
-			cuboid.fireCanvasChange();
-			//return cornermap.get(s);
-		}
-		//return null;
-	}
+//	public void keyColors(String s, int pieceN){
+//		System.out.println(s+" "+pieceN);
+//		if (cornermap.containsKey(s)){
+//			String[] cs = cornermap.get(s).split(",");
+//			PuzzleSticker[] ps = cuboid.getCorner(pieceN);//new PuzzleSticker[3];
+//			if (lcach.equals(s))
+//				flip+=1;
+//			else{
+//				flip = 0;
+//				lcach = s;
+//			}
+//			System.out.println(flip+lcach);
+//			for (int i = 0; i < ps.length; i++){
+//				ps[i].setFace(cs[(i+flip)%3]);
+//			}
+//			
+//			cuboid.fireCanvasChange();
+//			//return cornermap.get(s);
+//		}
+//		//return null;
+//	}
 
 	private void uniColor(){
 		for (PuzzleSticker[][] a : cuboid.cubeStickers)
