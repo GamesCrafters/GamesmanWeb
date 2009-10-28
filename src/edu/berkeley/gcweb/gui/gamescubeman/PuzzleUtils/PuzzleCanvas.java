@@ -20,6 +20,8 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	private Canvas3D canvas;
 	private NColorChooser colorChooser;
 	private CornerChooser cc3;
+	private int pieceN = 0;
+	private boolean keylock=false;
 	public PuzzleCanvas(AppletSettings settings, TwistyPuzzle puzzle, JPanel... options) {
 		this.puzzle = puzzle;
 		canvas = new Canvas3D();
@@ -56,6 +58,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	
 	public void setPieceEditing(boolean pieceEditing) {
 		cc3.setVisible(pieceEditing);
+		keylock=pieceEditing;
 	}
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {
@@ -70,7 +73,17 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	//TODO - undo-redo
 	//TODO - bounds on left hand & right hand, and some visual indicator of where they are
 	public void keyPressed(KeyEvent e) {
-		puzzle.doTurn(e);
+		if (keylock){
+			switch(e.getKeyCode()){
+			case KeyEvent.VK_SPACE: pieceN+=1; break;
+			case KeyEvent.VK_BACK_SPACE: pieceN-=1; break;
+			//case(t == e.VK_SPACE): ;
+			//case(e.VK_BACK_SPACE): pieceN-=1;
+			default: cc3.keyColors(e.getKeyChar()+"",pieceN%8);
+			}
+		}
+		else
+			puzzle.doTurn(e);
 	}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {

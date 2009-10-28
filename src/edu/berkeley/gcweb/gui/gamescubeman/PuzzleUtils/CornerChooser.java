@@ -34,7 +34,6 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener, ActionListener {
 	private static final int PREFERRED_HEIGHT = 50;
 	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
-	private JButton nullset;
 	private HashMap<String, Color> colors;
 	private Canvas3D paintCanvas;
 	private AppletSettings settings;
@@ -44,6 +43,10 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private PuzzleCanvas puzzlecanvas;
 	private HashMap<String,String> cornermap;
 	private Cuboid cuboid;
+	private int flip;
+	private String lcach;
+	//private HashMap<GeneralPath, >
+
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
 		this.paintCanvas = paintCanvas;
@@ -54,17 +57,9 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(100, PREFERRED_HEIGHT));
 		setOpaque(true);
-		
-		
-		nullset = new JButton("Clear");
-		nullset.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				uniColor();
-			}
-		});
-		nullset.setFocusable(false);
-		nullset.setBounds(0, 0, 40, 20);
-		add(nullset, BorderLayout.LINE_START);
+		flip=0;
+		lcach="";
+
 		
 		colors = colorScheme;
 		addMouseListener(this);
@@ -73,34 +68,40 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		paintCanvas.addKeyListener(this);
 		setOpaque(true);
 	}
-//	private void getInput(){
-//		
-//	    String CurLine = ""; // Line read from standard in
-//	       System.out.println("Enter a line of text (type 'quit' to exit): ");
-//			       InputStreamReader converter = new InputStreamReader(System.in);
-//			       BufferedReader in = new BufferedReader(converter);
-//			     while (!(CurLine.equals("quit"))){
-//			            try {
-//							CurLine = in.readLine();
-//						} catch (IOException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//			            if (!(CurLine.equals("quit"))){
-//			              System.out.println("You typed: " + CurLine);
-//			            }
-//			      }
-//	}
+
+	public void keyColors(String s, int pieceN){
+		System.out.println(s+" "+pieceN);
+		if (cornermap.containsKey(s)){
+			String[] cs = cornermap.get(s).split(",");
+			PuzzleSticker[] ps = cuboid.getCorner(pieceN);//new PuzzleSticker[3];
+			if (lcach.equals(s))
+				flip+=1;
+			else{
+				flip = 0;
+				lcach = s;
+			}
+			System.out.println(flip+lcach);
+			for (int i = 0; i < ps.length; i++){
+				ps[i].setFace(cs[(i+flip)%3]);
+			}
+			
+			cuboid.fireCanvasChange();
+			//return cornermap.get(s);
+		}
+		//return null;
+	}
+
 	private void uniColor(){
 		for (PuzzleSticker[][] a : cuboid.cubeStickers)
 			for(PuzzleSticker[] b: a)
 				for (PuzzleSticker c: b){
 					c.setFace(null);
 				}
-		RotationMatrix rm = new RotationMatrix(1, -45);
+		RotationMatrix rm = new RotationMatrix(1, 45);
 		rm = new RotationMatrix(0, -45).multiply(rm);
 		cuboid.setRotation(rm);
 		cuboid.fireStateChanged(null);
+		
 	}
 	
 
@@ -159,43 +160,53 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		}
 		double gap = (double) getWidth() / 15;
 		int x = 40;
+		
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","L","B");
+		paintkeyChar("A", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U,L,B","a");
+		
+		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","F","L");
+		paintkeyChar("S", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U,F,L","s");
+		
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","R","F");
-		paintkeyChar("A", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("U,R,F","a");
+		paintkeyChar("D", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U,R,F","d");
 		
 		
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","B","R");
-		paintkeyChar("S", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("U,B,R","s");
-		
-		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","L","B");
-		paintkeyChar("D", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("U,L,B","d");
-		
-		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","L","F");
-		paintkeyChar("J", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("D,L,F","j");
-		
-		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","R");
-		paintkeyChar("K", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("D,F,R","k");
-		
-		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","R","B");
-		paintkeyChar("L", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("D,R,B","l");
+		paintkeyChar("F", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("U,B,R","f");
 		
 		x +=STICKER_LENGTH+gap;
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","L");
-		paintkeyChar(";", x, PREFERRED_HEIGHT, g2d);
-		cornertableUpdate("D,F,L",";");
+		paintkeyChar("J", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D,B,L","j");
 		
+		
+		x +=STICKER_LENGTH+gap;
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","L","F");
+		paintkeyChar("K", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D,L,F","k");
+		
+		x +=STICKER_LENGTH+gap;
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","R");
+		paintkeyChar("L", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D,F,R","l");
+		
+		x +=STICKER_LENGTH+gap;
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","R","B");
+		paintkeyChar(";", x, PREFERRED_HEIGHT, g2d);
+		cornertableUpdate("D,R,B",";");
+		
+		
+		
+		paintkeyChar("SPACE", x+STICKER_LENGTH*2,PREFERRED_HEIGHT-25, g2d);
+		paintkeyChar("BACKSPACE", x+STICKER_LENGTH*2,PREFERRED_HEIGHT-15, g2d);
+		paintkeyChar("to iterate", x+STICKER_LENGTH*2,PREFERRED_HEIGHT, g2d);
 		colorRectangles = new HashMap<String, Rectangle2D>();
 		for(String face : colors.keySet()) {
 			colorRectangles.put(face, new Rectangle2D.Double());
@@ -338,6 +349,11 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			glowTimer.start();
 			currentCorner = 0;
 			uniColor();
+			PuzzleSticker[] temp = cuboid.getCorner(7);
+			temp[0].setFace("D");
+			temp[1].setFace("R");
+			temp[2].setFace("B");
+			cuboid.fireCanvasChange();
 			cuboid.setDisabled(true);
 		} else {
 			glowTimer.stop();

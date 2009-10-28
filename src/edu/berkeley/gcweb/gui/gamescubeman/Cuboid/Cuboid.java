@@ -252,10 +252,15 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			return null;
 		
 		ArrayList<PuzzleSticker[]> corners = new ArrayList<PuzzleSticker[]>();
+		
+		
+		
+		
+		////////////////////////////////
 		PuzzleSticker[] corner = new PuzzleSticker[3];
-		corner[0] = cubeStickers[CubeFace.UP.index()][0][0];
-		corner[1] = cubeStickers[CubeFace.RIGHT.index()][dimensions(1)-1][0];
-		corner[2] = cubeStickers[CubeFace.FRONT.index()][dimensions(1)-1][0];
+		corner[0] = cubeStickers[CubeFace.UP.index()][dimensions(1)-1][dimensions(1)-1];
+		corner[1] = cubeStickers[CubeFace.LEFT.index()][dimensions(1)-1][dimensions(1)-1];
+		corner[2] = cubeStickers[CubeFace.BACK.index()][dimensions(1)-1][dimensions(1)-1];
 		corners.add(corner);
 		
 		corner = new PuzzleSticker[3];
@@ -263,7 +268,13 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		corner[1] = cubeStickers[CubeFace.FRONT.index()][dimensions(1)-1][dimensions(1)-1];
 		corner[2] = cubeStickers[CubeFace.LEFT.index()][dimensions(1)-1][0];
 		corners.add(corner);
-		
+				
+		corner = new PuzzleSticker[3];
+		corner[0] = cubeStickers[CubeFace.UP.index()][0][0];
+		corner[1] = cubeStickers[CubeFace.RIGHT.index()][dimensions(1)-1][0];
+		corner[2] = cubeStickers[CubeFace.FRONT.index()][dimensions(1)-1][0];
+		corners.add(corner);
+				
 		corner = new PuzzleSticker[3];
 		corner[0] = cubeStickers[CubeFace.UP.index()][dimensions(1)-1][0];
 		corner[1] = cubeStickers[CubeFace.BACK.index()][dimensions(1)-1][0];
@@ -271,15 +282,9 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		corners.add(corner);
 		
 		corner = new PuzzleSticker[3];
-		corner[0] = cubeStickers[CubeFace.UP.index()][dimensions(1)-1][dimensions(1)-1];
-		corner[1] = cubeStickers[CubeFace.LEFT.index()][dimensions(1)-1][dimensions(1)-1];
-		corner[2] = cubeStickers[CubeFace.BACK.index()][dimensions(1)-1][dimensions(1)-1];
-		corners.add(corner);
-		
-		corner = new PuzzleSticker[3];
-		corner[0] = cubeStickers[CubeFace.DOWN.index()][0][0];
-		corner[1] = cubeStickers[CubeFace.FRONT.index()][0][0];
-		corner[2] = cubeStickers[CubeFace.RIGHT.index()][0][0];
+		corner[0] = cubeStickers[CubeFace.DOWN.index()][dimensions(1)-1][dimensions(1)-1];
+		corner[1] = cubeStickers[CubeFace.BACK.index()][0][dimensions(1)-1];
+		corner[2] = cubeStickers[CubeFace.LEFT.index()][0][dimensions(1)-1];
 		corners.add(corner);
 		
 		corner = new PuzzleSticker[3];
@@ -289,16 +294,18 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		corners.add(corner);
 		
 		corner = new PuzzleSticker[3];
+		corner[0] = cubeStickers[CubeFace.DOWN.index()][0][0];
+		corner[1] = cubeStickers[CubeFace.FRONT.index()][0][0];
+		corner[2] = cubeStickers[CubeFace.RIGHT.index()][0][0];
+		corners.add(corner);
+		
+		corner = new PuzzleSticker[3];
 		corner[0] = cubeStickers[CubeFace.DOWN.index()][dimensions(1)-1][0];
 		corner[1] = cubeStickers[CubeFace.RIGHT.index()][0][dimensions(1)-1];
 		corner[2] = cubeStickers[CubeFace.BACK.index()][0][0];
 		corners.add(corner);
 		
-		corner = new PuzzleSticker[3];
-		corner[0] = cubeStickers[CubeFace.DOWN.index()][dimensions(1)-1][dimensions(1)-1];
-		corner[1] = cubeStickers[CubeFace.BACK.index()][0][dimensions(1)-1];
-		corner[2] = cubeStickers[CubeFace.LEFT.index()][0][dimensions(1)-1];
-		corners.add(corner);
+		
 		
 		return corners.get(n);
 	}
