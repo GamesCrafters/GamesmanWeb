@@ -43,6 +43,8 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private PuzzleCanvas puzzlecanvas;
 	private HashMap<String,String> cornermap;
 	private Cuboid cuboid;
+	private int flip;
+	private String lcach;
 
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
@@ -61,6 +63,9 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		addComponentListener(this);
 		paintCanvas.addKeyListener(this);
 		setOpaque(true);
+		
+		flip = 0;
+		lcach = "";
 	}
 
 //	public void keyColors(String s, int pieceN){
@@ -317,14 +322,29 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		if (cornermap.containsKey(s)) {
 			String[] cs = cornermap.get(s).split(",");
 			PuzzleSticker[] ps = cuboid.getCorner(currentCorner);
+			if (lcach.equals(s))
+				flip+=1;
+			else{
+				flip = 0;
+				lcach = s;
+			}
 			for (int i = 0; i < ps.length; i++) {
-				ps[i].setFace(cs[i]);
+				ps[i].setFace(cs[(i+flip)%3]);
 			}
 			cuboid.fireCanvasChange();
-		} else if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		} else if(e.getKeyCode() == KeyEvent.VK_SPACE){
 			currentCorner++;
-		else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+			lcach="";
+			if (currentCorner>7)
+				currentCorner-=8;
+		}
+			
+		else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 			currentCorner--;
+			lcach="";
+			if(currentCorner<0)
+				currentCorner+=8;
+		}
 		System.out.println(e.getKeyCode() + " " + KeyEvent.VK_TAB);
 		if(currentCorner < 0)
 			currentCorner = 0;
