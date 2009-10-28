@@ -21,20 +21,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import javax.swing.JButton;
+import javax.swing.Timer;
 
 import edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
-import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D.PolyClickListener;
 
-public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener{
+public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener, ActionListener {
 	private static final int PREFERRED_HEIGHT = 50;
 	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
 	private JButton nullset;
@@ -47,7 +44,6 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	private PuzzleCanvas puzzlecanvas;
 	private HashMap<String,String> cornermap;
 	private Cuboid cuboid;
-	//private HashMap<GeneralPath, >
 	
 	public CornerChooser(AppletSettings settings, HashMap<String, Color> colorScheme, Canvas3D paintCanvas, PuzzleCanvas puzzlecanvas){
 		this.paintCanvas = paintCanvas;
@@ -71,55 +67,38 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		add(nullset, BorderLayout.LINE_START);
 		
 		colors = colorScheme;
-		//setColors(colors);
-		GeneralPath p = new GeneralPath();
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addComponentListener(this);
-		addKeyListener(this);
-		//this.paintCanvas.addPolyClickListener(this);
+		paintCanvas.addKeyListener(this);
 		setOpaque(true);
-
 	}
-	public void keyColors(String s){
-		System.out.println(s);
-		if (cornermap.containsKey(s)){
-			String[] cs = cornermap.get(s).split(",");
-			PuzzleSticker[] ps = new PuzzleSticker[3];
-			for (int i = 0; i < ps.length; i++){
-				ps[i].setFace(cs[i]);
-			}
-			cuboid.fireCanvasChange();
-			//return cornermap.get(s);
-		}
-		//return null;
-	}
-	private void getInput(){
-		
-	    String CurLine = ""; // Line read from standard in
-	       System.out.println("Enter a line of text (type 'quit' to exit): ");
-			       InputStreamReader converter = new InputStreamReader(System.in);
-			       BufferedReader in = new BufferedReader(converter);
-			     while (!(CurLine.equals("quit"))){
-			            try {
-							CurLine = in.readLine();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-			            if (!(CurLine.equals("quit"))){
-			              System.out.println("You typed: " + CurLine);
-			            }
-			      }
-	}
+//	private void getInput(){
+//		
+//	    String CurLine = ""; // Line read from standard in
+//	       System.out.println("Enter a line of text (type 'quit' to exit): ");
+//			       InputStreamReader converter = new InputStreamReader(System.in);
+//			       BufferedReader in = new BufferedReader(converter);
+//			     while (!(CurLine.equals("quit"))){
+//			            try {
+//							CurLine = in.readLine();
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//			            if (!(CurLine.equals("quit"))){
+//			              System.out.println("You typed: " + CurLine);
+//			            }
+//			      }
+//	}
 	private void uniColor(){
 		for (PuzzleSticker[][] a : cuboid.cubeStickers)
 			for(PuzzleSticker[] b: a)
 				for (PuzzleSticker c: b){
 					c.setFace(null);
 				}
-		RotationMatrix rm = new RotationMatrix(1, 45);
-		rm = new RotationMatrix(0,-45).multiply(rm);
+		RotationMatrix rm = new RotationMatrix(1, -45);
+		rm = new RotationMatrix(0, -45).multiply(rm);
 		cuboid.setRotation(rm);
 		cuboid.fireStateChanged(null);
 	}
@@ -224,9 +203,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		colorRectangles.put("null", new Rectangle2D.Double());
 		
 	}
-	private void recomputeStickers() {
 
-	}
 	private GeneralPath getClickedGP(){
 		Point p = getMousePosition();
 		if(p == null) return null;
@@ -330,36 +307,54 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 	public void componentMoved(ComponentEvent e) {}
 	public void componentResized(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("key a");
+	public void keyPressed(KeyEvent e) {
+		String s = e.getKeyChar() + "";
+		if (cornermap.containsKey(s)) {
+			String[] cs = cornermap.get(s).split(",");
+			PuzzleSticker[] ps = cuboid.getCorner(currentCorner);
+			for (int i = 0; i < ps.length; i++) {
+				ps[i].setFace(cs[i]);
+			}
+			cuboid.fireCanvasChange();
+		} else if(e.getKeyCode() == KeyEvent.VK_ENTER)
+			currentCorner++;
+		else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+			currentCorner--;
+		System.out.println(e.getKeyCode() + " " + KeyEvent.VK_TAB);
+		if(currentCorner < 0)
+			currentCorner = 0;
+		else if(currentCorner > 7)
+			currentCorner = 7;
+	
 	}
-	public void keyReleased(KeyEvent arg0) {
-		System.out.println("key r");
-		
-		if(arg0.getKeyLocation() == arg0.VK_C)
-			System.out.println(arg0);
-		if (arg0.isControlDown())
-			System.out.println("key r");
-		// TODO Auto-generated method stub
-		
-	}
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("key r");
-	}
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped(KeyEvent arg0) {}
 
+	private Timer glowTimer = new Timer(100, this);
 	private int currentCorner;
 	public void setVisible(boolean visible){
 		super.setVisible(visible);
-		if (visible) {
+		if(visible) {
+			glowTimer.start();
+			currentCorner = 0;
 			uniColor();
 			cuboid.setDisabled(true);
-			//cuboid.
 		} else {
+			glowTimer.stop();
 			cuboid.setRotation(cuboid.getPreferredViewAngle());
+			cuboid.setDisabled(false);
 			cuboid.fireStateChanged(null);
 		}
 	}
+
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == glowTimer) {
+			for(int i = 0; i < 8; i++) {
+				for(PuzzleSticker poly : cuboid.getCorner(i)) {
+					poly.setBorderColor(i == currentCorner ? new Color((int) System.currentTimeMillis()) : Color.BLACK);
+					cuboid.fireCanvasChange();
+				}
+			}
+		}
+	}
 }
-	
