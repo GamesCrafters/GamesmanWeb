@@ -65,7 +65,10 @@ public class RollingJPanel extends JPanel {
 				preferredHeight = Math.min(getPreferredSize().height, getParent().getHeight());
 				super.setVisible(true);
 			}
-			else if(getParent() != null) getParent().setCursor(Cursor.getDefaultCursor());
+			else if(getParent() != null) {
+				getParent().setCursor(Cursor.getDefaultCursor());
+				firePropertyChange("visibility", !visible, visible);
+			}
 		}
 		t.start();
 	}

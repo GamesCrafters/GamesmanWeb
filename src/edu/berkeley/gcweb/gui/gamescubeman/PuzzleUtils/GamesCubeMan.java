@@ -7,11 +7,15 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JApplet;
@@ -121,7 +125,15 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					colorChooserCheckBox.setMnemonic(KeyEvent.VK_T);
 					colorChooserCheckBox.setFocusable(false);
 					colorChooserCheckBox.addActionListener(GamesCubeMan.this);
-					
+					puzzleCanvas.getPieceEditorPanel().addPropertyChangeListener(new PropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent evt) {
+							if(evt.getPropertyName().equals("visibility")) {
+								boolean visible = (Boolean) evt.getNewValue();
+								if(!visible)
+									cornerChooserBox.setSelected(false);
+							}
+						}
+					});
 					
 					cornerChooserBox = new JCheckBox("Corner Chooser", false);
 					cornerChooserBox.setMnemonic(KeyEvent.VK_C);

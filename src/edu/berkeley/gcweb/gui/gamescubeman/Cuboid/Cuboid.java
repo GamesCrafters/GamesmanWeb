@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -248,7 +249,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public PuzzleSticker[] getCorner(int n) {
-		if(n < 0 || n >= 8)
+		if(n < 0 || n >= 8 || cubeStickers == null)
 			return null;
 		
 		ArrayList<PuzzleSticker[]> corners = new ArrayList<PuzzleSticker[]>();
@@ -497,6 +498,12 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	public String getState() {
 		if(dimensions(0) != 2 || dimensions(1) != 2 || dimensions(2) != 2)
 			return "Not a 2x2x2!";
+		for(PuzzleSticker[][] face : cubeStickers)
+			for(PuzzleSticker[] row : face)
+				for(PuzzleSticker stick : row)
+					if(stick.getFace() == null)
+						return "Invalid";
+		
 		int[] values = new int[CubeFace.faces.size()];
 		values[CubeFace.FRONT.index()] = 0;
 		values[CubeFace.RIGHT.index()] = 0;
@@ -556,8 +563,18 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			}
 		}
 		
-		//TODO - check legal state: all of 0-7 are in there, sum(orientations) % 3 == 0
-		
+		int sum=0;
+		for (int i:orientations)
+			sum+=i;
+		if (sum%3 != 0)
+			return "Invalid";
+		HashSet<Integer> notSeen = new HashSet<Integer>();
+		for(int i = 0; i < 8; i++)
+			notSeen.add(i);
+		for (int i:pieces)
+			notSeen.remove(i);
+		if(!notSeen.isEmpty())
+			return "Invalid";
 		return Utils.join(",", pieces) + ";" + Utils.join(",", orientations);
 	}
 	

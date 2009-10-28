@@ -20,7 +20,6 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	private Canvas3D canvas;
 	private NColorChooser colorChooser;
 	private CornerChooser cc3;
-	private int pieceN = 0;
 	public PuzzleCanvas(AppletSettings settings, TwistyPuzzle puzzle, JPanel... options) {
 		this.puzzle = puzzle;
 		canvas = new Canvas3D();
@@ -53,6 +52,10 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	public void setColorEditing(boolean colorEditing) {
 		canvas.setColorEditing(colorEditing);
 		colorChooser.setVisible(colorEditing);
+	}
+	
+	public RollingJPanel getPieceEditorPanel() {
+		return cc3;
 	}
 	
 	public void setPieceEditing(boolean pieceEditing) {
