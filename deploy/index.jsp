@@ -1,5 +1,6 @@
-<%@ page import="edu.berkeley.gcweb.*" %><%!
+<%@ page import="edu.berkeley.gcweb.*, java.io.*" %><%!
 private GameDictionary gameDictionary;
+
 
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
@@ -30,9 +31,14 @@ public void jspInit() {
         String internalName = gameDictionary.getInternalName(canonicalName);
         boolean puzz = gameDictionary.getIsPuzzle(internalName);
         boolean visible = gameDictionary.getIsVisible(internalName);
-        if (visible) {
-            if (puzz) { %>
-            <a href="ui/puzzle.jsp?puzzle=<%= internalName %>">
+	File f = new File("deploy/ui/images/" + internalName + ".png");
+	boolean fileExists = f.exists();
+	if (fileExists) {
+	    if (visible) {
+       		if (puzz) {
+		
+				%>
+		    <a href="ui/puzzle.jsp?puzzle=<%= internalName %>">
 <%          } else { %>
     		<a href="ui/game.jsp?game=<%= internalName %>">
 <%          } %>
@@ -40,8 +46,12 @@ public void jspInit() {
                 <span><%= canonicalName %></span>
             </a>
 <%
-        }
+		}
+	    
+        } 
     }
+    
+
 %>
 </div>
 </div>
