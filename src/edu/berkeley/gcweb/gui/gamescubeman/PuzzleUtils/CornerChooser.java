@@ -161,7 +161,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		cornertableUpdate("U,B,R","f");
 		
 		x +=STICKER_LENGTH+gap;
-		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","F","L");
+		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"D","B","L");
 		paintkeyChar("J", x, PREFERRED_HEIGHT, g2d);
 		cornertableUpdate("D,B,L","j");
 		
