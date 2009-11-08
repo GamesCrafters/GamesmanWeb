@@ -30,6 +30,9 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	public String getPuzzleName() {
 		return "Cuboid";
 	}
+	public void setgap(String v){
+		gapOption.setValue(v);
+	}
 	
 	public RotationMatrix getPreferredViewAngle() {
 		return new RotationMatrix(0, -45);
