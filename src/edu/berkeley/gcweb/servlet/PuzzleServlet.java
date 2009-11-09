@@ -23,7 +23,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.berkeley.gcweb.GameDictionary;
+import edu.berkeley.gcweb.GameState;
 
+import org.apache.thrift.TException;
+import org.apache.thrift.TSerializer;
+import org.apache.thrift.protocol.*;
+import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.transport.*;
+
+
+import edu.berkeley.gcweb.servlet.thrift.GamestateRequestHandler;
+import edu.berkeley.gcweb.servlet.thrift.GetMoveResponse;
+import edu.berkeley.gcweb.servlet.thrift.GetNextMoveResponse;
+
+
+
+import java.io.*;
 /**
  * A thin servlet that connects to a data source to retrieve puzzle move
  * information and return it to the client as a JSON-formatted string.
@@ -41,18 +56,111 @@ public class PuzzleServlet {
     @Produces("text/plain")
     public String getMoveValue(@PathParam("puzzle") String puzzle,
                                @Context UriInfo uri) {
-        String params = ";method=getMoveValue" + createMatrixParameterString(uri);
-        return executeRemoteQuery(puzzle, params);
+    	String json = null;
+
+    	Socket socket = getGameConnectionInfo(puzzle, json);
+    	
+    	TTransport transport = new TSocket(socket.getInetAddress().getHostAddress(), socket.getPort());
+    	
+		if (json != null) {
+    		return json;
+    	}
+    	
+    	TProtocol protocol = new TBinaryProtocol(transport);
+    	
+    	GetMoveResponse response;
+    	try {
+    		transport.open();
+    		GamestateRequestHandler.Client request = new GamestateRequestHandler.Client(protocol); 
+            // return client.getMoveValue(puzzle, createMatrixParameterString(uri));        
+    		
+            response = request.getMoveValue(puzzle, createMatrixParameterString(uri));
+            
+            if (response != null) {
+            	//response = client.getMoveValue(puzzle, createMatrixParameterString(uri));
+            	TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+                json = serializer.toString(response);
+            } else {
+            	
+            	// generate error message
+            }
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		if (json == null) {
+			response = new GetMoveResponse("error");
+			response.setMessage("No response from server");
+			TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+            try {
+				json = serializer.toString(response);
+			} catch (TException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+    	
+    	
+        
+        return json;
     }
 
     @GET @Path("/{puzzle}/getNextMoveValues")
     @Produces("text/plain")
     public String getNextMoveValues(@PathParam("puzzle") String puzzle,
                                     @Context UriInfo uri) {
-        
+    	String json = null;
+
+    	Socket socket = getGameConnectionInfo(puzzle, json);
+    	
+    	TTransport transport = new TSocket(socket.getInetAddress().getHostAddress(), socket.getPort());
+    	
+		if (json != null) {
+    		return json;
+    	}
+    	
+    	TProtocol protocol = new TBinaryProtocol(transport);
+    	
+    	GetNextMoveResponse response;
+    	try {
+    		transport.open();
+    		GamestateRequestHandler.Client request = new GamestateRequestHandler.Client(protocol); 
+            // return client.getMoveValue(puzzle, createMatrixParameterString(uri));        
+    		
+            response = request.getNextMoveValues(puzzle, createMatrixParameterString(uri));
+            
+            if (response != null) {
+            	//response = client.getMoveValue(puzzle, createMatrixParameterString(uri));
+            	TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+                json = serializer.toString(response);
+            } else {
+            	
+            	// generate error message
+            }
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		if (json == null) {
+			response = new GetNextMoveResponse("error");
+			response.setMessage("No response from server");
+			TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+            try {
+				json = serializer.toString(response);
+			} catch (TException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+
+        return json;  
+    	/*
         String params = ";method=getNextMoveValues" +
             createMatrixParameterString(uri);
         return executeRemoteQuery(puzzle, params);
+        */
     }
     
     private Socket connectToRemote(String gameName) throws IOException {
@@ -75,7 +183,38 @@ public class PuzzleServlet {
         }
         return sock;
     }
-    
+    /**
+     *  Calls connectToRemove to check if the request is sane... IE:
+     * 		- the game is in our dictionary 
+     * 		- the server port mapping is in our dictionary (or whatever connecToRemote does) 
+     * 		- generate error string into response if bad things happen
+     *  At the same time,  
+     */
+    private Socket getGameConnectionInfo(String gameName, String response) {
+    	//String response = null;
+    	Socket conn = null;
+        
+    	try {
+            // create a new TCP socket connection to the server
+            conn = connectToRemote(gameName);
+        
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                JSONObject json = new JSONObject();
+                //json.put("exception", e.getClass().toString());
+                //json.put("stacktrace", sw.toString());
+                json.put("status", "error");
+                json.put("message", e.getMessage() != null ? e.getMessage() : e.toString());
+                response = json.toString(4);
+            } catch (JSONException je) {
+                response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
+            }
+        }
+        return conn;
+    }
     private String executeRemoteQuery(String gamename, String message) {
         String response = null;
         Socket conn = null;

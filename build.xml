@@ -25,7 +25,7 @@
 	</target>
 	<target name="compile" description="Compile the GCWeb classes">
 		<mkdir dir="${build}"/>
-		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar" sourcepath="" srcdir="${src}" 
+		<javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar:${lib}/libthrift.jar:${lib}/slf4j-api-1.5.8.jar:${lib}/slf4j-nop-1.5.8.jar" sourcepath="" srcdir="${src}" 
 		       destdir="${build}" source="1.5" target="1.5" excludes="src build.xml" >
 			<include name="edu/berkeley/gcweb/**/*.java"/>
 			<exclude name="**/tests/*.java"/>
