@@ -35,7 +35,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
 public class CornerChooser extends RollingJPanel implements MouseListener, MouseMotionListener, ComponentListener, KeyListener, ActionListener {
 	private static final int PREFERRED_HEIGHT = 50;
-	private static final int STICKER_LENGTH = (int) (.3* PREFERRED_HEIGHT);
+	private static final int STICKER_LENGTH = (int) (.25* PREFERRED_HEIGHT);
 	private HashMap<String, Color> colors;
 	private Canvas3D paintCanvas;
 	private AppletSettings settings;
@@ -163,6 +163,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		}
 		double gap = (double) getWidth() / 15;
 		int x = 85;
+		paintkeyChar("SPACE, BACKSPACE TO MOVE HIGHLIGHTED CORNER", x,12, g2d);
 		
 		drawCorner(g2d,x,PREFERRED_HEIGHT/2,"U","L","B", "a");
 		paintkeyChar("A", x, PREFERRED_HEIGHT, g2d);
@@ -204,11 +205,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		paintkeyChar(";", x, PREFERRED_HEIGHT, g2d);
 		cornertableUpdate("D,R,B",";");
 		
-		
-		
-		paintkeyChar("SPACE", x+STICKER_LENGTH*2,PREFERRED_HEIGHT-25, g2d);
-		paintkeyChar("BACKSPACE", x+STICKER_LENGTH*2,PREFERRED_HEIGHT-15, g2d);
-		paintkeyChar("to iterate", x+STICKER_LENGTH*2,PREFERRED_HEIGHT, g2d);
+
 		colorRectangles = new HashMap<String, Rectangle2D>();
 		for(String face : colors.keySet()) {
 			colorRectangles.put(face, new Rectangle2D.Double());
@@ -348,6 +345,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			}
 		}
 		dupcheck.put(s, currentCorner);
+		
 		cuboid.fireCanvasChange();
 	}
 	
