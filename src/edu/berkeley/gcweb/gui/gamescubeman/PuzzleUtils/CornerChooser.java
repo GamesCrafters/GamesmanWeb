@@ -132,7 +132,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		stickers[2]=colors.get(c);
 		if (dupcheck.containsKey(k)){
 			for(int i = 0; i < stickers.length; i++)
-				stickers[i]=stickers[i].darker();
+				stickers[i]=stickers[i].darker().darker();
 		}	
 		p=drawSticker(g2d,x,y,0,stickers[0]);
 		StickerColor.put(p, faces);
@@ -381,6 +381,8 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			lcach="";
 			if (currentCorner>7)
 				currentCorner-=8;
+			if (dupcheck.keySet().size()==7)
+				lastCorner(dupcheck,cornermap.keySet());
 		}
 			
 		else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
@@ -388,11 +390,11 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			lcach="";
 			if(currentCorner<0)
 				currentCorner+=8;
+			if (dupcheck.keySet().size()==7)
+				lastCorner(dupcheck,cornermap.keySet());
 		}
 		paintComponent1();
-		if (dupcheck.keySet().size()==7){
-			lastCorner(dupcheck,cornermap.keySet());
-		}
+
 
 	}
 	public void keyReleased(KeyEvent e) {}
@@ -404,10 +406,10 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 		super.setVisible(visible);
 		if(visible) {
 			glowTimer.start();
-			cuboid.setgap("35");
-			RotationMatrix rm = new RotationMatrix(1, 45);
-			rm = new RotationMatrix(0, -45).multiply(rm);
-			cuboid.setRotation(rm);
+		//	cuboid.setgap("35");
+		//	RotationMatrix rm = new RotationMatrix(1, 45);
+		//	rm = new RotationMatrix(0, -45).multiply(rm);
+		//	cuboid.setRotation(rm);
 			cuboid.setDisabled(true);
 			paintCanvas.addKeyListener(this);
 			
@@ -415,10 +417,10 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 			currentCorner = -1;
 			actionPerformed(null);
 			glowTimer.stop();
-			cuboid.setgap("10");
-			cuboid.setRotation(cuboid.getPreferredViewAngle());
+			//cuboid.setgap("10");
+//			cuboid.setRotation(cuboid.getPreferredViewAngle());
 			cuboid.setDisabled(false);
-			cuboid.fireStateChanged(null);
+//			cuboid.fireStateChanged(null);
 			paintCanvas.removeKeyListener(this);
 			clearCheck=false;
 		}

@@ -31,6 +31,7 @@ import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
 @SuppressWarnings("serial")
 public class GamesCubeMan extends JApplet implements ActionListener, PuzzleStateChangeListener, MouseWheelListener {
@@ -41,7 +42,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private JCheckBox colorChooserCheckBox, optionsCheckBox, keysCheckBox,cornerChooserBox;
 	private RollingJPanel optionsPanel;
 	private KeyCustomizerPanel keysPanel;
-	private JButton resetView, scramble, resetPuzzle;
+	private JButton resetView, cornerView, scramble, resetPuzzle;
 	private JTextField turnHistoryField;
 
 	
@@ -104,13 +105,19 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					canvas = puzzleCanvas.getCanvas();
 					resetRotation();
 					
-					resetView = new JButton("Reset View");
+					resetView = new JButton("Front View");
 					resetView.setToolTipText(resetView.getText());
-					resetView.setMnemonic(KeyEvent.VK_R);
+					resetView.setMnemonic(KeyEvent.VK_F);
 					resetView.setFocusable(false);
 					resetView.addActionListener(GamesCubeMan.this);
 					
-					resetPuzzle = new JButton("Reset Puzzle");
+					cornerView = new JButton("Corner View");
+					cornerView.setToolTipText(cornerView.getText());
+					cornerView.setMnemonic(KeyEvent.VK_C);
+					cornerView.setFocusable(false);
+					cornerView.addActionListener(GamesCubeMan.this);
+					
+					resetPuzzle = new JButton("Reset");
 					resetPuzzle.setToolTipText(resetPuzzle.getText());
 					resetPuzzle.setFocusable(false);
 					resetPuzzle.addActionListener(GamesCubeMan.this);
@@ -135,8 +142,8 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 						}
 					});
 					
-					cornerChooserBox = new JCheckBox("Corner Chooser", false);
-					cornerChooserBox.setMnemonic(KeyEvent.VK_C);
+					cornerChooserBox = new JCheckBox("Choose Corner", false);
+					cornerChooserBox.setMnemonic(KeyEvent.VK_A);
 					cornerChooserBox.setFocusable(false);
 					cornerChooserBox.addActionListener(GamesCubeMan.this);
 					
@@ -200,10 +207,10 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					
 					JPanel topHalf = new JPanel(new BorderLayout());
 					
-					tabBoxes = new JCheckBox[] { colorChooserCheckBox, optionsCheckBox, keysCheckBox, cornerChooserBox };
+					tabBoxes = new JCheckBox[] { optionsCheckBox, keysCheckBox, cornerChooserBox, colorChooserCheckBox};
 					JPanel tabs = new JPanel();
 					tabs.setLayout(new BoxLayout(tabs, BoxLayout.PAGE_AXIS));
-					tabs.add(Utils.sideBySide(true, resetView, resetPuzzle, scramble));
+					tabs.add(Utils.sideBySide(true, resetView, cornerView, resetPuzzle, scramble));
 					tabs.add(Utils.sideBySide(false, tabBoxes));
 					topHalf.add(tabs, BorderLayout.PAGE_START);
 					
@@ -269,6 +276,8 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == resetView)
 			resetRotation();
+		else if (e.getSource() == cornerView)
+			cornerView();
 		else if(e.getSource() == scramble)
 			puzzle.scramble();
 		else if(e.getSource() == resetPuzzle)
@@ -288,6 +297,13 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private void resetRotation() {
 		puzzle.setRotation(puzzle.getPreferredViewAngle());
 		//stop any rotations
+		canvas.mousePressed(null);
+	}
+	
+	private void cornerView(){
+		RotationMatrix rm = new RotationMatrix(1, 45);
+		rm = new RotationMatrix(0, -45).multiply(rm);
+		puzzle.setRotation(rm);
 		canvas.mousePressed(null);
 	}
 	
