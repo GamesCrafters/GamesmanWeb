@@ -9,7 +9,7 @@ public class CubeFace {
 	public static ArrayList<CubeFace> faces = new ArrayList<CubeFace>();
 	public final static CubeFace UP = new CubeFace('U', 1, true, 0, 2, Color.WHITE);
 	public final static CubeFace DOWN = new CubeFace('D', UP, Color.YELLOW);
-	public final static CubeFace LEFT = new CubeFace('L', 0, true, 2, 1, Color.GREEN);
+	public final static CubeFace LEFT = new CubeFace('L', 0, true, 2, 1, new Color(34,139,34));//forest green
 	public final static CubeFace RIGHT = new CubeFace('R', LEFT, Color.BLUE);
 	public final static CubeFace FRONT = new CubeFace('F', 2, false, 0, 1, Color.RED);
 	public final static CubeFace BACK = new CubeFace('B', FRONT, new Color(255, 128, 0));
