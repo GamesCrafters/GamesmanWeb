@@ -10,6 +10,7 @@ import java.util.HashMap;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.NColorChooser.ColorChangeListener;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
@@ -33,9 +34,11 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		colorChooser.setVisible(false);
 		this.add(colorChooser, new Integer(1));
 		
-		cc3 = new CornerChooser(settings, puzzle.getDefaultColorScheme(), canvas, this);
-		cc3.setVisible(false);
-		this.add(cc3, new Integer(1));
+		if(this.puzzle instanceof Cuboid) {
+			cc3 = new CornerChooser(puzzle.getDefaultColorScheme(), this);
+			cc3.setVisible(false);
+			this.add(cc3, new Integer(1));
+		}
 		for(JPanel p : options)
 			this.add(p, new Integer(1));
 		this.addComponentListener(new ComponentAdapter() {
@@ -54,7 +57,7 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 		colorChooser.setVisible(colorEditing);
 	}
 	
-	public RollingJPanel getPieceEditorPanel() {
+	public CornerChooser getPieceEditorPanel() {
 		return cc3;
 	}
 	
@@ -80,23 +83,21 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	public void keyTyped(KeyEvent e) {}
 	
 	public void polyClicked(Polygon3D clicked) {
-		PuzzleSticker sticker = (PuzzleSticker) clicked;
-		String c3 = cc3.getSelectedFace();
-		System.out.println(puzzle.getPuzzleName());
-		if(c3 != null) {
-			String[] faces = c3.split(",");
-			//sticker.setFillColor(c3[0]);
-			sticker.setFace(faces[0]);
-			puzzle.fireStateChanged(null);
-			
-						
-		}
-		/*
+//		PuzzleSticker sticker = (PuzzleSticker) clicked;
+//		String c3 = cc3.getSelectedFace();
+//		System.out.println(puzzle.getPuzzleName());
+//		if(c3 != null) {
+//			String[] faces = c3.split(",");
+//			//sticker.setFillColor(c3[0]);
+//			sticker.setFace(faces[0]);
+//			puzzle.fireStateChanged(null);
+//			
+//						
+//		}
 		PuzzleSticker sticker = (PuzzleSticker) clicked;
 		if(colorChooser.getSelectedFace() != null) {
 			sticker.setFace(colorChooser.getSelectedFace());
 			puzzle.fireStateChanged(null);
 		}
-		*/
 	}
 }

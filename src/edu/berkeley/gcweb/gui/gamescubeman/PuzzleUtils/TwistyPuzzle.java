@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JCheckBox;
 import javax.swing.Timer;
 
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
@@ -27,15 +26,15 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		resetTimer();
 		createPolys(false);
 		fireStateChanged(null);
+
+		Integer val = frames_animation.getValue();
+		frames_animation.setValue(1);
+		doTurns(initialization, reverse);
+		frames_animation.setValue(val);
+		
+		queueIndex = 0;
 	}
 	
-	public void nullPuzzle(){
-		scrambling = false;
-		resetTimer();
-		_nullPoly(false);
-		fireStateChanged(null);
-	}
-
 	private ArrayList<PuzzleTurn> turns = new ArrayList<PuzzleTurn>();
 	public ArrayList<PuzzleTurn> getTurnHistory() {
 		return turns;
@@ -67,12 +66,16 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 				scrambling = false;
 				startInspection();
 			}
-			for(PuzzleTurn finished : anim.animate())
+			for(PuzzleTurn finished : anim.animate()) {
 				fireStateChanged(finished);
+			}
 			if(anim.isEmpty()) {
 				animationQueue.remove(0);
-				if(animationQueue.isEmpty())
+				if(animationQueue.isEmpty()) {
 					turner.stop();
+					if(playing)
+						forward();
+				}
 			}
 		} else if(e.getSource() == timer) {
 			updateTimeDisplay();
@@ -92,6 +95,29 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		for(PuzzleStateChangeListener l : stateListeners)
 			l.puzzleStateChanged(this, turn);
 		fireCanvasChange();
+	}
+	
+	private ArrayList<PuzzleTimerListener> timerListeners = new ArrayList<PuzzleTimerListener>();
+	public void addPuzzleTimerListener(PuzzleTimerListener l) {
+		timerListeners.add(l);
+	}
+	public void fireInspectionStarted(String scramble) {
+		for(PuzzleTimerListener l : timerListeners)
+			l.inspectionStarted(scramble);
+	}
+	public void fireTimerStarted() {
+		for(PuzzleTimerListener l : timerListeners)
+			l.timerStarted();
+	}
+	public void fireTimerReset() {
+		if(!isTiming() && !isInspecting())
+			return;
+		for(PuzzleTimerListener l : timerListeners)
+			l.timerReset();
+	}
+	public void fireTimerStopped(double time) {
+		for(PuzzleTimerListener l : timerListeners)
+			l.timerStopped(time);
 	}
 
 	private final TurnAnimation END_SCRAMBLING = new TurnAnimation(this);
@@ -113,7 +139,10 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		_createPolys(copyOld);
 	}
 	
-	private SliderOption frames_animation = new SliderOption("frames/animation", true, 5, 1, 20);
+	protected SliderOption frames_animation = new SliderOption("frames/animation", true, 5, 1, 100);
+	{
+		frames_animation.setSilent(true);
+	}
 	
 	public int getFramesPerAnimation() {
 		return frames_animation.getValue();
@@ -123,7 +152,63 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		List<PuzzleOption<?>> options = _getDefaultOptions();
 		options.add(0, frames_animation);
 		return options;
-		
+	}
+	
+	private String[] initialization = new String[0];
+	private boolean reverse = false;
+	public final void initialize(String turns, boolean reverse) {
+		if(turns == null) return;
+		if(turns.equals("#")) {
+			initialization = queuedTurns;
+		} else {
+			initialization = turns.split(" ");
+		}
+		this.reverse = true;
+		resetPuzzle();
+	}
+	
+	private final void doTurns(String[] turns, boolean reverse) {
+		String[] copy = turns.clone(); //this method will get called multiple times
+		if(reverse) Utils.reverse(copy);
+		for(String turn : copy) {
+			_doTurn(turn, reverse);
+		}
+	}
+	
+	private int queueIndex = 0;
+	private String[] queuedTurns = new String[0];
+	public final void queueTurns(String turns) {
+		if(turns != null)
+			this.queuedTurns = turns.split(" ");
+	}
+	
+	private boolean playing = false;
+	public final void playPause() {
+		//TODO - deal with key input =(
+		playing = !playing;
+		if(playing)
+			forward();
+	}
+	public boolean isPlaying() {
+		return playing;
+	}
+	public final void forward() {
+		if(queueIndex < queuedTurns.length)
+			_doTurn(queuedTurns[queueIndex++], false);
+		else
+			playing = false;
+	}
+	public final int getRemaining() {
+		return queuedTurns.length - queueIndex;
+	}
+	public final int getCompleted() {
+		return queueIndex;
+	}
+	
+	public final void backward() {
+		playing = false;
+		if(queueIndex > 0)
+			_doTurn(queuedTurns[--queueIndex], true);
 	}
 	
 	//*** To implement a custom twisty puzzle, you must override the following methods and provide a noarg constructor ***
@@ -131,19 +216,16 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	
 	protected abstract void _createPolys(boolean copyOld);
 	protected abstract void _scramble();
-	protected abstract boolean _doTurn(String turn);
+	protected abstract void _cantScramble();
+	protected abstract boolean _doTurn(String turn, boolean inverse);
 	
 	public abstract List<PuzzleOption<?>> _getDefaultOptions();
 
 	public abstract String getState();
 	public abstract boolean isSolved();
 	public abstract HashMap<String, Color> getDefaultColorScheme();
-	//this should set the default angle to view the puzzle from (using Shape3D's setRotation() method)
-	public abstract RotationMatrix getPreferredViewAngle();
-	
-	public JCheckBox puzzleOption() {
-		return null;
-	}
+	//this should be used set the default angle to view the puzzle from (using Shape3D's setRotation() method)
+	public abstract RotationMatrix[] getPreferredViewAngles();
 	
 	//*** END TWISTY PUZZLE IMPLEMENTATION ***
 	
@@ -163,8 +245,10 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 	public void puzzleStateChanged(TwistyPuzzle src, PuzzleTurn turn) {
 		//this will start the timer if we're currently inspecting
-		if(!scrambling && isInspecting() && turn != null && !turn.isInspectionLegal())
+		if(!scrambling && isInspecting() && turn != null && !turn.isInspectionLegal()) {
 			start = System.currentTimeMillis() - INSPECTION_TIME*1000;
+			fireTimerStarted();
+		}
 		if(src.isSolved() && isTiming())
 			stopTimer();
 	}
@@ -183,6 +267,7 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		stop = System.currentTimeMillis();
 		timer.stop();
 		updateTimeDisplay();
+		fireTimerStopped(getElapsedTime()/1000.);
 	}
 	private long getElapsedTime() {
 		if(start == -1) return 0;
@@ -201,11 +286,13 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		return start != -1 && getCountdownSeconds() > 0;
 	}
 	private void startInspection() {
+		fireInspectionStarted(Utils.join(" ", getTurnHistory().toArray()));
 		start = System.currentTimeMillis();
 		stop = -1;
 		timer.start();
 	}
 	private void resetTimer() {
+		fireTimerReset();
 		stop = start = -1;
 		timer.stop();
 		updateTimeDisplay();
@@ -215,20 +302,21 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	public final boolean doTurn(String turn) {
 		if(turn == null || scrambling) return false;
 		if(turn.equals("scramble")) {
-			
-			scramble();
+			if(!isInspecting() && !isTiming())
+				scramble();
+			else
+				_cantScramble();
 			return true;
 		}
-		return _doTurn(turn);
-	}
-	public void piecePicker(){
-		return;
+		if(turn.equals("reset")) {
+			resetPuzzle();
+			return true;
+		}
+		return _doTurn(turn, false);
 	}
 	
 	public boolean piecePickerSupport(){
 		//if 2x2x2 return true
 		return false;
 	}
-	protected abstract void _nullPoly(boolean copyOld);
-	
 }

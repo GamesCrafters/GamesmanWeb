@@ -1,4 +1,4 @@
-package edu.berkeley.gcweb.gui.gamescubeman.Megaminx;
+package edu.berkeley.gcweb.gui.gamescubeman.OldMegaminx;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.acos;
@@ -23,9 +23,9 @@ import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.Utils;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.PolygonCollection;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
-public class CopyOfMegaminx extends TwistyPuzzle {
+public class OldMegaminx extends TwistyPuzzle {
 
-	public CopyOfMegaminx() {
+	public OldMegaminx() {
 		super(0, 0, 4);
 	}
 
@@ -59,15 +59,26 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 
 	@Override
 	public boolean isSolved() {
-		// TODO Auto-generated method stub
-		return false;
+		for(PolygonCollection<PuzzleSticker> corner : cornerStickers) {
+			if(!corner.getNetRotations().equals(netCubeRotation, .01))
+				return false;
+		}
+		for(PolygonCollection<PuzzleSticker> edge : edgeStickers) {
+			if(!edge.getNetRotations().equals(netCubeRotation, .01))
+				return false;
+		}
+		return true;
 	}
 
 	@Override
-	public RotationMatrix getPreferredViewAngle() {
-		return new RotationMatrix(0, -0.5*(180-toDegrees(adjAngleRad)));
+	public RotationMatrix[] getPreferredViewAngles() {
+		return new RotationMatrix[] { new RotationMatrix(0, -0.5*(180-toDegrees(adjAngleRad))) };
 	}
+	@Override
+	protected void _cantScramble() {
+		// TODO Auto-generated method stub
 
+	}
 	@Override
 	protected void _scramble() {
 		Random r = new Random();
@@ -87,6 +98,7 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 		return temp;
 	}
 
+	private RotationMatrix netCubeRotation;
 	private ArrayList<PolygonCollection<PuzzleSticker>> centerStickers, cornerStickers, edgeStickers;
 	private int[] centerPermutation, cornerPermutation, edgePermutation, cornerOrientation, edgeOrientation;
 	
@@ -266,6 +278,7 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 				faces.get(i).get(c).setFace(FACES[i]);
 		if(!copyOld) {
 			//refreshing our internal representation
+			netCubeRotation = new RotationMatrix();
 			centerPermutation = enumerate(12);
 			cornerPermutation = enumerate(20);
 			cornerOrientation = new int[20];
@@ -298,7 +311,7 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 	private static final String[] FACES = { "F", "U", "R",   "DR", "DL", "L", //faces on the front 
 											"B", "D", "BLD", "BL", "BR", "BRD" }; //and the faces directly opposite them
 	@Override
-	protected boolean _doTurn(String turn) {
+	protected boolean _doTurn(String turn, boolean invert) {
 		boolean cubeRotation = turn.startsWith("[");
 		int axis, dir;
 		if(cubeRotation) {
@@ -324,6 +337,9 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 		if(ccw)
 			dir = -dir;
 		
+
+		if(invert) dir = -dir;
+		
 		appendTurn(new MegaminxTurn(axis, dir, cubeRotation, wide));
 		return true;
 	}
@@ -331,18 +347,18 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 	@Override
 	public HashMap<String, Color> getDefaultColorScheme() {
 		HashMap<String, Color> colorScheme = new HashMap<String, Color>();
-		colorScheme.put("F", Color.GRAY.brighter());
+		colorScheme.put("F", Color.GREEN.darker());
 		colorScheme.put("U", Color.WHITE);
 		colorScheme.put("R", new Color(102, 0, 102)); //purple
-		colorScheme.put("DR", Color.ORANGE.darker());
-		colorScheme.put("DL", Color.PINK);
-		colorScheme.put("L", Color.GREEN);
-		colorScheme.put("B", Color.YELLOW);
-		colorScheme.put("D", Color.BLUE);
-		colorScheme.put("BLD", Color.RED);
-		colorScheme.put("BL", Color.ORANGE); //this is actually a pretty light orange, using .brighter() makes it yellow
-		colorScheme.put("BR", Color.BLUE.darker().darker());
-		colorScheme.put("BRD", new Color(0, 255, 204)); //light blue
+		colorScheme.put("DR", Color.RED);
+		colorScheme.put("DL", Color.BLUE);
+		colorScheme.put("L", new Color(0, 255, 204)); //light blue
+		colorScheme.put("B", Color.GREEN.brighter());
+		colorScheme.put("D", Color.YELLOW);
+		colorScheme.put("BLD", Color.MAGENTA);
+		colorScheme.put("BL", Color.RED.darker());
+		colorScheme.put("BR", new Color(0, 128, 255)); //light-ish blue
+		colorScheme.put("BRD", new Color(255, 117, 34)); //dark orange
 		return colorScheme;
 	}
 	
@@ -353,6 +369,7 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 		private ArrayList<int[]> edgeCycles, cornerCycles, centerCycles;
 		private ArrayList<Integer> activeEdges, activeCorners, activeCenters;
 		public MegaminxTurn(int axis, int dir, boolean cubeRotation, boolean wide) {
+			super(getFramesPerAnimation());
 			if(cubeRotation && wide) throw new RuntimeException();
 			
 			this.axis = axis;
@@ -551,11 +568,12 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 		}
 		
 		@Override
-		public boolean animateMove() {
+		public void _animateMove(boolean firstFrame) {
 			rotatePieces(activeEdges, edgeStickers, rotate);
 			rotatePieces(activeCorners, cornerStickers, rotate);
 			rotatePieces(activeCenters, centerStickers, rotate);
-			return --frames == 0;
+			if(cubeRotation || wide)
+				netCubeRotation = rotate.multiply(netCubeRotation);
 		}
 		
 		private void rotatePieces(ArrayList<Integer> indices, ArrayList<PolygonCollection<PuzzleSticker>> pieces, RotationMatrix m) {
@@ -636,11 +654,5 @@ public class CopyOfMegaminx extends TwistyPuzzle {
 				for(int i = 0; i < cycles.get(c).length; i++)
 					arr[cycles.get(c)[Utils.modulo(i + dir, cycles.get(c).length)]] = copy[cycles.get(c)[i]];
 		}
-	}
-
-	@Override
-	protected void _nullPoly(boolean copyOld) {
-		// TODO Auto-generated method stub
-		
 	}
 }

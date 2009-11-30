@@ -3,6 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.SquareOne;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,8 +53,8 @@ public class SquareOne extends TwistyPuzzle {
 		return 0.05;
 	}
 	
-	public RotationMatrix getPreferredViewAngle() {
-		return new RotationMatrix(0, -45).multiply(new RotationMatrix(1, -15));
+	public RotationMatrix[] getPreferredViewAngles() {
+		return new RotationMatrix[] { new RotationMatrix(0, -45).multiply(new RotationMatrix(1, -15)) };
 	}
 	
 	//these are the pieces on top arranged counterclockwise, and null if the second part of a corner
@@ -317,17 +318,22 @@ public class SquareOne extends TwistyPuzzle {
 	private class SquareOneTurn extends PuzzleTurn {
 		private int top, down;
 		public SquareOneTurn(int topPieces, int bottomPieces, boolean legalIncrements) {
+			super(getFramesPerAnimation());
 			if(legalIncrements) {
 				int topDir = (int) Math.signum(topPieces), bottomDir = (int) Math.signum(bottomPieces);
-				while(Math.abs(topPieces) > 0 || Math.abs(bottomPieces) > 0) {
+				top = 0;
+				while(topPieces != 0) {
 					topPieces -= topDir;
-					bottomPieces -= bottomDir;
 					do {
 						top += topDir;
+					} while(!isTopSlashLegal(top));
+				}
+				down = 0;
+				while(bottomPieces != 0) {
+					bottomPieces -= bottomDir;
+					do {
 						down += bottomDir;
-					} while(!isSlashLegal(top, down));
-					if(topPieces == 0) topDir = 0;
-					if(bottomPieces == 0) bottomDir = 0;
+					} while(!isBotSlashLegal(down));
 				}
 			} else {
 				this.top = topPieces;
@@ -338,10 +344,11 @@ public class SquareOne extends TwistyPuzzle {
 		private boolean slash, leftSlash, cw;
 		private int ccw_axis;
 		public SquareOneTurn(boolean left, boolean cw) {
+			super(getFramesPerAnimation());
 			this.cw = cw;
 			slash = true;
 			leftSlash = left;
-			ccw_axis = cw ? 1 : -1;
+			ccw_axis = cw ? -1 : 1;
 			if(!left)
 				ccw_axis = -ccw_axis;
 		}
@@ -349,6 +356,7 @@ public class SquareOne extends TwistyPuzzle {
 		private int axis=-1;
 		private char axisname;
 		public SquareOneTurn(int axis, boolean cw) {
+			super(getFramesPerAnimation());
 			this.axis = axis;
 			axisname = axisnames.charAt(axis);
 			this.cw = cw;
@@ -357,11 +365,9 @@ public class SquareOne extends TwistyPuzzle {
 			if(axis == 2 || axis == 0)
 				ccw_axis = -ccw_axis;
 		}
-		private int frames = -1;
 		private RotationMatrix topRotationMatrix, downRotationMatrix, rotationMatrix;
-		public boolean animateMove() {
-			if(frames == -1) {
-				frames = getFramesPerAnimation();
+		public void _animateMove(boolean firstFrame) {
+			if(firstFrame) {
 				if(slash) {
 					rotationMatrix = new RotationMatrix(0, ccw_axis*180./frames);
 				} else if(axis != -1) {
@@ -387,7 +393,6 @@ public class SquareOne extends TwistyPuzzle {
 					if(piece != null)
 						piece.rotate(downRotationMatrix);
 			}
-			return --frames == 0;
 		}
 		public void updateInternalRepresentation(boolean polygons) {
 			if(slash) {
@@ -487,16 +492,23 @@ public class SquareOne extends TwistyPuzzle {
 	}
 
 	private Pattern turnPattern = Pattern.compile("(-?\\d*), *(-?\\d*)");
-	public boolean _doTurn(String turn) {
+	public boolean _doTurn(String turn, boolean invert) {
 		Matcher m;
 		SquareOneTurn s1turn = null;
+
+		boolean cw = leftRightSwitched ^ !turn.substring(1).equals("'");
+		if(invert) cw = !cw;
 		if(turn.startsWith("/"))
-			s1turn = new SquareOneTurn(leftRightSwitched, leftRightSwitched ^ turn.substring(1).equals("'"));
+			s1turn = new SquareOneTurn(leftRightSwitched, cw);
 		else if(turn.startsWith("\\"))
-			s1turn = new SquareOneTurn(!leftRightSwitched, leftRightSwitched ^ turn.substring(1).equals("'"));
+			s1turn = new SquareOneTurn(!leftRightSwitched, cw);
 		else if((m=turnPattern.matcher(turn)).find()) {
 			int top = Integer.parseInt(m.group(1));
 			int bottom = Integer.parseInt(m.group(2));
+			if(invert) {
+				top = -top;
+				bottom = -bottom;
+			}
 			s1turn = new SquareOneTurn(top, bottom, turn.charAt(0) == '[');
 		} else {
 			//cube rotations
@@ -509,6 +521,7 @@ public class SquareOne extends TwistyPuzzle {
 			//and because they're all that people would use 
 			if(!dir.equals("2"))
 				return false;
+			if(invert) ccw = !ccw;
 			if(face.equals("x")) {
 				appendTurn(new SquareOneTurn(0, !ccw));
 			} else if(face.equals("y")) {
@@ -524,12 +537,18 @@ public class SquareOne extends TwistyPuzzle {
 		return true;
 	}
 	
-	private boolean isSlashLegal(int top, int bottom) {
+	private boolean isTopSlashLegal(int top) {
 		int len = topLayer.length;
-		return topLayer[Utils.modulo(top, len)] && 
-				topLayer[Utils.modulo(6+top, len)] &&
-				bottomLayer[Utils.modulo(bottom, len)] &&
-				bottomLayer[Utils.modulo(6+bottom, len)];
+		return topLayer[Utils.modulo(top, len)] && topLayer[Utils.modulo(6+top, len)];
+	}
+	
+	private boolean isBotSlashLegal(int bottom) {
+		int len = topLayer.length;
+		return bottomLayer[Utils.modulo(bottom, len)] && bottomLayer[Utils.modulo(6+bottom, len)];
+	}
+	
+	private boolean isSlashLegal(int top, int bottom) {
+		return isTopSlashLegal(top) && isBotSlashLegal(bottom);
 	}
 
 	public String getState() {
@@ -659,35 +678,62 @@ public class SquareOne extends TwistyPuzzle {
 		}
 		return arr[i].equals(c);
 	}
+	@Override
+	protected void _cantScramble() {
+		// TODO Auto-generated method stub
 
+	}
 	private static final int SCRAMBLE_LENGTH = 40;
 	public void _scramble() {
-		boolean top = true, bottom = true, slash = true;
+		Random r = new Random();
+		boolean justDidHorizontal = false, justDidSlash = false;
 		for(int i=0; i<SCRAMBLE_LENGTH; i++) {
 			ArrayList<SquareOneTurn> legalTurns = new ArrayList<SquareOneTurn>();
-			for(int c=0; c<12; c++) {
-				if(top && isSlashLegal(c, 0))
-					legalTurns.add(new SquareOneTurn(c, 0, false));
-				if(bottom && isSlashLegal(0, c))
-					legalTurns.add(new SquareOneTurn(0, c, false));
-				if(slash && isSlashLegal(0, 0))
-					legalTurns.add(new SquareOneTurn(false, true));
+			for(int top=0; top<12; top++) {
+				for(int bot=0; bot<12; bot++) {
+					if(!justDidHorizontal && isSlashLegal(top, bot))
+						legalTurns.add(new SquareOneTurn(top, bot, false));
+					if(!justDidSlash)
+						legalTurns.add(new SquareOneTurn(false, r.nextBoolean()));
+				}
 			}
 			SquareOneTurn turn = Utils.choose(legalTurns);
-			if(turn.top != 0) {
-				top = false;
-				slash = true;
-			}
-			if(turn.down != 0) {
-				bottom = false;
-				slash = true;
+			if(turn.top != 0 || turn.down != 0) {
+				justDidHorizontal = true;
+				justDidSlash = false;
 			}
 			if(turn.slash) {
-				top = bottom = true;
-				slash = false;
+				justDidHorizontal = false;
+				justDidSlash = true;
 			}
 			appendTurn(turn);
 		}
+//		boolean top = true, bottom = true, slash = true;
+//		for(int i=0; i<SCRAMBLE_LENGTH; i++) {
+//			ArrayList<SquareOneTurn> legalTurns = new ArrayList<SquareOneTurn>();
+//			for(int c=0; c<12; c++) {
+//				if(top && isSlashLegal(c, 0))
+//					legalTurns.add(new SquareOneTurn(c, 0, false));
+//				if(bottom && isSlashLegal(0, c))
+//					legalTurns.add(new SquareOneTurn(0, c, false));
+//				if(slash && isSlashLegal(0, 0))
+//					legalTurns.add(new SquareOneTurn(false, true));
+//			}
+//			SquareOneTurn turn = Utils.choose(legalTurns);
+//			if(turn.top != 0) {
+//				top = false;
+//				slash = true;
+//			}
+//			if(turn.down != 0) {
+//				bottom = false;
+//				slash = true;
+//			}
+//			if(turn.slash) {
+//				top = bottom = true;
+//				slash = false;
+//			}
+//			appendTurn(turn);
+//		}
 	}
 	public HashMap<String, Color> getDefaultColorScheme() {
 		HashMap<String, Color> colors = new HashMap<String, Color>();
@@ -700,9 +746,4 @@ public class SquareOne extends TwistyPuzzle {
 		return colors;
 	}
 
-	@Override
-	protected void _nullPoly(boolean copyOld) {
-		// TODO Auto-generated method stub
-		
-	}
 }

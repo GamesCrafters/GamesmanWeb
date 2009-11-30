@@ -56,14 +56,6 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 	private JLabel remoteness;
 	private JLabel best_move;
 	private JLabel num_viable;
-	//private JButton resetViewButton;
-	/*
-	private JCheckBox display_best_move_box;
-	private JCheckBox display_remoteness_box;
-	private JCheckBox display_number_viable_box;
-	private JCheckBox display_viable_insides_box;
-	private JCheckBox display_solution_path_box;
-	*/
 	private JCheckBoxMenuItem display_best_move;
 	private JCheckBoxMenuItem display_remoteness;
 	private JCheckBoxMenuItem display_solution_path;
@@ -384,11 +376,9 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 		
 		canvas.fireCanvasChange();
 		update_displays();
-		MyShape holder = (MyShape) cube;
 	}
 
 	private void update_displays() {
-		MyShape holder = (MyShape) cube;
 		// catch if start or end is not valid.
 		if (!(solved_map.move_map.containsKey(solved_map.end[0] * boardsize*boardsize*4
 				+ solved_map.end[1] * boardsize*2 + solved_map.end[2]) && solved_map.move_map
@@ -397,8 +387,8 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 			System.out.println("Start or end are not achievable");
 			return;
 		}
-		remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(holder.current_position) / 2 + " moves"));
-		best_move.setText("The best move is to slide " + solved_map.getBestMove(holder.current_position));
+		remoteness.setText("The puzzle can be solved in " + (solved_map.getRemoteness(cube.current_position) / 2 + " moves"));
+		best_move.setText("The best move is to slide " + solved_map.getBestMove(cube.current_position));
 		
 	}
 

@@ -30,12 +30,9 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	public String getPuzzleName() {
 		return "Cuboid";
 	}
-	public void setgap(String v){
-		gapOption.setValue(v);
-	}
 	
-	public RotationMatrix getPreferredViewAngle() {
-		return new RotationMatrix(0, -45);
+	public RotationMatrix[] getPreferredViewAngles() {
+		return new RotationMatrix[] { new RotationMatrix(0, -45), new RotationMatrix(0, -45).multiply(new RotationMatrix(1, 45)) };
 	}
 
 	private static final String NORMAL = "Normal";
@@ -79,8 +76,8 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	//This returns an array of arrays of indices, where each element is an index of a sticker (represented as a 2 element array)
-	//So for the R face, a [2][][2] array faces would be returned where where faces[0] is a 4 element array of all the R face stickers,
-	//and faces[1] is a 6 element array of half the F, U, B, D stickers (for a 2x2x2)
+	//So for the R face, an [2][][2] array faces would be returned where where faces[0] is a 4 element array of all the R face stickers,
+	//and faces[1] is a 6 element array of half the F, U, B, D stickers
 	//The return value is structured like this to facilitate cycling stickers as necessary
 	public int[][][] getLayerIndices(CubeFace face, int layer) {
 		int width = dimensions(face.getWidthAxis());
@@ -252,7 +249,7 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	}
 	
 	public PuzzleSticker[] getCorner(int n) {
-		if(n < 0 || n >= 8 || cubeStickers == null)
+		if(n < 0 || n >= 8 || cubeStickers == null || !piecePickerSupport())
 			return null;
 		
 		ArrayList<PuzzleSticker[]> corners = new ArrayList<PuzzleSticker[]>();
@@ -356,9 +353,9 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 					translate[f1.getHeightAxis()] = -halfHeight;
 					translate[f1.getRotationAxis()] = -halfDepth;
 					sticker.translate(translate).scale(scale, scale, scale);
-					if(copyOld)
+					if(copyOld) {
 						sticker.setFace(cubeStickersOld[f1.index()][h][w].getFace());
-					else
+					} else
 						sticker.setFace(f1.toString());
 					cubeStickers[f1.index()][h][w] = sticker;
 					addPoly(sticker);
@@ -370,90 +367,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 						sticker.setFace(cubeStickersOld[f2.index()][h][w].getFace());
 					else
 						sticker.setFace(f2.toString());
-					cubeStickers[f2.index()][h][w] = sticker;
-					addPoly(sticker);
-				}
-			}
-		}
-
-		String variation = variationOption.getValue();
-		for(int f = 0; f < cubeStickers.length; f++) {
-			int width = cubeStickers[f].length;
-			int height = cubeStickers[f][0].length;
-			for(int w = 0; w < width; w++)
-				for(int h = 0; h < height; h++)
-					cubeStickers[f][w][h].setVisible(true);
-			if(variation.equals(VOID))
-				for(int w = 1; w < width - 1; w++)
-					for(int h = 1; h < height - 1; h++)
-						cubeStickers[f][w][h].setVisible(false);
-			else if(variation.equals(BABYFACE))
-				for(int w = 0; w < width; w++)
-					for(int h = 0; h < height; h++)
-						if(w == 0 || w == width - 1 || h == 0 || h == height - 1)
-							cubeStickers[f][w][h].setVisible(false);
-		}
-		
-//		for(PuzzleSticker ps : getCorner(1)) {
-//			ps.setFace(null);
-//		}
-	}
-	
-	protected void _nullPoly(boolean copyOld){
-		//mostly copied from _creatPoly, if that is changed, change this too.
-		if(!copyOld)
-			resetHandPositions();
-		PuzzleSticker[][][] cubeStickersOld = cubeStickers;
-		cubeStickers = new PuzzleSticker[6][][];
-		double[] point = new double[3];
-		double scale = 2. / Utils.max(dimensions(0), dimensions(1), dimensions(2));
-
-		for(CubeFace f1 : CubeFace.faces) {
-			if(f1.isCWWithAxis()) continue;
-			CubeFace f2 = f1.getOppositeFace();
-			int height = dimensions(f1.getHeightAxis());
-			int width = dimensions(f1.getWidthAxis());
-			int depth = dimensions(f1.getRotationAxis());
-			double halfHeight = height / 2.;
-			double halfWidth = width / 2.;
-			double halfDepth = depth / 2.;
-			cubeStickers[f1.index()] = new PuzzleSticker[height][width];
-			cubeStickers[f2.index()] = new PuzzleSticker[height][width];
-			for(int h = 0; h < height; h++) {
-				for(int w = 0; w < width; w++) {
-					PuzzleSticker sticker = new PuzzleSticker();
-					double stickerGap = gapOption.getValue();
-					List<Double> spaces1 = Arrays.asList(stickerGap, 1 - stickerGap);
-					List<Double> spaces2 = new ArrayList<Double>(spaces1);
-					for(double hh : spaces1) {
-						for(double ww : spaces2) {
-							point[f1.getHeightAxis()] = h + hh;
-							point[f1.getWidthAxis()] = w + ww;
-							point[f1.getRotationAxis()] = 0;
-							sticker.addPoint(point);
-						}
-						Collections.reverse(spaces2); //want to form a box, not an x
-					}
-
-					double[] translate = new double[3];
-					translate[f1.getWidthAxis()] = -halfWidth;
-					translate[f1.getHeightAxis()] = -halfHeight;
-					translate[f1.getRotationAxis()] = -halfDepth;
-					sticker.translate(translate).scale(scale, scale, scale);
-					if(copyOld)
-						sticker.setFace(cubeStickersOld[f1.index()][h][w].getFace());
-					else
-						sticker.setFace("U");
-					cubeStickers[f1.index()][h][w] = sticker;
-					addPoly(sticker);
-
-					translate = new double[3];
-					translate[f1.getRotationAxis()] = scale*depth;
-					sticker = (PuzzleSticker) sticker.clone().translate(translate);
-					if(copyOld)
-						sticker.setFace(cubeStickersOld[f2.index()][h][w].getFace());
-					else
-						sticker.setFace("U");
 					cubeStickers[f2.index()][h][w] = sticker;
 					addPoly(sticker);
 				}
@@ -501,6 +414,8 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 	public String getState() {
 		if(dimensions(0) != 2 || dimensions(1) != 2 || dimensions(2) != 2)
 			return "Not a 2x2x2!";
+		if(cubeStickers == null) //initing
+			return "Invalid";
 		for(PuzzleSticker[][] face : cubeStickers)
 			for(PuzzleSticker[] row : face)
 				for(PuzzleSticker stick : row)
@@ -546,8 +461,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			pieces[p] = piece;
 			orientations[p] = orientation;
 		}
-//		System.out.println(Arrays.deepToString(ColorSpitter.spit_out_colors(pieces, orientations)));
-//		System.out.println(Arrays.toString(pieces) + " " + Arrays.toString(orientations));
 		
 		CubeFace[][] decodedFaces = null;
 		try {
@@ -629,39 +542,55 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 		DIRECTION_TURN.put(-2, "2'");
 		DIRECTION_TURN.put(2, "2");
 	}
-	public boolean _doTurn(String turn) {
+	public boolean _doTurn(String turn, boolean invert) {
 		char ch = turn.charAt(0);
 		CubeFace face = CubeFace.decodeFace(ch);
 		Integer direction = TURN_DIRECTION.get(turn.substring(1));
 		if(direction == null) { //hand shift
 			int leftRightWidth = dimensions(CubeFace.RIGHT.getRotationAxis());
 			direction = 0;
-			if("<<".equals(turn.substring(1)))
+			if("--".equals(turn.substring(1)))
 				direction = -1;
-			else if(">>".equals(turn.substring(1)))
+			else if("++".equals(turn.substring(1)))
 				direction = 1;
 			else
 				return false;
-			if(!face.isCWWithAxis()) direction = -direction;
+
+			if(invert) direction = -direction;
+			
 			handPositions[face.index()] += direction;
 			handPositions[face.index()] = Math.max(1, handPositions[face.index()]);
 			handPositions[face.index()] = Math.min(leftRightWidth - 1, handPositions[face.index()]);
 			return true;
-		} else if(face != null) { //n-layer face turn
-			int layer = handPositions[face.index()] + ((Character.isUpperCase(ch)) ? 0 : 1);
-			doTurn(face, layer, direction);
-			return true;
-		} else { //cube rotation
-			doCubeRotation(CubeFace.decodeCubeRotation(ch), direction);
-			return true;
+		} else {
+			if(invert) direction = -direction;
+			if(face != null) { //n-layer face turn
+				int layer = handPositions[face.index()] + ((Character.isUpperCase(ch)) ? 0 : 1);
+				doTurn(face, layer, direction);
+				return true;
+			} else { //cube rotation
+				doCubeRotation(CubeFace.decodeCubeRotation(ch), direction);
+				return true;
+			}
 		}
+	}
+	@Override
+	protected void _cantScramble() {
+		resetHandPositions();
 	}
 	public void _scramble() {
 		CubeFace[] faces = CubeFace.faces();
 		Random r = new Random();
-		for(int ch = 0; ch < 3*(dimensions(0)+dimensions(1)+dimensions(2)); ch++) {
-			CubeFace f = faces[r.nextInt(faces.length)];
-			doTurn(f, r.nextInt(Math.max(1, dimensions(f.getRotationAxis())-1))+1, (r.nextInt(2)+1));
+		if(dimensions(0) == 2 && dimensions(1) == 2 && dimensions(2) == 2) {
+			String scramble = new CubeScramble("2x2x2", 42, "").toString();
+			for(String turn : scramble.split(" ")) {
+				_doTurn(turn, false);
+			}
+		} else {
+			for(int ch = 0; ch < 3*(dimensions(0)*dimensions(1)*dimensions(2)); ch++) {
+				CubeFace f = faces[r.nextInt(faces.length)];
+				doTurn(f, r.nextInt(Math.max(1, dimensions(f.getRotationAxis())-1))+1, (r.nextInt(2)+1));
+			}
 		}
 	}
 
@@ -671,11 +600,6 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			colors.put(f.toString(), f.getColor());
 		}
 		return colors;
-	}
-	
-	public void piecePicker(){
-		
-		
 	}
 	
 	public boolean piecePickerSupport(){

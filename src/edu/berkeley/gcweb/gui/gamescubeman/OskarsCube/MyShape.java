@@ -4,8 +4,6 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 import java.awt.Color;
 
-//import netscape.javascript.JSObject;
-
 public class MyShape extends Shape3D {
 	public BigRedAxis big_red_axis;
 	public Faces cube_faces;

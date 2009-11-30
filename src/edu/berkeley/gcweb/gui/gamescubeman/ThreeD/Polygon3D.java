@@ -68,6 +68,10 @@ public class Polygon3D implements Comparable<Polygon3D> {
 			clone.addPoint(point[0], point[1], point[2]);
 	}
 	
+	public double[] getPoint(int index) {
+		return points.get(index);
+	}
+	
 	private ArrayList<double[]> points;
 	public void addPoint(double x, double y, double z) {
 		if(points == null)
@@ -137,7 +141,7 @@ public class Polygon3D implements Comparable<Polygon3D> {
 	
 	//returns the z coordinate of the intersection of line through (0, 0, 0) -> (x, y, viewport)
 	//and the plane our polygon lies on
-	//we assume that we're dealing with convex polygons
+	//we assume that we're dealing with flat convex polygons
 	private double unproject(double x, double y, double scale) {
 		int viewport = 1; //this really shouldn't matter for what we're using this function for
 		//TODO - do the maths!
@@ -173,6 +177,38 @@ public class Polygon3D implements Comparable<Polygon3D> {
 		return sb.substring(4);
 	}
 
+	//returns true if this covers p, returns false if p covers this
+	//returns null if this and p do not intersect
+	public Boolean covers(Polygon3D p) {
+		if(this == p) return null;
+		Shape proj = projectXYPlane(1, 1);
+		Shape proj2 = p.projectXYPlane(1, 1);
+		Area a = new Area(proj);
+		a.intersect(new Area(proj2));
+		if(a.isEmpty())
+			return null;
+		
+		PathIterator pi = a.getPathIterator(null);
+		double[] avePoint = new double[2];
+		double[] point = new double[2];
+		int pointCount = 0;
+		while(!pi.isDone()) {
+			pointCount++;
+			pi.currentSegment(point);
+			for(int i=0; i<point.length; i++)
+				avePoint[i] += point[i];
+			pi.next();
+		}
+		for(int i=0; i<point.length; i++)
+			avePoint[i] /= pointCount;
+		double x = avePoint[0], y = avePoint[1]; //we want to look @ the center to hopefully avoid ties
+		double diff = p.unproject(x, y, 1) - unproject(x, y, 1);
+		if(Math.abs(diff) < 0.02)
+			return null;
+		return Math.signum(diff) < 0;
+	}
+	
+	//TODO -delteated!
 	//higher Z -> lower value
 	public int compareTo(Polygon3D p) {
 		Shape proj = projectXYPlane(1, 1);
@@ -196,6 +232,7 @@ public class Polygon3D implements Comparable<Polygon3D> {
 			double x = avePoint[0], y = avePoint[1]; //we want to look @ the center to hopefully avoid ties
 			return (int) Math.signum(p.unproject(x, y, 1) - unproject(x, y, 1));
 		} else //this will help deal with the multiple polygon case, but certainly not fix it :(
+//			return 0;
 			return (int) Math.signum(p.aveZ() - aveZ());
 	}
 }

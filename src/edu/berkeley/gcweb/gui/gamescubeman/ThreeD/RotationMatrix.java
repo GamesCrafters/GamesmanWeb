@@ -15,7 +15,11 @@ public class RotationMatrix {
 	private RotationMatrix(double[][] data) {
 		this.data = data;
 	}
+	private int axis;
+	private double degreesCCW;
 	public RotationMatrix(int axis, double degreesCCW) {
+		this.axis = axis;
+		this.degreesCCW = degreesCCW;
 		this.data = new double[SIZE][SIZE];
 		ArrayList<Integer> rows = new ArrayList<Integer>(Arrays.asList(0, 1, 2));
 		rows.remove(new Integer(axis));
@@ -63,8 +67,11 @@ public class RotationMatrix {
 		}
 		return result;
 	}
-	public double[] multiply(double... point) {
-		return transpose(multiply(new RotationMatrix(transpose(new double[][]{point}))).data)[0];
+	public double[] multiply(double[] pnt) {
+		return transpose(multiply(new RotationMatrix(transpose(new double[][]{ pnt }))).data)[0];
+	}
+	public double[] multiply(double x, double y, double z) {
+		return multiply(new double[] { x, y, z });
 	}
 	private double[][] transpose(double[][] m) {
 		double[][] t = new double[m[0].length][m.length];
@@ -73,15 +80,25 @@ public class RotationMatrix {
 				t[i][j] = m[j][i];
 		return t;
 	}
+	public RotationMatrix scaleRotation(double scale) {
+		return new RotationMatrix(axis, scale*degreesCCW);
+	}
 	public boolean isIdentity() {
 		return isIdentity(0);
 	}
 	public boolean isIdentity(double tolerance) {
+		return equals(new RotationMatrix(), tolerance);
+	}
+	public boolean equals(RotationMatrix other) {
+		return equals(other, 0);
+	}
+	public boolean equals(RotationMatrix other, double tolerance) {
 		for(int i=0; i<data.length; i++)
 			for(int j=0; j<data[i].length; j++)
-				if((i==j && Math.abs(data[i][j] - 1) > tolerance) || (i!=j && Math.abs(data[i][j] - 0) > tolerance))
+				if(Math.abs(data[i][j] - other.data[i][j]) > tolerance)
 					return false;
 		return true;
+	
 	}
 	private static final DecimalFormat df = new DecimalFormat("0.000");
 	public String toString(double[][] data) {

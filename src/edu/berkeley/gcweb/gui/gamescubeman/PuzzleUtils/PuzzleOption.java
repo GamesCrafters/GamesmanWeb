@@ -13,6 +13,11 @@ public abstract class PuzzleOption<H> {
 		this.guify = guify;
 	}
 	
+	private boolean silentOption = false;
+	public void setSilent(boolean silent) {
+		silentOption = silent;
+	}
+	
 	public boolean isGuifiable() {
 		return guify;
 	}
@@ -35,6 +40,7 @@ public abstract class PuzzleOption<H> {
 	}
 	
 	public final void fireOptionChanged() {
+		if(silentOption) return;
 		for(PuzzleOptionChangeListener l : listeners)
 			l.puzzleOptionChanged(this);
 	}

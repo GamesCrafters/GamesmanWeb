@@ -21,6 +21,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -91,29 +92,79 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 			x--;
 		if(dirty || !rotationRate.isIdentity() || x != 0 || y != 0) {
 			if(!dragging) {
-				//TODO - drag isn't always working
-				rotationRate = rotationRate.multiply(dragRate);
+				rotationRate = new RotationMatrix(1, deltaX).multiply(new RotationMatrix(0, -deltaY));
+				deltaX /= 1.01;
+				deltaY /= 1.01;
 				if(rotationRate.isIdentity(0.05)) {
 					rotationRate = new RotationMatrix();
-					dragRate = new RotationMatrix();
 				}
-//				System.out.println(rotationRate + "\n" + rotationRate.isIdentity());
 				RotationMatrix temp = rotationRate.multiply(new RotationMatrix(0, x).multiply(new RotationMatrix(1, y)));
 				for(Shape3D s : shapes)
 					s.rotate(temp);
 			}
 			for(Shape3D s : shapes) {
-				polys = s.getPolygons();
-				Collections.sort(polys);
-				polyProjection = new ArrayList<Shape>();
-				for(Polygon3D poly : polys) {
-					if(!poly.isVisible())
-						polyProjection.add(null);
-					else {
-						Shape proj = poly.projectXYPlane(VIEWPORT, scale * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT));
-						polyProjection.add(proj);
+				//this is the old, baaad way of doing z ordering
+//				polys = s.getPolygons();
+//				Collections.sort(polys);
+				
+				long start = System.nanoTime();
+				//implementing painter's algorithm
+				ArrayList<Polygon3D> oldPolys = s.getPolygons();
+				int polyCount = oldPolys.size();
+				//x_covered_by_y[i][j] = true when j covers i, false when i covers j, null when i and or j have been removed
+				Boolean[][] x_covered_by_y = new Boolean[polyCount][polyCount];
+				for(int i = 0; i < polyCount; i++) {
+					for(int j = i; j < polyCount; j++) {
+						Boolean i_covers_j = oldPolys.get(i).covers(oldPolys.get(j));
+						Boolean j_covers_i;
+						if(i_covers_j == null) {
+							j_covers_i = i_covers_j = false;
+						} else {
+							j_covers_i = !i_covers_j;
+						}
+						x_covered_by_y[i][j] = i_covers_j;
+						x_covered_by_y[j][i] = j_covers_i;
 					}
 				}
+				
+				polys = new ArrayList<Polygon3D>();
+				while(polys.size() < polyCount) {
+					int j;
+					for(j = 0; j < polyCount; j++) {
+						if(x_covered_by_y[j][j] == null) continue;
+						boolean bottom = true;
+						for(int i = 0; i < polyCount; i++) {
+							if(x_covered_by_y[i][j] != null) {
+								if(x_covered_by_y[i][j]) {
+									bottom = false;
+									break;
+								}
+							}
+						}
+						if(bottom)
+							break;
+					}
+					if(j == polyCount) {
+						//cycle detected in the polygon ordering, just choose one at random =(
+						for(j = 0; j < polyCount; j++)
+							if(x_covered_by_y[j][j] != null)
+								break;
+						System.out.println("Cycle detected, choosing index " + j);
+					}
+					polys.add(oldPolys.get(j));
+
+					for(int i = 0; i < polyCount; i++) {
+						x_covered_by_y[i][j] = null;
+						x_covered_by_y[j][i] = null;
+					}
+				}
+				
+				polyProjection = new ArrayList<Shape>();
+				for(Polygon3D poly : polys) {
+					Shape proj = poly.projectXYPlane(VIEWPORT, scale * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT));
+					polyProjection.add(proj);
+				}
+				System.out.println((System.nanoTime()-start)/1e9);
 			}
 			if(!dragging || colorEditing)
 				refreshSelectedPolygon();
@@ -128,7 +179,6 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	}
 
 	private RotationMatrix rotationRate = new RotationMatrix();
-	private RotationMatrix dragRate = new RotationMatrix();
 	private Point old;
 	private long lastDrag;
 	private HashSet<Integer> keys = new HashSet<Integer>();
@@ -166,11 +216,11 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public void mouseExited(MouseEvent e) {}
 	public void mousePressed(MouseEvent e) {
 		rotationRate = new RotationMatrix();
-		dragRate = new RotationMatrix();
+		deltaX = deltaY = 0;
 		dirty = true;
 	}
 	public void mouseReleased(MouseEvent e) {
-		if(System.currentTimeMillis() - lastDrag > 100)
+		if(!freeRotationSpin || System.currentTimeMillis() - lastDrag > 100)
 			mousePressed(null);
 		dragging = false;
 	}
@@ -179,16 +229,20 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 	public void setFreeRotation(boolean enabled) {
 		freeRotation = enabled;
 	}
+	private boolean freeRotationSpin=true;
+	public void setFreeRotationSpin(boolean enabled) {
+		freeRotationSpin = enabled;
+	}
+	private double deltaX = 0, deltaY = 0;
 	private boolean dragging = false;
 	public void mouseDragged(MouseEvent e) {
 		if(!freeRotation)
 			return;
 		dragging = true;
 		lastDrag = System.currentTimeMillis();
-		double deltaX = e.getX() - old.x;
-		double deltaY = e.getY() - old.y;
+		deltaX = e.getX() - old.x;
+		deltaY = e.getY() - old.y;
 		rotationRate = new RotationMatrix(1, deltaX).multiply(new RotationMatrix(0, -deltaY));
-		dragRate = new RotationMatrix(0, deltaY / 200).multiply(new RotationMatrix(1, -deltaX / 200));
 		old = e.getPoint();
 
 		for(Shape3D s : shapes)
@@ -296,7 +350,6 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 		
 		g2d.setColor(Color.BLACK);
 		
-		//TODO - deal with z ordering! break everything into triangles?
 		for(int i = 0; polys != null && i < polys.size(); i++) {
 			Polygon3D poly = polys.get(i);
 			Shape proj = polyProjection.get(i);

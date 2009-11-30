@@ -87,6 +87,12 @@ public class Utils {
 				return i;
 		return -1;
 	}
+	public static <H> int indexOfEquals(H h, H[] arr) {
+		for(int i = 0; i < arr.length; i++)
+			if(arr[i].equals(h))
+				return i;
+		return -1;
+	}
 	
 	public static void reverse(int[] arr) {
 		for(int left=0, right=arr.length-1; left<right; left++, right--) {
@@ -154,6 +160,6 @@ public class Utils {
 		else if(val.equalsIgnoreCase("false"))
 			return false;
 		return def;
-	
 	}
+	
 }

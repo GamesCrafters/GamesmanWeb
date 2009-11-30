@@ -36,26 +36,30 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 	private static final char[][] QWERTY_LOWER = {
 		{ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' },
 		{ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' },
-		{ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';' },
+		{ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'' },
 		{ 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/' },
+		{ ' ' }
 	};
 	private static final char[][] QWERTY_UPPER = {
 		{ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' },
 		{ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' },
-		{ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':' },
+		{ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"' },
 		{ 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?' },
+		{ ' ' }
 	};
 	private static final char[][] DVORAK_LOWER = {
 		{ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' },
 		{'\'', ',', '.', 'p', 'y', 'f', 'g', 'c', 'r', 'l' },
-		{ 'a', 'o', 'e', 'u', 'i', 'd', 'h', 't', 'n', 's' },
-		{ ';', 'q', 'j', 'k', 'x', 'b', 'm', 'w', 'v', 'z' }
+		{ 'a', 'o', 'e', 'u', 'i', 'd', 'h', 't', 'n', 's', '-' },
+		{ ';', 'q', 'j', 'k', 'x', 'b', 'm', 'w', 'v', 'z' },
+		{ ' ' }
 	};
 	private static final char[][] DVORAK_UPPER = {
 		{ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' },
 		{ '"', '<', '>', 'P', 'Y', 'F', 'G', 'C', 'R', 'L' },
-		{ 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S' },
-		{ ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z' }
+		{ 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S', '_' },
+		{ ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z' },
+		{ ' ' }
 	};
 	private static final String QWERTY_LAYOUT = "QWERTY";
 	private static final HashMap<String, char[][][]> KEYBOARD_LAYOUTS = new HashMap<String, char[][][]>();
@@ -64,7 +68,6 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 		KEYBOARD_LAYOUTS.put("DVORAK", new char[][][] { DVORAK_LOWER, DVORAK_UPPER });
 	}
 	
-	private static final int KEYBOARD_WIDTH = QWERTY_LOWER[0].length;
 	private static final int KEYBOARD_HEIGHT = QWERTY_LOWER.length;
 	
 	private Properties keyLayoutBackup, qwertyKeyLayout;
@@ -91,7 +94,7 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 		loadKeys();
 				
 		JTabbedPane lowerUpperPane = new JTabbedPane();
-		lowerUpperKeyEditors = new KeyEditor[2][KEYBOARD_HEIGHT][KEYBOARD_WIDTH];
+		lowerUpperKeyEditors = new KeyEditor[2][KEYBOARD_HEIGHT][];
 		for(int i=0; i<lowerUpperKeyEditors.length; i++) {
 			KeyEditor[][] keyEditors = lowerUpperKeyEditors[i];
 			JPanel keyPanel = new JPanel();
@@ -101,7 +104,8 @@ public class KeyCustomizerPanel extends RollingJPanel implements ActionListener 
 				JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
 				keyPanel.add(rowPanel);
 				rowPanel.add(new KeyEditor(row));
-				for(int col=0; col<KEYBOARD_WIDTH; col++) {
+				lowerUpperKeyEditors[i][row] = new KeyEditor[QWERTY_LOWER[row].length];
+				for(int col=0; col<lowerUpperKeyEditors[i][row].length; col++) {
 					keyEditors[row][col] = new KeyEditor();
 					rowPanel.add(keyEditors[row][col]);
 				}

@@ -42,6 +42,7 @@ public abstract class Shape3D {
 	public ArrayList<Polygon3D> getPolygons() {
 		ArrayList<Polygon3D> rendered = new ArrayList<Polygon3D>();
 		for(Polygon3D poly : polys) {
+			if(!poly.isVisible()) continue;
 			poly = poly.clone();
 			poly.rotate(rotation);
 			poly.translate(centerX, centerY, centerZ);

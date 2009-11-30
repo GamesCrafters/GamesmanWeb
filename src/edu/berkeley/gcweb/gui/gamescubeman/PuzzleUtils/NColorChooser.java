@@ -172,16 +172,16 @@ public class NColorChooser extends RollingJPanel {
 	}
 	
 	private void loadCookie() {
-		HashMap<String, Color> newColors = new HashMap<String, Color>(colors);
 		for(String face : colors.keySet()) {
 			Color c = settings.getColor("color_" + face, null);
 			if(c != null)
-				newColors.put(face, c);
+				colors.put(face, c);
 		}
 	}
 	private void saveCookie() {
-		for(String face : colors.keySet())
+		for(String face : colors.keySet()) {
 			settings.setColor("color_" + face, colors.get(face));
+		}
 	}
 
 	public String getSelectedFace() {

@@ -33,7 +33,7 @@ public class BigRedAxis {
 	 * new PolygonCollection(input_array); holder.translate(-14.5, 3.5, -3.5);
 	 * holder.translate(cube.start[0], -cube.start[1], cube.start[2]); }
 	 */
-	public BigRedAxis(CubeGen cube) {
+	public BigRedAxis(CubeGen cube) {						
 		int x = cube.start[0] + 1;
 		int y = -cube.start[1] - 1;
 		int z = cube.start[2] + 1;

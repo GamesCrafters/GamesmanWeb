@@ -10,16 +10,19 @@ public class CubeTurn extends PuzzleTurn {
 	private int layer, cw, legalTurns;
 	private Cuboid cube;
 	public CubeTurn(Cuboid cube, CubeFace f, int layer, int clockwise) {
+		super(cube.getFramesPerAnimation());
 		this.cube = cube;
 		this.face = f;
 		this.layer = layer;
 		cw = clockwise;
-		if(cw != -2) { //we wan't to distinguish between R2 and R2'
+		if(cw != -2) { //we want to distinguish between R2 and R2'
 			cw = Utils.modulo(cw, 4);
 			if(cw == 3) cw = -1;
 		}
-		if(cw % 2 != 0 && cube.dimensions(face.getWidthAxis()) != cube.dimensions(face.getHeightAxis())) {
-			cw = (cw > 0) ? cw + 1 : cw - 1;
+		if(cube.dimensions(face.getWidthAxis()) != cube.dimensions(face.getHeightAxis())) {
+			if(cw % 2 != 0) {
+				cw = (cw > 0) ? cw + 1 : cw - 1;
+			}
 			legalTurns = cw / 2;
 		} else
 			legalTurns = cw;
@@ -57,12 +60,10 @@ public class CubeTurn extends PuzzleTurn {
 				((other.layer == -1 || this.layer == -1) || face.index() != other.face.index() || layer != other.layer); //don't want something like R + R' 
 	}
 	
-	//this will turn the stickers, and return true when the move animation has finished
-	private int frames = -1;
 	private int[][][] stickers;
 	private RotationMatrix main_rotation;
-	public boolean animateMove() {
-		if(frames == -1) { //just starting animation
+	public void _animateMove(boolean firstFrame) {
+		if(firstFrame) { //just starting animation
 			int[][][] stickers1 = cube.getLayerIndices(face, layer);
 			int[][][] stickers2 = new int[0][][];
 			if(layer == -1) {
@@ -75,14 +76,12 @@ public class CubeTurn extends PuzzleTurn {
 			for(int i=0; i<stickers.length; i++)
 				stickers[i] = i < stickers1.length ? stickers1[i] : stickers2[i - stickers1.length];
 			
-			frames = cube.getFramesPerAnimation();
 			//multiply by -1 because the rotation matrix expects degrees ccw
 			main_rotation = new RotationMatrix(face.getRotationAxis(), -1*(face.isCWWithAxis() ? 1 : -1)*cw*90./frames);
 		}
 		for(int i=0; i<stickers.length; i++)
 			for(int[] index : stickers[i])
 				cube.cubeStickers[index[0]][index[1]][index[2]].rotate(main_rotation);
-		return --frames == 0;
 	}
 
 	//offset indicates that new_polys[(i + offset) % polys.length] = old_polys[i] for all 0 <= i < polys.length

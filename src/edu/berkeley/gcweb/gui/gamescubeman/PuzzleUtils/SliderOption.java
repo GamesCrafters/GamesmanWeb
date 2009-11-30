@@ -32,8 +32,12 @@ public class SliderOption extends PuzzleOption<Integer> implements ChangeListene
 	@Override
 	public void setValue(String val) {
 		try {
-			slider.setValue(Integer.parseInt(val));
+			setValue(Integer.parseInt(val));
 		} catch(NumberFormatException e) {}
+	}
+	
+	public void setValue(Integer val) {
+		slider.setValue(val);
 	}
 	
 	@Override
