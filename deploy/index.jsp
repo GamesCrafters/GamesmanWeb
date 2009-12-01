@@ -33,6 +33,7 @@ public void jspInit() {
         boolean visible = gameDictionary.getIsVisible(internalName);
 	File f = new File("deploy/ui/images/" + internalName + ".png");
 	boolean fileExists = f.exists();
+        boolean isOnline = canonicalName.equals("Connect 4");
 	if (fileExists) {
 	    if (visible) {
        		if (puzz) {
@@ -43,7 +44,10 @@ public void jspInit() {
     		<a href="ui/game.jsp?game=<%= internalName %>">
 <%          } %>
                 <img src="ui/images/<%= internalName %>.png">
-                <span><%= canonicalName %></span>
+                <span>
+                  <img src="ui/images/<%= isOnline ? "online.png" : "offline.png" %>" alt="Online Status">
+                  <%= canonicalName %>
+                </span>
             </a>
 <%
 		}
@@ -58,3 +62,4 @@ public void jspInit() {
 </div>
 </body>
 </html>
+

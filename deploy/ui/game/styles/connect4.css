@@ -21,3 +21,8 @@
 .connect4-grid .tie-marker { background: url("../images/connect4/tie-marker.png") no-repeat top center }
 .connect4-grid .lose-marker { background: url("../images/connect4/lose-marker.png") no-repeat top center }
 
+/* Configuration form */
+#connect4-options table { margin: 0 auto }
+#connect4-options table td, #connect4-options table th { padding: 0 0.5em }
+
+#connect4-play { text-align: center; margin-top: 1em }

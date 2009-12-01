@@ -37,6 +37,9 @@ body > .header h1 {
 
 #main { width: 100%; margin-left: -10em }
 #main h1 { font-size: 1.5em; margin: 0.25em 0 0.5em; text-align: center }
+#main h2 { font-size: 1.2em }
+#main * + h2 { margin-top: 0.75em }
+#main p { margin: 0.25em 0 }
 
 #game { width: 98%; margin: 0.5em auto; outline: 1px solid #aaf; padding: 1% }
 
@@ -76,4 +79,5 @@ body > .footer li { display: inline }
 body > .footer li + li::before { content: "- " }
 
 ul, ol { margin-left: 1.2em }
+input, button, select { font-size: 1em }
 .clear { clear: both }
