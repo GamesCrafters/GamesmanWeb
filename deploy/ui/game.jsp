@@ -1,50 +1,50 @@
-<%@ page import="edu.berkeley.gcweb.GameDictionary, java.io.*" %><%!
+<%@ page import="java.net.*, java.io.*,
+                 javax.xml.parsers.ParserConfigurationException,
+                 edu.berkeley.gcweb.GameDictionary" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+<%!
 private GameDictionary gameDictionary;
-private boolean debug = false;
 
+/**
+ * Initializes the resources used by this JSP. This function runs
+ * before other code in the page.
+ */
 public void jspInit() {
   ServletContext context = getServletConfig().getServletContext();
   try {
-    if (debug) {
-      throw new Exception(context.getResource("/WEB-INF/" +
-        context.getInitParameter("gameDictionary")).toString());
-    }
-    // TODO: memoization
-    gameDictionary = new GameDictionary(context.getResource(
-      "/WEB-INF/" + context.getInitParameter("gameDictionary")));
-  } catch (Exception e) {
-    throw new RuntimeException("An exception occurred during initialization: " +
-      e.getMessage());
+    URL dictionaryFile = context.getResource(
+      "/WEB-INF/" + context.getInitParameter("gameDictionary"));
+    gameDictionary = new GameDictionary(dictionaryFile);
+  } catch (ParserConfigurationException e) {
+    throw new RuntimeException(e);
+  } catch (IOException e) {
+    throw new RuntimeException(e);
   }
 }
 
-void terminate(ServletRequest request, ServletResponse response) {
-  /*
-  try {
-    request.getRequestDispatcher("/").forward(request, response);
-  } catch (Exception e) {
-    e.printStackTrace();
-  }
-  */
+public void terminate(String message) {
+  throw new RuntimeException("Terminating: " + message);
 }
-%><%
+%>
+<%
+ServletContext context = getServletConfig().getServletContext();
 String internalName = request.getParameter("game");
 String canonicalName = gameDictionary.getCanonicalName(internalName);
-// ensure that the puzzle is specified and registered by the dictionary servlet
-if ((internalName == null) || (canonicalName == null)) {
-  out.println("Terminating because internalname is "+internalName+" and canonincalName is "+canonicalName);
-  terminate(request, response);
-  return;
-}
-String uifile = gameDictionary.getUI(internalName);
-// Determine the appropriate file extension (JSP or HTML).
-String templateFile = "/ui/game/" + uifile;
-ServletContext context = getServletConfig().getServletContext();
-String absoluteJsp = context.getRealPath(templateFile + ".jsp");
-templateFile += (new File(absoluteJsp).exists()) ? ".jsp" : ".html";
 
-// TODO: encode the HTML entities in the names
-%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+// Ensure that the puzzle is specified and registered by the
+// dictionary servlet.
+if ((internalName == null) || (canonicalName == null)) {
+  terminate(String.format("internal name (%s) and canonical name (%s)",
+                          internalName, canonicalName));
+}
+
+String uiName = gameDictionary.getUI(internalName);
+// Determine the appropriate file extension (JSP or HTML).
+String templateFile = "/ui/game/" + uiName;
+String absoluteJsp = context.getRealPath(templateFile + ".jsp");
+templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-US"> 
   <head> 
   <title><%= canonicalName %> - Games - GamesmanWeb</title> 
@@ -56,11 +56,11 @@ templateFile += (new File(absoluteJsp).exists()) ? ".jsp" : ".html";
   <![endif]-->
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="game/styles/gcweb.css">
-  <link rel="stylesheet" href="game/styles/<%= uifile %>.css">
+  <link rel="stylesheet" href="game/styles/<%= uiName %>.css">
   <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
   <script type="text/javascript" src="game/js/jquery-1.3.2.min.js"></script>
   <script type="text/javascript" src="game/js/gc-game.js"></script>
-  <script type="text/javascript" src="game/js/<%= uifile %>.js"></script>
+  <script type="text/javascript" src="game/js/<%= uiName %>.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
@@ -93,8 +93,10 @@ templateFile += (new File(absoluteJsp).exists()) ? ".jsp" : ".html";
     </ul>
     <h2>Display Options</h2>
     <ul id="options">
-      <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
-      <li><label><input type="checkbox" id="option-prediction"> Prediction</label></li>
+      <li><label><input type="checkbox" id="option-move-values">
+                 Move-values</label></li>
+      <li><label><input type="checkbox" id="option-prediction">
+                 Prediction</label></li>
     </ul>
     </div> 
     <div id="main">
@@ -127,7 +129,8 @@ templateFile += (new File(absoluteJsp).exists()) ? ".jsp" : ".html";
   <!-- site footer --> 
   <div class="footer">
     <ul>
-    <li>&copy; 2008-2009 <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
+    <li>
+      &copy; 2008-2009 <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
     </ul>
   </div> 
   </body> 

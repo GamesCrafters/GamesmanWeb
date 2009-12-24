@@ -52,57 +52,63 @@ public class PuzzleServlet {
     @Context
     private static ServletContext servletContext; // why do I need this?
     
+    @GET @Path("{puzzle}/isAlive")
+    @Produces("text/plain")
+    public String isAlive(@PathParam("puzzle") String puzzle) {
+	boolean alive = getGameConnectionInfo(puzzle, null) != null;
+	String response = null;
+	try {
+	    response = new JSONObject()
+                .put("status", "ok")
+	        .put("response", new JSONObject().put("alive", alive))
+		.toString();
+	} catch (JSONException e) {
+	    response = "{ status: 'error', " + 
+		"message: 'failed to make JSON response with live-status' }";
+	}
+	return response;
+    }
+
     @GET @Path("/{puzzle}/getMoveValue")
     @Produces("text/plain")
     public String getMoveValue(@PathParam("puzzle") String puzzle,
                                @Context UriInfo uri) {
-    	String json = null;
-
-    	Socket socket = getGameConnectionInfo(puzzle, json);
-    	
-    	TTransport transport = new TSocket(socket.getInetAddress().getHostAddress(), socket.getPort());
-    	
-		if (json != null) {
-    		return json;
-    	}
-    	
-    	TProtocol protocol = new TBinaryProtocol(transport);
-    	
-    	GetMoveResponse response;
-    	try {
-    		transport.open();
-    		GamestateRequestHandler.Client request = new GamestateRequestHandler.Client(protocol); 
-            // return client.getMoveValue(puzzle, createMatrixParameterString(uri));        
-    		
-            response = request.getMoveValue(puzzle, createMatrixParameterString(uri));
-            
+        String json = null;
+        Socket socket = getGameConnectionInfo(puzzle, json);
+	TTransport transport =
+	    new TSocket(socket.getInetAddress().getHostAddress(),
+			socket.getPort());
+	TProtocol protocol = new TBinaryProtocol(transport);
+        GetMoveResponse response;
+	
+        try {
+            transport.open();
+            GamestateRequestHandler.Client request =
+		new GamestateRequestHandler.Client(protocol);              
+            response = request.getMoveValue(puzzle,
+					    createMatrixParameterString(uri));
             if (response != null) {
-            	//response = client.getMoveValue(puzzle, createMatrixParameterString(uri));
-            	TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+                TSerializer serializer =
+		    new TSerializer(new TSimpleJSONProtocol.Factory());
                 json = serializer.toString(response);
             } else {
-            	
-            	// generate error message
+                // generate error message
             }
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		if (json == null) {
-			response = new GetMoveResponse("error");
-			response.setMessage("No response from server");
-			TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+        } catch (TException e) {
+            throw new RuntimeException(e);
+        } 
+	
+        if (json == null) {
+            response = new GetMoveResponse("error");
+            response.setMessage("No response from server");
+            TSerializer serializer =
+		new TSerializer(new TSimpleJSONProtocol.Factory());
             try {
-				json = serializer.toString(response);
-			} catch (TException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-    	
-    	
-        
+                json = serializer.toString(response);
+            } catch (TException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return json;
     }
 
@@ -110,64 +116,53 @@ public class PuzzleServlet {
     @Produces("text/plain")
     public String getNextMoveValues(@PathParam("puzzle") String puzzle,
                                     @Context UriInfo uri) {
-    	String json = null;
+        String json = null;
+	Socket socket = getGameConnectionInfo(puzzle, json);
+        TTransport transport =
+	    new TSocket(socket.getInetAddress().getHostAddress(),
+			socket.getPort());
+        TProtocol protocol = new TBinaryProtocol(transport);
+        GetNextMoveResponse response;
 
-    	Socket socket = getGameConnectionInfo(puzzle, json);
-    	
-    	TTransport transport = new TSocket(socket.getInetAddress().getHostAddress(), socket.getPort());
-    	
-		if (json != null) {
-    		return json;
-    	}
-    	
-    	TProtocol protocol = new TBinaryProtocol(transport);
-    	
-    	GetNextMoveResponse response;
-    	try {
-    		transport.open();
-    		GamestateRequestHandler.Client request = new GamestateRequestHandler.Client(protocol); 
-            // return client.getMoveValue(puzzle, createMatrixParameterString(uri));        
-    		
-            response = request.getNextMoveValues(puzzle, createMatrixParameterString(uri));
+        try {
+            transport.open();
+            GamestateRequestHandler.Client request =
+		new GamestateRequestHandler.Client(protocol); 
+	    String parameterString = createMatrixParameterString(uri);
+            response = request.getNextMoveValues(puzzle, parameterString);
             
             if (response != null) {
-            	//response = client.getMoveValue(puzzle, createMatrixParameterString(uri));
-            	TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+                TSerializer serializer =
+		    new TSerializer(new TSimpleJSONProtocol.Factory());
                 json = serializer.toString(response);
             } else {
-            	
-            	// generate error message
+                // generate error message
             }
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		if (json == null) {
-			response = new GetNextMoveResponse("error");
-			response.setMessage("No response from server");
-			TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+        } catch (TException e) {
+	    throw new RuntimeException(e);
+        }
+	
+        if (json == null) {
+            response = new GetNextMoveResponse("error");
+            response.setMessage("No response from server");
+            TSerializer serializer =
+		new TSerializer(new TSimpleJSONProtocol.Factory());
             try {
-				json = serializer.toString(response);
-			} catch (TException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
+                json = serializer.toString(response);
+            } catch (TException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
 
-        return json;  
-    	/*
-        String params = ";method=getNextMoveValues" +
-            createMatrixParameterString(uri);
-        return executeRemoteQuery(puzzle, params);
-        */
+        return json;
     }
     
     private Socket connectToRemote(String gameName) throws IOException {
         GameDictionary.GameInfo inf;
         try {
             URL xmlFile = servletContext.getResource(
-                    "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
+	      "/WEB-INF/" + servletContext.getInitParameter("gameDictionary"));
             GameDictionary gameDictionary = new GameDictionary(xmlFile);
             inf = gameDictionary.getGameInfo(gameName);
         }
@@ -184,20 +179,19 @@ public class PuzzleServlet {
         return sock;
     }
     /**
-     *  Calls connectToRemove to check if the request is sane... IE:
-     * 		- the game is in our dictionary 
-     * 		- the server port mapping is in our dictionary (or whatever connecToRemote does) 
-     * 		- generate error string into response if bad things happen
+     *  Calls connectToRemote to check if the request is sane... IE:
+     *         - the game is in our dictionary 
+     *         - the server port mapping is in our dictionary (or whatever connecToRemote does) 
+     *         - generate error string into response if bad things happen
      *  At the same time,  
      */
     private Socket getGameConnectionInfo(String gameName, String response) {
-    	//String response = null;
-    	Socket conn = null;
+        //String response = null;
+        Socket conn = null;
         
-    	try {
+        try {
             // create a new TCP socket connection to the server
             conn = connectToRemote(gameName);
-        
         } catch (Exception e) {
             System.out.println(e);
             try {
@@ -213,6 +207,7 @@ public class PuzzleServlet {
                 response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
             }
         }
+        
         return conn;
     }
     private String executeRemoteQuery(String gamename, String message) {
