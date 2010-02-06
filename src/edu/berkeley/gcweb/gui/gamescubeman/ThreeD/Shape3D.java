@@ -24,7 +24,7 @@ public abstract class Shape3D {
 		centerZ = z;
 		fireCanvasChange();
 	}
-	private ArrayList<Polygon3D> polys = new ArrayList<Polygon3D>();
+	protected ArrayList<Polygon3D> polys = new ArrayList<Polygon3D>();
 	protected void clearPolys() {
 		polys.clear();
 	}
@@ -51,7 +51,7 @@ public abstract class Shape3D {
 		return rendered;
 	}
 
-	private RotationMatrix rotation = new RotationMatrix();
+	protected RotationMatrix rotation = new RotationMatrix();
 	public void setRotation(RotationMatrix m) {
 		rotation = (m == null) ? new RotationMatrix() : m;
 	}
