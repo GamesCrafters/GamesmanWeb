@@ -6,6 +6,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class BigRedAxis {
 	public PolygonCollection holder;
+	public PolygonCollection holder_stick;
 	public PolygonCollection xyholder;
 	public PolygonCollection yzholder;
 	public PolygonCollection xzholder;
@@ -21,33 +22,61 @@ public class BigRedAxis {
 	public PolygonCollection RawayW;
 	public PolygonCollection RawayB;
 	public PolygonCollection RawayR;
+	public PolygonCollection secondFaces;
 	
 
 	/*
-	 * public BigRedAxis(CubeGen cube){ PolygonCollection stick_1 = new
-	 * Stick().returnItem(); PolygonCollection stick_2 = new
-	 * Stick().returnItem(); PolygonCollection stick_3 = new
-	 * Stick().returnItem(); stick_1.rotate('x', 90); stick_1.translate(10, 10,
-	 * -1); stick_2.rotate('y', 90); stick_3.translate(10, 0, -11); //rotate the
-	 * sticks here Object[] input_array = {stick_1, stick_2, stick_3}; holder =
-	 * new PolygonCollection(input_array); holder.translate(-14.5, 3.5, -3.5);
-	 * holder.translate(cube.start[0], -cube.start[1], cube.start[2]); }
-	 */
+	public BigRedAxis(CubeGen cube){ 
+		PolygonCollection stick_1 = new Stick().returnItem(); 
+		PolygonCollection stick_2 = new Stick().returnItem(); 
+		PolygonCollection stick_3 = new Stick().returnItem(); 
+		stick_1.rotate('x', 90); 
+		stick_1.translate(10, 10, -1); 
+		stick_2.rotate('y', 90); 
+		stick_3.translate(10, 0, -11); 
+		//rotate the sticks here 
+		Object[] input_array = {stick_1, stick_2, stick_3}; 
+		holder = new PolygonCollection(input_array); 
+		holder.translate(-14.5, 3.5, -3.5);
+		holder.translate(cube.start[0], -cube.start[1], cube.start[2]);
+		}
+	*/
+	
 	public BigRedAxis(CubeGen cube) {						
 		int x = cube.start[0] + 1;
 		int y = -cube.start[1] - 1;
 		int z = cube.start[2] + 1;
 		double s = cube.boardsize +.5;
-		/* These make the arrows, the side with green_b refers to the side with the arrow base */
+		//These make the arrows, the side with green_b refers to the side with the arrow base 
 		double[] green_a = new double[] {0,0,.5,.5,1,.5,.5};
 		double[] green_b = new double[] {.25,.75,.75,.9,.5,.1,.25};
-		
+		/*
+		PolygonCollection stick_1 = new Stick().returnItem(); 
+		PolygonCollection stick_2 = new Stick().returnItem(); 
+		PolygonCollection stick_3 = new Stick().returnItem(); 
+		stick_1.rotate('x', 90); 
+		stick_1.translate(10, 11, -1); 
+		stick_2.rotate('y', 90); 
+		stick_3.translate(10, 0, -11); 
+		//rotate the sticks here 
+		Object[] input_array2 = {stick_1, stick_2, stick_3}; 
+		holder_stick = new PolygonCollection(input_array2); 
+		holder_stick.translate(-14.5, 3.5, -3.5);
+		holder_stick.translate(cube.start[0], -cube.start[1], cube.start[2]);
+		*/
 		Polygon3D startdot_w = new Polygon3D(); // THIS IS WHITE
 		startdot_w.setFillColor(Color.orange);
 		startdot_w.addPoint(-s, y + s, z - s);
 		startdot_w.addPoint(-s, y + s - 1, z - s);
 		startdot_w.addPoint(-s, y + s - 1, z - s + 1);
 		startdot_w.addPoint(-s, y + s, z - s + 1);
+		
+		Polygon3D startdot_w2 = new Polygon3D(); // THIS IS WHITE
+		startdot_w2.setFillColor(Color.orange);
+		startdot_w2.addPoint(-s +11, y + s, z - s);
+		startdot_w2.addPoint(-s +11, y + s - 1, z - s);
+		startdot_w2.addPoint(-s +11, y + s - 1, z - s + 1);
+		startdot_w2.addPoint(-s +11, y + s, z - s + 1);
 		
 		Polygon3D startdot_b = new Polygon3D(); // THIS IS BLUE
 		startdot_b.setFillColor(Color.orange);
@@ -63,6 +92,12 @@ public class BigRedAxis {
 		startdot_r.addPoint(x - s + 1, y + s - 1, -s);
 		startdot_r.addPoint(x - s, y + s - 1, -s);
 		
+		Polygon3D startdot_r2 = new Polygon3D();
+		startdot_r2.setFillColor(Color.orange); // THIS IS RED
+		startdot_r2.addPoint(x - s, y + s, -s + 11);
+		startdot_r2.addPoint(x - s + 1, y + s, -s +11);
+		startdot_r2.addPoint(x - s + 1, y + s - 1, -s +11);
+		startdot_r2.addPoint(x - s, y + s - 1, -s +11);
 		
 		Polygon3D arrow_w_tb = new Polygon3D();
 		arrow_w_tb.setFillColor(Color.orange);
@@ -103,6 +138,48 @@ public class BigRedAxis {
 		arrow_w_tr.addPoint(-s, y+s-1 + green_b[4], z-s - green_a[4]);
 		arrow_w_tr.addPoint(-s, y+s-1 + green_b[5], z-s - green_a[5]);
 		arrow_w_tr.addPoint(-s, y+s-1 + green_b[6], z-s - green_a[6]);
+		
+		Polygon3D arrow_w2_tr = new Polygon3D();
+		arrow_w2_tr.setFillColor(Color.orange);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[0], z-s - green_a[0]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[1], z-s - green_a[1]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[2], z-s - green_a[2]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[3], z-s - green_a[3]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[4], z-s - green_a[4]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[5], z-s - green_a[5]);
+		arrow_w2_tr.addPoint(-s+11, y+s-1 + green_b[6], z-s - green_a[6]);
+		
+		Polygon3D arrow_w2_tb = new Polygon3D();
+		arrow_w2_tb.setFillColor(Color.orange);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[0], z-s + green_b[0]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[1], z-s + green_b[1]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[2], z-s + green_b[2]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[3], z-s + green_b[3]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[4], z-s + green_b[4]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[5], z-s + green_b[5]);
+		arrow_w2_tb.addPoint(-s+11, y+s + green_a[6], z-s + green_b[6]);
+		
+		Polygon3D arrow_w2_ab = new Polygon3D();
+		arrow_w2_ab.setFillColor(Color.orange);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[0], z-s + green_b[0]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[1], z-s + green_b[1]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[2], z-s + green_b[2]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[3], z-s + green_b[3]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[4], z-s + green_b[4]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[5], z-s + green_b[5]);
+		arrow_w2_ab.addPoint(-s+11, y+s-1 - green_a[6], z-s + green_b[6]);
+		
+		Polygon3D arrow_w2_ar = new Polygon3D();
+		arrow_w2_ar.setFillColor(Color.orange);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[0], z-s+1 + green_a[0]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[1], z-s+1 + green_a[1]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[2], z-s+1 + green_a[2]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[3], z-s+1 + green_a[3]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[4], z-s+1 + green_a[4]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[5], z-s+1 + green_a[5]);
+		arrow_w2_ar.addPoint(-s+11, y+s-1 + green_b[6], z-s+1 + green_a[6]);
+		
+		
 		
 		Polygon3D arrow_b_aw = new Polygon3D();
 		arrow_b_aw.setFillColor(Color.orange);
@@ -184,22 +261,67 @@ public class BigRedAxis {
 		arrow_r_tb.addPoint(x-s + green_b[5], y+s + green_a[5], -s);
 		arrow_r_tb.addPoint(x-s + green_b[6], y+s + green_a[6], -s);
 		
+		Polygon3D arrow_r2_aw = new Polygon3D();
+		arrow_r2_aw.setFillColor(Color.orange);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[0], y+s-1 + green_b[0], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[1], y+s-1 + green_b[1], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[2], y+s-1 + green_b[2], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[3], y+s-1 + green_b[3], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[4], y+s-1 + green_b[4], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[5], y+s-1 + green_b[5], -s+11);
+		arrow_r2_aw.addPoint(x-s+1 + green_a[6], y+s-1 + green_b[6], -s+11);
+		
+		Polygon3D arrow_r2_tw = new Polygon3D();
+		arrow_r2_tw.setFillColor(Color.orange);
+		arrow_r2_tw.addPoint(x-s - green_a[0], y+s-1 + green_b[0], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[1], y+s-1 + green_b[1], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[2], y+s-1 + green_b[2], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[3], y+s-1 + green_b[3], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[4], y+s-1 + green_b[4], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[5], y+s-1 + green_b[5], -s+11);
+		arrow_r2_tw.addPoint(x-s - green_a[6], y+s-1 + green_b[6], -s+11);
+		
+		Polygon3D arrow_r2_ab = new Polygon3D();
+		arrow_r2_ab.setFillColor(Color.orange);
+		arrow_r2_ab.addPoint(x-s + green_b[0], y+s-1 - green_a[0], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[1], y+s-1 - green_a[1], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[2], y+s-1 - green_a[2], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[3], y+s-1 - green_a[3], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[4], y+s-1 - green_a[4], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[5], y+s-1 - green_a[5], -s+11);
+		arrow_r2_ab.addPoint(x-s + green_b[6], y+s-1 - green_a[6], -s+11);
+		
+		Polygon3D arrow_r2_tb = new Polygon3D();
+		arrow_r2_tb.setFillColor(Color.orange);
+		arrow_r2_tb.addPoint(x-s + green_b[0], y+s + green_a[0], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[1], y+s + green_a[1], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[2], y+s + green_a[2], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[3], y+s + green_a[3], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[4], y+s + green_a[4], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[5], y+s + green_a[5], -s+11);
+		arrow_r2_tb.addPoint(x-s + green_b[6], y+s + green_a[6], -s+11);
 		
 		Object[] input_array = { startdot_w, startdot_b, startdot_r,
 				arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr
 				,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw
-				,arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw,};
-		Object[] input_array_xy = {startdot_w,arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr};
+				,arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw, startdot_r2,startdot_w2,
+				arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr, arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw, };
+		Object[] input_array_xy = {startdot_w,startdot_w2,arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr,arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr};
 		Object[] input_array_yz = {startdot_b ,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw};
-		Object[] input_array_xz = {startdot_r, arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw};
-		Object[] input_array_tw = {arrow_b_tw,arrow_r_tw};
-		Object[] input_array_tb = {arrow_w_tb,arrow_r_tb};
-		Object[] input_array_tr = {arrow_b_tr,arrow_w_tr};
-		Object[] input_array_aw = {arrow_b_aw,arrow_r_aw};
-		Object[] input_array_ar = {arrow_b_ar,arrow_w_ar};
-		Object[] input_array_ab = {arrow_w_ab,arrow_r_ab};
+		Object[] input_array_xz = {startdot_r,startdot_r2, arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw,arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw};
+		Object[] input_array_tw = {arrow_b_tw,arrow_r_tw, arrow_r2_tw};
+		Object[] input_array_tb = {arrow_w_tb,arrow_r_tb,arrow_w2_tb, arrow_r2_tb};
+		Object[] input_array_tr = {arrow_b_tr, arrow_w_tr, arrow_w2_tr};
+		Object[] input_array_aw = {arrow_b_aw,arrow_r_aw,arrow_r2_aw};
+		Object[] input_array_ar = {arrow_b_ar,arrow_w_ar,arrow_w2_ar};
+		Object[] input_array_ab = {arrow_w_ab,arrow_r_ab,arrow_w2_ab,arrow_r2_ab};
+		Object[] input_array_second_faces = {arrow_r2_tw, arrow_r2_tb, arrow_w2_tr, arrow_r2_ab, arrow_r2_aw, arrow_w2_ar,
+				arrow_w2_ab, arrow_w2_tb, startdot_w2, startdot_r2 };
+		
+		
 		
 		holder = new PolygonCollection(input_array);
+		//holder_stick = new PolygonCollection(input_array2);
 		xyholder = new PolygonCollection(input_array_xy);
 		yzholder = new PolygonCollection(input_array_yz);
 		xzholder = new PolygonCollection(input_array_xz);
@@ -209,12 +331,16 @@ public class BigRedAxis {
 		awayW = new PolygonCollection(input_array_aw);
 		awayR = new PolygonCollection(input_array_ar);
 		awayB = new PolygonCollection(input_array_ab);
-		
+		secondFaces = new PolygonCollection(input_array_second_faces);
 
 	}
+	
 
 	public Polygon3D[] extract() {
 		return holder.extract_polygons();
+	}
+	public Polygon3D[] extract_stick() {
+		return holder_stick.extract_polygons();
 	}
 	public Polygon3D[] extractTW() {
 		return towardW.extract_polygons();
@@ -233,5 +359,8 @@ public class BigRedAxis {
 	}
 	public Polygon3D[] extractAB() {
 		return awayB.extract_polygons();
+	}
+	public Polygon3D[] extractSF() {
+		return secondFaces.extract_polygons();
 	}
 }

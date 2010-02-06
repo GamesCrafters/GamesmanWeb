@@ -33,14 +33,14 @@ public class WhiteFace {
 				if (check.get(2*x0*adj + 2*y0)==true) {
 					check.put(adj*2*x0 + 2*y0, false);
 					x0 = x0+1;
-					y0= y0;
+					//y0= y0;
 					continue;
 				}
 			}
 			if(check.containsKey(2*x0*adj + 2*y0 +1)&& y0<max) {
 				if (check.get(2*x0*adj + 2*y0+1)==true) {
 					check.put(2*x0*adj + 2*y0 +1, false);
-					x0 = x0;
+					//x0 = x0;
 					y0= y0 +1;
 					continue;
 				}
@@ -49,14 +49,14 @@ public class WhiteFace {
 				if (check.get(2*(x0-1)*adj + 2*y0)==true) {
 					check.put(2*(x0-1)*adj + 2*y0, false);
 					x0 = x0-1;
-					y0= y0;
+					//y0= y0;
 					continue;
 				}
 			}
 			if(check.containsKey(2*x0*adj + 2*(y0-1) +1)&& y0>0) {
 				if (check.get(2*x0*adj + 2*(y0-1)+1)==true) {
 					check.put(2*x0*adj + 2*(y0-1) +1, false);
-					x0 = x0;
+					//x0 = x0;
 					y0= y0 -1;
 					continue;
 				}

@@ -1,47 +1,68 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import edu.berkeley.gcweb.gui.gamescubeman.OskarsCube.Solver.Node;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 
 public class InteriorSolutionPath {
 	
 	
-	public PolygonCollection holder;
+	public PolygonCollection solution;
 	
 	//This class generates the solution path in the interior of the cube
 	public InteriorSolutionPath(Solver solved, CubeGen gened) {
 		
-		int remoteness = solved.getRemoteness(solved.start)/2;
+		//int remoteness = solved.getRemoteness(solved.start)/2;
 		int boardsize = gened.boardsize;
-		int[] current = solved.start;
 		int crem = 0;
-		Object[] input_array = new PolygonCollection[4*remoteness];
-		while (crem < remoteness) {
-			int[] nmove = solved.getNextBestMove(current);
-			PolygonCollection cube1= new Stick(1,1).returnItem();
-			PolygonCollection cube2= new Stick(1,1).returnItem();
+		LinkedList<Node> queue = new LinkedList<Node>();
+		int start_key = solved.start[0] * boardsize*boardsize*4 + solved.start[1] * boardsize*2 + solved.start[2];
+		queue.add(solved.move_map.get(start_key));
+		HashMap<Integer, Boolean> seen_map = new HashMap<Integer, Boolean>();
+		Object[] input_array = new PolygonCollection[4*125];
+		
+		while (!queue.isEmpty()) {
+			Node head = queue.removeFirst();
+			int the_key = head.board[0] * boardsize*boardsize*4 + head.board[1] * boardsize*2
+					+ head.board[2];
+			seen_map.put(the_key, true);
+			for (int[] legal_move : head.moves) {
+				int[] new_board = { head.board[0] + 2*legal_move[0],
+						head.board[1] + 2*legal_move[1],
+						head.board[2] + 2*legal_move[2] };
+				int[] half_board = { head.board[0] + legal_move[0],
+						head.board[1] + legal_move[1],
+						head.board[2] + legal_move[2] };
+				int new_key = new_board[0] * boardsize*boardsize*4 + new_board[1] * boardsize*2
+				+ new_board[2];
+				if (seen_map.containsKey(new_key))
+					continue;
+				int color = 1;
+				if (solved.move_map.get(new_key).onsolutionpath == true)
+					color = 2;
+				PolygonCollection cube1= new Stick(1,color).returnItem();
+				PolygonCollection cube2= new Stick(1,color).returnItem();
 			
-			cube1.translate(current[0] + nmove[0],-current[1]- nmove[1],current[2]+nmove[2]);
-			cube2.translate(current[0], -current[1],current[2]);
-			input_array[2*crem] = cube1;
-			input_array[2*crem+1] =cube2;
-			int[] next = {current[0]+2*nmove[0], current[1]+2*nmove[1],current[2]+2*nmove[2]};
-			current = next;
-			crem++;
+				cube1.translate(new_board[0],-new_board[1],new_board[2]);
+				cube2.translate(half_board[0], -half_board[1],half_board[2]);
+				input_array[2*crem] = cube1;
+				input_array[2*crem+1] =cube2;
+				queue.add(solved.move_map.get(new_key));
+				crem++;
+			}
 		}
 		//Note the end square never gets added so fix that
-		PolygonCollection cubefinal = new Stick(1,1).returnItem();
-		cubefinal.translate(current[0], -current[1], current[2]);
-		input_array[crem*2] = cubefinal;
 		
+		solution = new PolygonCollection(input_array);
+		solution.translate(-boardsize+.5, boardsize-1.5, -boardsize+.5);
 		
-		
-		holder = new PolygonCollection(input_array);
-		holder.translate(-boardsize+.5, boardsize-1.5, -boardsize+.5);
 	}
 
 	
 	public Polygon3D[] extract() {
-		return holder.extract_polygons();
+		return solution.extract_polygons();
 	}
 	
 }

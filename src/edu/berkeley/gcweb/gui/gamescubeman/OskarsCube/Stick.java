@@ -93,38 +93,44 @@ public class Stick {
 	}
 
 	public Stick(int length, int color) {
+		Color colour;
+		if (color == 1) {
+			colour = Color.LIGHT_GRAY;
+		} else {
+			colour = Color.YELLOW;
+		}
 		Polygon3D cap_1 = new Polygon3D();
-		cap_1.setFillColor(Color.LIGHT_GRAY);
+		cap_1.setFillColor(colour);
 		cap_1.addPoint(0, 0, 0);
 		cap_1.addPoint(1, 0, 0);
 		cap_1.addPoint(1, 1, 0);
 		cap_1.addPoint(0, 1, 0);
 		Polygon3D top_long = new Polygon3D();
-		top_long.setFillColor(Color.LIGHT_GRAY);
+		top_long.setFillColor(colour);
 		top_long.addPoint(0, 1, 0);
 		top_long.addPoint(1, 1, 0);
 		top_long.addPoint(1, 1, length);
 		top_long.addPoint(0, 1, length);
 		Polygon3D left_long = new Polygon3D();
-		left_long.setFillColor(Color.LIGHT_GRAY);
+		left_long.setFillColor(colour);
 		left_long.addPoint(0, 0, 0);
 		left_long.addPoint(0, 1, 0);
 		left_long.addPoint(0, 1, length);
 		left_long.addPoint(0, 0, length);
 		Polygon3D right_long = new Polygon3D();
-		right_long.setFillColor(Color.LIGHT_GRAY);
+		right_long.setFillColor(colour);
 		right_long.addPoint(1, 0, 0);
 		right_long.addPoint(1, 1, 0);
 		right_long.addPoint(1, 1, length);
 		right_long.addPoint(1, 0, length);
 		Polygon3D bottom_long = new Polygon3D();
-		bottom_long.setFillColor(Color.LIGHT_GRAY);
+		bottom_long.setFillColor(colour);
 		bottom_long.addPoint(0, 0, 0);
 		bottom_long.addPoint(0, 0, length);
 		bottom_long.addPoint(1, 0, length);
 		bottom_long.addPoint(1, 0, 0);
 		Polygon3D cap2 = new Polygon3D();
-		cap2.setFillColor(Color.LIGHT_GRAY);
+		cap2.setFillColor(colour);
 		cap2.addPoint(0, 0, length);
 		cap2.addPoint(0, 1, length);
 		cap2.addPoint(1, 1, length);

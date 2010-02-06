@@ -1,11 +1,43 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class CubeGen {
 
+	public CubeGen(int blue, int white, int red) {
+		this.findbest = true;
+		this.findbestc = true;
+		this.boardsize = 5;
+		BlueInt = blue;
+		RedInt = red;
+		WhiteInt = white;
+		Blue = intToSet(BlueInt);
+		White = intToSet(WhiteInt);
+		Red = intToSet(RedInt);
+		edges_blue = makeEdges(Blue);
+		edges_white = makeEdges(White);
+		edges_red = makeEdges(Red);
+		if (!legalBoard(Blue, edges_blue) || !legalBoard(White, edges_white) || !legalBoard(Red, edges_red)) {
+			System.out.println("Saved Failed: " + legalBoard(Blue, edges_blue) + " " + legalBoard(White, edges_white) + " " + legalBoard(Red, edges_red));
+			Blue = blocked_xz_face;
+			White = blocked_yz_face;
+			Red = blocked_xy_face;
+			boardsize=5;
+			validB = true;
+			validW = true;
+			validR = true;
+			start[0] = 2;
+			start[1] = 2;
+			start[2] = 2;
+			end[0] = 4;
+			end[1] = 8;
+			end[2] = 8;
+			edges_blue = makeEdges(Blue);
+			edges_white = makeEdges(White);
+			edges_red = makeEdges(Red);
+		}
+	}
 	public CubeGen(boolean random, boolean findbest, boolean findbestc, int boardsize) {
 		this.findbest = findbest;
 		this.findbestc = findbestc;
@@ -27,9 +59,12 @@ public class CubeGen {
 			end[2] = 8;
 		}else {
 			randomGen = new Random();
-			Blue = intToSet(randomGen.nextInt());
-			White = intToSet(randomGen.nextInt());
-			Red = intToSet(randomGen.nextInt());
+			BlueInt = randomGen.nextInt();
+			RedInt = randomGen.nextInt();
+			WhiteInt = randomGen.nextInt();
+			Blue = intToSet(BlueInt);
+			White = intToSet(WhiteInt);
+			Red = intToSet(RedInt);
 		}
 		edges_blue = makeEdges(Blue);
 		edges_white = makeEdges(White);
@@ -40,7 +75,8 @@ public class CubeGen {
 				validB =true;
 				
 			} else {
-				Blue = intToSet(randomGen.nextInt());
+				BlueInt = randomGen.nextInt();
+				Blue = intToSet(BlueInt);
 				edges_blue = makeEdges(Blue);
 				
 			}
@@ -50,7 +86,8 @@ public class CubeGen {
 				validR =true;
 				
 			} else {
-				Red = intToSet(randomGen.nextInt());
+				RedInt = randomGen.nextInt();
+				Red = intToSet(RedInt);
 				edges_red = makeEdges(Red);
 				
 				
@@ -61,7 +98,8 @@ public class CubeGen {
 				validW =true;
 				//System.out.println("Legal board made");
 			} else {
-				White = intToSet(randomGen.nextInt());
+				WhiteInt = randomGen.nextInt();
+				White = intToSet(WhiteInt);
 				edges_white = makeEdges(White);
 				
 			}
@@ -106,7 +144,7 @@ public class CubeGen {
 		HashMap<Integer, Boolean> list = new HashMap<Integer, Boolean>();
 		int adj = 2*boardsize;
 		int max = 2*boardsize -1;
-		int len = face.length;
+		//int len = face.length;
 		int i=0;
 		for(i=0; i< boardsize*2-1;i++) {
 			list.put(i*2+1, true);
@@ -178,14 +216,14 @@ public class CubeGen {
 				if (check.get(2*x0*adj + 2*y0)==true) {
 					check.put(adj*2*x0 + 2*y0, false);
 					x0 = x0+1;
-					y0= y0;
+					//y0= y0;
 					continue;
 				}
 			}
 			if(check.containsKey(2*x0*adj + 2*y0 +1)&& y0<max) {
 				if (check.get(2*x0*adj + 2*y0+1)==true) {
 					check.put(2*x0*adj + 2*y0 +1, false);
-					x0 = x0;
+					//x0 = x0;
 					y0= y0 +1;
 					continue;
 				}
@@ -194,14 +232,14 @@ public class CubeGen {
 				if (check.get(2*(x0-1)*adj + 2*y0)==true) {
 					check.put(2*(x0-1)*adj + 2*y0, false);
 					x0 = x0-1;
-					y0= y0;
+					//y0= y0;
 					continue;
 				}
 			}
 			if(check.containsKey(2*x0*adj + 2*(y0-1) +1)&& y0>0) {
 				if (check.get(2*x0*adj + 2*(y0-1)+1)==true) {
 					check.put(2*x0*adj + 2*(y0-1) +1, false);
-					x0 = x0;
+					//x0 = x0;
 					y0= y0 -1;
 					continue;
 				}
@@ -265,6 +303,8 @@ public class CubeGen {
 	public int brfactor = 0;
 	public int subcomponents = 0;
 	public int maxbrfactor = 0;
+	public int turns = 0;
+	public int planeTurns =0;
 	public boolean findbest = false;
 	public boolean findbestc = false;
 	public int boardsize = 5;
@@ -272,7 +312,9 @@ public class CubeGen {
 	public HashMap<Integer, Boolean> edges_blue;
 	public HashMap<Integer, Boolean> edges_red;
 	public HashMap<Integer, Boolean> edges_white;
-	
+	public int BlueInt;
+	public int WhiteInt;
+	public int RedInt;
 	public int[][] Blue;
 	public int[][] White;
 	public int[][] Red;

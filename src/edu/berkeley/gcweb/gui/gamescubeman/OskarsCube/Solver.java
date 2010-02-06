@@ -16,13 +16,14 @@ class Solver {
 	public HashMap<Integer, Node> move_map;
 	public boolean[][][] seen;
 
-	private class Node {
+	public class Node {
 		public int[] board; // the current board [x, y, z]
 		ArrayList<int[]> moves; // possible moves such as [-1,0,0], [0,1,0],
 								// etc...
 		public int remoteness; // the distance from the solution
 		public int branches;
 		public int bushiness=0;
+		public boolean onsolutionpath = false;
 		
 		public Node(int[] this_board, int old_remoteness, int branch) {
 			branches = branch;
@@ -125,8 +126,8 @@ class Solver {
 			queue = new LinkedList<Node>();
 			queue.add(goal_node);
 			solvin_thang(cube);
-			System.out.println("Searched " + 0 + " subcomponents, best remoteness " + 0 + " bushiness " + cube.bushiness + " branches " + cube.branches + "largest branch" + cube.brfactor);
-
+			System.out.println("(subcomponents " + 1 + ") (best remoteness " + 0 + ") (bushiness " + cube.bushiness + ") (branches " + cube.branches + ") (branch-by-degree " + cube.brfactor + ") (max-branch-degree " + cube.maxbrfactor + ") " +
+					"(turns " + cube.turns + ")");
 		}
 		
 		if (cube.findbest) {
@@ -225,9 +226,11 @@ class Solver {
 			HashMap<Integer, Boolean> seen_map = new HashMap<Integer, Boolean>();
 			resolvin_thang(cube, seen_map);
 			
-			int[] temp = { 2 * xbeste, 2 * ybeste, 2 * zbeste };
+			//int[] temp = { 2 * xbeste, 2 * ybeste, 2 * zbeste };
 			cube.subcomponents = count;
-			System.out.println("(subcomponents " + count + ") (best remoteness " + maxoverallends/2 + ") (bushiness " + cube.bushiness + ") (branches " + cube.branches + ") (branch-by-degree " + cube.brfactor + ") (max-branch-degree " + cube.maxbrfactor + ")");
+			System.out.println("(subcomponents " + count + ") (best remoteness " + maxoverallends/2 + ") (bushiness " + cube.bushiness + ") (branches " + cube.branches + ") (branch-by-degree " + cube.brfactor + ") (max-branch-degree " + cube.maxbrfactor + ") " +
+					"(turns " + cube.turns + ") (Not in plane turns " + cube.planeTurns + ")");
+			System.out.println("Board Number: " + cube.BlueInt + " " + cube.RedInt + " " + cube.WhiteInt);
 		}
 			
 			
@@ -235,16 +238,22 @@ class Solver {
 	private void resolvin_thang(CubeGen cube, HashMap<Integer, Boolean> seen_map) {
 		//this time we already have the movemap but need to fix the bushiness values
 		int bushiness=0;
+		int turns = 0;
+		int planeturns =0;
+		int[] cdirection = {0,0,0};
+		int[] plane1 = {0,0,0};
+		int[] plane2 = {0,0,0};
 		while (!queue.isEmpty()) {
 			Node head = queue.removeFirst();
+			
 			int the_key = head.board[0] * boardsize*boardsize*4 + head.board[1] * boardsize*2
 					+ head.board[2];
 			seen_map.put(the_key, true);
-			int newB = 0;
+			//int newB = 0;
 			int count = 0;
 			count = head.moves.size();
 			if (count >=3) {
-				newB =1;
+				//newB =1;
 			}
 			for (int[] legal_move : head.moves) {
 				int[] new_board = { head.board[0] + 2*legal_move[0],
@@ -255,17 +264,46 @@ class Solver {
 				if (seen_map.containsKey(new_key))
 					continue;
 				else if (getRemoteness(new_board) < getRemoteness(head.board)) {
+					//This means this move in on the solution path
+					move_map.get(new_key).onsolutionpath = true;
+					if (!(legal_move[0] == cdirection[0] && legal_move[1] == cdirection[1] && legal_move[2] == cdirection[2])) {
+						//System.out.println("turns" + cdirection[0] + cdirection[1]+ cdirection[2] + legal_move[0] + legal_move[1] + legal_move[2] );
+						turns +=1;
+						cdirection = legal_move;
+						
+						if((Math.abs(legal_move[0]) == Math.abs(plane1[0]) && Math.abs(legal_move[1]) == Math.abs(plane1[1])
+								&& Math.abs(plane1[2]) == Math.abs(legal_move[2]))) {
+						} else if ((Math.abs(legal_move[0]) == Math.abs(plane2[0]) && Math.abs(legal_move[1]) == Math.abs(plane2[1])
+								&& Math.abs(plane2[2]) == Math.abs(legal_move[2]))){
+							plane2[0] = plane1[0];
+							plane2[1] = plane1[1];
+							plane2[2] = plane1[2];
+							plane1[0] = legal_move[0];
+							plane1[1] = legal_move[1];
+							plane1[2] = legal_move[2];
+						} else {
+							plane2[0] = plane1[0];
+							plane2[1] = plane1[1];
+							plane2[2] = plane1[2];
+							plane1[0] = legal_move[0];
+							plane1[1] = legal_move[1];
+							plane1[2] = legal_move[2];
+							planeturns = planeturns +1;
+						}
+					}
 					queue.add(move_map.get(new_key));
 					continue;					
 				} else {
 				bushiness += head.branches + head.bushiness;
 				move_map.get(new_key).bushiness = head.branches + head.bushiness;
-				System.out.println("headb " + head.branches + " " + head.bushiness);
+				//System.out.println("headb " + head.branches + " " + head.bushiness);
 				queue.add(move_map.get(new_key));
 				}
 			}
 		}
 		cube.bushiness = bushiness;
+		cube.turns = turns;
+		cube.planeTurns = planeturns;
 	}
 
 	private void solvin_thang(CubeGen cube) {
@@ -382,8 +420,8 @@ class Solver {
 
 	public static void main(String[] args) {
 	
-		CubeGen cube = new CubeGen(false, false, false, 5);
-		Solver test = new Solver(cube);
+		//CubeGen cube = new CubeGen(false, false, false, 5);
+		//Solver test = new Solver(cube);
 		
 	}
 }

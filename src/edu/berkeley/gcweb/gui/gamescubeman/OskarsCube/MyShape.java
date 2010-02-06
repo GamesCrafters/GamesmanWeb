@@ -3,6 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class MyShape extends Shape3D {
 	public BigRedAxis big_red_axis;
@@ -18,7 +19,23 @@ public class MyShape extends Shape3D {
 	private Polygon3D[] towardR;
 	private Polygon3D[] awayB;
 	private Polygon3D[] towardB;
-
+	private Polygon3D[] secondFaces;
+	private Polygon3D[] secondFacesFaces;
+	
+	public ArrayList<Polygon3D> getPolygons() {
+		ArrayList<Polygon3D> rendered = new ArrayList<Polygon3D>();
+		for(Polygon3D poly : polys) {
+			if(!poly.isVisible()) continue;
+			poly = poly.clone();
+			poly.rotate(rotation);
+			poly.translate(centerX, centerY, centerZ);
+			//This is for OskarsCube top-down view for perspective.
+			poly.scale(.5, .5, 1);
+			rendered.add(poly);
+		}
+		return rendered;
+	}
+	
 	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
 		current_position = new int[3];
@@ -37,11 +54,19 @@ public class MyShape extends Shape3D {
 		towardW = big_red_axis.extractTW();
 		towardB = big_red_axis.extractTB();
 		towardR = big_red_axis.extractTR();
+		secondFaces = big_red_axis.extractSF();
+
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
 				addPoly(red_axis_array[i]);
 		}
+		/*Polygon3D[] red_axis_array2 = big_red_axis.extract_stick();
+		for (int i = 0; i < red_axis_array2.length; i++) {
+			if (red_axis_array2[i] != null)
+				addPoly(red_axis_array2[i]);
+		}
+		*/
 		for (int i = 0; i < interior_array.length; i++) {
 			if (interior_array[i] != null) {
 				interior_array[i].setVisible(false);
@@ -55,6 +80,7 @@ public class MyShape extends Shape3D {
 			}
 		}
 		cube_faces = new Faces(cube);
+		secondFacesFaces = cube_faces.extract_sf();
 		Polygon3D[] faces = cube_faces.extract();
 		for (int i = 0; i < faces.length; i++) {
 			if (faces[i] != null)
@@ -75,8 +101,16 @@ public class MyShape extends Shape3D {
 	}
 	public void setIntSolVisible(boolean visible) {
 		for (int i = 0; i < intSol_array.length; i++)
-			if (intSol_array[i] != null)
+			if (intSol_array[i] != null) {
 				intSol_array[i].setVisible(visible);
+				if (intSol_array[i].getFillColor() != Color.yellow) {
+					intSol_array[i].setOpacity((float) .1);
+					//intSol_array[i].setVisible(false);
+					
+				}
+				intSol_array[i].setBorderColor(Color.GRAY);
+			}
+		
 	}
 	public void setAwayWVisible(boolean best, boolean visible, boolean color) {
 		Color col = Color.cyan;
@@ -149,6 +183,20 @@ public class MyShape extends Shape3D {
 				towardR[i].setVisible(visible);
 				towardR[i].setFillColor(col);
 			}
+	}
+	public void setSecondFacesVisible(boolean visible) {
+		for (int i = 0; i < secondFaces.length; i++) {
+			if (secondFaces[i] != null) {
+				secondFaces[i].setVisible(visible);
+			}
+		}
+		for (int i=0; i< secondFacesFaces.length; i++) {
+			if (secondFacesFaces[i] != null) {
+				secondFacesFaces[i].setVisible(visible);
+			}
+		}
+	
+	
 	}
 
 }
