@@ -6,6 +6,7 @@ public abstract class PuzzleTurn {
 	public PuzzleTurn(int frames_animation) {
 		frames = frames_animation;
 	}
+	public abstract PuzzleTurn invert();
 	//returns true if this turn is legal during inspection
 	public abstract boolean isInspectionLegal();
 	//returns true if this turn has no visible effect on the puzzle

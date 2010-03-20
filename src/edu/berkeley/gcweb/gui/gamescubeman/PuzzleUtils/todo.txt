@@ -48,6 +48,12 @@ TODO:
 -super cuboids
 
 GAMESCRAFTERS:
+-solve square 1
+-go from any position to any position
+-how far can we go with 3x3x3?
+-make hongchen's corner chooser live
+-move buttons to the side
+
 -update page keyboard when the applet's key layout changes
 -lots of flickering on firefox mac?
 

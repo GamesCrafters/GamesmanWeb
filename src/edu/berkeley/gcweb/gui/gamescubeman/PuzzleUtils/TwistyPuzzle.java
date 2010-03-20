@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.Timer;
 
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
+import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Polygon3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Shape3D;
 
@@ -21,6 +22,25 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 		addStateChangeListener(this);
 	}
 
+	private boolean bld = false;
+	public void setBLDMode(boolean bld) {
+		this.bld = bld;
+	}
+	
+	@Override
+	public ArrayList<Polygon3D> getPolygons() {
+		ArrayList<Polygon3D> polys = super.getPolygons();
+		if(bld) {
+			for(Polygon3D poly : polys) {
+				if(!(poly instanceof PuzzleSticker))
+					throw new Error();
+				PuzzleSticker ps = (PuzzleSticker) poly;
+				ps.setFace(null);
+			}
+		}
+		return polys;
+	}
+	
 	public void resetPuzzle() {
 		scrambling = false;
 		resetTimer();
@@ -299,20 +319,53 @@ public abstract class TwistyPuzzle extends Shape3D implements ActionListener, Pu
 	}
 	private Timer timer = new Timer(100, this);
 	//returns true if the String was recognized as a turn
-	public final boolean doTurn(String turn) {
-		if(turn == null || scrambling) return false;
-		if(turn.equals("scramble")) {
-			if(!isInspecting() && !isTiming())
-				scramble();
-			else
-				_cantScramble();
-			return true;
+	public final boolean doTurn(String turn2) {
+//		if(turn == null || scrambling) return false;
+//		if(turn.equals("scramble")) {
+//			if(!isInspecting() && !isTiming())
+//				scramble();
+//			else
+//				_cantScramble();
+//			return true;
+//		}
+//		if(turn.equals("reset")) {
+//			resetPuzzle();
+//			return true;
+//		}
+//		if(turn.equals("undo")) {
+//			if(!turns.isEmpty()) {
+//				PuzzleTurn lastTurn = turns.get(turns.size()-1);
+//				appendTurn(lastTurn.invert());
+//			}
+//			return true;
+//		}
+//		return _doTurn(turn, false);
+		
+//		//TODO - hacked together for hackathon 2010 =)
+		if(turn2 == null || scrambling) return false;
+		for(String turn : turn2.split(" ")) {
+			if(turn.equals("scramble")) {
+				if(!isInspecting() && !isTiming())
+					scramble();
+				else
+					_cantScramble();
+				continue;
+			}
+			if(turn.equals("reset")) {
+				resetPuzzle();
+				continue;
+			}
+			if(turn.equals("undo")) {
+				if(!turns.isEmpty()) {
+					PuzzleTurn lastTurn = turns.get(turns.size()-1);
+					appendTurn(lastTurn.invert());
+				}
+				continue;
+			}
+			//TODO - hacked together for hackathon 2010 =)
+			_doTurn(turn, false);
 		}
-		if(turn.equals("reset")) {
-			resetPuzzle();
-			return true;
-		}
-		return _doTurn(turn, false);
+		return true;
 	}
 	
 	public boolean piecePickerSupport(){

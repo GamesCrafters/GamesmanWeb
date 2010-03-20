@@ -20,7 +20,7 @@
   <target name="all" depends="compile, applets, war"/>
   <target name="rebuild" depends="clean, compile, war"/>
   <target name="war" depends="compile, applets" description="Package a WAR file">
-    <delete file="gcweb.war"/>
+    <delete file="${dist}/gcweb.war"/>
     <war destfile="${dist}/gcweb.war" basedir="${deploy}"
 	 webxml="${deploy}/WEB-INF/web.xml" includes="**"
 	 excludes="**/.* **/.*/* **/servlet-api.jar **/jsp-api.jar"/>

@@ -55,6 +55,9 @@ public abstract class Shape3D {
 	public void setRotation(RotationMatrix m) {
 		rotation = (m == null) ? new RotationMatrix() : m;
 	}
+	public RotationMatrix getRotation() {
+		return rotation;
+	}
 	public void rotate(RotationMatrix m) {
 		rotation = m.multiply(rotation);
 	}

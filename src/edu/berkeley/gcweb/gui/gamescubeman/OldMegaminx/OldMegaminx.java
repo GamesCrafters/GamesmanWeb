@@ -654,5 +654,11 @@ public class OldMegaminx extends TwistyPuzzle {
 				for(int i = 0; i < cycles.get(c).length; i++)
 					arr[cycles.get(c)[Utils.modulo(i + dir, cycles.get(c).length)]] = copy[cycles.get(c)[i]];
 		}
+
+		@Override
+		public PuzzleTurn invert() {
+			// TODO IMPLEMENT UNDO
+			return null;
+		}
 	}
 }

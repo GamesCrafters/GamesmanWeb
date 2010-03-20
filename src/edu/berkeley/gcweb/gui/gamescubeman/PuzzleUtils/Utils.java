@@ -116,17 +116,27 @@ public class Utils {
 	public static JPanel sideBySide(JComponent... cs) {
 		return sideBySide(false, cs);
 	}
-	public static JPanel sideBySide(boolean resize, JComponent... cs) {
+	public static JPanel sideBySide(boolean resize, boolean vertical, JComponent... cs) {
 		JPanel p = new JPanel();
-		if(resize)
-			p.setLayout(new GridLayout(1, 0));
-		else
-			p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+		if(resize) {
+			if(vertical)
+				p.setLayout(new GridLayout(0, 1));
+			else
+				p.setLayout(new GridLayout(1, 0));
+		} else {
+			if(vertical)
+				p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+			else
+				p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
+		}
 		p.setBackground(Color.WHITE);
 		for(JComponent c : cs)
 			if (c != null)
 				p.add(c);
 		return p;
+	}
+	public static JPanel sideBySide(boolean resize, JComponent... cs) {
+		return sideBySide(resize, false, cs);
 	}
 	
 	public static String colorToString(Color c) {

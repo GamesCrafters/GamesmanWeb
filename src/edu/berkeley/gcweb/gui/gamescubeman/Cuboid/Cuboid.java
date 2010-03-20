@@ -569,7 +569,10 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 				doTurn(face, layer, direction);
 				return true;
 			} else { //cube rotation
-				doCubeRotation(CubeFace.decodeCubeRotation(ch), direction);
+				CubeFace cf = CubeFace.decodeCubeRotation(ch);
+				if(cf == null)
+					return false;
+				doCubeRotation(cf, direction);
 				return true;
 			}
 		}

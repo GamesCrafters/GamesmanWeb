@@ -431,6 +431,12 @@ public class Pyraminx extends TwistyPuzzle {
 				arr.set(Utils.moduloAcces(indices, i+offset), clone.get(indices[i])); 
 			}
 		}
+
+		@Override
+		public PuzzleTurn invert() {
+			// TODO INVERTING
+			return null;
+		}
 	}
 	@Override
 	protected void _cantScramble() {

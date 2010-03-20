@@ -2,7 +2,7 @@
     	         java.io.File, java.io.IOException,
                  javax.xml.parsers.ParserConfigurationException,
                  edu.berkeley.gcweb.GameDictionary" %>
-<%@ taglib uri="http://gamescrafters.berkeley.edu/gctl" prefix="gc" %>
+<%@ taglib uri="/WEB-INF/tld/gctl.tld" prefix="gc" %>
 <%!
 private GameDictionary gameDictionary;
 

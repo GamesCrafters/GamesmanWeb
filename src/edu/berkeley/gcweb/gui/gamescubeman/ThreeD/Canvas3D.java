@@ -21,8 +21,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 import javax.swing.JComponent;
@@ -164,7 +162,6 @@ public class Canvas3D extends JComponent implements KeyListener, ActionListener,
 					Shape proj = poly.projectXYPlane(VIEWPORT, scale * Math.min((double)getWidth() / DEFAULT_WIDTH, (double)getHeight() / DEFAULT_HEIGHT));
 					polyProjection.add(proj);
 				}
-				System.out.println((System.nanoTime()-start)/1e9);
 			}
 			if(!dragging || colorEditing)
 				refreshSelectedPolygon();

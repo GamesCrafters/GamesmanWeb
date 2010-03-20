@@ -7,6 +7,7 @@ import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
 
 public class CubeTurn extends PuzzleTurn {
 	private CubeFace face;
+	private int clockwise; //simply for easy inverting purposes
 	private int layer, cw, legalTurns;
 	private Cuboid cube;
 	public CubeTurn(Cuboid cube, CubeFace f, int layer, int clockwise) {
@@ -14,6 +15,7 @@ public class CubeTurn extends PuzzleTurn {
 		this.cube = cube;
 		this.face = f;
 		this.layer = layer;
+		this.clockwise = clockwise;
 		cw = clockwise;
 		if(cw != -2) { //we want to distinguish between R2 and R2'
 			cw = Utils.modulo(cw, 4);
@@ -107,5 +109,9 @@ public class CubeTurn extends PuzzleTurn {
 		//updating internal representation
 		for(int[][] cycleIndices : stickers)
 			cycle(cube.cubeStickers, cycleIndices, legalTurns);
+	}
+	@Override
+	public PuzzleTurn invert() {
+		return new CubeTurn(cube, face, layer, -clockwise);
 	}
 }

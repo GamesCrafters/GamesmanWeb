@@ -62,7 +62,8 @@ public class PuzzleCanvas extends JLayeredPane implements KeyListener, ColorChan
 	}
 	
 	public void setPieceEditing(boolean pieceEditing) {
-		cc3.setVisible(pieceEditing);
+		if(cc3 != null)
+			cc3.setVisible(pieceEditing);
 	}
 	
 	public void colorsChanged(HashMap<String, Color> colorScheme) {

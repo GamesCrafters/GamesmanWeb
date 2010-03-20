@@ -30,8 +30,7 @@ function appletLoaded() {
 	//TODO - move value history doesn't always work w/ ie and chrome when pressing scramble
 	//TODO - ie doesn't change buttons when they're clicked
 	//TODO - chrome still gives focus to the applet
-	//TODO - resizable applet would be nice (http://www.metaportaldermedienpolemik.net/processing.org/applet_resize/)
-	//TODO - checkboxes are really wierd with ie
+	//TODO - checkboxes are really weird with ie
 	//TODO - select all, select none for checkboxes (in framework)
 	//TODO - keyboard table resizes if the window is too small
 	//TODO - horizontal scrollbar in ie
@@ -49,7 +48,8 @@ function appletLoaded() {
 	});
 }
 
-$(document).ready(function(){
+//$(document).ready(function(){
+function appletLoaded() {
 	//although the dom is ready to be traversed,
 	//our applet is not necessarily ready to be accessed
 	//we must wait until appletLoaded() is called to access the applet
@@ -112,7 +112,8 @@ $(document).ready(function(){
 		$("#" + (key == ';' ? 'semicolon' : key)).addClass("move-key").click(createClickHandler(key));
 	}
 	game.loadBoard(getBoardString());
-});
+}
+//});
 
 function debug(mytext) {
 //	$("#debug").text($("#debug").text()+"\n"+mytext);

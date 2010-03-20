@@ -14,6 +14,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.swing.BoxLayout;
 import javax.swing.JApplet;
@@ -27,6 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import netscape.javascript.JSObject;
+
+//import netscape.javascript.JSObject;
 import edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.PuzzleOption.PuzzleOptionChangeListener;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.RotationMatrix;
@@ -56,6 +61,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 	private CheckBoxOption free_rotation_spin = new CheckBoxOption("free_rotation_spin", true, true);
 	private CheckBoxOption antialiasing = new CheckBoxOption("antialiasing", true, false);
 	private CheckBoxOption show_history = new CheckBoxOption("show_history", true, false);
+	private CheckBoxOption bld_mode = new CheckBoxOption("bld_mode", true, false);
 	private SliderOption scale = new SliderOption("scale", true, (int) Canvas3D.DEFAULT_SCALE, 0, 10000);
 	private SliderOption distance = new SliderOption("distance", true, 4, 4, 100);
 	
@@ -83,6 +89,14 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 			});
 		} catch (Throwable e) {
 			e.printStackTrace();
+		}
+	}
+	@Override
+	public void start() {
+		try {
+			jso.call("appletLoaded", new Object[0]);
+		} catch(Exception e) {
+			
 		}
 	}
 	
@@ -178,17 +192,21 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 				puzzle.setCenter(center[0], center[1], distance.getValue());
 				canvas.setScale(scale.getValue());
 				updatePiecePicker();
+				puzzle.setBLDMode(bld_mode.getValue());
 			}
 		};
 		
-		PuzzleOption<?>[] options = new PuzzleOption<?>[] { bg_color, fg_color, show_options, focus_indicator, draw_axis, free_rotation, free_rotation_spin, antialiasing, show_history, scale, distance };
+		//TODO - probably better to have the PuzzleOption class do all this, if possible
+		PuzzleOption<?>[] options = new PuzzleOption<?>[] { bg_color, fg_color, show_options, focus_indicator, draw_axis,
+				free_rotation, free_rotation_spin, antialiasing, show_history, scale, distance, bld_mode };
 		for(PuzzleOption<?> option : options) {
 			String val = settings.get(option.getName(), null);
 			if(val != null)
 				option.setValue(val);
 			option.addChangeListener(pl);
 		}
-		optionsPanel.add(Utils.sideBySide(antialiasing.getComponent(), show_history.getComponent(), free_rotation.getComponent(), free_rotation_spin.getComponent()));
+		optionsPanel.add(Utils.sideBySide(antialiasing.getComponent(), show_history.getComponent()));
+		optionsPanel.add(Utils.sideBySide(free_rotation.getComponent(), free_rotation_spin.getComponent(), bld_mode.getComponent()));
 		optionsPanel.add(Utils.sideBySide(scale.getComponent(), distance.getComponent()));
 		
 		for(PuzzleOption<?> option : puzzle.getDefaultOptions()) {
@@ -239,23 +257,24 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 		});
 		play_pause.setFocusable(false);
 
-		JPanel topHalf = new JPanel(new BorderLayout());
+		JPanel leftHalf = new JPanel(new BorderLayout());
 		JPanel tabs = new JPanel();
 		tabs.setLayout(new BoxLayout(tabs, BoxLayout.PAGE_AXIS));
 		tabBoxes = new JCheckBox[] { optionsCheckBox, keysCheckBox, cornerChooserBox, colorChooserCheckBox};
-		tabs.add(Utils.sideBySide(true, changeView, resetPuzzle, scramble));//, backward, play_pause, forward));
-		tabs.add(Utils.sideBySide(false, tabBoxes));
-		topHalf.add(tabs, BorderLayout.PAGE_START);
+		boolean vertical = false; //TODO - vertical doesn't look very good
+		tabs.add(Utils.sideBySide(true, vertical, changeView, resetPuzzle, scramble));//, backward, play_pause, forward));
+		tabs.add(Utils.sideBySide(false, vertical, tabBoxes));
+		leftHalf.add(tabs, BorderLayout.PAGE_START);
 		
 		turnHistoryField = new JTextField();
 		turnHistoryField.setEditable(false);
-		topHalf.add(turnHistoryField, BorderLayout.CENTER);
+		leftHalf.add(turnHistoryField, BorderLayout.CENTER);
 
 		JPanel pane = new JPanel(new BorderLayout());
 		setContentPane(pane);
 		
 		if(show_options.getValue())
-			pane.add(topHalf, BorderLayout.PAGE_START);
+			pane.add(leftHalf, vertical ? BorderLayout.LINE_START : BorderLayout.PAGE_START);
 		pane.add(puzzleCanvas, BorderLayout.CENTER);
 		canvas.requestFocusInWindow();
 		
@@ -337,7 +356,7 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 		RotationMatrix[] angles = puzzle.getPreferredViewAngles();
 		if(reset)
 			rotationIndex = 0;
-		else
+		else if(puzzle.getRotation().equals(angles[rotationIndex])) //only switch to next view if the current view isn't "dirty"
 			rotationIndex = (rotationIndex + 1) % angles.length;
 		String text = "Change View (" + rotationIndex + ")";
 		changeView.setText(text);
@@ -388,6 +407,17 @@ public class GamesCubeMan extends JApplet implements ActionListener, PuzzleState
 					a.canvas.requestFocusInWindow();
 			}
 		});
+		
+		//added for hackathon 2010! =)
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			String line;
+			while((line = br.readLine()) != null) {
+				a.puzzle.doTurn(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void mouseWheelMoved(MouseWheelEvent e) {

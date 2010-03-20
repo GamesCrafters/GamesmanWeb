@@ -14,6 +14,8 @@ public class WhiteFace {
 
 		// The white sides polygons go in here.
 		Polygon3D white_border = new Polygon3D();
+		
+//		white_border.setBorderColor(null);
 		white_border.setFillColor(Color.WHITE);
 		white_border.addPoint(0, 0, 0);
 		white_border.addPoint(0, 0, max2);

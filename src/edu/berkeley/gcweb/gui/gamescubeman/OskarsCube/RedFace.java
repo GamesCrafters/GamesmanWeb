@@ -15,6 +15,7 @@ public class RedFace {
 		
 		Polygon3D red_border = new Polygon3D();
 		red_border.setFillColor(Color.RED);
+//		red_border.setBorderColor(null);
 		red_border.addPoint(0, 0, 0);
 		red_border.addPoint(0, -max2, 0);
 		red_border.addPoint(max2, -max2, 0);
@@ -62,8 +63,6 @@ public class RedFace {
 					continue;
 				}
 			}
-			
-			
 		}
 
 		Polygon3D green_dot = new Polygon3D();

@@ -19,6 +19,7 @@ public class PuzzleSticker extends Polygon3D {
 	private static HashMap<String, Color> colorScheme;
 	public static void setColorScheme(HashMap<String, Color> colors) {
 		colorScheme = colors;
+		colors.put(null, Color.GRAY); //this is for BLD
 	}
 	public Color getFillColor() {
 		Color c = null;

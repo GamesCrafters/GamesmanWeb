@@ -489,6 +489,11 @@ public class SquareOne extends TwistyPuzzle {
 			String turns = "(" + top + ", " + down + ")";
 			return turns;
 		}
+		@Override
+		public PuzzleTurn invert() {
+			// TODO INVERT
+			return null;
+		}
 	}
 
 	private Pattern turnPattern = Pattern.compile("(-?\\d*), *(-?\\d*)");
