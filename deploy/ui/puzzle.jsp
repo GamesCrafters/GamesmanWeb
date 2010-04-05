@@ -166,7 +166,7 @@ String uifile = gameDictionary.getUI(internalName);
     <!-- site footer --> 
     <div class="footer">
       <ul>
-        <li>&copy; 2008-2009 <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
+        <li>&copy; <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
       </ul>
     </div> 
   </body> 
