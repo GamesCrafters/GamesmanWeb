@@ -21,6 +21,7 @@ public class MyShape extends Shape3D {
 	private Polygon3D[] towardB;
 	private Polygon3D[] secondFaces;
 	private Polygon3D[] secondFacesFaces;
+	private boolean topdownview = true;
 	
 	public ArrayList<Polygon3D> getPolygons() {
 		ArrayList<Polygon3D> rendered = new ArrayList<Polygon3D>();
@@ -30,7 +31,11 @@ public class MyShape extends Shape3D {
 			poly.rotate(rotation);
 			poly.translate(centerX, centerY, centerZ);
 			//This is for OskarsCube top-down view for perspective.
+			if(topdownview) {
 			poly.scale(.5, .5, 1);
+			} else {
+				poly.scale(1, 1, 1);
+			}
 			rendered.add(poly);
 		}
 		return rendered;
@@ -104,8 +109,8 @@ public class MyShape extends Shape3D {
 			if (intSol_array[i] != null) {
 				intSol_array[i].setVisible(visible);
 				if (intSol_array[i].getFillColor() != Color.yellow) {
-					intSol_array[i].setOpacity((float) .1);
-					//intSol_array[i].setVisible(false);
+					//intSol_array[i].setOpacity((float) .01);
+					intSol_array[i].setVisible(false);
 					
 				}
 				intSol_array[i].setBorderColor(Color.GRAY);
@@ -185,6 +190,7 @@ public class MyShape extends Shape3D {
 			}
 	}
 	public void setSecondFacesVisible(boolean visible) {
+		topdownview = visible;
 		for (int i = 0; i < secondFaces.length; i++) {
 			if (secondFaces[i] != null) {
 				secondFaces[i].setVisible(visible);
@@ -195,7 +201,7 @@ public class MyShape extends Shape3D {
 				secondFacesFaces[i].setVisible(visible);
 			}
 		}
-	
+		
 	
 	}
 

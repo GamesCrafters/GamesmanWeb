@@ -309,7 +309,7 @@ public class BigRedAxis {
 		Object[] input_array_xy = {startdot_w,startdot_w2,arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr,arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr};
 		Object[] input_array_yz = {startdot_b ,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw};
 		Object[] input_array_xz = {startdot_r,startdot_r2, arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw,arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw};
-		Object[] input_array_tw = {arrow_b_tw,arrow_r_tw, arrow_r2_tw};
+		Object[] input_array_tw = {arrow_b_tw, arrow_r_tw, arrow_r2_tw};
 		Object[] input_array_tb = {arrow_w_tb,arrow_r_tb,arrow_w2_tb, arrow_r2_tb};
 		Object[] input_array_tr = {arrow_b_tr, arrow_w_tr, arrow_w2_tr};
 		Object[] input_array_aw = {arrow_b_aw,arrow_r_aw,arrow_r2_aw};

@@ -84,7 +84,7 @@ class Solver {
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube) {
 		
-		System.out.println("Solving");
+		//System.out.println("Solving");
 		
 		boardsize = cube.boardsize;
 		
@@ -228,9 +228,13 @@ class Solver {
 			
 			//int[] temp = { 2 * xbeste, 2 * ybeste, 2 * zbeste };
 			cube.subcomponents = count;
+			cube.remoteness = maxoverallends/2;
+			cube.compute_face_sp();
+			if(cube.loudprint) {
 			System.out.println("(subcomponents " + count + ") (best remoteness " + maxoverallends/2 + ") (bushiness " + cube.bushiness + ") (branches " + cube.branches + ") (branch-by-degree " + cube.brfactor + ") (max-branch-degree " + cube.maxbrfactor + ") " +
 					"(turns " + cube.turns + ") (Not in plane turns " + cube.planeTurns + ")");
 			System.out.println("Board Number: " + cube.BlueInt + " " + cube.RedInt + " " + cube.WhiteInt);
+			}
 		}
 			
 			

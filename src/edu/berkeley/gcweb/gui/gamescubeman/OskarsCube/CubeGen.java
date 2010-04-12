@@ -19,7 +19,10 @@ public class CubeGen {
 		edges_white = makeEdges(White);
 		edges_red = makeEdges(Red);
 		if (!legalBoard(Blue, edges_blue) || !legalBoard(White, edges_white) || !legalBoard(Red, edges_red)) {
-			System.out.println("Saved Failed: " + legalBoard(Blue, edges_blue) + " " + legalBoard(White, edges_white) + " " + legalBoard(Red, edges_red));
+			if (loudprint) {
+				System.out.println("Saved Failed: " + legalBoard(Blue, edges_blue) + " " + legalBoard(White, edges_white) + " " + legalBoard(Red, edges_red));
+			}
+			original = false;
 			Blue = blocked_xz_face;
 			White = blocked_yz_face;
 			Red = blocked_xy_face;
@@ -104,6 +107,7 @@ public class CubeGen {
 				
 			}
 		}
+		
 	}
 
 	private int[][] intToSet(int seed) {
@@ -255,7 +259,7 @@ public class CubeGen {
 	}
 
 	
-	
+	/*
 	// private static int[][] blocked_xz_face = {{1,0}, {7,0}, {1,1}, {2,1},
 	// {3,1}, {5,1}, {7,1}, {5,2}, {1,3}, {3,3}, {4,3}, {5,3}, {6,3}, {7,3},
 	// {1,4}, {3,4}, {1,5}, {3,5}, {5,5}, {6,5}, {7,5}, {1,6}, {3,6}, {5,6},
@@ -268,7 +272,8 @@ public class CubeGen {
 	// {3,1}, {4,1}, {5,1}, {7,1}, {3,2}, {7,2}, {1,3}, {3,3}, {5,3}, {7,3},
 	// {1,4}, {3,4}, {5,4}, {0,5}, {1,5}, {3,5}, {5,5}, {6,5}, {7,5}, {8,5},
 	// {1,6}, {3,6}, {1,7}, {3,7}, {4,7}, {5,7}, {7,7}, {7,8}};
-
+	*/
+	
 	private static int[][] blocked_xz_face = { { 0, 5 }, { 1, 2 }, { 1, 6 },
 			{ 2, 3 }, { 2, 5 }, { 3, 4 }, { 3, 8 }, { 4, 1 }, { 4, 7 },
 			{ 5, 2 }, { 5, 4 }, { 6, 3 }, { 6, 7 }, { 7, 0 }, { 7, 4 },
@@ -281,7 +286,7 @@ public class CubeGen {
 			{ 8, 5 }, { 1, 1 }, { 1, 3 }, { 1, 5 }, { 1, 7 }, { 3, 1 },
 			{ 3, 3 }, { 3, 5 }, { 3, 7 }, { 5, 1 }, { 5, 3 }, { 5, 5 },
 			{ 5, 7 }, { 7, 1 }, { 7, 3 }, { 7, 5 }, { 7, 7 } };
-	private static int[][] blocked_xy_face = { { 0, 1 }, { 0, 7 }, { 1, 6 },
+	private static int[][] blocked_xy_face = { { 0, 1 }, { 0, 7 }, { 1, 6 }, //red face
 			{ 2, 3 }, { 3, 2 }, { 3, 4 }, { 4, 5 }, { 4, 7 }, { 5, 2 },
 			{ 6, 3 }, { 6, 5 }, { 6, 7 }, { 7, 2 }, { 7, 4 }, { 7, 6 },
 			{ 8, 5 }, { 1, 1 }, { 1, 3 }, { 1, 5 }, { 1, 7 }, { 3, 1 },
@@ -295,7 +300,104 @@ public class CubeGen {
 	 * standard[n/2i +j][0] = 2i +1; standard[n/2i +j][0] = 2j +1; } } return
 	 * standard; }
 	 */
-
+	
+	public void compute_face_sp() {
+		//compute clear alleys
+		
+		for(int i=0; i<2*(boardsize)-1; i=i+1) {
+			int goodbx = 0, goodrx = 0, goodwx = 0;
+			int goodby = 0, goodry = 0, goodwy = 0;					
+			for(int k=0; k < 2*(boardsize-1)*(boardsize-1); k++) {					
+					if(Blue[k][0] ==i) {
+						goodbx++;
+					}
+					if(White[k][0] ==i) {
+						goodwx++;
+					}
+					if(Red[k][0] ==i) {
+						goodrx++;
+					}		
+					if(Blue[k][1] ==i) {
+						goodby++;
+					}
+					if(White[k][1] ==i) {
+						goodwy++;
+					}
+					if(Red[k][1] ==i) {
+						goodry++;
+					}		
+			}
+			alleys = new int[2*boardsize-1];
+			alleys[goodbx] = alleys[goodbx]+1;
+			alleys[goodby] = alleys[goodby]+1;
+			alleys[goodwx] = alleys[goodwx]+1;
+			alleys[goodwy] = alleys[goodwy]+1;
+			alleys[goodrx] = alleys[goodrx]+1;
+			alleys[goodry] = alleys[goodry]+1;
+			
+		}
+		//distance btwn start/end
+		sumlindistance = Math.abs(start[1]- end[1]) + Math.abs(start[0]-end[0]) + Math.abs(start[2]-end[2]);
+		//solution distance btwn start/end in 2D face
+		for(int board = 0; board<3; board++) {
+			int[][] puzz = new int[boardsize][boardsize];
+			int indx=0, indy=2;
+			if(board ==1) {
+				indx = 1;
+				indy = 2;
+			}
+			if(board ==2) {
+				indx = 0;
+				indy = 1;
+			}
+			
+			puzz[start[indx]/2][start[indy]/2] =1;
+			while(puzz[end[indx]/2][end[indy]/2] == 0) {
+				for(int i=0; i<boardsize; i++) {
+					for(int j=0; j<boardsize; j++) {
+						if(puzz[i][j] != 0) {
+							//System.out.println("at " + board + " " + i + "," + j + " "+ puzz[i][j]);
+							//check if neighbors seen and or if can get to them.
+							if(j>0 && puzz[i][j-1] ==0 && !blocked(i,j-1,i,j, board)) {
+								puzz[i][j-1] = puzz[i][j]+1;
+							}
+							if(i>0 && puzz[i-1][j] ==0 && !blocked(i-1,j,i,j, board)) {
+								puzz[i-1][j] = puzz[i][j]+1;
+							}
+							if(j<boardsize-1 && puzz[i][j+1] ==0 && !blocked(i,j,i,j+1, board)) {
+								puzz[i][j+1] = puzz[i][j]+1;
+							}
+							if(i<boardsize-1 && puzz[i+1][j] ==0 && !blocked(i,j,i+1,j, board)) {
+								puzz[i+1][j] = puzz[i][j]+1;
+							}
+						}
+					}
+				}
+				
+			}
+			sumsoldistance += puzz[end[indx]/2][end[indy]/2];
+			//System.out.println("end " + board + " " + puzz[end[indx]/2][end[indy]/2]);
+		}
+		
+	}
+	public boolean blocked(int x,int y,int z,int w, int board) {
+		boolean ans= false;
+		for(int k=0; k< 2*(boardsize-1)*(boardsize-1); k++) {
+			if(board== 0 && Blue[k][0] == x+z && Blue[k][1] == y+w) {
+				ans = true;
+			}
+			if(board ==1 && White[k][0] ==x+z && White[k][1] ==y+w) {
+				ans = true;
+			}
+			if(board ==2 && Red[k][0] ==x+z && Red[k][1] ==y+w) {
+				ans = true;
+			}
+		}
+		return ans;
+	}
+	public int[] alleys;
+	public int sumlindistance=0;
+	public int sumsoldistance=0;
 	public int[] start = { 0,0,0 };
 	public int[] end = { 1,1,1 };
 	public int bushiness =0;
@@ -321,6 +423,31 @@ public class CubeGen {
 	public boolean validB;
 	public boolean validR;
 	public boolean validW;
+	public boolean original = true;
+	public int remoteness;
+	public boolean loudprint = false;
+	
+	public int probabilistic() {
+		int i =0, count=0;
+		randomGen = new Random();
+		for(;i<100000; i=i+1) {
+			int j = randomGen.nextInt();
+			int[][] intset = intToSet(j);
+			HashMap<Integer, Boolean> edges_i = makeEdges(intset);
+			if(legalBoard(intset, edges_i)) {
+				count= count +1;
+			}
+			//if((i/10000)*10000 ==i) 
+			//	System.out.println("i at" + i);
+		}
+		return count;
+	}
+	
+	public static void main(String[] args) {
+		CubeGen cube = new CubeGen(false, false, false, 7);
+		System.out.println(cube.probabilistic());
+		
+	}
 	
 
 }

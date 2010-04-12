@@ -42,7 +42,7 @@ public class BlueFace { // THE BLUE FACE IS XZ
 				if (check.get(2*x0*adj + 2*y0+1)==true) {
 					check.put(2*x0*adj + 2*y0 +1, false);
 					//x0 = x0;
-					//y0= y0 +1;
+					y0= y0 +1;
 					continue;
 				}
 			}

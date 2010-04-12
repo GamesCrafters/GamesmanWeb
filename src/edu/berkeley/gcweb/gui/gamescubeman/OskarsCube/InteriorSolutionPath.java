@@ -42,8 +42,8 @@ public class InteriorSolutionPath {
 				int color = 1;
 				if (solved.move_map.get(new_key).onsolutionpath == true)
 					color = 2;
-				PolygonCollection cube1= new Stick(1,color).returnItem();
-				PolygonCollection cube2= new Stick(1,color).returnItem();
+				PolygonCollection cube1= new Stick(.9,color).returnItem();
+				PolygonCollection cube2= new Stick(.9,color).returnItem();
 			
 				cube1.translate(new_board[0],-new_board[1],new_board[2]);
 				cube2.translate(half_board[0], -half_board[1],half_board[2]);

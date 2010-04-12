@@ -92,7 +92,7 @@ public class Stick {
 		holder = new PolygonCollection(input_array);
 	}
 
-	public Stick(int length, int color) {
+	public Stick(double length, int color) {
 		Color colour;
 		if (color == 1) {
 			colour = Color.LIGHT_GRAY;
@@ -101,40 +101,40 @@ public class Stick {
 		}
 		Polygon3D cap_1 = new Polygon3D();
 		cap_1.setFillColor(colour);
-		cap_1.addPoint(0, 0, 0);
-		cap_1.addPoint(1, 0, 0);
-		cap_1.addPoint(1, 1, 0);
-		cap_1.addPoint(0, 1, 0);
+		cap_1.addPoint(.1, .1, .1);
+		cap_1.addPoint(.9, .1, .1);
+		cap_1.addPoint(.9,.9,.1);
+		cap_1.addPoint(.1,.9,.1);
 		Polygon3D top_long = new Polygon3D();
 		top_long.setFillColor(colour);
-		top_long.addPoint(0, 1, 0);
-		top_long.addPoint(1, 1, 0);
-		top_long.addPoint(1, 1, length);
-		top_long.addPoint(0, 1, length);
+		top_long.addPoint(.1,.9,.1);
+		top_long.addPoint(.9,.9,.1);
+		top_long.addPoint(.9, .9, length);
+		top_long.addPoint(.1, .9, length);
 		Polygon3D left_long = new Polygon3D();
 		left_long.setFillColor(colour);
-		left_long.addPoint(0, 0, 0);
-		left_long.addPoint(0, 1, 0);
-		left_long.addPoint(0, 1, length);
-		left_long.addPoint(0, 0, length);
+		left_long.addPoint(.1, .1, .1);
+		left_long.addPoint(.1, .9, .1);
+		left_long.addPoint(.1, .9, length);
+		left_long.addPoint(.1, .1, length);
 		Polygon3D right_long = new Polygon3D();
 		right_long.setFillColor(colour);
-		right_long.addPoint(1, 0, 0);
-		right_long.addPoint(1, 1, 0);
-		right_long.addPoint(1, 1, length);
-		right_long.addPoint(1, 0, length);
+		right_long.addPoint(.9, .1, .1);
+		right_long.addPoint(.9, .9, .1);
+		right_long.addPoint(.9, .9, length);
+		right_long.addPoint(.9, .1, length);
 		Polygon3D bottom_long = new Polygon3D();
 		bottom_long.setFillColor(colour);
-		bottom_long.addPoint(0, 0, 0);
-		bottom_long.addPoint(0, 0, length);
-		bottom_long.addPoint(1, 0, length);
-		bottom_long.addPoint(1, 0, 0);
+		bottom_long.addPoint(.1, .1, .1);
+		bottom_long.addPoint(.1, .1, length);
+		bottom_long.addPoint(.9, .1, length);
+		bottom_long.addPoint(.9, .1, .1);
 		Polygon3D cap2 = new Polygon3D();
 		cap2.setFillColor(colour);
-		cap2.addPoint(0, 0, length);
-		cap2.addPoint(0, 1, length);
-		cap2.addPoint(1, 1, length);
-		cap2.addPoint(1, 0, length);
+		cap2.addPoint(.1, .1, length);
+		cap2.addPoint(.1, .9, length);
+		cap2.addPoint(.9, .9, length);
+		cap2.addPoint(.9, .1, length);
 		Polygon3D[] input_array = { cap_1, top_long, left_long, right_long,
 				bottom_long, cap2 };
 		holder = new PolygonCollection(input_array);
