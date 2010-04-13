@@ -2,7 +2,7 @@
 <project name="GamesmanWeb" default="all">
   
   <tstamp>
-    <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+    <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss"/>
   </tstamp>
   <description>
     Compile and package GamesmanWeb into a distributable WAR file
@@ -22,38 +22,40 @@
   <target name="war" depends="compile, applets" description="Package a WAR file">
     <delete file="${dist}/gcweb.war"/>
     <war destfile="${dist}/gcweb.war" basedir="${deploy}"
-	 webxml="${deploy}/WEB-INF/web.xml" includes="**"
-	 excludes="**/.* **/.*/* **/servlet-api.jar **/jsp-api.jar"/>
+         webxml="${deploy}/WEB-INF/web.xml" includes="**"
+         excludes="**/.* **/.*/* **/servlet-api.jar **/jsp-api.jar"/>
   </target>
+  
   <target name="compile" description="Compile the GCWeb classes">
     <mkdir dir="${build}"/>
     <javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar:${lib}/jsp-api.jar:${lib}/libthrift.jar:${lib}/slf4j-api-1.5.8.jar:${lib}/slf4j-nop-1.5.8.jar"
-	   sourcepath="" srcdir="${src}" destdir="${build}"
-	   source="1.5" target="1.5" excludes="src build.xml">
+           sourcepath="" srcdir="${src}" destdir="${build}"
+           source="1.5" target="1.5" excludes="src build.xml">
       <include name="edu/berkeley/gcweb/**/*.java"/>
       <exclude name="**/tests/*.java"/>
       <exclude name="**/gui/**/*.java"/>
     </javac>
   </target>
 
-  <target name="clean" depends="clean-applets" 
-      description="Clean the build directories">
+  <target name="clean" depends="clean-applets"
+          description="Clean the build directories">
     <delete dir="${build}"/>
   </target>
   <target name="applets" depends="jar-gamescubeman, jar-oskarscube" />
   
   <target name="clean-applets" depends="clean-applet-source">
-    <delete dir="${appletdestdir}" />
+    <delete dir="${appletdestdir}"/>
   </target>
 
   <target name="compile-applets" description="Compiles Java applets">
     <javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/"
-	   classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/"
-	   debug="true" debuglevel="lines,vars,source"/>
+           classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/"
+           debug="true" debuglevel="lines,vars,source">
+<compilerarg value="-Xlint:unchecked"/></javac>
   </target>
 
   <target name="jar-oskarscube" depends="compile-applets">
-    <mkdir dir="${deploy-applet}" />
+    <mkdir dir="${deploy-applet}"/>
     <jar jarfile="${deploy-applet}/OskarsCube.jar">
       <manifest>
         <attribute name="Class-path" value="."/>
@@ -64,7 +66,7 @@
         <include name="edu/berkeley/gcweb/gui/gamescubeman/ThreeD/**"/>
         <include name="edu/berkeley/gcweb/gui/gamescubeman/OskarsCube/**"/>
         <exclude name="**/*.jar"/>
-        <exclude name="**/*.java" />
+        <exclude name="**/*.java"/>
       </fileset>
     </jar>
   </target>

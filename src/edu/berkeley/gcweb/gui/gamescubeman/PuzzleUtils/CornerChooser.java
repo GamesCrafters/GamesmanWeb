@@ -19,6 +19,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -318,7 +319,7 @@ public class CornerChooser extends RollingJPanel implements MouseListener, Mouse
 				ps2[i].setFace(null);
 			
 		}
-		for (String k:((HashMap<String, Integer>)dupcheck.clone()).keySet()){
+		for (String k : new HashSet<String>(dupcheck.keySet())){
 			if(dupcheck.get(k).equals(currentCorner)){
 				dupcheck.remove(k);
 			}

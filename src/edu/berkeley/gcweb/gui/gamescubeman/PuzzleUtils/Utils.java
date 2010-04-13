@@ -5,7 +5,7 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
@@ -43,40 +43,43 @@ public class Utils {
 		return max;
 	}
 	
-	public static<P> void swap(ArrayList<P> a, int i, int j) {
+	public static<P> void swap(List<P> a, int i, int j) {
 		P temp = a.get(i);
 		a.set(i, a.get(j));
 		a.set(j, temp);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static<H> H[] copyOf(H[] arr, int len) {
-		int nonNullIndex = -1;
-		for(int i=0; i < arr.length; i++)
-			if(arr[i] != null) {
-				nonNullIndex = i;
-				break;
-			}
-		ArrayList<H> list = new ArrayList<H>();
-		for(int i=0; i<len; i++) list.add(null);
-		H[] copy = (H[]) list.toArray((H[]) Array.newInstance(arr[nonNullIndex].getClass(), 0));
-		for(int i=0; i<len; i++)
-			copy[i] = arr[i];
+		Class<?> type = arr.getClass().getComponentType();
+		H[] copy = (H[]) Array.newInstance(type, len);
+		System.arraycopy(arr, 0, copy, 0, len);
 		return copy;
 	}
 	
-	public static String join(String join, int[] os) {
-		String temp = "";
-		for(int o : os)
-			temp += join + o;
-		if(temp.length() == 0) return temp;
-		return temp.substring(join.length());
+	public static String join(String join, int[] numbers) {
+		if (numbers.length == 0) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		for (int n : numbers) {
+			builder.append(n);
+			builder.append(join);
+		}
+		int end = builder.length();
+		return builder.delete(end - join.length(), end).toString();
 	}
-	public static String join(String join, Object[] os) {
-		String temp = "";
-		for(Object o : os)
-			temp += join + o.toString();
-		if(temp.length() == 0) return temp;
-		return temp.substring(join.length());
+	public static String join(String join, Object[] elements) {
+		if (elements.length == 0) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		for (Object element : elements) {
+			builder.append(element);
+			builder.append(join);
+		}
+		int end = builder.length();
+		return builder.delete(end - join.length(), end).toString();
 	}
 	public static<H> H moduloAcces(H[] arr, int i) {
 		return arr[modulo(i, arr.length)];
@@ -109,7 +112,7 @@ public class Utils {
 	}
 	
 	private static final Random r = new Random();
-	public static<H> H choose(ArrayList<H> arr) {
+	public static<H> H choose(List<H> arr) {
 		return arr.get(r.nextInt(arr.size()));
 	}
 

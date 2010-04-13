@@ -3,6 +3,7 @@ package edu.berkeley.gcweb.gui.gamescubeman.SquareOne;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,6 +81,7 @@ public class SquareOne extends TwistyPuzzle {
 	private Boolean[] topLayer, bottomLayer;
 	//this keeps track of how many times the left and right halves have been twisted
 	private boolean leftHalfEven, rightHalfEven, leftRightSwitched;
+	@SuppressWarnings("unchecked")
 	protected void _createPolys(boolean copyOld) {
 		double gap = gapOption.getValue();
 		double sin15 = Math.sin(Math.toRadians(15));
@@ -188,7 +190,7 @@ public class SquareOne extends TwistyPuzzle {
 		}
 		
 		PolygonCollection<PuzzleSticker> downEdge = topEdge.clone().mirror(1);
-		ArrayList<PolygonCollection<PuzzleSticker>> downCorners = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		List<PolygonCollection<PuzzleSticker>> downCorners = new ArrayList<PolygonCollection<PuzzleSticker>>();
 		for(PolygonCollection<PuzzleSticker> coll : topCorners) {
 			PolygonCollection<PuzzleSticker> cc = coll.clone().mirror(1);
 			if(bandagedCorners) //this means we have bandaged corners w/ 3 polys
@@ -215,8 +217,8 @@ public class SquareOne extends TwistyPuzzle {
 			downCorner.get(0).setFace("D");
 		downEdge.get(0).setFace("D");
 		
-		ArrayList<PolygonCollection<PuzzleSticker>> top = new ArrayList<PolygonCollection<PuzzleSticker>>();
-		ArrayList<PolygonCollection<PuzzleSticker>> down = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		List<PolygonCollection<PuzzleSticker>> top = new ArrayList<PolygonCollection<PuzzleSticker>>();
+		List<PolygonCollection<PuzzleSticker>> down = new ArrayList<PolygonCollection<PuzzleSticker>>();
 		String[] faces = { "F", "R", "B", "L" };
 		for(int i=0; i<faces.length; i++) {
 			topEdge.get(1).setFace(faces[i]);

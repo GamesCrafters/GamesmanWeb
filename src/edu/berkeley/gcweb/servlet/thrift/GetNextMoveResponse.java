@@ -174,6 +174,7 @@ public class GetNextMoveResponse implements TBase, java.io.Serializable, Cloneab
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void setFieldValue(int fieldID, Object value) {
     switch (fieldID) {
     case STATUS:

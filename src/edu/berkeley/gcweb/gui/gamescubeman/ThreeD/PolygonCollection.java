@@ -12,6 +12,7 @@ public class PolygonCollection<P extends Polygon3D> extends ArrayList<P> {
 	/**
 	 * Although it shouldn't, this method actually *does* clone the underlying elements ... urgh
 	 */
+	@SuppressWarnings("unchecked")
 	public PolygonCollection<P> clone() {
 		PolygonCollection<P> clone = new PolygonCollection<P>();
 		for(P poly : this)
