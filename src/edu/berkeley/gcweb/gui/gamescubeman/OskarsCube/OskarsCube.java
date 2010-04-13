@@ -145,7 +145,7 @@ public class OskarsCube extends JApplet implements KeyListener, ActionListener {
 					for(int i = 0; i< cubefaces.boardsize*2-1; i++) {
 						open_alleys.setText(open_alleys.getText() + cubefaces.alleys[i]);
 						if(i != cubefaces.boardsize*2-2) {
-							open_alleys.setText(open_alleys.getText() + " " + cubefaces.alleys[i]);
+							open_alleys.setText(open_alleys.getText() + "/");
 						}
 					}
 					abs_distance = new JLabel("Linear Dist: " + cubefaces.sumlindistance);

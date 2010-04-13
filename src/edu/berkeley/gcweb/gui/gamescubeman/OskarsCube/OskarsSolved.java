@@ -1,6 +1,9 @@
 package edu.berkeley.gcweb.gui.gamescubeman.OskarsCube;
 
+import java.util.ArrayList;
+
 import javax.swing.SwingUtilities;
+
 
 import edu.berkeley.gcweb.gui.gamescubeman.ThreeD.Canvas3D;
 
@@ -11,15 +14,33 @@ public class OskarsSolved {
 	private Solver solve;
 
 	public OskarsSolved(int blue, int white, int red, int tosolve, boolean random, String filename) {
+		System.out.println("b\tw\tr\tremoteness\tsubcomponents\tbushiness\tbranches\tbrfactor\tmaxbr\tturns\tplaneturns\tsumlindist\tsolve distance\talleys");
+		
 		if (!random) {
 			for(int r = red; r < red + tosolve; r++) {
 				for(int w = white; w < white + tosolve; w++) {
 					for(int b = blue; b < blue + tosolve; b++) {
 						cubefaces = new CubeGen(r,w,b);
+						ArrayList<Integer> vals = new ArrayList<Integer>();
 						if(cubefaces.original) {
 							solve = new Solver(cubefaces);
 							if (cubefaces.remoteness > min_remoteness) {
-								found_one(b,w,r, cubefaces.remoteness, cubefaces.subcomponents, cubefaces.bushiness, cubefaces.branches, cubefaces.brfactor, cubefaces.maxbrfactor, cubefaces.turns, cubefaces.planeTurns, cubefaces.alleys[0], cubefaces.sumlindistance, cubefaces.sumsoldistance);
+								vals.add(b);
+								vals.add(w);
+								vals.add(r);
+								vals.add(cubefaces.remoteness);
+								vals.add(cubefaces.subcomponents);
+								vals.add(cubefaces.bushiness);
+								vals.add(cubefaces.branches);
+								vals.add(cubefaces.brfactor);
+								vals.add(cubefaces.maxbrfactor);
+								vals.add(cubefaces.turns);
+								vals.add(cubefaces.planeTurns);
+								vals.add(cubefaces.sumlindistance);
+								vals.add(cubefaces.sumsoldistance);
+								for(int i =0; i< cubefaces.boardsize*2-1; i++)
+									vals.add(cubefaces.alleys[i]);
+								found_one(vals );
 								
 							}
 						}
@@ -31,15 +52,30 @@ public class OskarsSolved {
 			for (int i = 0; i < tosolve; i++) {
 				cubefaces = new CubeGen(true,true,true, 5);
 				solve = new Solver(cubefaces);
+				ArrayList<Integer> vals = new ArrayList<Integer>();
 				if (cubefaces.remoteness > min_remoteness) {
-					found_one(cubefaces.BlueInt, cubefaces.WhiteInt, cubefaces.RedInt, cubefaces.remoteness, cubefaces.subcomponents, cubefaces.bushiness, cubefaces.branches, cubefaces.brfactor, cubefaces.maxbrfactor, cubefaces.turns, cubefaces.planeTurns, cubefaces.alleys[0], cubefaces.sumlindistance, cubefaces.sumsoldistance);
-					
+					vals.add(cubefaces.BlueInt);
+					vals.add(cubefaces.WhiteInt);
+					vals.add(cubefaces.RedInt);
+					vals.add(cubefaces.remoteness);
+					vals.add(cubefaces.subcomponents);
+					vals.add(cubefaces.bushiness);
+					vals.add(cubefaces.branches);
+					vals.add(cubefaces.brfactor);
+					vals.add(cubefaces.maxbrfactor);
+					vals.add(cubefaces.turns);
+					vals.add(cubefaces.planeTurns);
+					vals.add(cubefaces.sumlindistance);
+					vals.add(cubefaces.sumsoldistance);
+					for(int j =0; j< cubefaces.boardsize*2-1; j++)
+						vals.add(cubefaces.alleys[j]);
+					found_one(vals);
 				}
 			}
 		}
 	}
 	public static void main(String[] args) {
-		OskarsSolved osolve = new OskarsSolved(0,0,0,1200000, true, "default"); //600000 4 hours
+		new OskarsSolved(0,0,0,1200000, true, "default"); //600000 4 hours
 		//OskarsSolved osolve = new OskarsSolved(0,0,0,1000, false, "default");
 	}
 		
@@ -48,8 +84,14 @@ public class OskarsSolved {
 					
 					
 				
-	private void found_one(int red, int white, int blue, int remoteness, int subcomponents, int bushiness, int branches, int branchbydeg, int maxbranch, int turns, int notplaneturns, int alleys, int lindist, int soldist) {
-		String tout = red + "\t" + white + "\t" + blue + "\t" + remoteness + "\t" + subcomponents + "\t" + bushiness + "\t" + branches + "\t" + branchbydeg + "\t" + maxbranch + "\t" + turns + "\t" + notplaneturns + "\t" + alleys + "\t" + lindist + "\t" + soldist; 
+	private void found_one(ArrayList<Integer> vals) {
+		String tout = "";
+		for(int i =0; i< vals.size(); i++) {
+			tout = tout + vals.get(i);
+			if (i< vals.size()-1) {
+				tout = tout + "\t";
+			}
+		}
 		System.out.println(tout);
 	}	
 		

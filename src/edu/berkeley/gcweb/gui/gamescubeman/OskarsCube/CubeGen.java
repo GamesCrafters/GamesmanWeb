@@ -303,7 +303,7 @@ public class CubeGen {
 	
 	public void compute_face_sp() {
 		//compute clear alleys
-		
+		alleys = new int[2*boardsize-1];
 		for(int i=0; i<2*(boardsize)-1; i=i+1) {
 			int goodbx = 0, goodrx = 0, goodwx = 0;
 			int goodby = 0, goodry = 0, goodwy = 0;					
@@ -326,14 +326,15 @@ public class CubeGen {
 					if(Red[k][1] ==i) {
 						goodry++;
 					}		
+					
 			}
-			alleys = new int[2*boardsize-1];
 			alleys[goodbx] = alleys[goodbx]+1;
 			alleys[goodby] = alleys[goodby]+1;
 			alleys[goodwx] = alleys[goodwx]+1;
 			alleys[goodwy] = alleys[goodwy]+1;
 			alleys[goodrx] = alleys[goodrx]+1;
 			alleys[goodry] = alleys[goodry]+1;
+			
 			
 		}
 		//distance btwn start/end
