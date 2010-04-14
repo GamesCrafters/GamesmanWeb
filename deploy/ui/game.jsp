@@ -58,7 +58,7 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
   <link rel="stylesheet" href="game/styles/gcweb.css">
   <link rel="stylesheet" href="game/styles/<%= uiName %>.css">
   <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
-  <script type="text/javascript" src="game/js/jquery-1.3.2.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
   <script type="text/javascript" src="game/js/gc-game.js"></script>
   <script type="text/javascript" src="game/js/<%= uiName %>.js"></script>
   <script type="text/javascript">

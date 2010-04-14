@@ -5,11 +5,11 @@ private boolean debug = false;
 public void jspInit() {
     ServletContext context = getServletConfig().getServletContext();
     try {
-		if (debug) {
-			throw new Exception(context.getResource("/WEB-INF/" +
-			    context.getInitParameter("gameDictionary")).toString());
-		}
-		// TODO: memoization
+        if (debug) {
+            throw new Exception(context.getResource("/WEB-INF/" +
+                context.getInitParameter("gameDictionary")).toString());
+        }
+        // TODO: memoization
         gameDictionary = new GameDictionary(context.getResource(
             "/WEB-INF/" + context.getInitParameter("gameDictionary")));
     } catch (Exception e) {
@@ -19,36 +19,36 @@ public void jspInit() {
 }
 
 void terminate(ServletRequest request, ServletResponse response) {
-	/*
-	try {
-		request.getRequestDispatcher("/").forward(request, response);
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	*/
+    /*
+    try {
+        request.getRequestDispatcher("/").forward(request, response);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    */
 }
 
 void dynamicInclude(JspWriter out, String internalName) {
-	ServletContext context = getServletConfig().getServletContext();
-	String path = "/ui/" + internalName + ".html";
-	try {
-		InputStream htmlStream = context.getResourceAsStream(path);
-		if (htmlStream == null) {
-			throw new IOException("File at " + context.getRealPath(path) + " not found.");
-		} else {
-			BufferedReader in = new BufferedReader(new InputStreamReader(htmlStream));
-			String line = in.readLine();
-			while (line != null) {
-				out.println(line);
-				line = in.readLine();
-			}
-			in.close();
-		}
-	} catch (IOException e) {
-		try {
-			out.println(e.getMessage());
-		} catch (IOException ioe) { }
-	}
+    ServletContext context = getServletConfig().getServletContext();
+    String path = "/ui/" + internalName + ".html";
+    try {
+        InputStream htmlStream = context.getResourceAsStream(path);
+        if (htmlStream == null) {
+            throw new IOException("File at " + context.getRealPath(path) + " not found.");
+        } else {
+            BufferedReader in = new BufferedReader(new InputStreamReader(htmlStream));
+            String line = in.readLine();
+            while (line != null) {
+                out.println(line);
+                line = in.readLine();
+            }
+            in.close();
+        }
+    } catch (IOException e) {
+        try {
+            out.println(e.getMessage());
+        } catch (IOException ioe) { }
+    }
 }
 %><%
 String internalName = request.getParameter("puzzle");
@@ -57,9 +57,9 @@ boolean puzzle = gameDictionary.getIsPuzzle(internalName);
 String gameclass = puzzle ? "Puzzle" : "Game";
 // ensure that the puzzle is specified and registered by the dictionary servlet
 if ((internalName == null) || (canonicalName == null)) {
-	out.println("Terminating because internalname is "+internalName+" and canonincalName is "+canonicalName);
-	terminate(request, response);
-	return;
+    out.println("Terminating because internalname is "+internalName+" and canonincalName is "+canonicalName);
+    terminate(request, response);
+    return;
 }
 String uifile = gameDictionary.getUI(internalName);
 // TODO: encode the HTML entities in the names
@@ -77,15 +77,15 @@ String uifile = gameDictionary.getUI(internalName);
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/<%= uifile %>.css">
     <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
-    <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.js"></script>
     <script type="text/javascript" src="js/gcweb.js"></script>
     <script type="text/javascript" src="js/<%= uifile %>.js"></script>
     <script type="text/javascript">
-	  $(document).ready(function() {
-	    $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
-	  });
-	</script>
+      $(document).ready(function() {
+        $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
+      });
+    </script>
   </head> 
   <body> 
         <p id="timer">&nbsp;</p>
