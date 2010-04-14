@@ -19,10 +19,10 @@ function invertMap(map) {
 }
 
 var keyMap = { 
-		//"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
+		"a": "y'", ";": "y", "q": "z'", "p": "z", "t": "x", "y": "x", "b": "x'", "n": "x'", //cube rotations
 		"W": "b", "O": "b'", "E": "l'", "D": "l", "F": "u'", "J": "u", "I": "r", "K": "r'", //solver turns 
 		"w": "B", "o": "B'", "e": "L'", "d": "L", "f": "U'", "j": "U", "i": "R", "k": "R'" //solver turns 
-	};
+};
 var invertedKeyMap = invertMap(keyMap);
 
 function appletLoaded() {
@@ -42,13 +42,12 @@ function appletLoaded() {
 	});
 
 	$("#cube").mousewheel(function(event, delta) {
-		console.log(event);
-		console.log("DELTA:");
-		console.log(delta);
+		debug(event);
+		debug("DELTA:");
+		debug(delta);
 	});
 }
 
-//$(document).ready(function(){
 function appletLoaded() {
 	//although the dom is ready to be traversed,
 	//our applet is not necessarily ready to be accessed
@@ -64,7 +63,6 @@ function appletLoaded() {
 		onExecutingMove: onExecutingMove,
 		updateMoveValues: updateMoveValues, 
 		clearMoveValues: clearMoveValues,
-		getBoardString: getBoardString,
 		getPositionValue: getPositionValue,
 		getNextMoveValues: getNextMoveValues,
 		debug: 0
@@ -113,15 +111,15 @@ function appletLoaded() {
 	}
 	game.loadBoard(getBoardString());
 }
-//});
 
 function debug(mytext) {
-//	$("#debug").text($("#debug").text()+"\n"+mytext);
 	typeof console != "undefined" && console.log && console.log(mytext);
 }
 
 function doQuery(turn, board) {
 	if (turn == null || !nextMoves) {
+		nextMoves = [];
+		queuedMoves = [];
 		game.loadBoard(board);
 		return false;
 	}
@@ -141,6 +139,10 @@ function doQuery(turn, board) {
 	}
 	if(!moveInfo.move)
 		return false;
+		
+	// we only want to use nextMoves once
+	nextMoves = [];
+	
 	game.doMove(moveInfo);
 	return true;
 }
@@ -148,19 +150,20 @@ function doQuery(turn, board) {
 function puzzleStateChanged(turn, boardState) {
 	var face = null;
 	var dir = null;
-	if(turn != null) {
-		turn = turn.toString(); //this converts from the java object to a string
-		face = turn.substring(0, 1);
-		dir = turn.substring(1);
+	if(turn == null) {
+		// this is a reset
+		doQuery(null, boardState);
+		return;
 	}
-	
-	if(queuedMoves.length == 0) { //this means a turn actually happened
-		debug("Nothing in the queue, doing move "+turn);
+	//this means a turn actually happened
+	turn = turn.toString(); //this converts from the java object to a string
+	face = turn.substring(0, 1);
+	dir = turn.substring(1);
+	if(nextMoves.length > 0 && queuedMoves.length == 0) {
 		doQuery(turn, boardState);
 	} else {
 		// nextMoves is empty, so queue up the move request.
 		queuedMoves.push([turn, boardState]);
-		debug("already doing move "+queuedMoves[0]+"; queue length is now "+queuedMoves.length + "; queueing move " + turn);
 	}
 }
 
@@ -176,14 +179,12 @@ function onExecutingMove(moveInfo) {
 
 // called on initial load, and each subsequent doMove will also reference this
 function onNextValuesReceived(json){
-    debug("onNextValuesReceived, queue length = "+queuedMoves.length);
     nextMoves = json;
     deQueue();
 }
 
 function deQueue() {
     if(queuedMoves.length != 0) {
-        debug("There is something in the queue length "+queuedMoves.length+", doing move "+queuedMoves[0]);
         do {
         	var turn_board = queuedMoves.shift();
         } while(!doQuery(turn_board[0], turn_board[1]));
@@ -199,7 +200,6 @@ function updateMoveValues(nextMoves){
     });
     for(var i in nextMoves) {
     	value = nextMoves[i].delta + 1;
-        //debug(i+":"+nextMoves[i].move+"="+value+" ("+nextMoves[i].remoteness+")");
     	$('#' + invertedKeyMap[nextMoves[i].move]).removeClass(moveValueClasses.join(" "));
     	$('#' + invertedKeyMap[nextMoves[i].move]).addClass(moveValueClasses[value]);
     }
@@ -210,8 +210,7 @@ function clearMoveValues(){
 	$('.keyboard td').removeClass(moveValueClasses.join(" "));
 }
 
-//converts our own representation of the board (2d/3d array) into a board string
-function getBoardString(board){
+function getBoardString(){
 	return $("#cube")[0].getBoardString();
 }
 

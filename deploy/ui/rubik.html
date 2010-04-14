@@ -1,24 +1,28 @@
 <div>
+
 <script type="text/javascript">
-		var mywidth = "50%";
-		var myheight = "50%";
-		if ($.browser.mozilla) {
-			mywidth = '400px';//$("#game").width() * 0.75 + "px";
-			myheight = '400px';//$("#game").height() * 0.75 + "px";
-		}
+		var width = '400px';
+		var height = '250px';
+		document.write('<div id="textDiv" style="width: ' + width + '; height: ' + height + ';" >');
+		document.write('<div id="textBox">');
 		drawApplet('cube', 'applets/GamesCubeMan.jar', 'edu.berkeley.gcweb.gui.gamescubeman.PuzzleUtils.GamesCubeMan',
 				'<param name="MAYSCRIPT" value="true" \/>' +
 				'<param name="puzzle_class" value="edu.berkeley.gcweb.gui.gamescubeman.Cuboid.Cuboid" />' +
-				'<param name="dim_x" value="2" />' +
-				'<param name="dim_y" value="2" />' +
-				'<param name="dim_z" value="2" />' +
 				'<param name="focus_indicator" value="false" />' +
 				'<param name="draw_axis" value="false" />' +
-				'<param name="resizable" value="false" />' +
-				'<param name="bg_color" value="' + getBGColor() + '" />' +
-				'<param name="fg_color" value="' + getFGColor() + '" />', mywidth, myheight);
+				'<param name="variations_allowed" value="false" />' +
+				'<param name="bg_color" value="#000066" />' +
+				'<param name="fg_color" value="#ffffff" />', width, height);
+		document.write('</div>');
+		document.write('<div id="handleRight" style="width: 5px; height: ' + height + '; background: transparent url(images/pyraminx/drag-right.gif) no-repeat center right; position: absolute; left: ' + width + '; top: 0px; cursor: e-resize;"></div>');
+		document.write('<div id="handleCorner" style="width: 5px; height: 5px; background: transparent url(images/pyraminx/drag-bottomright.gif) no-repeat bottom right; position: absolute; left: ' + width + '; top: ' + height + '; cursor: se-resize;"></div>');
+		document.write('<div id="handleBottom" style="width: ' + width + '; height: 5px; background: transparent url(images/pyraminx/drag-bottom.gif) no-repeat bottom center; position: absolute; left: 0px; top: ' + height + '; cursor: s-resize;"></div>');
+		document.write('</div>');
+		document.write('<script type="text/javascript" src="js/resize.js"><\/script>');
+		document.write('<script type="text/javascript" src="js/resize_settings.js"><\/script>');
 </script>
 </div>
+<br />
 <div id="key-help"></div>
 <div>
 <div id="debug"></div>

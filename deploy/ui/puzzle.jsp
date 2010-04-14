@@ -98,7 +98,7 @@ String uifile = gameDictionary.getUI(internalName);
       <!-- game commands --> 
       <div class="nav">
         <ul> 
-          <li><a href="">Change Options</li>
+          <li><a href="">Change Options</a></li>
           <li><a href="javascript:location.reload();">Reset <%= gameclass %></a></li>
           <!--<li><a href="#">Rules</a></li>
           <li><a href="#">Load Puzzle</a></li>
@@ -107,12 +107,12 @@ String uifile = gameDictionary.getUI(internalName);
         </ul>
         <h2>Display Options</h2>
         <ul id="options">
-          <li><label><input type="checkbox" id="option-move-values"> Move-values</label></li>
+          <li><label><input type="checkbox" id="option-move-values">Move-Values</label></li>
         <% if (puzzle) { %>
-          <li><label><input type="checkbox" id="option-move-value-history"> Value History</label></li>
-          <li><label><input type="checkbox" id="option-predictions"> Predictions</label></li>
-          <li><label><input type="checkbox" id="option-timer" onclick="toggleTimer()"> Show Timer</label></li>
-          <!--<li><label><input type="checkbox" id="option-move-remoteness"> Move Remoteness</label></li>-->
+          <li><label><input type="checkbox" id="option-move-value-history">Value History</label></li>
+          <li><label><input type="checkbox" id="option-predictions">Predictions</label></li>
+          <li><label><input type="checkbox" id="option-timer" onclick="toggleTimer()">Show Timer</label></li>
+          <!--<li><label><input type="checkbox" id="option-move-remoteness">Move Remoteness</label></li>-->
         <% } %>
         </ul>
       </div> 

@@ -450,6 +450,10 @@ public class Pyraminx extends TwistyPuzzle {
 			if(ccw)
 				turn = turn.substring(0, turn.length()-1);
 			int layer = Character.isUpperCase(turn.charAt(0)) ? 2 : 1;
+			
+			//TODO - hack for gamescrafters
+			if(layer == 1) continue;
+			
 			int axis = AXES.indexOf(Character.toUpperCase(turn.charAt(0)));
 			appendTurn(new PyraminxTurn(axis, ccw ? -1 : 1, layer));
 		}

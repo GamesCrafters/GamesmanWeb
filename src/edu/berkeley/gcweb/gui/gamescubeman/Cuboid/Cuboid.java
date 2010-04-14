@@ -566,6 +566,13 @@ public class Cuboid extends TwistyPuzzle implements ActionListener {
 			if(invert) direction = -direction;
 			if(face != null) { //n-layer face turn
 				int layer = handPositions[face.index()] + ((Character.isUpperCase(ch)) ? 0 : 1);
+				
+				//TODO - hacked for gamescrafters
+				if(Math.abs(direction) == 2) {
+					direction = (int) Math.signum(direction);
+					doTurn(face, layer, direction);
+				}
+				
 				doTurn(face, layer, direction);
 				return true;
 			} else { //cube rotation

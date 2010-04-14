@@ -80,13 +80,12 @@ GCWeb = {
 
                 previousMoves: new Array(),
                 
-                valueHistory: new Array(),
-                
                 // board state functions
                 loadBoard: function(newBoardString){
                     this.currentMoveValue = null;
                     this.currentBoardString = newBoardString;
                     this.previousMoves = new Array();
+                    this.drawMoveValueHistory(this.previousMoves);
                     
                     // gets the initial state and sets remoteness
                     this.getPositionValue(this.currentBoardString, this.setRemoteness);
@@ -97,6 +96,8 @@ GCWeb = {
                     this.maxRemotenessSeen = 0;
                     this.minRemotenessSeen = 0;
                     this.numMoves = 0;
+                    if(this.timer) // cancel the timer if it's already running
+                    	clearInterval(this.timer);
                     this.timer = null;
                     //$('#max-remoteness').text(this.maxRemotenessSeen);
                     //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(2));
@@ -123,6 +124,29 @@ GCWeb = {
                     $("#history-graph").bind("mouseout", function(){$("#tooltip").remove();});
                 },
                 
+                drawMoveValueHistory: function(pMoves) {
+	                /* find maximum remoteness */
+	                var m = 0;
+	                for (var i = 0; i < pMoves.length; i++) {m = Math.max(m, pMoves[i].remoteness)};
+	                window.flot_opts.x2axis.max = m;
+	                window.flot_opts.xaxis.max = m;
+	                window.flot_opts.yaxis.max = (pMoves.length > 9) ? pMoves.length - 1 : 9; //(Math.floor(vals.length / 5) + 1) * 5 - 1;
+	                window.flot_opts.yaxis.ticks = window.flot_opts.yaxis.max + 1;
+	                $("#history-graph").height(window.flot_opts.yaxis.max * 15 + 15);
+	                var data = Array();
+	                for (i = 0; i < pMoves.length; i++) {
+	                    data.push([pMoves[i].remoteness, window.flot_opts.yaxis.max - i]);
+	                }
+	                window.flot_data[0].data = data;
+	                
+	                if($('#option-move-value-history').is(':checked')) {
+	                    // Draw graph
+	                    $.plot($("#history-graph"), window.flot_data, window.flot_opts);
+	                    // Scroll to bottom
+	                    $("#history-graph-container").scrollTop(10000);
+	                }
+                },
+                
                 // move functions
                 doMove: function(newMove){
                     
@@ -138,57 +162,7 @@ GCWeb = {
                         options.onExecutingMove(newMove);
                     }
                     if(newMove.remoteness != undefined){
-						/*//
-						// fragile, but measures the width of the history tree without the scrollbar
-                        this.historyTreeWidth = this.historyTreeWidth || $("#history-tree").width();
-                        if(newMove.remoteness > this.maxRemotenessSeen){
-                            this.maxRemotenessSeen = newMove.remoteness;
-                            $('#max-remoteness').text(this.maxRemotenessSeen);
-                            $('#min-remoteness').text(this.minRemotenessSeen);
-                            //$('#mid-remoteness').text((this.maxRemotenessSeen/2).toFixed(1));
-                            $("#history-tree").html('');
-                            for(var i=0;i<this.previousMoves.length;i++){
-                                width = (this.previousMoves[i].remoteness*100/this.maxRemotenessSeen + 10);
-                                $("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>&nbsp;</span></div>").scrollTop(10000);
-                            }
-                        }
-                        if(this.maxRemotenessSeen > 0){
-                            width = newMove.remoteness*100/this.maxRemotenessSeen + 10;
-                        } else {
-                            width = 10;
-                        }
-                        *///
-                        text = newMove.remoteness;
-                        text = '&nbsp;';
-                        setTimeout(function(pMoves) {
-                            /* find maximum remoteness */
-                            var m = pMoves[0].remoteness;
-                            for (var i = 1; i < pMoves.length; i++) {m = Math.max(m, pMoves[i].remoteness)};
-                            window.flot_opts.x2axis.max = m;
-                            window.flot_opts.xaxis.max = m;
-                            window.flot_opts.yaxis.max = (pMoves.length > 9) ? pMoves.length - 1 : 9; //(Math.floor(vals.length / 5) + 1) * 5 - 1;
-                            window.flot_opts.yaxis.ticks = window.flot_opts.yaxis.max + 1;
-                            $("#history-graph").height(window.flot_opts.yaxis.max * 15 + 15);
-                            var data = Array();
-                            for (i = 0; i < pMoves.length; i++) {
-                                data.push([pMoves[i].remoteness, window.flot_opts.yaxis.max - i]);
-                            }
-                            window.flot_data[0].data = data;
-                            
-                            
-                            // Draw graph
-                            $.plot($("#history-graph"), window.flot_data, window.flot_opts);
-                            // Scroll to bottom
-                            $("#history-graph-container").scrollTop(10000);
-                            
-                            
-                        }, 10, this.previousMoves);
-                        /*
-                        console.error(value_history);
-                        this.valueHistory.push(newMove.remoteness);
-                        console.error("newMove.remoteness != undefined")
-                        setTimeout(function(v){graph(v);}, 10, this.valueHistory);*/
-						//$("#history-tree").append("<div class='mvh-row' style='background: transparent url(images/greendot.png) no-repeat right; width: "+width+"px; text-align: right;'><span>"+text+"</span></div>").scrollTop(10000);
+                        setTimeout(this.drawMoveValueHistory, 10, this.previousMoves);
                     }
                     
                     // update the current board string and the move stack
@@ -299,16 +273,16 @@ GCWeb = {
                     $.getJSON(url, {}, function (json) {
                         doneWaiting();
                         if (json && json.response && !json.error) {
-                                var moveValues = json.response;
-                                var thisRemoteness = 0;
-                                if (mythis.currentMoveValue && mythis.currentMoveValue.remoteness) {
-                                    thisRemoteness = mythis.currentMoveValue.remoteness;
-                                }
-                                for (mvkey in moveValues) {
-                                    var mv = moveValues[mvkey];
-                                    mv.delta = mv.remoteness - thisRemoteness;
-                                    //alert(mv.delta+";"+mv.remoteness+";"+thisRemoteness);
-                                }
+                            var moveValues = json.response;
+                            var thisRemoteness = 0;
+                            if (mythis.currentMoveValue && mythis.currentMoveValue.remoteness) {
+                                thisRemoteness = mythis.currentMoveValue.remoteness;
+                            }
+                            for (mvkey in moveValues) {
+                                var mv = moveValues[mvkey];
+                                mv.delta = mv.remoteness - thisRemoteness;
+                                //alert(mv.delta+";"+mv.remoteness+";"+thisRemoteness);
+                            }
                             if (moveValues.length == 0 && mythis.timer != null) {
                                 clearInterval(mythis.timer);
                                 mythis.timer = null;
@@ -368,7 +342,15 @@ GCWeb = {
             $('#option-predictions').change(function(){$('#prediction').slideToggle(150);});
             
             if(!$('#option-move-value-history').is(':checked')){$('#move-value-history').hide();}
-            $('#option-move-value-history').change(function(){$('#move-value-history').slideToggle(500).scrollTop(10000); toggleMoveValueKey(false);});
+            $('#option-move-value-history').change(
+            	function(g) {
+            		return function(){
+            			$('#move-value-history').slideToggle(500);
+            			g.drawMoveValueHistory(g.previousMoves);
+            			toggleMoveValueKey(false);
+            		}
+            	}(g)
+            );
             
             $('#option-move-values').change(function(){
                 if($('#option-move-values').is(':checked')){
