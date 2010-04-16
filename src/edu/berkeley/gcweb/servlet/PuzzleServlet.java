@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -52,7 +54,10 @@ public class PuzzleServlet {
     @Path("{puzzle}/isAlive")
     @Produces("text/plain")
     public String isAlive(@PathParam("puzzle") String puzzle) {
-        boolean alive = getGameConnectionInfo(puzzle, null) != null;
+	Set<String> serverIndependent = new HashSet<String>();
+	serverIndependent.add("oskarscube");
+	boolean alive = serverIndependent.contains(puzzle) ||
+	                (getGameConnectionInfo(puzzle, null) != null);
         String response = null;
         try {
             JSONObject json = new JSONObject().put("status", "ok");
