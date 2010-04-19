@@ -1,8 +1,8 @@
 var P1COLOR = {red: 255, green: 0, blue: 0}
 var P2COLOR = {red: 0, green: 0, blue: 255}
 var BGCOLOR = {red: 0, green: 0, blue: 102}
-var WINNING_MOVE_COLOR = {red: 50, green: 50, blue: 50}
-var LOSING_MOVE_COLOR = {red: 0, green: 200, blue:50}
+var WINNING_MOVE_COLOR = {red: 0, green: 255, blue: 0}
+var LOSING_MOVE_COLOR = {red: 139, green: 0, blue:0}
 var BOARD_STARTING_COLOR = {red: 210, green: 180, blue: 140}
 var HIGHLIGHTED_COLOR = {red: 0, green: 0, blue: 0}
 var P1TURN = true;
