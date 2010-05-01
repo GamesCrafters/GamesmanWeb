@@ -94,6 +94,3 @@ $(function() {
   </table>
   <div id="connect4-play"><button type="button">Play!</button></div>
 </div>
-<!-- Image prefetching -->
-<img class="prefetch" src="game/images/connect4/blue-piece.png" alt="">
-<img class="prefetch" src="game/images/connect4/red-piece.png" alt="">

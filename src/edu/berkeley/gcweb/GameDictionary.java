@@ -158,7 +158,8 @@ public class GameDictionary {
     private void addServers(GameInfo myInfo, NodeList children) {
         for (int j = 0; j < children.getLength(); j++) {
             Node server = children.item(j);
-            if (server.getNodeType()==Node.ELEMENT_NODE && server.getNodeName()=="server") {
+            if ((server.getNodeType() == Node.ELEMENT_NODE) &&
+		    (server.getNodeName().equals("server"))) {
                 NamedNodeMap attributes = server.getAttributes();
                 Node hostNode = attributes.getNamedItem("host");
                 Node portNode = attributes.getNamedItem("port");

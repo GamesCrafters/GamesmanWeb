@@ -2,9 +2,9 @@
  * connect-four.js
  * An implementation of a Connect Four interface.
  * This file is dependent upon the jQuery library and has been tested with
- * jQuery 1.3.2.
+ * jQuery 1.4.
  * @author  ide
- * @version 0.1 2009-02-02 ide
+ * @version 0.2 2010-04-30 ide
  */
 
 /**
@@ -27,6 +27,9 @@ ConnectFour.TILE_IMAGE = "game/images/" + ConnectFour.NAME + "/tile.png";
 ConnectFour.WIN_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/win-marker.png";
 ConnectFour.TIE_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/tie-marker.png";
 ConnectFour.LOSE_MARKER_IMAGE = "game/images/" + ConnectFour.NAME + "/lose-marker.png";
+GCWeb.prefetch(ConnectFour.TOP_TILE_IMAGE, ConnectFour.TILE_IMAGE,
+	       ConnectFour.WIN_MARKER_IMAGE, ConnectFour.TIE_MARKER_IMAGE,
+	       ConnectFour.LOSE_MARKER_IMAGE);
 
 ConnectFour.prototype.constructor = function(config) {
   config = config || {};
@@ -139,15 +142,14 @@ ConnectFour.prototype.handleNextValuesReceived = function() {
 };
 
 ConnectFour.prototype.attachMoveListener = function() {
-  var self = this;
   // Create an event handler to listen for clicks.
   var clickHandler = function(e) {
-    if (self.currentPiece) {
-      var mouseColumn = self.computeColumn(e.pageX);
+    if (this.currentPiece) {
+      var mouseColumn = this.computeColumn(e.pageX);
       // Call doMove with the column as the move-delta.
-      ConnectFour.superClass.doMove.call(self, mouseColumn.toString());
+      this.doMove.(mouseColumn.toString());
     }
-  };
+  }.bind(this);
   this.board.bind("click.move", clickHandler);
 };
 
@@ -161,17 +163,16 @@ ConnectFour.prototype.attachPieceTracker = function(piece) {
     return false;
   }
   
-  var self = this;
   var previousColumn = this.computeColumn(piece.element.offset().left);
   var tracker = function(e) {
-    var mouseColumn = self.computeColumn(e.pageX);
+    var mouseColumn = this.computeColumn(e.pageX);
     // Align the piece with the column over which the mouse is positioned
     if (mouseColumn != previousColumn) {
       piece.moveToColumn(mouseColumn, 200);
       previousColumn = mouseColumn;
     }
     return true;    // Allow event propagation
-  };
+  }.bind(this);
   this.board.bind("mousemove.tracker", tracker);
   return true;
 };
@@ -346,7 +347,9 @@ function ConnectFourPiece(game, player) {
   this.element.appendTo(game.board.find("td[colspan]"));
 }
 GCWeb.extend(ConnectFourPiece, GCWeb.Piece);
-
+GCWeb.prefetch('game/images/' + ConnectFour.NAME + '/red-piece.png',
+	       'game/images/' + ConnectFour.NAME + '/blue-piece.png',
+	       'game/images/' + ConnectFour.NAME + '/blank-piece.png');
 ConnectFourPiece.MILLIS_PER_ROW = 80;
 
 ConnectFourPiece.prototype.resize = function() {

@@ -181,7 +181,7 @@ public class PuzzleServlet {
     /**
      * Calls connectToRemote to check if the request is sane... IE: - the game
      * is in our dictionary - the server port mapping is in our dictionary (or
-     * whatever connecToRemote does) - generate error string into response if
+     * whatever connectToRemote does) - generate error string into response if
      * bad things happen At the same time,
      */
     private Socket getGameConnectionInfo(String gameName, String response) {

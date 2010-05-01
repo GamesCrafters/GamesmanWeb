@@ -1,4 +1,4 @@
-<%@ page import="java.net.*, java.io.*,
+<%@ page import="java.net.*, java.io.*, java.util.*,
                  javax.xml.parsers.ParserConfigurationException,
                  edu.berkeley.gcweb.GameDictionary" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
@@ -130,7 +130,7 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
   <div class="footer">
     <ul>
     <li>
-      &copy; 2008-2010 <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
+      &copy; 2008-<%= Calendar.getInstance().get(Calendar.YEAR) %> <a href="http://gamescrafters.berkeley.edu" rel="external">GamesCrafters</a> and UC Regents</li>
     </ul>
   </div> 
   </body> 

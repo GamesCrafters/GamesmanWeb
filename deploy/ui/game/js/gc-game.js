@@ -66,6 +66,13 @@ GCWeb.confirm = function(prompt, onaccept, oncancel) {
   dialogScreen.animate({opacity: 0.8}, fadeDuration);
 };
 
+/** Prefetches the images at the given URIs into the browser cache. */
+GCWeb.prefetch = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    new Image().src = arguments[i];
+  }
+};
+
 /**
  * Extends the subclass from the specified base class.
  * Note that when overriding methods of the parent class,
@@ -85,9 +92,12 @@ GCWeb.extend = function(subClass, baseClass) {
 GCWeb.Team = function(name) {
   this.name = name;
 };
-GCWeb.Team.RED = new GCWeb.Team("Red");
-GCWeb.Team.BLUE = new GCWeb.Team("Blue");
+GCWeb.Team.RED = new GCWeb.Team('Red');
+GCWeb.Team.BLUE = new GCWeb.Team('Blue');
 
+GCWeb.Team.prototype.toString = function() {
+  return this.name;
+};
 /** Returns the other team. */
 GCWeb.Team.prototype.other = function() {
   return (this == GCWeb.Team.BLUE) ? GCWeb.Team.RED : GCWeb.Team.BLUE;
@@ -105,21 +115,22 @@ GCWeb.Piece = function(game, team, options) {
   this.element = $('<img class="piece">').hide();
   
   var image, altText;
+  var baseUri = 'game/images/gc-game/';
   switch (team) {
     case GCWeb.Team.RED:
       altText = "[Red]";
-      image = options.image || "red-piece.png";
+      image = options.image || baseUri + 'red-piece.png';
       break;
     case GCWeb.Team.BLUE:
       altText = "[Blue]";
-      image = options.image || "blue-piece.png";
+      image = options.image || baseUri + 'blue-piece.png';
       break;
     default:
       altText = "[None]";
-      image = options.image || "blank-piece.png";
+      image = options.image || baseUri + 'blank-piece.png';
       break;
   }
-  this.element.attr({"src": image, "alt": altText});
+  this.element.attr({ 'src': image, 'alt': altText });
 
   if (options.visible) {
     this.show();
@@ -160,6 +171,11 @@ GCWeb.Game.generateId = function() {
   };
 }();
 
+/** Returns a dictionary with the width of the drawable screen width. */
+GCWeb.Game.getScreenWidth = function() {
+  return $('#game').width();
+}
+
 GCWeb.Game.prototype.constructor = function(name, width, height, config) {
   config = config || {};
   this.local = config.local || false;  // Whether to connect to the server
@@ -169,8 +185,9 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
   this.options = config.options || {}; // Dictionary of game-specific options
   this.id = this.name + "-" + GCWeb.Game.generateId();
   this.player = GCWeb.Team.BLUE;
-  this.board = $('<div id="' + this.id + '" />');
-  this.defaultBoardString = config.defaultBoardString || this.getDefaultBoardString();
+  this.board = $('<div />').attr('id', this.id);
+  this.defaultBoardString = config.defaultBoardString ||
+                            this.getDefaultBoardString();
   this.handlingDoMove = false;
   this.doMoveRequestQueue = [];
 
@@ -186,52 +203,61 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
  * should call this method.
  */
 GCWeb.Game.prototype.start = function() {
-  var self = this;
   this.showingMoveValues = $("#option-move-values:checked").length > 0;
-  $("#option-move-values").click(function() {
-    self.showingMoveValues = $("#option-move-values:checked").length > 0;
-	if (self.showingMoveValues) {
-		self.showMoveValues();
-	} else {
-		self.hideMoveValues();
-	}
-  });
+  // Unbind old event handlers to release references to any old Games.
+  $("#option-move-values").unbind('click').click(function() {
+    this.showingMoveValues = $("#option-move-values:checked").length > 0;
+    if (this.showingMoveValues) {
+      this.showMoveValues(this.nextMoves);
+    } else {
+      this.hideMoveValues(this.nextMoves);
+    }
+  }.bind(this));
   // Prevent the user from making any moves (move-making will be restored
   // in the callback from getNextMoveValues).
   this.handlingDoMove = true;
+
+  // A helper function to decide if move-values and predictions are available.
+  function chooseMoveValueDisplay(moveValue) {
+    // Check if the value (win/lose/tie) information is available.
+    var checkboxes = $('#option-move-values, #option-prediction');
+    if ((typeof moveValue.value) != 'undefined') {
+      checkboxes.removeAttr('disabled');
+    } else {
+      checkboxes.attr('disabled', 'disabled');
+    }
+    this.updatePrediction(moveValue);
+  }
+
   // Get the move-value of the initial board state, and then get the values
   // of all of the next moves that can be made.
   if (!this.local) {
-    var self = this;
     var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
       "/getMoveValue" + this.createParameterString();
-    var options = {cache: false, dataType: "json", url: serverUrl};
+    var options = {cache: false, dataType: 'json', url: serverUrl};
     options.success = function(data, textStatus) {
-      if (data.status == "ok") {
+      if (data.status == 'ok') {
         var moveValue = data.response;
-        self.moveHistory.push(moveValue);
-        
-        // Check if the value (win/lose/tie) information is available.
-        if (moveValue.value !== undefined) {
-          $("#option-move-values").removeAttr("disabled");
-        } else {
-          $("#option-move-values").attr("disabled", "disabled");
-        }
-		self.updatePrediction(moveValue);
-        self.getNextMoveValues(moveValue.board);
+        this.moveHistory.push(moveValue);
+        chooseMoveValueDisplay.call(this, moveValue);        
+        this.getNextMoveValues(moveValue.board);
       } else {
-        GCWeb.alert("The GamesCrafters server could not handle the request (" + data.status + ").");
-        self._clearDoMoveRequests();
+	var message = data.message ? '\n[' + data.message + ']' : '';
+        GCWeb.alert('The GamesCrafters server could not handle the request.' +
+		    message);
+        this._clearDoMoveRequests();
       }
-    };
+    }.bind(this);
     options.error = function(textStatus) {
-      GCWeb.alert("The GamesCrafters server is not responding (" + textStatus + ").");
-      self._clearDoMoveRequests();
-    };
+      GCWeb.alert('The GamesCrafters server is not responding. [' +
+                  textStatus + ']');
+      this._clearDoMoveRequests();
+    }.bind(this);
     $.ajax(options);
   } else {
     var initialState = this.localGetMoveValue(this.defaultBoardString);
     this.moveHistory.push(initialState);
+    chooseMoveValueDisplay.call(this, initialState);
     this.nextMoves = this.localGetNextMoveValues(initialState.board);
     if (this.nextMoves.length == 0) {
       this.handleGameOver();
@@ -242,9 +268,11 @@ GCWeb.Game.prototype.start = function() {
   }
 };
 
+GCWeb
+
 GCWeb.Game.prototype.createParameterString = function(board) {
   board = board || this.defaultBoardString;
-  var paramString = ";board=" +  encodeURIComponent(board) +
+  var paramString = ";board=" + encodeURIComponent(board) +
     ";width=" + encodeURIComponent(this.width) +
     ";height=" + encodeURIComponent(this.height);
   for (var key in this.options) {
@@ -265,8 +293,8 @@ GCWeb.Game.prototype.createParameterString = function(board) {
  * @param options a dictionary of options to pass to the piece's constructor
  */
 GCWeb.Game.prototype.createPiece = function(type, team, options) {
-  if (typeof type != "function") {
-    throw new Exception("The specified type " + type + " is not a function.");
+    if ((typeof type) != 'function') {
+    throw new Exception('The specified type ' + type + ' is not a function.');
   }
   var piece = new type(this, team, options);
   this.pieces.push(piece);
@@ -340,13 +368,14 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   
   // Request the next move values.
   if (!this.local) {
-	// Reverse the move value so that it's from the next player's perspective.
-	var reversed = { value: moveValue.value, remoteness: moveValue.remoteness };
-	if (reversed.value == "win") {
-	  reversed.value = "lose";
-	} else if (reversed.value == "lose") {
+    // Reverse the move value so that it's from the next player's perspective.
+    var reversed = { value: moveValue.value,
+		     remoteness: moveValue.remoteness };
+    if (reversed.value == "win") {
+      reversed.value = "lose";
+    } else if (reversed.value == "lose") {
       reversed.value = "win";
-	}
+    }
     this.updatePrediction(reversed);
     this.getNextMoveValues(moveValue.board);
   } else {
@@ -358,7 +387,6 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
       this._dequeueDoMoveRequest();
     }
   }
-  
   return true;
 };
 
@@ -373,10 +401,10 @@ GCWeb.Game.prototype.handleGameOver = function() {
   var value = lastMove ? lastMove.value : null;
   switch (value) {
     case "win":
-      prompt = this.player.name + " won the game!";
+      prompt = this.player + " won the game!";
       break;
     case "lose":
-      prompt = this.player.name + " lost the game.";
+      prompt = this.player + " lost the game.";
       break;
     case "tie":
       prompt = "The game has ended in a tie!";
@@ -401,36 +429,38 @@ GCWeb.Game.prototype.handleGameOver = function() {
  * @param board the string that represents the current state of the board
  */
 GCWeb.Game.prototype.getNextMoveValues = function(board) {
-  var self = this;
   var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
     "/getNextMoveValues" + this.createParameterString(board);
   var options = {cache: false, dataType: "json", url: serverUrl};
-  options.success = function(data, textStatus) {
+  options.success = function(data, textStatus, xhr) {
     if (data.status == "ok") {
       var moveValues = data.response;
-      self.nextMoves = moveValues;
+      this.nextMoves = moveValues;
       
-      if (self.showingMoveValues) {
-		  self.showMoveValues(self.nextMoves);
+      if (this.showingMoveValues) {
+        this.showMoveValues(this.nextMoves);
       }
       
       // If there are no more next moves, the game is over.
-      if (self.nextMoves.length == 0) {
-        self.handleGameOver();
+      if (this.nextMoves.length == 0) {
+        this.handleGameOver();
       } else {
-        self.fireEvent("nextvaluesreceived", self.nextMoves);
-        // Finally, handle pending doMove calls
-        self._dequeueDoMoveRequest();
+        this.fireEvent("nextvaluesreceived", this.nextMoves);
+        // Finally, handle pending doMove calls.
+        this._dequeueDoMoveRequest();
       }
     } else {
-      GCWeb.alert("The GamesCrafters server could not handle the request (" + data.status + ").");
-      self._clearDoMoveRequests();
+      var message = data.message ? '\n[' + data.message  + ']' : '';
+      GCWeb.alert('The GamesCrafters server could not handle the request.' +
+                  message);
+      this._clearDoMoveRequests();
     }
-  };
-  options.error = function(textStatus) {
-    GCWeb.alert("The GamesCrafters server is not responding (" + textStatus + ").");
-    self._clearDoMoveRequests();
-  };
+  }.bind(this);
+  options.error = function(xhr, textStatus, error) {
+    GCWeb.alert('The GamesCrafters server is not responding. [' + textStatus +
+                ']');
+    this._clearDoMoveRequests();
+  }.bind(this);
   $.ajax(options);
 };
 
@@ -440,7 +470,8 @@ GCWeb.Game.prototype._enqueueDoMoveRequest = function(fnArguments) {
   var caller = this;
   // Create a function that may be invoked that encapsulates this call
   this.doMoveRequestQueue.push(function() {
-    return fnArguments.callee.apply(caller, Array.prototype.slice(fnArguments));
+    return fnArguments.callee.apply(caller,
+                                    Array.prototype.slice(fnArguments));
   });
   this.fireEvent("callenqueued", fnArguments);
 };
@@ -514,4 +545,19 @@ GCWeb.Game.prototype.hideMoveValues = function() { };
  */
 GCWeb.Game.prototype.removeEventListener = function(event, listener) {
   throw new Exception("removeEventListener is unimplemented");
+};
+
+
+/** Binds the specified objects to "this" and arguments like currying. */
+Function.prototype.bind = function __Function_bind() {
+  if ((arguments.length == 0) || ((typeof arguments[0]) == 'undefined')) {
+    return this;
+  }
+  var fn = this;
+  var curryArguments = Array.prototype.slice.call(arguments);
+  var thisContext = curryArguments.shift();
+  return function() {
+    var argumentArray = Array.prototype.slice.call(arguments);
+    return fn.apply(thisContext, curryArguments.concat(argumentArray));
+  };
 };
