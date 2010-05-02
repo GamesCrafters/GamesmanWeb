@@ -147,7 +147,7 @@ ConnectFour.prototype.attachMoveListener = function() {
     if (this.currentPiece) {
       var mouseColumn = this.computeColumn(e.pageX);
       // Call doMove with the column as the move-delta.
-      this.doMove.(mouseColumn.toString());
+      this.doMove(mouseColumn.toString());
     }
   }.bind(this);
   this.board.bind("click.move", clickHandler);
