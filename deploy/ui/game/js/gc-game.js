@@ -154,29 +154,9 @@ GCWeb.Piece.prototype.hide = function() {
  * @param name    the internal name of the game
  * @param width   the width of the game board (e.g. the number of columns)
  * @param height  the height of the game board (e.g. the number of rows)
- * @param options a dictionary specifying any game variants
+ * @param config  a dictionary specifying any game variants
  */
-GCWeb.Game = function(name, width, height, options) {
-  GCWeb.Game.prototype.constructor.call(this, name, width, height, options);
-}
-
-/** The URL of the server that is the gateway to the Gamesman provider. */
-GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
-
-/** Generates a unique ID for a game instance. */
-GCWeb.Game.generateId = function() {
-  var id = 0;
-  return function() {
-    return id++;
-  };
-}();
-
-/** Returns a dictionary with the width of the drawable screen width. */
-GCWeb.Game.getScreenWidth = function() {
-  return $('#game').width();
-}
-
-GCWeb.Game.prototype.constructor = function(name, width, height, config) {
+GCWeb.Game = function(name, width, height, config) {
   config = config || {};
   this.local = config.local || false;  // Whether to connect to the server
   this.name = name;
@@ -195,7 +175,25 @@ GCWeb.Game.prototype.constructor = function(name, width, height, config) {
   this.moveHistory = [];
   this.nextMoves = [];
   this.eventListeners = {};
-};
+
+  this.addEventListener('gameover', this.handleGameOver.bind(this));
+  this.prediction = new GCWeb.Prediction(this);
+}
+/** The URL of the server that is the gateway to the Gamesman provider. */
+GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
+
+/** Generates a unique ID for a game instance. */
+GCWeb.Game.generateId = function() {
+  var id = 0;
+  return function() {
+    return id++;
+  };
+}();
+
+/** Returns a dictionary with the width of the drawable screen width. */
+GCWeb.Game.getScreenWidth = function() {
+  return $('#game').width();
+}
 
 /**
  * Starts the game by requesting the value of the initial board position
@@ -217,16 +215,15 @@ GCWeb.Game.prototype.start = function() {
   // in the callback from getNextMoveValues).
   this.handlingDoMove = true;
 
-  // A helper function to decide if move-values and predictions are available.
+  // A helper function to decide if move-values are available.
   function chooseMoveValueDisplay(moveValue) {
     // Check if the value (win/lose/tie) information is available.
-    var checkboxes = $('#option-move-values, #option-prediction');
+    var checkbox = $('#option-move-values');
     if ((typeof moveValue.value) != 'undefined') {
-      checkboxes.removeAttr('disabled');
+      checkbox.removeAttr('disabled');
     } else {
-      checkboxes.attr('disabled', 'disabled');
+      checkbox.attr('disabled', 'disabled');
     }
-    this.updatePrediction(moveValue);
   }
 
   // Get the move-value of the initial board state, and then get the values
@@ -242,9 +239,9 @@ GCWeb.Game.prototype.start = function() {
         chooseMoveValueDisplay.call(this, moveValue);        
         this.getNextMoveValues(moveValue.board);
       } else {
-	var message = data.message ? '\n[' + data.message + ']' : '';
+        var message = data.message ? '\n[' + data.message + ']' : '';
         GCWeb.alert('The GamesCrafters server could not handle the request.' +
-		    message);
+                    message);
         this._clearDoMoveRequests();
       }
     }.bind(this);
@@ -260,9 +257,9 @@ GCWeb.Game.prototype.start = function() {
     chooseMoveValueDisplay.call(this, initialState);
     this.nextMoves = this.localGetNextMoveValues(initialState.board);
     if (this.nextMoves.length == 0) {
-      this.handleGameOver();
+      this.fireEvent('gameover');
     } else {
-      this.fireEvent("nextvaluesreceived", this.nextMoves);
+      this.fireEvent('nextvaluesreceived', this.nextMoves);
       this._dequeueDoMoveRequest(); // Also sets handlingDoMove to false
     }
   }
@@ -323,12 +320,12 @@ GCWeb.Game.prototype.switchTeams = function(team) {
  * Adds a listener that is invoked when the specified event is triggered.
  * @param event     the name of the event for which to listen. Possible values
  *                  include "callenqueued", "invalidmove", "executingmove",
- *                  "nextvaluesreceived", "calldequeued", "win", "lose", "tie".
+ *                  "nextvaluesreceived", "calldequeued", "gameover".
  * @param listener  the callback function to invoke when the event fires
  */
 GCWeb.Game.prototype.addEventListener = function(event, listener) {
   this.eventListeners[event] = this.eventListeners[event] || [];
-  this.eventListeners[event].push(listener);
+  this.eventListeners[event].unshift(listener);
 };
 
 /**
@@ -368,22 +365,13 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   
   // Request the next move values.
   if (!this.local) {
-    // Reverse the move value so that it's from the next player's perspective.
-    var reversed = { value: moveValue.value,
-		     remoteness: moveValue.remoteness };
-    if (reversed.value == "win") {
-      reversed.value = "lose";
-    } else if (reversed.value == "lose") {
-      reversed.value = "win";
-    }
-    this.updatePrediction(reversed);
     this.getNextMoveValues(moveValue.board);
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
     if (this.nextMoves.length == 0) {
-      this.handleGameOver();
+      this.fireEvent('gameover');
     } else {
-      this.fireEvent("nextvaluesreceived", this.nextMoves);
+      this.fireEvent('nextvaluesreceived', this.nextMoves);
       this._dequeueDoMoveRequest();
     }
   }
@@ -394,33 +382,29 @@ GCWeb.Game.prototype.handleGameOver = function() {
   // Clear any pending doMove requests.
   this._clearDoMoveRequests();
   
-  var lastMove = (this.moveHistory.length > 0) ?
-                  this.moveHistory[this.moveHistory.length - 1] : null;
+  var lastMove = this.getLastMoveValue();
   // Display a prompt to the user.
   var prompt;
   var value = lastMove ? lastMove.value : null;
-  switch (value) {
-    case "win":
-      prompt = this.player + " won the game!";
-      break;
-    case "lose":
-      prompt = this.player + " lost the game.";
-      break;
-    case "tie":
-      prompt = "The game has ended in a tie!";
-      break;
-    case "draw":
-      prompt = "The game has ended in a draw!";
-      break;
-    default:
-      prompt = "The game has ended!";
-      break;
+  if (value == 'win') {
+    prompt = this.player + ' is the winner!';
+  } else if (value == 'lose') {
+    prompt = this.player + ' lost the game.';
+  } else if (value == 'tie') {
+    prompt = 'The game has ended in a tie!';
+  } else {
+    prompt = 'The game has ended!';
   }
-  prompt += " Would you like to reset the game and play again?";
+  prompt += ' Would you like to reset the game and play again?';
   var onAccept = function() {
     window.location.reload();
   };
   GCWeb.confirm(prompt, onAccept);
+};
+
+GCWeb.Game.prototype.getLastMoveValue = function() {
+  var length = this.moveHistory.length;
+  return (length > 0) ? this.moveHistory[length - 1] : null;
 };
 
 /**
@@ -431,7 +415,7 @@ GCWeb.Game.prototype.handleGameOver = function() {
 GCWeb.Game.prototype.getNextMoveValues = function(board) {
   var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
     "/getNextMoveValues" + this.createParameterString(board);
-  var options = {cache: false, dataType: "json", url: serverUrl};
+  var options = {dataType: "json", url: serverUrl};
   options.success = function(data, textStatus, xhr) {
     if (data.status == "ok") {
       var moveValues = data.response;
@@ -443,9 +427,9 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
       
       // If there are no more next moves, the game is over.
       if (this.nextMoves.length == 0) {
-        this.handleGameOver();
+	this.fireEvent('gameover');
       } else {
-        this.fireEvent("nextvaluesreceived", this.nextMoves);
+        this.fireEvent('nextvaluesreceived', this.nextMoves);
         // Finally, handle pending doMove calls.
         this._dequeueDoMoveRequest();
       }
@@ -466,21 +450,18 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
 
 /** Enqueues a request to doMove given the specified invocation context. */
 GCWeb.Game.prototype._enqueueDoMoveRequest = function(fnArguments) {
-  // Bind the caller object to a variable
-  var caller = this;
-  // Create a function that may be invoked that encapsulates this call
+  // Create a function that may be invoked that encapsulates this call.
   this.doMoveRequestQueue.push(function() {
-    return fnArguments.callee.apply(caller,
-                                    Array.prototype.slice(fnArguments));
-  });
-  this.fireEvent("callenqueued", fnArguments);
+    return fnArguments.callee.apply(this, Array.prototype.slice(fnArguments));
+  }.bind(this));
+  this.fireEvent('callenqueued', fnArguments);
 };
 
 /** Dequeues a doMove request if one is queued and invokes it. */
 GCWeb.Game.prototype._dequeueDoMoveRequest = function() {
   if (this.doMoveRequestQueue.length > 0) {
     var fn = this.doMoveRequestQueue.shift();
-    this.fireEvent("calldequeued", fn);
+    this.fireEvent('calldequeued', fn);
     fn();
   } else {
     this.handlingDoMove = false;
@@ -491,7 +472,7 @@ GCWeb.Game.prototype._dequeueDoMoveRequest = function() {
 GCWeb.Game.prototype._clearDoMoveRequests = function() {
   this.doMoveRequestQueue = [];
   this.handlingDoMove = false;
-  this.fireEvent("callscleared"/* Pass in the cleared requests? */);
+  this.fireEvent('callscleared'/* Pass in the cleared requests? */);
 }
 
 /**
@@ -511,30 +492,22 @@ GCWeb.Game.prototype.fireEvent = function(name) {
   }
 };
 
-GCWeb.Game.prototype.updatePrediction = function(moveValue) {
-  var text = (moveValue.remoteness !== undefined) ?
-	moveValue.value + " in " + moveValue.remoteness + " moves" :
-    "Prediction not available.";
-  $("#prediction span").text(text);
-};
-
 /**
  * Returns the default board string for this game.
  */
 GCWeb.Game.prototype.getDefaultBoardString;
 
 /**
- * Displays the win-loss-tie values of the next moves so that the player may
+ * Displays the win-lose-tie values of the next moves so that the player may
  * view the most up-to-date view.
  */
 GCWeb.Game.prototype.showMoveValues = function() { };
 
 /**
- * Hides the win-loss-tie values of the next moves. If they are already hidden,
+ * Hides the win-lose-tie values of the next moves. If they are already hidden,
  * this method does nothing.
  */
 GCWeb.Game.prototype.hideMoveValues = function() { };
-
 
 /**
  * Removes a callback function so that it will not be invoked when the
@@ -547,6 +520,75 @@ GCWeb.Game.prototype.removeEventListener = function(event, listener) {
   throw new Exception("removeEventListener is unimplemented");
 };
 
+
+/**
+ * The prediction plug-in that displays the oracle's prediction of the game's
+ * outcome and the number of turns to reach that outcome.
+ */
+GCWeb.Prediction = function(game) {
+  this.game = game;
+  this.lastPlayer = this.game.player;
+  var handler = this.updatePrediction.bind(this);
+  this.game.addEventListener('nextvaluesreceived', handler);
+  this.game.addEventListener('gameover', handler);
+};
+
+GCWeb.Prediction.prototype.updatePrediction = function() {
+  var html = '';
+  var moveValue = this.game.getLastMoveValue();
+  if (!moveValue) {
+    html += 'Game not yet started.';
+  } else {
+    // If the current player changed since the last turn (usually players
+    // will alternate turns in most games), then reverse the move-value
+    // to be from the new current player's point of view.
+    if (this.game.player != this.lastPlayer) {
+      var reversedValue = moveValue.value;
+      if (moveValue.value == 'win') {
+	reversedValue = 'lose';
+      } else if (moveValue.value == 'lose') {
+	reversedValue = 'win';
+      }
+      moveValue = { value: reversedValue, remoteness: moveValue.remoteness };
+    }
+
+    if ((typeof moveValue.value) === 'string') {
+      html += '<span class="' +
+	      ((this.game.player == GCWeb.Team.BLUE) ? 'gc-blue' : 'gc-red') +
+	      '">' + this.game.player + '</span> ';
+      if (moveValue.value == 'win') {
+	html += '<span class="gc-win">wins</span>';
+      } else if (moveValue.value == 'lose') {
+        html += '<span class="gc-lose">loses</span>';
+      } else if (moveValue.value == 'tie') {
+	html += '<span class="gc-tie">ties</span>';
+      } else {
+	html += 'will finish the game';  // Lame, I know.
+      }
+
+      if ((typeof moveValue.remoteness) !== 'undefined') {
+        var remoteness = Math.round(moveValue.remoteness);
+	html += ' in ' + remoteness + ' move' + ((remoteness == 1) ? '' : 's');
+      }
+      html += '.';
+    } else {
+	html = 'Prediction unavailable.';
+    }
+  }
+  $("#prediction > span").html(html);
+  this.lastPlayer = this.game.player;
+  this.tryEnablePredictions();
+};
+
+GCWeb.Prediction.prototype.tryEnablePredictions = function() {
+  var moveValue = this.game.getLastMoveValue();
+  var checkbox = $('#option-prediction');
+  if (moveValue && (moveValue.value !== undefined)) {
+    checkbox.removeAttr('disabled');
+  } else {
+    checkbox.attr('disabled', 'disabled');
+  }
+};
 
 /** Binds the specified objects to "this" and arguments like currying. */
 Function.prototype.bind = function __Function_bind() {

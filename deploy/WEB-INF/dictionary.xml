@@ -3,8 +3,8 @@
   <game internal-name="connect4" canonical-name="Connect 4" ui="connect4" visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="1210" canonical-name="1,2,...,10">
-    <server host="localhost" port="4242" />
+  <game internal-name="1210" canonical-name="1, 2, ..., 10">
+    <server host="localhost" port="24444" />
   </game>
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
     <server host="localhost" port="4242" />

@@ -12,3 +12,13 @@
 .gc-dialog-screen {
   width: 100%; height: 100%; position: fixed; left: 0; top: 0; z-index: 1000
 }
+
+#prediction { text-align: center }
+.gc-red, .gc-blue, .gc-win, .gc-lose, .gc-tie {
+  border-bottom: 2px solid
+}
+.gc-red { border-bottom-color: #f00 }
+.gc-blue { border-bottom-color: #00f }
+.gc-win { border-bottom-color: #0f0 }
+.gc-lose { border-bottom-color: #8a0000 }
+.gc-tie { border-bottom-color: #ff0 }

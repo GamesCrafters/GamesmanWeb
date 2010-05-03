@@ -28,4 +28,23 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
+
+  <tag>
+    <name>dropdown</name>
+    <tag-class>edu.berkeley.gcweb.servlet.gctl.DropdownTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Displays a dropdown menu for a range of items.
+    </description>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>values</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
 </taglib>
