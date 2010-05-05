@@ -122,7 +122,7 @@ ConnectFour.prototype.handleExecutingMove = function(moveValue) {
 
     var column = parseInt(moveValue.move);
     // Find the row where the piece is represented in the future board string.
-    var lastMove = this.moveHistory[this.moveHistory.length - 1];
+    var lastMove = this.getLastMoveValue();
     var row = this.findFreeRow(column, moveValue.board) + 1;
     row = this.findFreeRow(column, lastMove.board);
     // Move the piece to the specified column and slide it down.

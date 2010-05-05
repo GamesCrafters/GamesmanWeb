@@ -154,7 +154,9 @@ GCWeb.Piece.prototype.hide = function() {
  * @param name    the internal name of the game
  * @param width   the width of the game board (e.g. the number of columns)
  * @param height  the height of the game board (e.g. the number of rows)
- * @param config  a dictionary specifying any game variants
+ * @param config  a dictionary of configuration parameters, one of which may
+ *                be a dictionary named "options", which contains
+ *                game-specific options (i.e. variants).
  */
 GCWeb.Game = function(name, width, height, config) {
   config = config || {};
@@ -175,6 +177,12 @@ GCWeb.Game = function(name, width, height, config) {
   this.moveHistory = [];
   this.nextMoves = [];
   this.eventListeners = {};
+
+  this.addEventListener('nextvaluesreceived', function() {
+    if (this.showingMoveValues) {
+      this.showMoveValues(this.nextMoves);
+    }
+  }.bind(this));
 
   this.addEventListener('gameover', this.handleGameOver.bind(this));
   this.prediction = new GCWeb.Prediction(this);
@@ -421,13 +429,9 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
       var moveValues = data.response;
       this.nextMoves = moveValues;
       
-      if (this.showingMoveValues) {
-        this.showMoveValues(this.nextMoves);
-      }
-      
       // If there are no more next moves, the game is over.
       if (this.nextMoves.length == 0) {
-	this.fireEvent('gameover');
+        this.fireEvent('gameover');
       } else {
         this.fireEvent('nextvaluesreceived', this.nextMoves);
         // Finally, handle pending doMove calls.
@@ -545,34 +549,34 @@ GCWeb.Prediction.prototype.updatePrediction = function() {
     if (this.game.player != this.lastPlayer) {
       var reversedValue = moveValue.value;
       if (moveValue.value == 'win') {
-	reversedValue = 'lose';
+        reversedValue = 'lose';
       } else if (moveValue.value == 'lose') {
-	reversedValue = 'win';
+        reversedValue = 'win';
       }
       moveValue = { value: reversedValue, remoteness: moveValue.remoteness };
     }
 
     if ((typeof moveValue.value) === 'string') {
       html += '<span class="' +
-	      ((this.game.player == GCWeb.Team.BLUE) ? 'gc-blue' : 'gc-red') +
-	      '">' + this.game.player + '</span> ';
+              ((this.game.player == GCWeb.Team.BLUE) ? 'gc-blue' : 'gc-red') +
+              '">' + this.game.player + '</span> ';
       if (moveValue.value == 'win') {
-	html += '<span class="gc-win">wins</span>';
+        html += '<span class="gc-win">wins</span>';
       } else if (moveValue.value == 'lose') {
         html += '<span class="gc-lose">loses</span>';
       } else if (moveValue.value == 'tie') {
-	html += '<span class="gc-tie">ties</span>';
+        html += '<span class="gc-tie">ties</span>';
       } else {
-	html += 'will finish the game';  // Lame, I know.
+        html += 'will finish the game';  // Lame, I know.
       }
 
       if ((typeof moveValue.remoteness) !== 'undefined') {
         var remoteness = Math.round(moveValue.remoteness);
-	html += ' in ' + remoteness + ' move' + ((remoteness == 1) ? '' : 's');
+        html += ' in ' + remoteness + ' move' + ((remoteness == 1) ? '' : 's');
       }
       html += '.';
     } else {
-	html = 'Prediction unavailable.';
+      html = 'Prediction unavailable.';
     }
   }
   $("#prediction > span").html(html);

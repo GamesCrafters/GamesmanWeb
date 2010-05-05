@@ -1,0 +1,13 @@
+#gc1210-options { display: none }
+#gc1210-game { margin: 1em auto; padding: 0; position: relative }
+.gc1210-board { margin: 0 auto; padding: 0; border-spacing: 0 }
+
+.gc1210-board td { border: 2px solid #003 }
+.gc1210-board .gc1210-unused { background: #004; border-color: #004 }
+
+.gc1210-board .gc1210-piece { }
+
+.gc1210-board .gc1210-active { border-color: #4ed; cursor: pointer }
+.gc1210-board .gc1210-win { border-color: #0f0 }
+.gc1210-board .gc1210-lose { border-color: #8a0000 }
+.gc1210-board .gc1210-tie { border-color: #ff0 }
