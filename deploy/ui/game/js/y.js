@@ -383,7 +383,8 @@ var handleClick = function(e) {
 			P1TURN = false;
 			P2TURN = true;
 			c.clicked = true;
-		} else if(P2TURN==true) {
+		} 
+		else if(P2TURN==true) {
 			c.red = P2COLOR.red;
 			c.green = P2COLOR.green;
 			c.blue = P2COLOR.blue;
@@ -402,7 +403,7 @@ var handleClick = function(e) {
 			P2TURN = false;
 			c.clicked = true;
 		}
-		drawCircle(c, circleRad)
+		drawCircle(c, circleRad + circleRadExtra);
 		
 		var temp = getMovesFromFakeServer();
 		var winningMoves = temp.winningMoves;
@@ -517,7 +518,8 @@ $(document).ready(function() {
 	rowSpacing *= (constraint) / (width);
 	triangleWidth *= (constraint) / width;
 	triangleHeight *= (constraint) / width;
-	circleRad = triangleWidth / 3;
+	circleRad = triangleWidth / 3.0;
+	circleRadExtra = circleRad / 6.0;
 	if(circleRad > 30) {
 		circleRad = 30;
 	}
@@ -620,6 +622,7 @@ var canvasWidth = 0;
 var canvasHeight = 0;
 var constraint;
 var circleRad = 10;
+var circleRadExtra = 4;
 
 var offsets; // = {x: 8, y: 110};
 var tileBorder = 1;
