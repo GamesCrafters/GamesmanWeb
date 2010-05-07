@@ -1,0 +1,71 @@
+<script type="text/javascript" src="game/js/dino_Board.js"></script>
+<script type="text/javascript" src="game/js/dino_Piece.js"></script>
+<script type="text/javascript" src="game/js/dino_Arrow.js"></script>
+<form name="game-options">
+	<div>
+	<input type="submit" id="newgame" value="New Game">
+	<b> Board Size </b>
+	<select name="size" id="board-size">
+		<option value="3">3x3</option>
+		<option value="4">4x4</option>
+		<option value="5">5x5</option>
+		<option value="6">6x6</option>
+	</select>
+	<b> Red Player </b>
+	<select name="red" id="red-player">
+		<option value="red-human">Human</option>
+		<option value="red-computer">Computer</option>
+	</select>
+	<b> Blue Player </b>
+	<select name="blue" id="blue-player">
+		<option value="blue-human">Human</option>
+		<option value="blue-computer">Computer</option>
+	</select>
+	<button type="reset_game"> Reset Game </button>		
+	</div>
+	<input type="hidden" name="game" value="dino" />
+</form>
+<div style="position:relative"> <table id="board" border="0" cellspacing="0" cellpadding="0"></table> </div> <!--style="border-collapse:collapse;"-->
+<script type="text/javascript"> 	
+$(document).ready(function(){
+	//This block of code is executed when the DOM is ready to be manipulated 
+	function clickEvent() { //Game loop
+		dinoBoard.hideAllArrows();
+		
+		var piece = dinoBoard.findPieceObject(this.id); 
+		piece.arrowClicked(this.id); 
+
+		dinoBoard.updateBoardRepresentation(piece);
+		
+		if(piece.myCurrentSquare == dinoBoard.greenGoalLocation) {
+			dinoBoard.removeGreenPiece(piece); 
+		}
+		if(piece.myCurrentSquare == dinoBoard.purpleGoalLocation) {
+			dinoBoard.removePurplePiece(piece); 
+		}
+		
+		if(dinoBoard.currentPlayerWon()) {
+			dinoBoard.hideAllArrows();
+			var alertMsg = "Game Over."
+			if(dinoBoard.currentPlayer == "green") {
+				alertMsg = alertMsg + " Red player has won."; 
+			} else if (dinoBoard.currentPlayer == "purple") {
+				alertMsg = alertMsg + " Blue player has won."; 
+			} else {
+				//console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
+			}
+			alert(alertMsg); 
+		} else {
+			dinoBoard.toggleNextPlayer(); 
+			//if(dinoBoard.playerTrapped()) {
+			//	dinoBoard.toggleNextPlayer();
+			//	dinoBoard.drawArrows();
+			//}
+			dinoBoard.drawArrows(); 
+		}
+		//For debugging purposes 
+		//dinoBoard.printPiecesOnBoard(); 
+	}
+	var dinoBoard = new Board(4, "green", clickEvent); 
+});
+</script>
