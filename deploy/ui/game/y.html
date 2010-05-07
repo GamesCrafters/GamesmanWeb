@@ -1,16 +1,18 @@
 <h1 align="center">Y Board</h1>
 
-<div id="testdiv" style="text-align: center;">
+<div id="testdiv">
 	<form name="gameForm">
 		<p>
-			<input type="button" value="New Game" onclick="newGame()">
-			<b>Inner Rows</b>
-			<select name="centerRowsForm"size="1" id="centerRowsFormID">
-				<option>0</option>
+			<input value="New Game" onclick="newGame()" type="button">
+			<b>Center Rows</b>
+			<select name="centerRowsForm" size="1" id="centerRowsFormID">
 				<option>1</option>
 				<option>2</option>
-				<option>3</option>
+				<option selected="selected">3</option>
 				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
 			</select>
 			<b>Outer Rows</b>
 			<select name="outerRowsForm" size="1" id="outerRowsFormID">
@@ -18,8 +20,11 @@
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>
+				<option selected="selected">4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
 			</select>
 		</p>
 	</form>
-
 </div>
