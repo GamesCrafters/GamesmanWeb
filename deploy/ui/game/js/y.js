@@ -33,7 +33,8 @@ var Point = function(setx, sety, setred, setgreen, setblue, setalpha){
 	this.innerCorner = false;
 	this.edgeCount = 0;
 	this.whoClicked = null;
-	this.edges = new Array();
+	this.rad = circleRad;
+	//this.edges = new Array();
 	this.id = setx.toFixed(3)+"-"+sety.toFixed(3);
 }
 
@@ -94,7 +95,7 @@ var makeEdges = function() {
 		centers[i].edgeCount = count;
 		for(var k = 0; k < count; k++) {
 			if(k < edgesAndDists.length) {
-			var ne =  new Edge(centers[i], edgesAndDists[k].c2, BOARD_STARTING_COLOR.red, BOARD_STARTING_COLOR.green, BOARD_STARTING_COLOR.blue, 255);
+			var ne =  new Edge(centers[i], edgesAndDists[k].c2, EDGE_STARTING_COLOR.red, EDGE_STARTING_COLOR.green, EDGE_STARTING_COLOR.blue, 255);
 			//addEdgeToCenter(centers[i], ne);
 			edges.push(ne);
 			}
@@ -184,7 +185,7 @@ var gup = function(name) {
 //--------------------------------------------------------------------------
 // Drawing the board
 //--------------------------------------------------------------------------
-var drawCircles = function(rad) {
+var drawCircles = function() {
   elem = document.getElementById(canvasID);
   if (!elem || !elem.getContext) { return; }
   // Get the canvas 2d context.
@@ -198,7 +199,7 @@ var drawCircles = function(rad) {
 					   +centers[i].alpha+")";
     context.fillStyle = fillColor;
 	context.beginPath();
-	context.arc(centers[i].x, centers[i].y, rad, 0, Math.PI*2, true);
+	context.arc(centers[i].x, centers[i].y, centers[i].rad, 0, Math.PI*2, true);
 	context.closePath();
 	context.fill();
   }
@@ -253,16 +254,18 @@ var drawEdgesFromList = function(edgesIn) {
 	// Get the canvas 2d context.
 	var context = elem.getContext('2d');
 	if (!context || !context.putImageData) { return; }
-	context.beginPath();
-	context.strokeStyle = 'rgb('+EDGE_STARTING_COLOR.red+', '+
-								 EDGE_STARTING_COLOR.green+', '+
-								 EDGE_STARTING_COLOR.blue+')';
-	context.lineWidth   = EDGE_WIDTH;
+	
 	for(var e in edgesIn) {
+	context.beginPath();
+	context.lineWidth = EDGE_WIDTH;
+		context.strokeStyle = 'rgb('+edgesIn[e].red+', '+
+									edgesIn[e].green+', '+
+									edgesIn[e].blue+')';
 		context.moveTo(edgesIn[e].c1.x, edgesIn[e].c1.y);
 		context.lineTo(edgesIn[e].c2.x, edgesIn[e].c2.y);
+		context.stroke();
 	}
-	context.stroke();
+	
 	//console.log("drew edges from list");
 }
 var drawEdge = function(edge) {
@@ -403,6 +406,7 @@ var handleClick = function(e) {
 			P2TURN = false;
 			c.clicked = true;
 		}
+		c.rad = circleRad + circleRadExtra;
 		drawCircle(c, circleRad + circleRadExtra);
 		
 		var temp = getMovesFromFakeServer();
@@ -436,7 +440,25 @@ var handleClick = function(e) {
 			drawEdge(c.edges[e]);
 		}
 	}*/
-	
+	clearEverything();
+	drawEverything();
+}
+var clearEverything = function() {
+	elem = document.getElementById(canvasID);
+	if (!elem || !elem.getContext) { return; }
+	// Get the canvas 2d context.
+	var context = elem.getContext('2d');
+	if (!context || !context.putImageData) { return; }
+	context.clearRect(0, 0, canvasWidth, canvasHeight);
+}
+var drawEverything = function() {
+	elem = document.getElementById(canvasID);
+	if (!elem || !elem.getContext) { return; }
+	// Get the canvas 2d context.
+	var context = elem.getContext('2d');
+	if (!context || !context.putImageData) { return; }
+	drawEdgesFromList(edges);
+	drawCircles();
 }
 var getMovesFromFakeServer = function() {
   var winning = new Array();
@@ -514,7 +536,7 @@ $(document).ready(function() {
 	
 	// determine what the spacing should be depending on how big the canvas is
 	//console.log('outerRows', outerRows, 'centerRows', centerRows);
-	var width = 2*(rowSpacing*Math.sqrt(3)/2*outerRows) + triangleWidth*centerRows + circleRad * 2;
+	var width = 2*(rowSpacing*Math.sqrt(3)/2*outerRows) + triangleWidth*centerRows + (circleRad + circleRadExtra)* 2;
 	rowSpacing *= (constraint) / (width);
 	triangleWidth *= (constraint) / width;
 	triangleHeight *= (constraint) / width;
@@ -526,7 +548,7 @@ $(document).ready(function() {
 	EDGE_WIDTH = Math.ceil(circleRad/3.0)
 	
 	// create the centers and edges
-	createHex(canvasWidth/2, outerRows * rowSpacing + circleRad, centerRows, outerRows);
+	createHex(canvasWidth/2, outerRows * rowSpacing + circleRad + circleRadExtra, centerRows, outerRows);
 	makeEdges();
 	
 	// create the html canvas
@@ -534,7 +556,7 @@ $(document).ready(function() {
 	
 	// draw the edges, and then the circles over them
 	drawEdgesFromList(edges);
-	drawCircles(circleRad);
+	drawCircles();
 });
 function Y(target, options) {
 	// I don't think I have to use target or options
