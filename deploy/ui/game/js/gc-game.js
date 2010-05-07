@@ -240,7 +240,7 @@ GCWeb.Game.prototype.start = function() {
     var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
       "/getMoveValue" + this.createParameterString();
     var options = {cache: false, dataType: 'json', url: serverUrl};
-    options.success = function(data, textStatus) {
+    options.success = function(data, textStatus, xhr) {
       if (data.status == 'ok') {
         var moveValue = data.response;
         this.moveHistory.push(moveValue);
@@ -253,9 +253,9 @@ GCWeb.Game.prototype.start = function() {
         this._clearDoMoveRequests();
       }
     }.bind(this);
-    options.error = function(textStatus) {
+    options.error = function(xhr, textStatus, errorThrown) {
       GCWeb.alert('The GamesCrafters server is not responding. [' +
-                  textStatus + ']');
+                  textStatus + ': ' + errorThrown + ']');
       this._clearDoMoveRequests();
     }.bind(this);
     $.ajax(options);
@@ -444,9 +444,9 @@ GCWeb.Game.prototype.getNextMoveValues = function(board) {
       this._clearDoMoveRequests();
     }
   }.bind(this);
-  options.error = function(xhr, textStatus, error) {
+  options.error = function(xhr, textStatus, errorThrown) {
     GCWeb.alert('The GamesCrafters server is not responding. [' + textStatus +
-                ']');
+                ': ' + errorThrown + ']');
     this._clearDoMoveRequests();
   }.bind(this);
   $.ajax(options);
