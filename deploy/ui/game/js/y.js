@@ -69,6 +69,7 @@ var makeBoard = function (width, height) {
 	//console.log('canvas set to', 'width', width, 'height', height);
 	newCanvas.setAttribute("onclick", "handleClick(event)");
 	div.appendChild(newCanvas);
+	y.board = $(newCanvas);
 }
 var makeEdges = function() {
 	for(var i in centers) {
@@ -479,7 +480,9 @@ var getMovesFromFakeServer = function() {
 //--------------------------------------------------------------------------
 // Initial Setup
 //--------------------------------------------------------------------------
+var y;
 $(document).ready(function() {
+	y = new Y();
 	centers = new Array();
 	edges = new Array();
 	
@@ -557,24 +560,28 @@ $(document).ready(function() {
 	// draw the edges, and then the circles over them
 	drawEdgesFromList(edges);
 	drawCircles();
+	y.start();
 });
 function Y(target, options) {
 	// I don't think I have to use target or options
 	options = options || {};
 	options.option = target;
-	options.local = true;
+	//options.local = true;
+	
 	Y.superClass.constructor.call(this, Y.NAME, target, 1, options);
 	
-	
+	// Register event listeners to hook into the framework.
+	this.addEventListener('nextvaluesreceived',
+			      this.handleNextValuesReceived.bind(this));
 }
-var start = function(team) {
+Y.prototype.start = function(team) {
 	this.player = team || GCWeb.Team.BLUE;
 	Y.superClass.start.call(this);
 }
 
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
-	//console.log("I got move values! ", moveValues);
+	console.log("I got move values! ", moveValues);
 	var a = 1;
 }
 Y.prototype.showMoveValues = function(moves) {
