@@ -14,7 +14,7 @@ public class OskarsSolved {
 	private Solver solve;
 
 	public OskarsSolved(int blue, int white, int red, int tosolve, boolean random, String filename) {
-		System.out.println("b\tw\tr\tremoteness\tsubcomponents\tbushiness\tbranches\tbrfactor\tmaxbr\tturns\tplaneturns\tsumlindist\tsolve distance\talleys");
+		System.out.println("b\tw\tr\tremoteness\tsubcomponents\tbushiness\tbranches\tbrfactor\tmaxbr\tturns\tplaneturns\tsumlindist\tsolve distance\tachievable\talleys");
 		
 		if (!random) {
 			for(int r = red; r < red + tosolve; r++) {
@@ -38,6 +38,7 @@ public class OskarsSolved {
 								vals.add(cubefaces.planeTurns);
 								vals.add(cubefaces.sumlindistance);
 								vals.add(cubefaces.sumsoldistance);
+								vals.add(OskarsCube.acheivable);
 								for(int i =0; i< cubefaces.boardsize*2-1; i++)
 									vals.add(cubefaces.alleys[i]);
 								found_one(vals );
@@ -67,6 +68,7 @@ public class OskarsSolved {
 					vals.add(cubefaces.planeTurns);
 					vals.add(cubefaces.sumlindistance);
 					vals.add(cubefaces.sumsoldistance);
+					vals.add(OskarsCube.acheivable);
 					for(int j =0; j< cubefaces.boardsize*2-1; j++)
 						vals.add(cubefaces.alleys[j]);
 					found_one(vals);

@@ -12,7 +12,7 @@ public class InteriorSolutionPath {
 	public PolygonCollection solution;
 	
 	//This class generates the solution path in the interior of the cube
-	public InteriorSolutionPath(Solver solved, CubeGen gened) {
+	public InteriorSolutionPath(Solver solved, CubeGen gened, boolean[][][] traveled_map, int[] cur_pos) {
 		
 		//int remoteness = solved.getRemoteness(solved.start)/2;
 		int boardsize = gened.boardsize;
@@ -22,6 +22,7 @@ public class InteriorSolutionPath {
 		queue.add(solved.move_map.get(start_key));
 		HashMap<Integer, Boolean> seen_map = new HashMap<Integer, Boolean>();
 		Object[] input_array = new PolygonCollection[4*125];
+		
 		
 		while (!queue.isEmpty()) {
 			Node head = queue.removeFirst();
@@ -40,10 +41,27 @@ public class InteriorSolutionPath {
 				if (seen_map.containsKey(new_key))
 					continue;
 				int color = 1;
-				if (solved.move_map.get(new_key).onsolutionpath == true)
+				int color2 = 1;
+				//System.out.println(new_board[0] + " " + new_board[1] + " " + new_board[2]);
+				if (solved.move_map.get(new_key).onsolutionpath == true && traveled_map[new_board[0]][new_board[1]][new_board[2]] == true) {
 					color = 2;
-				PolygonCollection cube1= new Stick(.9,color).returnItem();
-				PolygonCollection cube2= new Stick(.9,color).returnItem();
+					color2 = 2;
+					//System.out.println("Colored green");
+					
+				} else if(traveled_map[new_board[0]][new_board[1]][new_board[2]] == true){
+					color = 3;
+					color2 = 3;
+				} else if(solved.move_map.get(new_key).onsolutionpath == true) {
+					color = 4;
+					color2 = 4;
+				} 
+				
+				if(new_board[0] == cur_pos[0] && new_board[1] == cur_pos[1] && new_board[2] == cur_pos[2]){
+					color = 5;
+					
+				}
+				PolygonCollection cube1= new Stick(1,color).returnItem();
+				PolygonCollection cube2= new Stick(1,color2).returnItem();
 			
 				cube1.translate(new_board[0],-new_board[1],new_board[2]);
 				cube2.translate(half_board[0], -half_board[1],half_board[2]);

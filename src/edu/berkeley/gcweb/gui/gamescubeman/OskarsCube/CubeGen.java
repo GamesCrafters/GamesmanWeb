@@ -5,13 +5,19 @@ import java.util.Random;
 
 public class CubeGen {
 
-	public CubeGen(int blue, int white, int red) {
+	public CubeGen(long blue, long white, long red) {
+		if(blue> java.lang.Integer.MAX_VALUE)
+			blue = -(blue- Integer.MAX_VALUE);
+		if(red> java.lang.Integer.MAX_VALUE)
+			red = -(red- Integer.MAX_VALUE);
+		if(white> java.lang.Integer.MAX_VALUE)
+			white = -(white- Integer.MAX_VALUE);
 		this.findbest = true;
 		this.findbestc = true;
 		this.boardsize = 5;
-		BlueInt = blue;
-		RedInt = red;
-		WhiteInt = white;
+		BlueInt = (int) blue;
+		RedInt = (int) red;
+		WhiteInt = (int) white;
 		Blue = intToSet(BlueInt);
 		White = intToSet(WhiteInt);
 		Red = intToSet(RedInt);
@@ -379,6 +385,48 @@ public class CubeGen {
 			sumsoldistance += puzz[end[indx]/2][end[indy]/2];
 			//System.out.println("end " + board + " " + puzz[end[indx]/2][end[indy]/2]);
 		}
+		//calculate linear walls- the number of walls that are linear
+		for(int b = 0; b<3; b++) {
+			for(int i=0; i<boardsize-1; i++) {
+				boolean linear = true, gap = false;
+				for(int j=0; j<2*boardsize-1; j++) {
+					
+					if(!blocked(i,j,i,0,b) || i==boardsize-1) {
+						gap = true;
+					} else if(i>0) {
+						gap = false;
+					}
+					if(i>0)
+						if(blocked(i-1,j,i,0,b))
+							linear = false;
+					if(i<boardsize-2)
+						if(blocked(i+1,j,i,0,b))
+							linear = false;
+					if(gap==true && linear ==true)
+						linearwalls= linearwalls +1;
+				}
+			}
+			for(int j=0; j<boardsize-1; j++) {
+				boolean linear = true, gap = false;
+				for(int i=0; i<2*boardsize-1; i++) {
+					
+					if(!blocked(i,j,i,0,b) || i==boardsize-1) {
+						gap = true;
+					} else if(i>0) {
+						gap = false;
+					}
+					if(i>0)
+						if(blocked(i-1,j,i,0,b))
+							linear = false;
+					if(i<boardsize-2)
+						if(blocked(i+1,j,i,0,b))
+							linear = false;
+					if(gap==true && linear ==true)
+						linearwalls= linearwalls +1;
+				}
+			}
+		}
+		
 		
 	}
 	public boolean blocked(int x,int y,int z,int w, int board) {
@@ -396,11 +444,17 @@ public class CubeGen {
 		}
 		return ans;
 	}
+	//Face related cube metrics
 	public int[] alleys;
 	public int sumlindistance=0;
 	public int sumsoldistance=0;
+	public int linearwalls =0;
+	
+	
 	public int[] start = { 0,0,0 };
 	public int[] end = { 1,1,1 };
+	public int boardsize = 5;
+	//Solve related cube metrics
 	public int bushiness =0;
 	public int branches = 0;
 	public int brfactor = 0;
@@ -408,9 +462,13 @@ public class CubeGen {
 	public int maxbrfactor = 0;
 	public int turns = 0;
 	public int planeTurns =0;
+	public int remoteness;
+	public int branchturns =0;
+	
 	public boolean findbest = false;
 	public boolean findbestc = false;
-	public int boardsize = 5;
+	
+	//board generating variables
 	private Random randomGen;
 	public HashMap<Integer, Boolean> edges_blue;
 	public HashMap<Integer, Boolean> edges_red;
@@ -425,7 +483,7 @@ public class CubeGen {
 	public boolean validR;
 	public boolean validW;
 	public boolean original = true;
-	public int remoteness;
+	
 	public boolean loudprint = false;
 	
 	public int probabilistic() {

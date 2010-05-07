@@ -95,8 +95,18 @@ public class Stick {
 	public Stick(double length, int color) {
 		Color colour;
 		if (color == 1) {
+			//Not on sol, not seen
 			colour = Color.LIGHT_GRAY;
-		} else {
+		} else if(color ==2) {
+			//on sol, seen
+			colour = Color.GREEN;
+		} else if(color ==3) {
+			//not on sol, seen
+			colour = Color.RED;
+		} else if(color ==5) {
+			colour = Color.orange;
+		}else {
+			//on sol, not seen
 			colour = Color.YELLOW;
 		}
 		Polygon3D cap_1 = new Polygon3D();

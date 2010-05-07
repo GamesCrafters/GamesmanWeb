@@ -22,8 +22,10 @@ public class BigRedAxis {
 	public PolygonCollection RawayW;
 	public PolygonCollection RawayB;
 	public PolygonCollection RawayR;
+	public PolygonCollection secondFacesBlue;
+	public PolygonCollection secondFacesRed;
+	public PolygonCollection secondFacesWhite;
 	public PolygonCollection secondFaces;
-	
 
 	/*
 	public BigRedAxis(CubeGen cube){ 
@@ -84,6 +86,13 @@ public class BigRedAxis {
 		startdot_b.addPoint(x - s + 1, s, z - s);
 		startdot_b.addPoint(x - s + 1, s, z - s + 1);
 		startdot_b.addPoint(x - s, s, z - s + 1);
+		
+		Polygon3D startdot_b2 = new Polygon3D(); // THIS IS BLUE
+		startdot_b2.setFillColor(Color.orange);
+		startdot_b2.addPoint(x - s, s-11, z - s);
+		startdot_b2.addPoint(x - s + 1, s-11, z - s);
+		startdot_b2.addPoint(x - s + 1, s-11, z - s + 1);
+		startdot_b2.addPoint(x - s, s-11, z - s + 1);
 		
 		Polygon3D startdot_r = new Polygon3D();
 		startdot_r.setFillColor(Color.orange); // THIS IS RED
@@ -221,6 +230,47 @@ public class BigRedAxis {
 		arrow_b_tr.addPoint(x-s+1 - green_b[5],s, z-s - green_a[5]);
 		arrow_b_tr.addPoint(x-s+1 - green_b[6],s, z-s - green_a[6]);
 		
+		
+		Polygon3D arrow_b2_aw = new Polygon3D();
+		arrow_b2_aw.setFillColor(Color.orange);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[0],s-11, z-s + green_b[0]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[1],s-11, z-s + green_b[1]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[2],s-11, z-s + green_b[2]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[3],s-11, z-s + green_b[3]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[4],s-11, z-s + green_b[4]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[5],s-11, z-s + green_b[5]);
+		arrow_b2_aw.addPoint(x-s+1 + green_a[6],s-11, z-s + green_b[6]);
+		
+		Polygon3D arrow_b2_tw = new Polygon3D();
+		arrow_b2_tw.setFillColor(Color.orange);
+		arrow_b2_tw.addPoint(x-s - green_a[0],s-11, z-s + green_b[0]);
+		arrow_b2_tw.addPoint(x-s - green_a[1],s-11, z-s + green_b[1]);
+		arrow_b2_tw.addPoint(x-s - green_a[2],s-11, z-s + green_b[2]);
+		arrow_b2_tw.addPoint(x-s - green_a[3],s-11, z-s + green_b[3]);
+		arrow_b2_tw.addPoint(x-s - green_a[4],s-11, z-s + green_b[4]);
+		arrow_b2_tw.addPoint(x-s - green_a[5],s-11, z-s + green_b[5]);
+		arrow_b2_tw.addPoint(x-s - green_a[6],s-11, z-s + green_b[6]);
+		
+		Polygon3D arrow_b2_ar = new Polygon3D();
+		arrow_b2_ar.setFillColor(Color.orange);
+		arrow_b2_ar.addPoint(x-s + green_b[0],s-11, z-s+1 + green_a[0]);
+		arrow_b2_ar.addPoint(x-s + green_b[1],s-11, z-s+1 + green_a[1]);
+		arrow_b2_ar.addPoint(x-s + green_b[2],s-11, z-s+1 + green_a[2]);
+		arrow_b2_ar.addPoint(x-s + green_b[3],s-11, z-s+1 + green_a[3]);
+		arrow_b2_ar.addPoint(x-s + green_b[4],s-11, z-s+1 + green_a[4]);
+		arrow_b2_ar.addPoint(x-s + green_b[5],s-11, z-s+1 + green_a[5]);
+		arrow_b2_ar.addPoint(x-s + green_b[6],s-11, z-s+1 + green_a[6]);
+		
+		Polygon3D arrow_b2_tr = new Polygon3D();
+		arrow_b2_tr.setFillColor(Color.orange);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[0],s-11, z-s - green_a[0]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[1],s-11, z-s - green_a[1]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[2],s-11, z-s - green_a[2]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[3],s-11, z-s - green_a[3]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[4],s-11, z-s - green_a[4]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[5],s-11, z-s - green_a[5]);
+		arrow_b2_tr.addPoint(x-s+1 - green_b[6],s-11, z-s - green_a[6]);
+		
 		Polygon3D arrow_r_aw = new Polygon3D();
 		arrow_r_aw.setFillColor(Color.orange);
 		arrow_r_aw.addPoint(x-s+1 + green_a[0], y+s-1 + green_b[0], -s);
@@ -304,19 +354,25 @@ public class BigRedAxis {
 		Object[] input_array = { startdot_w, startdot_b, startdot_r,
 				arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr
 				,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw
-				,arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw, startdot_r2,startdot_w2,
-				arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr, arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw, };
+				,arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw, startdot_r2,startdot_w2,startdot_b2,
+				arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr, arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw, arrow_b2_tr, arrow_b2_ar,arrow_b2_aw, arrow_b2_tw};
 		Object[] input_array_xy = {startdot_w,startdot_w2,arrow_w_tb,arrow_w_ab,arrow_w_ar,arrow_w_tr,arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr};
-		Object[] input_array_yz = {startdot_b ,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw};
+		Object[] input_array_yz = {startdot_b, startdot_b2,arrow_b_tr,arrow_b_aw,arrow_b_ar,arrow_b_tw,arrow_b2_tr,arrow_b2_aw,arrow_b2_ar,arrow_b2_tw};
 		Object[] input_array_xz = {startdot_r,startdot_r2, arrow_r_tb,arrow_r_ab,arrow_r_tw,arrow_r_aw,arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw};
-		Object[] input_array_tw = {arrow_b_tw, arrow_r_tw, arrow_r2_tw};
+		Object[] input_array_tw = {arrow_b_tw,arrow_b2_tw, arrow_r_tw, arrow_r2_tw};
 		Object[] input_array_tb = {arrow_w_tb,arrow_r_tb,arrow_w2_tb, arrow_r2_tb};
-		Object[] input_array_tr = {arrow_b_tr, arrow_w_tr, arrow_w2_tr};
-		Object[] input_array_aw = {arrow_b_aw,arrow_r_aw,arrow_r2_aw};
-		Object[] input_array_ar = {arrow_b_ar,arrow_w_ar,arrow_w2_ar};
+		Object[] input_array_tr = {arrow_b_tr,  arrow_b2_tr,arrow_w_tr, arrow_w2_tr};
+		Object[] input_array_aw = {arrow_b_aw,arrow_b2_aw,arrow_r_aw,arrow_r2_aw};
+		Object[] input_array_ar = {arrow_b_ar,arrow_b2_ar,arrow_w_ar,arrow_w2_ar};
 		Object[] input_array_ab = {arrow_w_ab,arrow_r_ab,arrow_w2_ab,arrow_r2_ab};
+		Object[] input_array_second_face_blue = { startdot_b2, arrow_b2_tr,arrow_b2_aw,arrow_b2_ar,arrow_b2_tw};
+		Object[] input_array_second_face_red = {startdot_r2, arrow_r2_tb,arrow_r2_ab,arrow_r2_tw,arrow_r2_aw};
+		Object[] input_array_second_face_white = {startdot_w2, arrow_w2_tb,arrow_w2_ab,arrow_w2_ar,arrow_w2_tr};
 		Object[] input_array_second_faces = {arrow_r2_tw, arrow_r2_tb, arrow_w2_tr, arrow_r2_ab, arrow_r2_aw, arrow_w2_ar,
-				arrow_w2_ab, arrow_w2_tb, startdot_w2, startdot_r2 };
+				arrow_w2_ab, arrow_w2_tb, startdot_w2, startdot_r2,arrow_b2_tw, arrow_b2_tr, arrow_w2_tr, arrow_b2_ar, arrow_b2_aw, arrow_w2_ar,
+				arrow_w2_ab, arrow_w2_tb, startdot_w2, startdot_b2,arrow_r2_tw, arrow_r2_tb, arrow_b2_tr, arrow_r2_ab, arrow_r2_aw, arrow_b2_ar,
+				arrow_b2_aw, arrow_b2_tw, startdot_b2, startdot_r2};
+		
 		
 		
 		
@@ -331,6 +387,9 @@ public class BigRedAxis {
 		awayW = new PolygonCollection(input_array_aw);
 		awayR = new PolygonCollection(input_array_ar);
 		awayB = new PolygonCollection(input_array_ab);
+		secondFacesBlue = new PolygonCollection(input_array_second_face_blue);
+		secondFacesWhite = new PolygonCollection(input_array_second_face_white);
+		secondFacesRed = new PolygonCollection(input_array_second_face_red);
 		secondFaces = new PolygonCollection(input_array_second_faces);
 
 	}
@@ -359,6 +418,15 @@ public class BigRedAxis {
 	}
 	public Polygon3D[] extractAB() {
 		return awayB.extract_polygons();
+	}
+	public Polygon3D[] extractSFB() {
+		return secondFacesBlue.extract_polygons();
+	}
+	public Polygon3D[] extractSFW() {
+		return secondFacesWhite.extract_polygons();
+	}
+	public Polygon3D[] extractSFR() {
+		return secondFacesRed.extract_polygons();
 	}
 	public Polygon3D[] extractSF() {
 		return secondFaces.extract_polygons();

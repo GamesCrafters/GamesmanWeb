@@ -19,9 +19,16 @@ public class MyShape extends Shape3D {
 	private Polygon3D[] towardR;
 	private Polygon3D[] awayB;
 	private Polygon3D[] towardB;
-	private Polygon3D[] secondFaces;
+	private Polygon3D[] secondFacesWhite;
+	private Polygon3D[] secondFacesRed;
+	private Polygon3D[] secondFacesBlue;
+	private Polygon3D[] secondFFacesBlue;
+	private Polygon3D[] secondFFacesRed;
+	private Polygon3D[] secondFFacesWhite;
 	private Polygon3D[] secondFacesFaces;
+	private Polygon3D[] secondFaces;
 	private boolean topdownview = true;
+	private CubeGen cube2;
 	
 	public ArrayList<Polygon3D> getPolygons() {
 		ArrayList<Polygon3D> rendered = new ArrayList<Polygon3D>();
@@ -43,13 +50,14 @@ public class MyShape extends Shape3D {
 	
 	public MyShape(double x, double y, double z, CubeGen cube) {
 		super(x, y, z);
+		cube2=cube;
 		current_position = new int[3];
 		current_position[0] = cube.start[0];
 		current_position[1] = cube.start[1];
 		current_position[2] = cube.start[2];
 		big_red_axis = new BigRedAxis(cube);
 		interior = new Interior(OskarsCube.solved_map, cube);
-		intSol = new InteriorSolutionPath(OskarsCube.solved_map, cube);
+		intSol = new InteriorSolutionPath(OskarsCube.solved_map, cube, OskarsCube.traveled_map, current_position);
 		OskarsCube.acheivable = interior.acheivable;
 		interior_array = interior.extract();
 		intSol_array = intSol.extract();
@@ -60,7 +68,10 @@ public class MyShape extends Shape3D {
 		towardB = big_red_axis.extractTB();
 		towardR = big_red_axis.extractTR();
 		secondFaces = big_red_axis.extractSF();
-
+		secondFacesBlue = big_red_axis.extractSFB();
+		secondFacesRed = big_red_axis.extractSFR();
+		secondFacesWhite = big_red_axis.extractSFW();
+		
 		Polygon3D[] red_axis_array = big_red_axis.extract();
 		for (int i = 0; i < red_axis_array.length; i++) {
 			if (red_axis_array[i] != null)
@@ -86,6 +97,9 @@ public class MyShape extends Shape3D {
 		}
 		cube_faces = new Faces(cube);
 		secondFacesFaces = cube_faces.extract_sf();
+		secondFFacesBlue = cube_faces.extract_sfb();
+		secondFFacesWhite = cube_faces.extract_sfw();
+		secondFFacesRed = cube_faces.extract_sfr();
 		Polygon3D[] faces = cube_faces.extract();
 		for (int i = 0; i < faces.length; i++) {
 			if (faces[i] != null)
@@ -99,19 +113,34 @@ public class MyShape extends Shape3D {
 		setTowardBVisible(false, false, false);
 		fireCanvasChange();
 	}
+	
 	public void setInteriorVisible(boolean visible) {
 		for (int i = 0; i < interior_array.length; i++)
 			if (interior_array[i] != null)
 				interior_array[i].setVisible(visible);
 	}
+	public void updateIntSol(boolean visible) {
+		if(visible) {
+		setIntSolVisible(false);
+		intSol = new InteriorSolutionPath(OskarsCube.solved_map, cube2, OskarsCube.traveled_map, current_position);
+		intSol_array = intSol.extract();
+		for (int i = 0; i < intSol_array.length; i++) {
+			if (intSol_array[i] != null) {
+				intSol_array[i].setVisible(false);
+				addPoly(intSol_array[i]);
+			}
+		}
+		setIntSolVisible(visible);
+		}
+	}
+	
 	public void setIntSolVisible(boolean visible) {
 		for (int i = 0; i < intSol_array.length; i++)
 			if (intSol_array[i] != null) {
 				intSol_array[i].setVisible(visible);
-				if (intSol_array[i].getFillColor() != Color.yellow) {
-					//intSol_array[i].setOpacity((float) .01);
+				if (intSol_array[i].getFillColor() == Color.LIGHT_GRAY) {
+					//intSol_array[i].setOpacity((float) .1);
 					intSol_array[i].setVisible(false);
-					
 				}
 				intSol_array[i].setBorderColor(Color.GRAY);
 			}
@@ -201,8 +230,50 @@ public class MyShape extends Shape3D {
 				secondFacesFaces[i].setVisible(visible);
 			}
 		}
+	}
+	public void setSecondFacesBlueVisible(boolean visible) {
 		
-	
+		
+		for (int i = 0; i < secondFacesBlue.length; i++) {
+			if (secondFacesBlue[i] != null) {
+				secondFacesBlue[i].setVisible(!visible);
+			}
+		}
+		for (int i=0; i< secondFFacesBlue.length; i++) {
+			if (secondFFacesBlue[i] != null) {
+				secondFFacesBlue[i].setVisible(!visible);
+			}
+		}
+	}
+	public void setSecondFacesRedVisible(boolean visible) {
+		
+		
+		for (int i = 0; i < secondFacesRed.length; i++) {
+			if (secondFacesRed[i] != null) {
+				secondFacesRed[i].setVisible(!visible);
+			}
+		}
+		for (int i=0; i< secondFFacesRed.length; i++) {
+			if (secondFFacesRed[i] != null) {
+				secondFFacesRed[i].setVisible(!visible);
+			}
+		}
+	}
+	public void setSecondFacesWhiteVisible(boolean visible) {
+		
+		
+		//Turns off the BigRedAxis 2nd white face components
+		for (int i = 0; i < secondFacesWhite.length; i++) {
+			if (secondFacesWhite[i] != null) {
+				secondFacesWhite[i].setVisible(!visible);
+			}
+		}
+		//Turns off the 2nd White board
+		for (int i=0; i< secondFFacesWhite.length; i++) {
+			if (secondFFacesWhite[i] != null) {
+				secondFFacesWhite[i].setVisible(!visible);
+			}
+		}
 	}
 
 }

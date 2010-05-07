@@ -84,14 +84,11 @@ class Solver {
 	/* SOLVER CODE BEGINS HERE */
 	public Solver(CubeGen cube) {
 		
-		//System.out.println("Solving");
 		
 		boardsize = cube.boardsize;
-		
 		blocked_xz_face = cube.Blue;
 		blocked_xy_face = cube.Red;
 		blocked_yz_face = cube.White;
-		
 		seen = new boolean[cube.boardsize][cube.boardsize][cube.boardsize];
 		int a=0, b=0, c=0;
 		for (a =0; a < boardsize; a++) {
@@ -101,12 +98,8 @@ class Solver {
 				}
 			}
 		}
-		
 		start = cube.start;
 		end = cube.end;
-		
-		
-		
 		move_map = new HashMap<Integer, Node>();
 		queue = new LinkedList<Node>();
 		Node goal_node = new Node(end, -1, 0); // we initialize at -1 so that the
@@ -242,6 +235,7 @@ class Solver {
 	private void resolvin_thang(CubeGen cube, HashMap<Integer, Boolean> seen_map) {
 		//this time we already have the movemap but need to fix the bushiness values
 		int bushiness=0;
+		int branchturns=0;
 		int turns = 0;
 		int planeturns =0;
 		int[] cdirection = {0,0,0};
@@ -274,7 +268,9 @@ class Solver {
 						//System.out.println("turns" + cdirection[0] + cdirection[1]+ cdirection[2] + legal_move[0] + legal_move[1] + legal_move[2] );
 						turns +=1;
 						cdirection = legal_move;
-						
+						if(head.branches>=3) {
+							branchturns +=1;
+						}
 						if((Math.abs(legal_move[0]) == Math.abs(plane1[0]) && Math.abs(legal_move[1]) == Math.abs(plane1[1])
 								&& Math.abs(plane1[2]) == Math.abs(legal_move[2]))) {
 						} else if ((Math.abs(legal_move[0]) == Math.abs(plane2[0]) && Math.abs(legal_move[1]) == Math.abs(plane2[1])
@@ -308,6 +304,7 @@ class Solver {
 		cube.bushiness = bushiness;
 		cube.turns = turns;
 		cube.planeTurns = planeturns;
+		cube.branchturns = branchturns;
 	}
 
 	private void solvin_thang(CubeGen cube) {
