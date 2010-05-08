@@ -582,10 +582,12 @@ $(function() {
    y.start();
 });
 
-function Y(centerRows, outerRows, options) {
-    var width = centerRows;
-    var height = outerRows;
-    Y.superClass.constructor.call(this, 'y', width, height, options);
+function Y(centerRows, outerRows, config) {
+    config = config || {};
+    config.options = config.options || {};
+    config.options.centerRows = centerRows;
+    config.options.outerRows = outerRows;
+    Y.superClass.constructor.call(this, 'y', 0, 0, config);
   
     // Register event listeners to hook into the framework.
     this.addEventListener('nextvaluesreceived',
