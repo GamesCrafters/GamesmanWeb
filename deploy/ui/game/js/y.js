@@ -611,15 +611,15 @@ Y.prototype.start = function(team) {
 Y.prototype.getDefaultBoardString = function() {
     var ret = "";
     for(var c in centers) {
-	if(centers[c].whoClicked == "P1") {
-	    ret += "X";
-	} else if(centers[c].whoClicked == "P2") {
-	    ret += "O";
-	} else {
-	    ret += " ";
-	}
+		if(centers[c].whoClicked == "P1") {
+			ret += "X";
+		} else if(centers[c].whoClicked == "P2") {
+			ret += "O";
+		} else {
+			ret += " ";
+		}
     }
-    //console.log('getDefaultBoardString: "' + ret + '"');
+    console.log('getDefaultBoardString: "' + ret + '"');
     return ret;
 };
 
@@ -629,13 +629,13 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 };
 Y.prototype.showMoveValues = function(moves) {
     //console.log("I should show move values", moves);
-    SHOW_MOVE_VALUES = true;
+    SHOW_MOVE_VALUES = false;
 	clearEverything();
 	drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
     //console.log("I should hide move values");
-    SHOW_MOVE_VALUES = false;
+    SHOW_MOVE_VALUES = true;
 	drawEverything();
 	drawEverything();
 };
