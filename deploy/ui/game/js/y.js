@@ -611,6 +611,7 @@ Y.prototype.start = function(team) {
 Y.prototype.getDefaultBoardString = function() {
     var ret = "";
     for(var c in centers) {
+		console.log("centers[c].whoClicked: " + centers[c].whoClicked + ", " + c);
 		if(centers[c].whoClicked == "P1") {
 			ret += "X";
 		} else if(centers[c].whoClicked == "P2") {
@@ -618,6 +619,7 @@ Y.prototype.getDefaultBoardString = function() {
 		} else {
 			ret += " ";
 		}
+		console.log('ret: "'+ret+'"');
     }
     console.log('getDefaultBoardString: "' + ret + '"');
     return ret;
