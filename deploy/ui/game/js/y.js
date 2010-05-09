@@ -587,6 +587,7 @@ $(function() {
    // draw the edges, and then the circles over them
    drawEdgesFromList(edges);
    drawCircles();
+   console.log("directly before y.start()");
    y.start();
 });
 
