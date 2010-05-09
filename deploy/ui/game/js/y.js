@@ -465,6 +465,7 @@ var handleClick = function(e) {
     }*/
     clearEverything();
     drawEverything();
+	y.doMove(y.getDefaultBoardString());
 };
 var clearEverything = function() {
     elem = document.getElementById(canvasID);
