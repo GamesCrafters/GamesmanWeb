@@ -201,14 +201,16 @@ var drawCircles = function() {
   
     for(var i in centers) {
 		var fillColor = null;
-		if(SHOW_MOVE_VALUES && !centers[i].clicked) {
+		if(SHOW_MOVE_VALUES == true && !centers[i].clicked) {
 			fillColor = "rgba(" + BOARD_STARTING_COLOR.red + "," +
 								BOARD_STARTING_COLOR.green+ "," +
 								BOARD_STARTING_COLOR.blue+ "," +
+								centers[i].alpha+")";
 		} else {
 			fillColor = "rgba(" + Math.floor(centers[i].red) + "," +
 							Math.floor(centers[i].green)+ "," +
 							Math.floor(centers[i].blue) + "," +
+							centers[i].alpha+")";
 		}
 		centers[i].alpha+")";
 		context.fillStyle = fillColor;
