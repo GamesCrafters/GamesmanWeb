@@ -70,8 +70,7 @@ var makeBoard = function (width, height) {
     //console.log('canvas set to', 'width', width, 'height', height);
     newCanvas.setAttribute("onclick", "handleClick(event)");
     div.appendChild(newCanvas);
-	BOARD_OBJECT = $(newCanvas);
-    //y.board = $(newCanvas);  // hack to access the global Y game object
+    y.board = $(newCanvas);  // hack to access the global Y game object
 };
 var makeEdges = function() {
     for(var i in centers) {
@@ -573,8 +572,7 @@ $(function() {
    }
    EDGE_WIDTH = Math.ceil(circleRad/3.0);
   
-   // Instantiate the Y game object
-   y = new Y(centerRows, outerRows);
+  
 
    // create the centers and edges
    createHex(canvasWidth/2,
@@ -582,9 +580,12 @@ $(function() {
 	     centerRows, outerRows);
    makeEdges();
   
+   // Instantiate the Y game object
+   y = new Y(centerRows, outerRows);
+  
    // create the html canvas
    makeBoard(canvasWidth, canvasHeight);
-	y.board = BOARD_OBJECT;
+  
    // draw the edges, and then the circles over them
    drawEdgesFromList(edges);
    drawCircles();
@@ -694,7 +695,6 @@ var EDGE_WIDTH = 4;
 var P1TURN = true;
 var P2TURN = false;
 var SHOW_MOVE_VALUES = false;
-var BOARD_OBJECT = null;
 
 var canvasID = "board";
 var div = null;
