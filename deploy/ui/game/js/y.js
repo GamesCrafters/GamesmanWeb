@@ -200,19 +200,25 @@ var drawCircles = function() {
     if (!context || !context.putImageData) { return; }
   
     for(var i in centers) {
-	var fillColor = "rgba(" + Math.floor(centers[i].red) + "," +
-	                Math.floor(centers[i].green)+ "," +
-	                Math.floor(centers[i].blue) + "," +
-	centers[i].alpha+")";
-	context.fillStyle = fillColor;
-	context.beginPath();
-	context.arc(centers[i].x, centers[i].y, centers[i].rad, 0,
-		    Math.PI * 2, true);
-	context.closePath();
-	context.fill();
+		var fillColor = null;
+		if(SHOW_MOVE_VALUES && !centers[i].clicked) {
+			fillColor = "rgba(" + BOARD_STARTING_COLOR.red + "," +
+								BOARD_STARTING_COLOR.green+ "," +
+								BOARD_STARTING_COLOR.blue+ "," +
+		} else {
+			fillColor = "rgba(" + Math.floor(centers[i].red) + "," +
+							Math.floor(centers[i].green)+ "," +
+							Math.floor(centers[i].blue) + "," +
+		}
+		centers[i].alpha+")";
+		context.fillStyle = fillColor;
+		context.beginPath();
+		context.arc(centers[i].x, centers[i].y, centers[i].rad, 0, Math.PI * 2, true);
+		context.closePath();
+		context.fill();
     }
 };
-var drawCircle = function(center, rad) {
+/*var drawCircle = function(center, rad) {
     //console.log("drawCircle", 'c.red', center.red, 'c.green', center.green, 'c.blue', center.blue);
     elem = document.getElementById(canvasID);
     if (!elem || !elem.getContext) { return; }
@@ -232,7 +238,7 @@ var drawCircle = function(center, rad) {
     context.arc(center.x, center.y, rad, 0, Math.PI*2, true);
     context.closePath();
     context.fill();
-};
+};*/
 var drawEdges = function(circleSet) {
     elem = document.getElementById(canvasID);
     if (!elem || !elem.getContext) { return; }
@@ -264,14 +270,14 @@ var drawEdgesFromList = function(edgesIn) {
     if (!context || !context.putImageData) { return; }
   
     for(var e in edgesIn) {
-	context.beginPath();
-	context.lineWidth = EDGE_WIDTH;
-	context.strokeStyle = 'rgb('+edgesIn[e].red+', '+
-                              edgesIn[e].green+', '+
-	                      edgesIn[e].blue+')';
-	context.moveTo(edgesIn[e].c1.x, edgesIn[e].c1.y);
-	context.lineTo(edgesIn[e].c2.x, edgesIn[e].c2.y);
-	context.stroke();
+		context.beginPath();
+		context.lineWidth = EDGE_WIDTH;
+		context.strokeStyle = 'rgb('+edgesIn[e].red+', '+
+								edgesIn[e].green+', '+
+								edgesIn[e].blue+')';
+		context.moveTo(edgesIn[e].c1.x, edgesIn[e].c1.y);
+		context.lineTo(edgesIn[e].c2.x, edgesIn[e].c2.y);
+		context.stroke();
     }
   
     //console.log("drew edges from list");
@@ -422,7 +428,7 @@ var handleClick = function(e) {
 	    c.clicked = true;
 	}
 	c.rad = circleRad + circleRadExtra;
-	drawCircle(c, circleRad + circleRadExtra);
+	//drawCircle(c, circleRad + circleRadExtra);
     
 	var temp = getMovesFromFakeServer();
 	var winningMoves = temp.winningMoves;
@@ -432,7 +438,7 @@ var handleClick = function(e) {
 	    winningMoves[i].red = WINNING_MOVE_COLOR.red;
 	    winningMoves[i].green = WINNING_MOVE_COLOR.green;
 	    winningMoves[i].blue = WINNING_MOVE_COLOR.blue;
-	    drawCircle(winningMoves[i], circleRad);
+	    //drawCircle(winningMoves[i], circleRad);
 	    //console.log('winningMove', winningMoves[i]);
 	}
 	for(var i in losingMoves) {
@@ -440,7 +446,7 @@ var handleClick = function(e) {
 	    losingMoves[i].red = LOSING_MOVE_COLOR.red;
 	    losingMoves[i].green = LOSING_MOVE_COLOR.green;
 	    losingMoves[i].blue = LOSING_MOVE_COLOR.blue;
-	    drawCircle(losingMoves[i], circleRad);
+	    //drawCircle(losingMoves[i], circleRad);
 	    //console.log('losingMove', losingMoves[i]);
 	}
     }
@@ -621,11 +627,15 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 };
 Y.prototype.showMoveValues = function(moves) {
     //console.log("I should show move values", moves);
-    var a = 1;
+    SHOW_MOVE_VALUES = true;
+	clearEverything();
+	drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
     //console.log("I should hide move values");
-    var a = 1;
+    SHOW_MOVE_VALUES = false;
+	drawEverything();
+	drawEverything();
 };
 
 
@@ -677,6 +687,7 @@ var HIGHLIGHTED_COLOR = {red: 0, green: 0, blue: 0};
 var EDGE_WIDTH = 4;
 var P1TURN = true;
 var P2TURN = false;
+var SHOW_MOVE_VALUES = false;
 
 var canvasID = "board";
 var div = null;
