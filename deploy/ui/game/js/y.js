@@ -74,34 +74,33 @@ var makeBoard = function (width, height) {
 };
 var makeEdges = function() {
     for(var i in centers) {
-	var edgesAndDists = new Array();
-	for(var j in centers) {
-	    if(centers[i].id!=centers[j].id) {
-		edgesAndDists.push({dist: mag(centers[i], centers[j]), c1: centers[i], c2: centers[j]});
-	    }
-	}
-	edgesAndDists.sort(compareCenters);
-	var count = 6;
-	if(centers[i].fringe) {
-	    count = 4;
-	}
-	if(centers[i].outerCorner) {
-	    count = 3;
-	}
-	if(centers[i].innerCorner) {
-	    count = 5;
-	}
-	if(centers[i].fringe && centers[i].innerCorner) {
-	    count = 2;
-	}
-	centers[i].edgeCount = count;
-	for(var k = 0; k < count; k++) {
-	    if(k < edgesAndDists.length) {
-		var ne =  new Edge(centers[i], edgesAndDists[k].c2, EDGE_STARTING_COLOR.red, EDGE_STARTING_COLOR.green, EDGE_STARTING_COLOR.blue, 255);
-		//addEdgeToCenter(centers[i], ne);
-		edges.push(ne);
-	    }
-	}
+		var edgesAndDists = new Array();
+		for(var j in centers) {
+			if(centers[i].id!=centers[j].id) {
+				edgesAndDists.push({dist: mag(centers[i], centers[j]), c1: centers[i], c2: centers[j]});
+			}
+		}
+		edgesAndDists.sort(compareCenters);
+		var count = 6;
+		if(centers[i].fringe) {
+			count = 4;
+		}
+		if(centers[i].outerCorner) {
+			count = 3;
+		}
+		if(centers[i].innerCorner) {
+			count = 5;
+		}
+		if(centers[i].fringe && centers[i].innerCorner) {
+			count = 2;
+		}
+		centers[i].edgeCount = count;
+		for(var k = 0; k < count; k++) {
+			if(k < edgesAndDists.length) {
+				var ne =  new Edge(centers[i], edgesAndDists[k].c2, EDGE_STARTING_COLOR.red, EDGE_STARTING_COLOR.green, EDGE_STARTING_COLOR.blue, 255);
+				edges.push(ne);
+			}
+		}
     
     }
 };
@@ -614,14 +613,15 @@ Y.prototype.start = function(team) {
 
 Y.prototype.getDefaultBoardString = function() {
     var ret = "";
+	console.log('centers.length: ', centers.length);
     for(var c in centers) {
 		//console.log("centers[c].whoClicked: " + centers[c].whoClicked + ", " + c);
 		if(centers[c].whoClicked == "P1") {
-			ret += "X";
-		// } else if(centers[c].whoClicked == "P2") {
-			ret += "O";
+			ret = ret + "X";
+		} else if(centers[c].whoClicked == "P2") {
+			ret = ret + "O";
 		} else {
-			ret += "%20";
+			ret = ret + " ";
 		}
 		//console.log('ret: "'+ret+'"');
     }
