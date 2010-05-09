@@ -618,15 +618,15 @@ Y.prototype.getDefaultBoardString = function() {
 		//console.log("centers[c].whoClicked: " + centers[c].whoClicked + ", " + c);
 		if(centers[c].whoClicked == "P1") {
 			ret += "X";
-		} else if(centers[c].whoClicked == "P2") {
+		// } else if(centers[c].whoClicked == "P2") {
 			ret += "O";
 		} else {
-			ret += " ";
+			ret += "%20";
 		}
 		//console.log('ret: "'+ret+'"');
     }
     console.log('getDefaultBoardString: "' + ret + '"');
-	ret = "X                 ";
+	//ret = "X                 ";
     return ret;
 };
 
@@ -636,13 +636,13 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 };
 Y.prototype.showMoveValues = function(moves) {
     //console.log("I should show move values", moves);
-    SHOW_MOVE_VALUES = false;
+    SHOW_MOVE_VALUES = true;
 	clearEverything();
 	drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
     //console.log("I should hide move values");
-    SHOW_MOVE_VALUES = true;
+    SHOW_MOVE_VALUES = false;
 	drawEverything();
 	drawEverything();
 };
