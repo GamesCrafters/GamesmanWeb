@@ -21,13 +21,14 @@ var addEdgeToCenter = function (c1, newEdge) {
     }
     c1.edges.push(newEdge);
 };
-var Point = function(setx, sety, setred, setgreen, setblue, setalpha){
+var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
     this.x = setx;
     this.y = sety;
     this.red = setred;
     this.green = setgreen;
     this.blue = setblue;
     this.alpha = setalpha;
+	this.index = setindex;
     this.clicked = false;
     this.fringe = false;
     this.outerCorner = false;
@@ -129,11 +130,12 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
 	var id = x1.toFixed(3) + "-"+y1.toFixed(3);
 	//console.log(id);
   
-	centers[id] = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1);
+	var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, centers.length);
+	centers.push(tempC);
 	if(lastRow) {
-	    centers[id].fringe = true;
+	    tempC.fringe = true;
 	    if(ptCount==0) {
-		centers[id].outerCorner = true;
+			tempC.outerCorner = true;
 	    }
 	}
   
@@ -142,13 +144,14 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
 };
 var drawLine = function(start, end, segments, lastRow) {
     if(start.x == end.x && start.y == end.y) {
-	var id = start.x.toFixed(3) + "-" + start.y.toFixed(3);
-	centers[id] = new Point(start.x, start.y, BOARD_STARTING_COLOR.red, 
-				BOARD_STARTING_COLOR.green,
-				BOARD_STARTING_COLOR.blue, 1, id);
-	centers[id].innerCorner = true;
-	centers[id].fringe = true;
-	return;
+		var id = start.x.toFixed(3) + "-" + start.y.toFixed(3);
+		var tempC = new Point(start.x, start.y, BOARD_STARTING_COLOR.red, 
+					BOARD_STARTING_COLOR.green,
+					BOARD_STARTING_COLOR.blue, 1, id, centers.length);
+		tempC.innerCorner = true;
+		tempC.fringe = true;
+		centers.push(tempC);
+		return;
     }
     //console.log('start', "("+start.x+", "+start.y+")", 'end', "("+end.x+", "+end.y+")", "segments", segments);
     var vMag = Math.sqrt(Math.pow(start.x - end.x, 2) +
@@ -157,24 +160,25 @@ var drawLine = function(start, end, segments, lastRow) {
     var dirMag = Math.sqrt(Math.pow(dir.x, 2)+Math.pow(dir.y, 2));
     dir = {x: dir.x / dirMag, y: dir.y / dirMag };
     for(var i = 0; i <= segments; i++ ) {
-	var setX = start.x + dir.x * i * vMag / segments;
-	var setY = start.y + dir.y * i * vMag / segments;
-	var id  = setX.toFixed(3) + "-" + setY.toFixed(3);
-	//console.log('i ' + i, 'id', id);
-	centers[id] = new Point(setX, setY, BOARD_STARTING_COLOR.red,
-				BOARD_STARTING_COLOR.green,
-				BOARD_STARTING_COLOR.blue, 1);
-	if(lastRow) {
-	    centers[id].fringe = true;
-	}
-	if((i==0) || (i==segments)) {
-	    centers[id].fringe = true;
-	}
-	//centers[id].innerCorner = true;
-	if(lastRow && ((i==0)||(i == segments))) {
-	    centers[id].innerCorner = true;
-	    //console.log('innerCorner set to true');
-	}
+		var setX = start.x + dir.x * i * vMag / segments;
+		var setY = start.y + dir.y * i * vMag / segments;
+		var id  = setX.toFixed(3) + "-" + setY.toFixed(3);
+		//console.log('i ' + i, 'id', id);
+		var tempC = new Point(setX, setY, BOARD_STARTING_COLOR.red,
+					BOARD_STARTING_COLOR.green,
+					BOARD_STARTING_COLOR.blue, 1);
+		if(lastRow) {
+			tempC.fringe = true;
+		}
+		if((i==0) || (i==segments)) {
+			tempC.fringe = true;
+		}
+		//centers[id].innerCorner = true;
+		if(lastRow && ((i==0)||(i == segments))) {
+			tempC.innerCorner = true;
+			//console.log('innerCorner set to true');
+		}
+		centers.push(tempC);
     }
 };
 var gup = function(name) {
