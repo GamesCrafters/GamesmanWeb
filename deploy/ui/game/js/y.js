@@ -326,9 +326,9 @@ var createHex = function(x, y, depthInside, depthOutside) {
 		lastRow = false;
     }*/
 	for(var i = 0; i <= depthInside; i++) {
-		var start = {x: x + v0.x * depthInside, y: y + v0.y * depthInside};
-		var end   = {x: x + v1.x * depthInside, y: y + v1.y * depthInside};
-		drawLine(start, end, depthInside, (i==depthInside));
+		var start = {x: x + v0.x * i, y: y + v0.y * i};
+		var end   = {x: x + v1.x * i, y: y + v1.y * i};
+		drawLine(start, end, i, (i==depthInside));
 	}
   
     v0 = {x: 0, y: - 1};
