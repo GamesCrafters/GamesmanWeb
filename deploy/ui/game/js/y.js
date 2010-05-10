@@ -313,18 +313,6 @@ var createHex = function(x, y, depthInside, depthOutside) {
     var dir = {x: (v1.x - v0.x), y: v1.y - v0.y}
     var mag = Math.sqrt(Math.pow(dir.x, 2)+Math.pow(dir.y, 2));
     dir = {x: dir.x / mag, y: dir.y / mag };
-    var lastRow = true;
-    /*while(depthInside >= 0) {
-		var start = {x: x + v0.x * depthInside, y: y + v0.y * depthInside};
-		var end   = {x: x + v1.x * depthInside, y: y + v1.y * depthInside};
-		var len   = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2)) / depthInside;
-		//console.log( "("+start.x + ", "+start.y+")" +  " ("+end.x+", "+end.y+")" + ' depthInside: ' + depthInside);
-		//console.log('depthInside', depthInside==0);
-		drawLine(start, end, depthInside, lastRow);
-		//console.log('row: ', depthInside );
-		depthInside--;
-		lastRow = false;
-    }*/
 	for(var i = 0; i <= depthInside; i++) {
 		var start = {x: x + v0.x * i, y: y + v0.y * i};
 		var end   = {x: x + v1.x * i, y: y + v1.y * i};
@@ -355,19 +343,13 @@ var createHex = function(x, y, depthInside, depthOutside) {
     var outsideCounter =  1;
     var rowSpacingCopy = rowSpacing;
     while(outsideCounter <= depthOutside) {
-	var p0 = {x: x + v0.x * rowSpacingCopy * outsideCounter,
-		  y: y + v0.y * rowSpacingCopy * outsideCounter };
-	var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * outsideCounter,
-		  y: llCorner.y - v1.y * rowSpacingCopy * outsideCounter};
-	var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * outsideCounter,
-		  y: lrCorner.y - v2.y * rowSpacingCopy * outsideCounter};
-	drawArc(outsideLeftCorner, p2, p0,  outsideCounter+depthInsideCopy,
-		7 * Math.PI /6, outsideCounter == depthOutside);
-	drawArc(outsideRightCorner, p1, p0,  outsideCounter+depthInsideCopy,
-		-Math.PI/6, outsideCounter == depthOutside);
-	drawArc(outsideTopCorner, p2, p1,  outsideCounter+depthInsideCopy,
-		Math.PI/2, outsideCounter == depthOutside);
-	outsideCounter++;
+		var p0 = {x: x + v0.x * rowSpacingCopy * outsideCounter, y: y + v0.y * rowSpacingCopy * outsideCounter };
+		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * outsideCounter, y: llCorner.y - v1.y * rowSpacingCopy * outsideCounter};
+		var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * outsideCounter, y: lrCorner.y - v2.y * rowSpacingCopy * outsideCounter};
+		drawArc(outsideLeftCorner, p0, p2,  outsideCounter+depthInsideCopy, 7 * Math.PI /6, outsideCounter == depthOutside);
+		drawArc(outsideRightCorner, p0, p1,  outsideCounter+depthInsideCopy, -Math.PI/6, outsideCounter == depthOutside);
+		drawArc(outsideTopCorner, p1, p2,  outsideCounter+depthInsideCopy, Math.PI/2, outsideCounter == depthOutside);
+		outsideCounter++;
     }
 };
 var mag = function(v1, v2) {
