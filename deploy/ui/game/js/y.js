@@ -116,32 +116,51 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
     var a1 = Math.atan2(p1.x - center.x, p1.y - center.y);
     var a2 = Math.atan2(p2.x - center.x, p2.y - center.y);
     if(a2 < a1) {
-	temp = a1;
-	a1 = a2;
-	a2 = temp;
+		temp = a1;
+		a1 = a2;
+		a2 = temp;
     } // a1 is smaller than a2
     var totalPoints = ptCount;
     ptCount--;
     var radius = mag(center,p1);
-    while(ptCount >= 0) {
-	var theta = a1 + (a2-a1)/totalPoints*ptCount + offset;
-	var x1 = Math.cos(theta)*radius + center.x;
-	var y1 = Math.sin(theta)*radius + center.y;
-	var id = x1.toFixed(3) + "-"+y1.toFixed(3);
-	//console.log(id);
-  
-	var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
-	centers.push(tempC);
-	CENTER_INDEX+=1;
-	if(lastRow) {
-	    tempC.fringe = true;
-	    if(ptCount==0) {
-			tempC.outerCorner = true;
-	    }
+    /*while(ptCount >= 0) {
+		var theta = a1 + (a2-a1)/totalPoints*ptCount + offset;
+		var x1 = Math.cos(theta)*radius + center.x;
+		var y1 = Math.sin(theta)*radius + center.y;
+		var id = x1.toFixed(3) + "-"+y1.toFixed(3);
+		//console.log(id);
+		
+		var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
+		centers.push(tempC);
+		CENTER_INDEX+=1;
+		if(lastRow) {
+			tempC.fringe = true;
+			if(ptCount==0) {
+				tempC.outerCorner = true;
+			}
+		}
+		
+		ptCount--;
+	}*/
+    
+	for(var i = 0; i <= ptCount; i++) {
+		var theta = a1 + (a2-a1)/totalPoints*i + offset;
+		var x1 = Math.cos(theta)*radius + center.x;
+		var y1 = Math.sin(theta)*radius + center.y;
+		var id = x1.toFixed(3) + "-"+y1.toFixed(3);
+		//console.log(id);
+		
+		var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
+		centers.push(tempC);
+		CENTER_INDEX+=1;
+		if(lastRow) {
+			tempC.fringe = true;
+			if(i==0) {
+				tempC.outerCorner = true;
+			}
+		}
 	}
-  
-	ptCount--;
-    }
+
 };
 var drawLine = function(start, end, segments, lastRow) {
     if(start.x == end.x && start.y == end.y) {
