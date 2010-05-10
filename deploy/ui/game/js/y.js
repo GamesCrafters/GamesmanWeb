@@ -432,7 +432,7 @@ var handleClick = function(e) {
 			P2TURN = true;
 			c.clicked = true;
 		}
-		else if(P2TURN==true) {
+		/*else if(P2TURN==true) {
 			c.red = P2COLOR.red;
 			c.green = P2COLOR.green;
 			c.blue = P2COLOR.blue;
@@ -452,6 +452,7 @@ var handleClick = function(e) {
 			c.clicked = true;
 		}
 		c.rad = circleRad + circleRadExtra;
+		*/
 		//drawCircle(c, circleRad + circleRadExtra);
 		
 		/*var temp = getMovesFromFakeServer();
@@ -496,7 +497,7 @@ var drawEverything = function() {
     drawEdgesFromList(edges);
     drawCircles();
 };
-var getMovesFromFakeServer = function() {
+/*var getMovesFromFakeServer = function() {
     var winning = new Array();
     var losing  = new Array();
     for(i in centers) {
@@ -510,7 +511,7 @@ var getMovesFromFakeServer = function() {
 	}
     }
     return {winningMoves:winning, losingMoves:losing};
-};
+};*/
 
 //--------------------------------------------------------------------------
 // Initial Setup
@@ -645,16 +646,18 @@ Y.prototype.getDefaultBoardString = function() {
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
     console.log("I got move values! ", moveValues);
+	var winningMove = new Array();
 	if(SHOW_MOVE_VALUES==true) {
-		for(var move in moveValues) {
-			centerIndex = move.move.toString();
+		for(var m in moveValues) {
+			centerIndex = moveValues[m].move.toString();
 			for(var i in centers) {
 				if(centers[i].index == centerIndex) {
-					if(move.value=="win" && !centers[i].clicked) {
+					if(moveValues[m].value=="win" && !centers[i].clicked) {
 						centers[i].red = WINNING_MOVE_COLOR.red;
 						centers[i].green = WINNING_MOVE_COLOR.green;
 						centers[i].blue = WINNING_MOVE_COLOR.blue;
-					} else if(move.value=="lose" && !centers[i].clicked) {
+						winningMoves.push(moveValues[m]);
+					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
 						centers[i].red = LOSING_MOVE_COLOR.red;
 						centers[i].green = LOSING_MOVE_COLOR.green;
 						centers[i].blue = LOSING_MOVE_COLOR.blue;
