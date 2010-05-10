@@ -314,17 +314,22 @@ var createHex = function(x, y, depthInside, depthOutside) {
     var mag = Math.sqrt(Math.pow(dir.x, 2)+Math.pow(dir.y, 2));
     dir = {x: dir.x / mag, y: dir.y / mag };
     var lastRow = true;
-    while(depthInside >= 0) {
-	var start = {x: x + v0.x * depthInside, y: y + v0.y * depthInside};
-	var end   = {x: x + v1.x * depthInside, y: y + v1.y * depthInside};
-	var len   = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2)) / depthInside;
-	//console.log( "("+start.x + ", "+start.y+")" +  " ("+end.x+", "+end.y+")" + ' depthInside: ' + depthInside);
-	//console.log('depthInside', depthInside==0);
-	drawLine(start, end, depthInside, lastRow);
-	//console.log('row: ', depthInside );
-	depthInside--;
-	lastRow = false;
-    }
+    /*while(depthInside >= 0) {
+		var start = {x: x + v0.x * depthInside, y: y + v0.y * depthInside};
+		var end   = {x: x + v1.x * depthInside, y: y + v1.y * depthInside};
+		var len   = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2)) / depthInside;
+		//console.log( "("+start.x + ", "+start.y+")" +  " ("+end.x+", "+end.y+")" + ' depthInside: ' + depthInside);
+		//console.log('depthInside', depthInside==0);
+		drawLine(start, end, depthInside, lastRow);
+		//console.log('row: ', depthInside );
+		depthInside--;
+		lastRow = false;
+    }*/
+	for(var i = 0; i <= depthInside; i++) {
+		var start = {x: x + v0.x * depthInside, y: y + v0.y * depthInside};
+		var end   = {x: x + v1.x * depthInside, y: y + v1.y * depthInside};
+		drawLine(start, end, depthInside, (i==depthInside));
+	}
   
     v0 = {x: 0, y: - 1};
     v1 = {x: -triangleWidth*3/4, y: triangleHeight/2}
