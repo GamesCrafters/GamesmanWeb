@@ -13,20 +13,20 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	this.eastArrowIDIdentifier = "EA"; 
 	this.westArrowIDIdentifier = "WA"; 
 	
-	this.orangeSpaceAddress = "grayspace.jpg";
-	this.greenSpaceAddress = "redstart.jpg";
-	this.purpleSpaceAddress = "bluestart.jpg";
-	this.greenGoalAddress = "redgoal1.jpg";
-	this.purpleGoalAddress = "bluegoal1.jpg";
-	this.transparentAddress = "Transparent.png";  
+	this.orangeSpaceAddress = "game/images/dino/grayspace.jpg";
+	this.greenSpaceAddress = "game/images/dino/redstart.jpg";
+	this.purpleSpaceAddress = "game/images/dino/bluestart.jpg";
+	this.greenGoalAddress = "game/images/dino/redgoal1.jpg";
+	this.purpleGoalAddress = "game/images/dino/bluegoal1.jpg";
+	this.transparentAddress = "game/images/dino/Transparent.png";  
 	
-	this.northArrowAddress = "suparrow.png"; 
-	this.eastArrowAddress = "srightarrow.png"; 
-	this.southArrowAddress = "sdownarrow.png";
-	this.westArrowAddress = "sleftarrow.png";
+	this.northArrowAddress = "game/images/dino/suparrow.png"; 
+	this.eastArrowAddress = "game/images/dino/srightarrow.png"; 
+	this.southArrowAddress = "game/images/dino/sdownarrow.png";
+	this.westArrowAddress = "game/images/dino/sleftarrow.png";
 
-	this.purplePieceAddress = "bluepiecelast.png";
-	this.greenPieceAddress = "redpiecelast.png";
+	this.purplePieceAddress = "game/images/dino/bluepiecelast.png";
+	this.greenPieceAddress = "game/images/dino/redpiecelast.png";
 	
 	this.transparentLocation = "T"; 
 	this.purpleGoalLocation = "PG";
@@ -158,11 +158,11 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	}
 	
 	function drawBoard() {
+
 		var greenPieceCount = 0;
 		var purplePieceCount = 0; 
 		for (var i = 0; i < this.boardWidth; i++){
 				var nextRow = document.createElement("tr");
-				
 				$('#board').append(nextRow);
 				for (var j = 0; j < this.boardWidth; j++){
 					var nextCell = document.createElement("td");
