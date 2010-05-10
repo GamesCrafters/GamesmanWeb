@@ -671,9 +671,10 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 		drawEverything();
 	} else {
 		for(var m in moveValues) {
-			if(moveValues[m].value=="win" && !centers[i].clicked) {
+			var centerIndex = parseInt(moveValues[m].move);
+			if(moveValues[m].value=="win" && !centers[centerIndex].clicked) {
 				winningMoves.push(moveValues[m]);
-			} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
+			} else if(moveValues[m].value=="lose" && !centers[centerIndex].clicked) {
 				losingMoves.push(moveValues[m]);
 			}
 		}
