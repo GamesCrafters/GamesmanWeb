@@ -361,7 +361,7 @@ var createHex = function(x, y, depthInside, depthOutside) {
     //console.log('lrCorner', "("+lrCorner.x+","+lrCorner.y+")")
     var outsideCounter =  1;
     var rowSpacingCopy = rowSpacing;
-    while(outsideCounter <= depthOutside) {
+    /*while(outsideCounter <= depthOutside) {
 		var p0 = {x: x + v0.x * rowSpacingCopy * outsideCounter, y: y + v0.y * rowSpacingCopy * outsideCounter };
 		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * outsideCounter, y: llCorner.y - v1.y * rowSpacingCopy * outsideCounter};
 		var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * outsideCounter, y: lrCorner.y - v2.y * rowSpacingCopy * outsideCounter};
@@ -370,6 +370,14 @@ var createHex = function(x, y, depthInside, depthOutside) {
 		drawArc(outsideRightCorner, p0, p1,  outsideCounter+depthInsideCopy, -Math.PI/6, outsideCounter == depthOutside);
 		
 		outsideCounter++;
+    }*/
+	for(var i = depthOutside; i >= 1; i--) {
+		var p0 = {x: x + v0.x * rowSpacingCopy * i, y: y + v0.y * rowSpacingCopy * i };
+		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * i, y: llCorner.y - v1.y * rowSpacingCopy * i};
+		var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * i, y: lrCorner.y - v2.y * rowSpacingCopy * i};
+		drawArc(outsideLeftCorner, p0, p2,  i+depthInsideCopy, 7 * Math.PI /6, i == depthOutside);
+		drawArc(outsideTopCorner, p1, p2,  i+depthInsideCopy, Math.PI/2, i == depthOutside);
+		drawArc(outsideRightCorner, p0, p1,  i+depthInsideCopy, -Math.PI/6, i == depthOutside);
     }
 };
 var mag = function(v1, v2) {
@@ -630,7 +638,7 @@ Y.prototype.start = function(team) {
 Y.prototype.getDefaultBoardString = function() {
     var ret = "";
 	console.log('centers.length: ', centers.length);
-    for(var c in centers) {
+    for(var c = 0; c < centers.length; c++) {
 		//console.log("centers[c].whoClicked: " + centers[c].whoClicked + ", " + c);
 		if(centers[c].whoClicked == "P1") {
 			ret = ret + "X";
@@ -642,7 +650,6 @@ Y.prototype.getDefaultBoardString = function() {
 		//console.log('ret: "'+ret+'"');
     }
     console.log('getDefaultBoardString: "' + ret + '"');
-	//ret = "X                 ";
     return ret;
 };
 
