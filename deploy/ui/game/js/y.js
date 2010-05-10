@@ -130,8 +130,9 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
 	var id = x1.toFixed(3) + "-"+y1.toFixed(3);
 	//console.log(id);
   
-	var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, centers.length);
+	var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
 	centers.push(tempC);
+	CENTER_INDEX+=1;
 	if(lastRow) {
 	    tempC.fringe = true;
 	    if(ptCount==0) {
@@ -147,10 +148,11 @@ var drawLine = function(start, end, segments, lastRow) {
 		var id = start.x.toFixed(3) + "-" + start.y.toFixed(3);
 		var tempC = new Point(start.x, start.y, BOARD_STARTING_COLOR.red, 
 					BOARD_STARTING_COLOR.green,
-					BOARD_STARTING_COLOR.blue, 1, id, centers.length);
+					BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
 		tempC.innerCorner = true;
 		tempC.fringe = true;
 		centers.push(tempC);
+		CENTER_INDEX+=1;
 		return;
     }
     //console.log('start', "("+start.x+", "+start.y+")", 'end', "("+end.x+", "+end.y+")", "segments", segments);
@@ -166,7 +168,7 @@ var drawLine = function(start, end, segments, lastRow) {
 		//console.log('i ' + i, 'id', id);
 		var tempC = new Point(setX, setY, BOARD_STARTING_COLOR.red,
 					BOARD_STARTING_COLOR.green,
-					BOARD_STARTING_COLOR.blue, 1);
+					BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
 		if(lastRow) {
 			tempC.fringe = true;
 		}
@@ -179,6 +181,7 @@ var drawLine = function(start, end, segments, lastRow) {
 			//console.log('innerCorner set to true');
 		}
 		centers.push(tempC);
+		CENTER_INDEX+=1;
     }
 };
 var gup = function(name) {
@@ -703,6 +706,7 @@ var EDGE_WIDTH = 4;
 var P1TURN = true;
 var P2TURN = false;
 var SHOW_MOVE_VALUES = false;
+var CENTER_INDEX = 0;
 
 var canvasID = "board";
 var div = null;
