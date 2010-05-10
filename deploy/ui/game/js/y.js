@@ -226,16 +226,16 @@ var drawCircles = function() {
   
     for(var i in centers) {
 		var fillColor = null;
-		if(SHOW_MOVE_VALUES == true && !centers[i].clicked) {
-			fillColor = "rgba(" + BOARD_STARTING_COLOR.red + "," +
-								BOARD_STARTING_COLOR.green+ "," +
-								BOARD_STARTING_COLOR.blue+ "," +
-								centers[i].alpha+")";
-		} else {
+		if(SHOW_MOVE_VALUES == true || centers[i].clicked) {
 			fillColor = "rgba(" + Math.floor(centers[i].red) + "," +
 							Math.floor(centers[i].green)+ "," +
 							Math.floor(centers[i].blue) + "," +
 							centers[i].alpha+")";
+		} else if(!centers[i].clicked) {
+			fillColor = "rgba(" + BOARD_STARTING_COLOR.red + "," +
+								BOARD_STARTING_COLOR.green+ "," +
+								BOARD_STARTING_COLOR.blue+ "," +
+								centers[i].alpha+")";
 		}
 		centers[i].alpha+")";
 		context.fillStyle = fillColor;
@@ -650,7 +650,7 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 	var losingMoves = new Array();
 	if(SHOW_MOVE_VALUES==true) {
 		for(var m in moveValues) {
-			var centerIndex = moveValues[m].move.toString();
+			var centerIndex = parseInt(moveValues[m].move);
 			for(var i in centers) {
 				if(centers[i].index == centerIndex) {
 					if(moveValues[m].value=="win" && !centers[i].clicked) {
@@ -658,11 +658,13 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 						centers[i].green = WINNING_MOVE_COLOR.green;
 						centers[i].blue = WINNING_MOVE_COLOR.blue;
 						winningMoves.push(moveValues[m]);
+						break;
 					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
 						centers[i].red = LOSING_MOVE_COLOR.red;
 						centers[i].green = LOSING_MOVE_COLOR.green;
 						centers[i].blue = LOSING_MOVE_COLOR.blue;
 						losingMoves.push(moveValues[m]);
+						break;
 					}
 				}
 			}
@@ -712,7 +714,7 @@ Y.prototype.showMoveValues = function(moves) {
 Y.prototype.hideMoveValues = function() {
     //console.log("I should hide move values");
     //SHOW_MOVE_VALUES = false;
-	drawEverything();
+	clearEverything();
 	drawEverything();
 };
 
