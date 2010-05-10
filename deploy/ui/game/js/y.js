@@ -366,8 +366,9 @@ var createHex = function(x, y, depthInside, depthOutside) {
 		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * outsideCounter, y: llCorner.y - v1.y * rowSpacingCopy * outsideCounter};
 		var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * outsideCounter, y: lrCorner.y - v2.y * rowSpacingCopy * outsideCounter};
 		drawArc(outsideLeftCorner, p0, p2,  outsideCounter+depthInsideCopy, 7 * Math.PI /6, outsideCounter == depthOutside);
-		drawArc(outsideRightCorner, p0, p1,  outsideCounter+depthInsideCopy, -Math.PI/6, outsideCounter == depthOutside);
 		drawArc(outsideTopCorner, p1, p2,  outsideCounter+depthInsideCopy, Math.PI/2, outsideCounter == depthOutside);
+		drawArc(outsideRightCorner, p0, p1,  outsideCounter+depthInsideCopy, -Math.PI/6, outsideCounter == depthOutside);
+		
 		outsideCounter++;
     }
 };
