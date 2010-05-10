@@ -388,6 +388,7 @@ var handleClick = function(e) {
   
     //getNearestCenterAndDistWithLog(mouseX, mouseY, centers);
     c = getClickedCenter(mouseX, mouseY, centers);
+	console.log('clickedCenter: ', c.index, c);
     //console.log('clickedCenter', c);
     if(c==null) {
 	return;
@@ -468,7 +469,7 @@ var handleClick = function(e) {
     }*/
     clearEverything();
     drawEverything();
-	y.doMove(y.getDefaultBoardString());
+	y.doMove(0);
 };
 var clearEverything = function() {
     elem = document.getElementById(canvasID);
