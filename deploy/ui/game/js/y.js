@@ -581,8 +581,9 @@ $(function() {
    makeEdges();
   
    // Instantiate the Y game object
+   centerRows += 1;
    y = new Y(centerRows, outerRows);
-  
+   centerRows -= 1;
    // create the html canvas
    makeBoard(canvasWidth, canvasHeight);
   
