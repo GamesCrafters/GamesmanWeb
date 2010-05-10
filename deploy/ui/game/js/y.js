@@ -541,13 +541,13 @@ $(function() {
    // get row and column info from the URL
    centerRows = gup('centerRows');
    if(!centerRows) {
-       centerRows = 3;
+       centerRows = 2;
    } else {
        centerRows = parseInt(centerRows);
    }
-   outerRows = gup('outerRows');// || 3;
+   outerRows = gup('outerRows');
    if(!outerRows) {
-       outerRows = 3;
+       outerRows = 2;
    } else {
        outerRows = parseInt(outerRows);
    }
