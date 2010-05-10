@@ -432,7 +432,7 @@ var handleClick = function(e) {
 			P2TURN = true;
 			c.clicked = true;
 		}
-		/*else if(P2TURN==true) {
+		else if(P2TURN==true) {
 			c.red = P2COLOR.red;
 			c.green = P2COLOR.green;
 			c.blue = P2COLOR.blue;
@@ -452,7 +452,7 @@ var handleClick = function(e) {
 			c.clicked = true;
 		}
 		c.rad = circleRad + circleRadExtra;
-		*/
+		
 		//drawCircle(c, circleRad + circleRadExtra);
 		
 		/*var temp = getMovesFromFakeServer();
@@ -682,27 +682,6 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 		}
 	}
 	
-	if(winningMoves.length!=0) {
-		var centerIndex = parseInt(winningMoves[0].move);
-		centers[centerIndex].red = P2COLOR.red;
-		centers[centerIndex].green = P2COLOR.green;
-		centers[centerIndex].blue = P2COLOR.blue;
-		centers[centerIndex].clicked = true;
-		
-		y.doMove(centerIndex);
-	} else {
-		var centerIndex = parseInt(losingMoves[0].move);
-		centers[centerIndex].red = P2COLOR.red;
-		centers[centerIndex].green = P2COLOR.green;
-		centers[centerIndex].blue = P2COLOR.blue;
-		centers[centerIndex].clicked = true;
-		
-		y.doMove(centerIndex);
-	}
-	
-	P1TURN = true;
-	P2TURN = false;
-	y.switchTeams();
 	clearEverything();
 	drawEverything();
 };
