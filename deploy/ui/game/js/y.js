@@ -736,8 +736,8 @@ if(false) {
 };
 
 // ---- Duplicated variables ----
-var P1COLOR = {red: 255, green: 0, blue: 0};
-var P2COLOR = {red: 0, green: 0, blue: 255};
+var P1COLOR = {red: 0, green: 0, blue: 255};
+var P2COLOR = {red: 255, green: 0, blue: 0};
 var BGCOLOR = {red: 0, green: 0, blue: 102};
 var WINNING_MOVE_COLOR = {red: 0, green: 255, blue: 0};
 var LOSING_MOVE_COLOR = {red: 139, green: 0, blue: 0};
