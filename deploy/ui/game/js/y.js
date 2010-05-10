@@ -478,7 +478,7 @@ var handleClick = function(e) {
 	
     clearEverything();
     drawEverything();
-	//y.doMove(c.index);
+	y.doMove(c.index);
 };
 var clearEverything = function() {
     elem = document.getElementById(canvasID);
@@ -702,6 +702,7 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 	
 	P1TURN = true;
 	P2TURN = false;
+	y.switchTeams();
 	clearEverything();
 	drawEverything();
 };
