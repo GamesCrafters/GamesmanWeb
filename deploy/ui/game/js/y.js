@@ -409,85 +409,75 @@ var handleClick = function(e) {
 	console.log('clickedCenter: ', c.index, c);
     //console.log('clickedCenter', c);
     if(c==null) {
-	return;
+		return;
     }
     //console.log('innerCorner', c.innerCorner, 'outerCorner', c.outerCorner, 'fringe', c.fringe, 'edgeCount', c.edgeCount);
     //console.log('edges.length', c.edges.length);
     if(!c.clicked) {
-	if(P1TURN==true) {
-	    c.red = P1COLOR.red;
-	    c.green = P1COLOR.green;
-	    c.blue = P1COLOR.blue;
-	    c.alpha = 1;
-	    c.whoClicked = "P1";
-	    for(var e in edges) {
-		if((edges[e].c1==c && edges[e].c2.whoClicked == "P1") || (edges[e].c1.whoClicked == "P1" && edges[e].c2 == c)) {
-		    edges[e].red = P1COLOR.red;
-		    edges[e].green = P1COLOR.green;
-		    edges[e].blue = P1COLOR.blue;
-		    drawEdge(edges[e]);
+		if(P1TURN==true) {
+			c.red = P1COLOR.red;
+			c.green = P1COLOR.green;
+			c.blue = P1COLOR.blue;
+			c.alpha = 1;
+			c.whoClicked = "P1";
+			for(var e in edges) {
+				if((edges[e].c1==c && edges[e].c2.whoClicked == "P1") || (edges[e].c1.whoClicked == "P1" && edges[e].c2 == c)) {
+					edges[e].red = P1COLOR.red;
+					edges[e].green = P1COLOR.green;
+					edges[e].blue = P1COLOR.blue;
+					drawEdge(edges[e]);
+				}
+			}
+			P1TURN = false;
+			P2TURN = true;
+			c.clicked = true;
 		}
-	    }
-	    P1TURN = false;
-	    P2TURN = true;
-	    c.clicked = true;
-	} 
-	else if(P2TURN==true) {
-	    c.red = P2COLOR.red;
-	    c.green = P2COLOR.green;
-	    c.blue = P2COLOR.blue;
-	    c.alpha = 1;
-	    c.whoClicked = "P2";
-      
-	    for(var e in edges) {
-		if((edges[e].c1==c && edges[e].c2.whoClicked == "P2") || (edges[e].c1.whoClicked == "P2" && edges[e].c2 == c)) {
-		    edges[e].red = P2COLOR.red;
-		    edges[e].green = P2COLOR.green;
-		    edges[e].blue = P2COLOR.blue;
-		    drawEdge(edges[e]);
+		else if(P2TURN==true) {
+			c.red = P2COLOR.red;
+			c.green = P2COLOR.green;
+			c.blue = P2COLOR.blue;
+			c.alpha = 1;
+			c.whoClicked = "P2";
+			
+			for(var e in edges) {
+				if((edges[e].c1==c && edges[e].c2.whoClicked == "P2") || (edges[e].c1.whoClicked == "P2" && edges[e].c2 == c)) {
+					edges[e].red = P2COLOR.red;
+					edges[e].green = P2COLOR.green;
+					edges[e].blue = P2COLOR.blue;
+					drawEdge(edges[e]);
+				}
+			}
+			P1TURN = true;
+			P2TURN = false;
+			c.clicked = true;
 		}
-	    }
-	    P1TURN = true;
-	    P2TURN = false;
-	    c.clicked = true;
-	}
-	c.rad = circleRad + circleRadExtra;
-	//drawCircle(c, circleRad + circleRadExtra);
-    
-	var temp = getMovesFromFakeServer();
-	var winningMoves = temp.winningMoves;
-	var losingMoves = temp.losingMoves;
-	for(var i in winningMoves) {
-	    //console.log("w", winningMoves[i]);
-	    winningMoves[i].red = WINNING_MOVE_COLOR.red;
-	    winningMoves[i].green = WINNING_MOVE_COLOR.green;
-	    winningMoves[i].blue = WINNING_MOVE_COLOR.blue;
-	    //drawCircle(winningMoves[i], circleRad);
-	    //console.log('winningMove', winningMoves[i]);
-	}
-	for(var i in losingMoves) {
-	    //console.log("l", losingMoves[i])
-	    losingMoves[i].red = LOSING_MOVE_COLOR.red;
-	    losingMoves[i].green = LOSING_MOVE_COLOR.green;
-	    losingMoves[i].blue = LOSING_MOVE_COLOR.blue;
-	    //drawCircle(losingMoves[i], circleRad);
-	    //console.log('losingMove', losingMoves[i]);
-	}
+		c.rad = circleRad + circleRadExtra;
+		//drawCircle(c, circleRad + circleRadExtra);
+		
+		/*var temp = getMovesFromFakeServer();
+		var winningMoves = temp.winningMoves;
+		var losingMoves = temp.losingMoves;
+		for(var i in winningMoves) {
+			//console.log("w", winningMoves[i]);
+			winningMoves[i].red = WINNING_MOVE_COLOR.red;
+			winningMoves[i].green = WINNING_MOVE_COLOR.green;
+			winningMoves[i].blue = WINNING_MOVE_COLOR.blue;
+			//drawCircle(winningMoves[i], circleRad);
+			//console.log('winningMove', winningMoves[i]);
+		}
+		for(var i in losingMoves) {
+			//console.log("l", losingMoves[i])
+			losingMoves[i].red = LOSING_MOVE_COLOR.red;
+			losingMoves[i].green = LOSING_MOVE_COLOR.green;
+			losingMoves[i].blue = LOSING_MOVE_COLOR.blue;
+			//drawCircle(losingMoves[i], circleRad);
+			//console.log('losingMove', losingMoves[i]);
+		}*/
     }
-  
-    /*for(var e in edges) {
-    console.log("-------------------------------------------");
-    if(edges[e].c1 == c || edges[e].c2 == c) {
-      console.log("-------------------------------------------");
-      c.edges[e].red = 50;
-      c.edges[e].green = 20;
-      c.edges[e].blue = 30;
-      drawEdge(c.edges[e]);
-    }
-    }*/
+	
     clearEverything();
     drawEverything();
-	y.doMove(0);
+	y.doMove(c.index);
 };
 var clearEverything = function() {
     elem = document.getElementById(canvasID);
@@ -655,7 +645,26 @@ Y.prototype.getDefaultBoardString = function() {
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
     console.log("I got move values! ", moveValues);
-    var a = 1;
+	if(SHOW_MOVE_VALUES==true) {
+		for(var move in moveValues) {
+			centerIndex = move.move.toString();
+			for(var i in centers) {
+				if(centers[i].index == centerIndex) {
+					if(move.value=="win" && !centers[i].clicked) {
+						centers[i].red = WINNING_MOVE_COLOR.red;
+						centers[i].green = WINNING_MOVE_COLOR.green;
+						centers[i].blue = WINNING_MOVE_COLOR.blue;
+					} else if(move.value=="lose" && !centers[i].clicked) {
+						centers[i].red = LOSING_MOVE_COLOR.red;
+						centers[i].green = LOSING_MOVE_COLOR.green;
+						centers[i].blue = LOSING_MOVE_COLOR.blue;
+					}
+				}
+			}
+		}
+		clearEverything();
+		drawEverything();
+	}
 };
 Y.prototype.showMoveValues = function(moves) {
     //console.log("I should show move values", moves);
