@@ -478,7 +478,7 @@ var handleClick = function(e) {
 	
     clearEverything();
     drawEverything();
-	y.doMove(c.index);
+	//y.doMove(c.index);
 };
 var clearEverything = function() {
     elem = document.getElementById(canvasID);
@@ -646,10 +646,11 @@ Y.prototype.getDefaultBoardString = function() {
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
     console.log("I got move values! ", moveValues);
-	var winningMove = new Array();
+	var winningMoves = new Array();
+	var losingMoves = new Array();
 	if(SHOW_MOVE_VALUES==true) {
 		for(var m in moveValues) {
-			centerIndex = moveValues[m].move.toString();
+			var centerIndex = moveValues[m].move.toString();
 			for(var i in centers) {
 				if(centers[i].index == centerIndex) {
 					if(moveValues[m].value=="win" && !centers[i].clicked) {
@@ -661,13 +662,45 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 						centers[i].red = LOSING_MOVE_COLOR.red;
 						centers[i].green = LOSING_MOVE_COLOR.green;
 						centers[i].blue = LOSING_MOVE_COLOR.blue;
+						losingMoves.push(moveValues[m]);
 					}
 				}
 			}
 		}
 		clearEverything();
 		drawEverything();
+	} else {
+		for(var m in moveValues) {
+			if(moveValues[m].value=="win" && !centers[i].clicked) {
+				winningMoves.push(moveValues[m]);
+			} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
+				losingMoves.push(moveValues[m]);
+			}
+		}
 	}
+	
+	if(winningMoves.length!=0) {
+		var centerIndex = parseInt(winningMoves[0].move);
+		centers[centerIndex].red = P2COLOR.red;
+		centers[centerIndex].green = P2COLOR.green;
+		centers[centerIndex].blue = P2COLOR.blue;
+		centers[centerIndex].clicked = true;
+		
+		y.doMove(centerIndex);
+	} else {
+		var centerIndex = parseInt(losingMoves[0].move);
+		centers[centerIndex].red = P2COLOR.red;
+		centers[centerIndex].green = P2COLOR.green;
+		centers[centerIndex].blue = P2COLOR.blue;
+		centers[centerIndex].clicked = true;
+		
+		y.doMove(centerIndex);
+	}
+	
+	P1TURN = true;
+	P2TURN = false;
+	clearEverything();
+	drawEverything();
 };
 Y.prototype.showMoveValues = function(moves) {
     //console.log("I should show move values", moves);
