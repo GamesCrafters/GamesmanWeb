@@ -646,9 +646,7 @@ Y.prototype.getDefaultBoardString = function() {
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
     console.log("I got move values! ", moveValues);
-	var winningMoves = new Array();
-	var losingMoves = new Array();
-	if(SHOW_MOVE_VALUES==true) {
+	//if(SHOW_MOVE_VALUES==true) {
 		for(var m in moveValues) {
 			var centerIndex = parseInt(moveValues[m].move);
 			for(var i in centers) {
@@ -657,31 +655,19 @@ Y.prototype.handleNextValuesReceived = function(moveValues) {
 						centers[i].red = WINNING_MOVE_COLOR.red;
 						centers[i].green = WINNING_MOVE_COLOR.green;
 						centers[i].blue = WINNING_MOVE_COLOR.blue;
-						winningMoves.push(moveValues[m]);
 						break;
 					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
 						centers[i].red = LOSING_MOVE_COLOR.red;
 						centers[i].green = LOSING_MOVE_COLOR.green;
 						centers[i].blue = LOSING_MOVE_COLOR.blue;
-						losingMoves.push(moveValues[m]);
 						break;
 					}
 				}
 			}
 		}
-		clearEverything();
-		drawEverything();
-	} else {
-		for(var m in moveValues) {
-			var centerIndex = parseInt(moveValues[m].move);
-			if(moveValues[m].value=="win" && !centers[centerIndex].clicked) {
-				winningMoves.push(moveValues[m]);
-			} else if(moveValues[m].value=="lose" && !centers[centerIndex].clicked) {
-				losingMoves.push(moveValues[m]);
-			}
-		}
-	}
-	
+		//clearEverything();
+		//drawEverything();
+	//}
 	clearEverything();
 	drawEverything();
 };
