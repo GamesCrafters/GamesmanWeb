@@ -34,6 +34,22 @@ var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
 //--------------------------------------------------------------------------
 // Board Setup
 //--------------------------------------------------------------------------
+var newGame = function() {
+    var cr =  document.forms["gameForm"].elements["centerRowsForm"].value;
+	var or =   document.forms["gameForm"].elements["outerRowsForm"].value
+    //window.location.href = "file:///C:/Users/Kevin/Documents/My%20Dropbox/Spring_10/CS%2099/Y/arc.html?centerRows="+cr+"&outerRows="+or+"#top";
+  
+    qIndex = window.location.href.indexOf("?");
+    var currentLoc = "";
+    if(qIndex>-1) {
+		currentLoc = window.location.href.substring(0, qIndex + 1);
+    } else {
+		currentLoc = window.location.href+"?";
+    }
+    currentLoc = currentLoc + 'game='+(gup('game') || "Y")+'&centerRows='+cr+'&outerRows='+or;
+    //console.log(currentLoc);
+    window.location.href = currentLoc;
+};
 var makeBoard = function (width, height) {
     var newCanvas = document.createElement("canvas");
     newCanvas.setAttribute("id", canvasID);
