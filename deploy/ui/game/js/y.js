@@ -34,19 +34,6 @@ var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
 //--------------------------------------------------------------------------
 // Board Setup
 //--------------------------------------------------------------------------
-/*var newGame = function() {
-    var cr =  document.forms["gameForm"].elements["centerRowsForm"].value;
-	var or =   document.forms["gameForm"].elements["outerRowsForm"].value
-	qIndex = window.location.href.indexOf("?");
-    var currentLoc = "";
-    if(qIndex>-1) {
-		currentLoc = window.location.href.substring(0, qIndex + 1);
-    } else {
-		currentLoc = window.location.href+"?";
-    }
-    currentLoc = currentLoc + 'game='+(gup('game') || "Y")+'&centerRows='+cr+'&outerRows='+or;
-    window.location.href = currentLoc;
-};*/
 var makeBoard = function (width, height) {
     var newCanvas = document.createElement("canvas");
     newCanvas.setAttribute("id", canvasID);
@@ -91,9 +78,9 @@ var makeEdges = function() {
 };
 var compareCenters = function(cad1, cad2)  {
     if(cad1.dist > cad2.dist) {
-	return 1;
+		return 1;
     } else {
-	return -1;
+		return -1;
     }
 };
 var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
@@ -107,25 +94,6 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
     var totalPoints = ptCount;
     ptCount--;
     var radius = mag(center,p1);
-    /*while(ptCount >= 0) {
-		var theta = a1 + (a2-a1)/totalPoints*ptCount + offset;
-		var x1 = Math.cos(theta)*radius + center.x;
-		var y1 = Math.sin(theta)*radius + center.y;
-		var id = x1.toFixed(3) + "-"+y1.toFixed(3);
-		//console.log(id);
-		
-		var tempC = new Point(x1, y1,  BOARD_STARTING_COLOR.red,  BOARD_STARTING_COLOR.green,  BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
-		centers.push(tempC);
-		CENTER_INDEX+=1;
-		if(lastRow) {
-			tempC.fringe = true;
-			if(ptCount==0) {
-				tempC.outerCorner = true;
-			}
-		}
-		
-		ptCount--;
-	}*/
     
 	for(var i = 0; i <= ptCount; i++) {
 		var theta = a1 + (a2-a1)/totalPoints*i + offset;
@@ -149,9 +117,7 @@ var drawArc = function(center, p1, p2, ptCount, offset, lastRow) {
 var drawLine = function(start, end, segments, lastRow) {
     if(start.x == end.x && start.y == end.y) {
 		var id = start.x.toFixed(3) + "-" + start.y.toFixed(3);
-		var tempC = new Point(start.x, start.y, BOARD_STARTING_COLOR.red, 
-					BOARD_STARTING_COLOR.green,
-					BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
+		var tempC = new Point(start.x, start.y, BOARD_STARTING_COLOR.red, BOARD_STARTING_COLOR.green, BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
 		tempC.innerCorner = true;
 		tempC.fringe = true;
 		centers.push(tempC);
@@ -159,8 +125,7 @@ var drawLine = function(start, end, segments, lastRow) {
 		return;
     }
     //console.log('start', "("+start.x+", "+start.y+")", 'end', "("+end.x+", "+end.y+")", "segments", segments);
-    var vMag = Math.sqrt(Math.pow(start.x - end.x, 2) +
-			 Math.pow(start.y - end.y, 2));
+    var vMag = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));
     var dir = {x: (end.x - start.x), y: end.y - start.y}
     var dirMag = Math.sqrt(Math.pow(dir.x, 2)+Math.pow(dir.y, 2));
     dir = {x: dir.x / dirMag, y: dir.y / dirMag };
@@ -169,9 +134,7 @@ var drawLine = function(start, end, segments, lastRow) {
 		var setY = start.y + dir.y * i * vMag / segments;
 		var id  = setX.toFixed(3) + "-" + setY.toFixed(3);
 		//console.log('i ' + i, 'id', id);
-		var tempC = new Point(setX, setY, BOARD_STARTING_COLOR.red,
-					BOARD_STARTING_COLOR.green,
-					BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
+		var tempC = new Point(setX, setY, BOARD_STARTING_COLOR.red, BOARD_STARTING_COLOR.green, BOARD_STARTING_COLOR.blue, 1, CENTER_INDEX);
 		if(lastRow) {
 			tempC.fringe = true;
 		}
@@ -193,9 +156,9 @@ var gup = function(name) {
     var regex = new RegExp(regexS);
     var results = regex.exec(window.location.href);
     if(results == null)
-	return false;
+		return false;
     else
-	return results[1];
+		return results[1];
 };
 
 //--------------------------------------------------------------------------
@@ -207,19 +170,12 @@ var drawCircles = function() {
     // Get the canvas 2d context.
     var context = elem.getContext('2d');
     if (!context || !context.putImageData) { return; }
-  
     for(var i in centers) {
 		var fillColor = null;
 		if(SHOW_MOVE_VALUES == true || centers[i].clicked) {
-			fillColor = "rgba(" + Math.floor(centers[i].red) + "," +
-							Math.floor(centers[i].green)+ "," +
-							Math.floor(centers[i].blue) + "," +
-							centers[i].alpha+")";
+			fillColor = "rgba("+Math.floor(centers[i].red)+"," +Math.floor(centers[i].green)+","+Math.floor(centers[i].blue)+","+centers[i].alpha+")";
 		} else if(!centers[i].clicked) {
-			fillColor = "rgba(" + BOARD_STARTING_COLOR.red + "," +
-								BOARD_STARTING_COLOR.green+ "," +
-								BOARD_STARTING_COLOR.blue+ "," +
-								centers[i].alpha+")";
+			fillColor = "rgba("+BOARD_STARTING_COLOR.red+","+BOARD_STARTING_COLOR.green+ ","+BOARD_STARTING_COLOR.blue+ ","+centers[i].alpha+")";
 		}
 		centers[i].alpha+")";
 		context.fillStyle = fillColor;
@@ -228,50 +184,6 @@ var drawCircles = function() {
 		context.closePath();
 		context.fill();
     }
-};
-/*var drawCircle = function(center, rad) {
-    //console.log("drawCircle", 'c.red', center.red, 'c.green', center.green, 'c.blue', center.blue);
-    elem = document.getElementById(canvasID);
-    if (!elem || !elem.getContext) { return; }
-    // Get the canvas 2d context.
-    var context = elem.getContext('2d');
-    if (!context || !context.putImageData) { return; }
-  
-    var fillColor = "rgba("+Math.floor(center.red)+","
-                    +Math.floor(center.green)+","
-                    +Math.floor(center.blue)+","
-                    +center.alpha+")";
-    //var fillColor = "rgb("+gr()+","+gr()+","+gr()+")";
-    
-    context.fillStyle = fillColor;
-    //console.log(context.fillStyle);
-    context.beginPath();
-    context.arc(center.x, center.y, rad, 0, Math.PI*2, true);
-    context.closePath();
-    context.fill();
-};*/
-var drawEdges = function(circleSet) {
-    elem = document.getElementById(canvasID);
-    if (!elem || !elem.getContext) { return; }
-    // Get the canvas 2d context.
-    var context = elem.getContext('2d');
-    if (!context || !context.putImageData) { return; }
-    context.beginPath();
-    context.strokeStyle = 'rgb('+EDGE_STARTING_COLOR.red+', '+
-                          EDGE_STARTING_COLOR.green+', '+
-                          EDGE_STARTING_COLOR.blue+')';
-    context.lineWidth   = EDGE_WIDTH;
-    for(var c in circleSet) {
-	for(var i in circleSet[c].edges) {
-	    context.moveTo(circleSet[c].edges[i].c1.x,
-			   circleSet[c].edges[i].c1.y);
-	    context.lineTo(circleSet[c].edges[i].c2.x,
-			   circleSet[c].edges[i].c2.y);
-	    //console.log('from', circleSet[c].edges[i].c1.x, circleSet[c].edges[i].c1.y, 'to', circleSet[c].edges[i].c2.x, circleSet[c].edges[i].c2.y);
-	}
-    }
-    context.stroke();
-    //console.log("drew edges");
 };
 var drawEdgesFromList = function(edgesIn) {
     elem = document.getElementById(canvasID);
@@ -321,17 +233,14 @@ var createHex = function(x, y, depthInside, depthOutside) {
 		var end   = {x: x + v1.x * i, y: y + v1.y * i};
 		drawLine(start, end, i, (i==depthInside));
 	}
-  
     v0 = {x: 0, y: - 1};
     v1 = {x: -triangleWidth*3/4, y: triangleHeight/2}
     mag =  Math.sqrt(Math.pow(v1.x, 2)+Math.pow(v1.y, 2))
     v1 = {x: v1.x / mag, y: - v1.y / mag};
     v2 = {x: -v1.x, y: v1.y};
   
-    var llCorner = {x: x - (depthInsideCopy)*triangleWidth/2,
-		    y: y + (depthInsideCopy) * triangleHeight};
-    var lrCorner = {x: x + (depthInsideCopy)*triangleWidth/2,
-		    y: y + (depthInsideCopy) * triangleHeight};
+    var llCorner = {x: x - (depthInsideCopy)*triangleWidth/2, y: y + (depthInsideCopy) * triangleHeight};
+    var lrCorner = {x: x + (depthInsideCopy)*triangleWidth/2, y: y + (depthInsideCopy) * triangleHeight};
   
     //console.log('starting outer triangle -------------------------------------------');
     //console.log('v1', "<"+v1.x+", "+v1.y+">");
@@ -345,16 +254,6 @@ var createHex = function(x, y, depthInside, depthOutside) {
     //console.log('lrCorner', "("+lrCorner.x+","+lrCorner.y+")")
     var outsideCounter =  1;
     var rowSpacingCopy = rowSpacing;
-    /*while(outsideCounter <= depthOutside) {
-		var p0 = {x: x + v0.x * rowSpacingCopy * outsideCounter, y: y + v0.y * rowSpacingCopy * outsideCounter };
-		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * outsideCounter, y: llCorner.y - v1.y * rowSpacingCopy * outsideCounter};
-		var p2 = {x: lrCorner.x + v2.x * rowSpacingCopy * outsideCounter, y: lrCorner.y - v2.y * rowSpacingCopy * outsideCounter};
-		drawArc(outsideLeftCorner, p0, p2,  outsideCounter+depthInsideCopy, 7 * Math.PI /6, outsideCounter == depthOutside);
-		drawArc(outsideTopCorner, p1, p2,  outsideCounter+depthInsideCopy, Math.PI/2, outsideCounter == depthOutside);
-		drawArc(outsideRightCorner, p0, p1,  outsideCounter+depthInsideCopy, -Math.PI/6, outsideCounter == depthOutside);
-		
-		outsideCounter++;
-    }*/
 	for(var i = depthOutside; i >= 1; i--) {
 		var p0 = {x: x + v0.x * rowSpacingCopy * i, y: y + v0.y * rowSpacingCopy * i };
 		var p1 = {x: llCorner.x + v1.x * rowSpacingCopy * i, y: llCorner.y - v1.y * rowSpacingCopy * i};
@@ -373,11 +272,11 @@ var mag = function(v1, v2) {
 var getClickedCenter = function(boardX, boardY) {
     //console.log("getClickedCenter");
     for(var j in centers) {
-	var dist2 = mag(centers[j], {x: boardX, y: boardY});
-	//console.log(dist2<circleRad, 'dist2', dist2, 'circleRad2', circleRad2);
-	if(dist2<circleRad) {
-	    return centers[j];
-	}
+		var dist2 = mag(centers[j], {x: boardX, y: boardY});
+		//console.log(dist2<circleRad, 'dist2', dist2, 'circleRad2', circleRad2);
+		if(dist2<circleRad) {
+			return centers[j];
+		}
     }
     return null;
 };
@@ -436,28 +335,6 @@ var handleClick = function(e) {
 			c.clicked = true;
 		}
 		c.rad = circleRad + circleRadExtra;
-		
-		//drawCircle(c, circleRad + circleRadExtra);
-		
-		/*var temp = getMovesFromFakeServer();
-		var winningMoves = temp.winningMoves;
-		var losingMoves = temp.losingMoves;
-		for(var i in winningMoves) {
-			//console.log("w", winningMoves[i]);
-			winningMoves[i].red = WINNING_MOVE_COLOR.red;
-			winningMoves[i].green = WINNING_MOVE_COLOR.green;
-			winningMoves[i].blue = WINNING_MOVE_COLOR.blue;
-			//drawCircle(winningMoves[i], circleRad);
-			//console.log('winningMove', winningMoves[i]);
-		}
-		for(var i in losingMoves) {
-			//console.log("l", losingMoves[i])
-			losingMoves[i].red = LOSING_MOVE_COLOR.red;
-			losingMoves[i].green = LOSING_MOVE_COLOR.green;
-			losingMoves[i].blue = LOSING_MOVE_COLOR.blue;
-			//drawCircle(losingMoves[i], circleRad);
-			//console.log('losingMove', losingMoves[i]);
-		}*/
     }
 	
     clearEverything();
@@ -481,21 +358,7 @@ var drawEverything = function() {
     drawEdgesFromList(edges);
     drawCircles();
 };
-/*var getMovesFromFakeServer = function() {
-    var winning = new Array();
-    var losing  = new Array();
-    for(i in centers) {
-	if(!centers[i].clicked) {
-	    rand = Math.random();
-	    if(rand > 0.5) {
-		winning.push(centers[i]);
-	    } else {
-		losing.push(centers[i]);
-	    }
-	}
-    }
-    return {winningMoves:winning, losingMoves:losing};
-};*/
+
 
 //--------------------------------------------------------------------------
 // Initial Setup
@@ -557,7 +420,7 @@ $(function() {
    centerRows-=1;
   
    // determine what the spacing should be depending on how big the canvas is
-   //console.log('outerRows', outerRows, 'centerRows', centerRows);
+   // console.log('outerRows', outerRows, 'centerRows', centerRows);
    var width = 2 * (rowSpacing * Math.sqrt(3) / 2 * outerRows) +
                triangleWidth * centerRows + (circleRad + circleRadExtra) * 2;
    rowSpacing *= (constraint) / (width);
@@ -573,9 +436,7 @@ $(function() {
   
 
    // create the centers and edges
-   createHex(canvasWidth/2,
-	     outerRows * rowSpacing + circleRad + circleRadExtra,
-	     centerRows, outerRows);
+   createHex(canvasWidth/2, outerRows * rowSpacing + circleRad + circleRadExtra, centerRows, outerRows);
    makeEdges();
   
    // Instantiate the Y game object
@@ -600,8 +461,7 @@ function Y(centerRows, outerRows, config) {
     Y.superClass.constructor.call(this, 'y', 0, 0, config);
   
     // Register event listeners to hook into the framework.
-    this.addEventListener('nextvaluesreceived',
-			  this.handleNextValuesReceived.bind(this));
+    this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived.bind(this));
 }
 GCWeb.extend(Y, GCWeb.Game);
 
@@ -622,90 +482,44 @@ Y.prototype.getDefaultBoardString = function() {
 		} else {
 			ret = ret + " ";
 		}
-		//console.log('ret: "'+ret+'"');
     }
     //console.log('getDefaultBoardString: "' + ret + '"');
     return ret;
 };
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
-    //console.log("I got move values! ", moveValues);
-	//if(SHOW_MOVE_VALUES==true) {
-		for(var m in moveValues) {
-			var centerIndex = parseInt(moveValues[m].move);
-			for(var i in centers) {
-				if(centers[i].index == centerIndex) {
-					if(moveValues[m].value=="win" && !centers[i].clicked) {
-						centers[i].red = WINNING_MOVE_COLOR.red;
-						centers[i].green = WINNING_MOVE_COLOR.green;
-						centers[i].blue = WINNING_MOVE_COLOR.blue;
-						break;
-					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
-						centers[i].red = LOSING_MOVE_COLOR.red;
-						centers[i].green = LOSING_MOVE_COLOR.green;
-						centers[i].blue = LOSING_MOVE_COLOR.blue;
-						break;
-					}
+	for(var m in moveValues) {
+		var centerIndex = parseInt(moveValues[m].move);
+		for(var i in centers) {
+			if(centers[i].index == centerIndex) {
+				if(moveValues[m].value=="win" && !centers[i].clicked) {
+					centers[i].red = WINNING_MOVE_COLOR.red;
+					centers[i].green = WINNING_MOVE_COLOR.green;
+					centers[i].blue = WINNING_MOVE_COLOR.blue;
+					break;
+				} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
+					centers[i].red = LOSING_MOVE_COLOR.red;
+					centers[i].green = LOSING_MOVE_COLOR.green;
+					centers[i].blue = LOSING_MOVE_COLOR.blue;
+					break;
 				}
 			}
 		}
-		//clearEverything();
-		//drawEverything();
-	//}
+	}
 	clearEverything();
 	drawEverything();
 };
 Y.prototype.showMoveValues = function(moves) {
-    //console.log("I should show move values", moves);
     SHOW_MOVE_VALUES = true;
 	clearEverything();
 	drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
-    //console.log("I should hide move values");
     SHOW_MOVE_VALUES = false;
 	clearEverything();
 	drawEverything();
 };
 
-
-if(false) {
-    Y.P1COLOR = {red: 255, green: 0, blue: 0};
-    Y.P2COLOR = {red: 0, green: 0, blue: 255};
-    Y.BGCOLOR = {red: 0, green: 0, blue: 102};
-    Y.WINNING_MOVE_COLOR = {red: 50, green: 50, blue: 50};
-    Y.LOSING_MOVE_COLOR = {red: 0, green: 200, blue:50};
-    Y.BOARD_STARTING_COLOR = {red: 210, green: 180, blue: 140};
-    Y.EDGE_STARTING_COLOR = {red: 0, green: 0, blue: 0};
-    Y.HIGHLIGHTED_COLOR = {red: 0, green: 0, blue: 0};
-    Y.EDGE_WIDTH = 4;
-    Y.P1TURN = true;
-    Y.P2TURN = false;
-
-    Y.canvasID = "board";
-    Y.div = null;
-    Y.canvasWidth = 0;
-    Y.canvasHeight = 0;
-    Y.constraint;
-    Y.circleRad = 10;
-
-    Y.offsets; // = {x: 8, y: 110};
-    Y.tileBorder = 1;
-
-    Y.centers;
-    Y.edges;
-    //Y.currentCenter;
-    //Y.previousCenter = null;
-
-    Y.centerRows;
-    Y.outerRows;
-    Y.triangleWidth = 30;
-    Y.triangleHeight = triangleWidth/2 * Math.sqrt(3);
-    Y.rowSpacing = 40;
-    Y.axisSpacing = 100;
-};
-
-// ---- Duplicated variables ----
 var P1COLOR = {red: 0, green: 0, blue: 255};
 var P2COLOR = {red: 255, green: 0, blue: 0};
 var BGCOLOR = {red: 0, green: 0, blue: 102};
@@ -728,13 +542,9 @@ var constraint;
 var circleRad = 10;
 var circleRadExtra = 4;
 
-var offsets; // = {x: 8, y: 110};
-var tileBorder = 1;
-
+var offsets;
 var centers;
 var edges;
-//Y.currentCenter;
-//Y.previousCenter = null;
 
 var centerRows;
 var outerRows;
