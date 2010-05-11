@@ -406,7 +406,7 @@ var handleClick = function(e) {
   
     //getNearestCenterAndDistWithLog(mouseX, mouseY, centers);
     c = getClickedCenter(mouseX, mouseY, centers);
-	console.log('clickedCenter: ', c.index, c);
+	//console.log('clickedCenter: ', c.index, c);
     //console.log('clickedCenter', c);
     if(c==null) {
 		return;
@@ -604,7 +604,7 @@ $(function() {
    // draw the edges, and then the circles over them
    drawEdgesFromList(edges);
    drawCircles();
-   console.log("directly before y.start()");
+   //console.log("directly before y.start()");
    y.start();
 });
 
@@ -629,7 +629,7 @@ Y.prototype.start = function(team) {
 
 Y.prototype.getDefaultBoardString = function() {
     var ret = "";
-	console.log('centers.length: ', centers.length);
+	//console.log('centers.length: ', centers.length);
     for(var c = 0; c < centers.length; c++) {
 		//console.log("centers[c].whoClicked: " + centers[c].whoClicked + ", " + c);
 		if(centers[c].whoClicked == "P1") {
@@ -641,12 +641,12 @@ Y.prototype.getDefaultBoardString = function() {
 		}
 		//console.log('ret: "'+ret+'"');
     }
-    console.log('getDefaultBoardString: "' + ret + '"');
+    //console.log('getDefaultBoardString: "' + ret + '"');
     return ret;
 };
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
-  console.log("I got move values! ", moveValues);
+  //console.log("I got move values! ", moveValues);
   
   this.switchTeams();
   
