@@ -1,0 +1,83 @@
+h1 {
+	text-align: center;
+	font: 21pt georgia;
+}
+body {
+	font: 10pt verdana, tahoma, arial, sans;
+}
+#board {
+	/* padding = #board td's size / 4 */
+	margin: 0px auto;
+	padding: 10px;
+	border: 1px solid #ccc;
+	background-color: #eee;
+}
+#board * {
+	margin: 0;
+	padding: 0;
+}
+#board td {
+	width: 40px;
+	height: 40px;
+	max-height: 40px;
+}
+#board tr {
+	max-height: 40px;
+}
+#board .square {
+	display: block;
+	width: 50%;
+	height: 50%;
+	margin: 0px auto;
+	vertical-align: middle;
+}
+#board .red {
+	background-color: red;
+}
+#board .blue {
+	background-color: blue;
+}
+#board .bridgeHorizontal {
+	position: absolute;
+	margin-left: -12px;
+	margin-top: -10px;
+	width: 64px;
+	height: 20px;
+}
+#board .bridgeVertical {
+	position: absolute;
+	margin-top: -32px;
+	margin-left: 10px;
+	height: 64px;
+	width: 20px;
+}
+#board .win {
+	background-color: #00FF00;
+}
+#board .loss {
+	background-color: #8A0000;
+}
+#board .tie {
+	background-color: #FFFF00;
+}
+#options {
+	width: 250px;
+	margin: 0px auto;
+	margin-bottom: 1em;
+	text-align: center;
+}
+#settings {
+	width: 220px;
+	margin: 1em auto;
+	padding: 2px;
+	padding-bottom: 4px;
+	text-align: center;
+}
+#settings legend {
+	margin-left: 45px;
+	font-weight: bold;
+}
+#prediction {
+	margin-top: 1em;
+	text-align: center;
+}
