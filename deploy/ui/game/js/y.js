@@ -308,7 +308,6 @@ var handleClick = function(e) {
 					edges[e].red = P1COLOR.red;
 					edges[e].green = P1COLOR.green;
 					edges[e].blue = P1COLOR.blue;
-					drawEdge(edges[e]);
 				}
 			}
 			P1TURN = false;
@@ -327,7 +326,6 @@ var handleClick = function(e) {
 					edges[e].red = P2COLOR.red;
 					edges[e].green = P2COLOR.green;
 					edges[e].blue = P2COLOR.blue;
-					drawEdge(edges[e]);
 				}
 			}
 			P1TURN = true;
