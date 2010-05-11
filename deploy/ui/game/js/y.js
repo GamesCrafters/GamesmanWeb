@@ -7,19 +7,10 @@ var Edge = function (setC1, setC2, setRed, setGreen, setBlue,setAlpha) {
     this.red = setRed;
     this.green = setGreen;
     this.blue = setBlue;
-  this.alpha = setAlpha
+	this.alpha = setAlpha
 };
 var edgesEqual = function(e1, e2) {
-    return (e1.c1.id==e2.c1.id && e1.c2.id == e2.c2.id) ||
-    (e1.c1.id==e2.c2.id && e1.c2.id==c2.c1.id);
-};
-var addEdgeToCenter = function (c1, newEdge) {
-    for(var i in c1.edges) {
-	if(edgesEqual(c1.edges[i], newEdge)) {
-	    return;
-	}
-    }
-    c1.edges.push(newEdge);
+    return (e1.c1.id==e2.c1.id && e1.c2.id == e2.c2.id) || (e1.c1.id==e2.c2.id && e1.c2.id==c2.c1.id);
 };
 var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
     this.x = setx;
@@ -36,7 +27,6 @@ var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
     this.edgeCount = 0;
     this.whoClicked = "";
     this.rad = circleRad;
-    //this.edges = new Array();
     this.id = setx.toFixed(3)+"-"+sety.toFixed(3);
 };
 
@@ -44,25 +34,19 @@ var Point = function(setx, sety, setred, setgreen, setblue, setalpha, setindex){
 //--------------------------------------------------------------------------
 // Board Setup
 //--------------------------------------------------------------------------
-var newGame = function() {
-    //console.log("ir", document.forms["gameForm"].elements["centerRowsForm"].value);
-    //console.log("or", document.forms["gameForm"].elements["outerRowsForm"].value);
-    //console.log(window.location.href);
+/*var newGame = function() {
     var cr =  document.forms["gameForm"].elements["centerRowsForm"].value;
-  var or =   document.forms["gameForm"].elements["outerRowsForm"].value
-    //window.location.href = "file:///C:/Users/Kevin/Documents/My%20Dropbox/Spring_10/CS%2099/Y/arc.html?centerRows="+cr+"&outerRows="+or+"#top";
-  
-    qIndex = window.location.href.indexOf("?");
+	var or =   document.forms["gameForm"].elements["outerRowsForm"].value
+	qIndex = window.location.href.indexOf("?");
     var currentLoc = "";
     if(qIndex>-1) {
-	currentLoc = window.location.href.substring(0, qIndex + 1);
+		currentLoc = window.location.href.substring(0, qIndex + 1);
     } else {
-	currentLoc = window.location.href+"?";
+		currentLoc = window.location.href+"?";
     }
     currentLoc = currentLoc + 'game='+(gup('game') || "Y")+'&centerRows='+cr+'&outerRows='+or;
-    //console.log(currentLoc);
     window.location.href = currentLoc;
-};
+};*/
 var makeBoard = function (width, height) {
     var newCanvas = document.createElement("canvas");
     newCanvas.setAttribute("id", canvasID);
@@ -623,7 +607,6 @@ GCWeb.extend(Y, GCWeb.Game);
 
 Y.prototype.start = function(team) {
     this.player = team || GCWeb.Team.BLUE;
-    this.switchTeams();
     Y.superClass.start.call(this);
 };
 
@@ -646,47 +629,43 @@ Y.prototype.getDefaultBoardString = function() {
 };
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
-  //console.log("I got move values! ", moveValues);
-  
-  this.switchTeams();
-  
-  //if(SHOW_MOVE_VALUES==true) {
-  for(var m in moveValues) {
-    var centerIndex = parseInt(moveValues[m].move);
-    for(var i in centers) {
-      if(centers[i].index == centerIndex) {
-	if (moveValues[m].value == "win" && !centers[i].clicked) {
-	  centers[i].red = WINNING_MOVE_COLOR.red;
-	  centers[i].green = WINNING_MOVE_COLOR.green;
-	  centers[i].blue = WINNING_MOVE_COLOR.blue;
-	  break;
-	} else if (moveValues[m].value=="lose" && !centers[i].clicked) {
-	  centers[i].red = LOSING_MOVE_COLOR.red;
-	  centers[i].green = LOSING_MOVE_COLOR.green;
-	  centers[i].blue = LOSING_MOVE_COLOR.blue;
-	  break;
-	}
-      }
-    }
-  }
-  //clearEverything();
-  //drawEverything();
-  //}
-  clearEverything();
-  drawEverything();
+    //console.log("I got move values! ", moveValues);
+	//if(SHOW_MOVE_VALUES==true) {
+		for(var m in moveValues) {
+			var centerIndex = parseInt(moveValues[m].move);
+			for(var i in centers) {
+				if(centers[i].index == centerIndex) {
+					if(moveValues[m].value=="win" && !centers[i].clicked) {
+						centers[i].red = WINNING_MOVE_COLOR.red;
+						centers[i].green = WINNING_MOVE_COLOR.green;
+						centers[i].blue = WINNING_MOVE_COLOR.blue;
+						break;
+					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
+						centers[i].red = LOSING_MOVE_COLOR.red;
+						centers[i].green = LOSING_MOVE_COLOR.green;
+						centers[i].blue = LOSING_MOVE_COLOR.blue;
+						break;
+					}
+				}
+			}
+		}
+		//clearEverything();
+		//drawEverything();
+	//}
+	clearEverything();
+	drawEverything();
 };
-
 Y.prototype.showMoveValues = function(moves) {
-  //console.log("I should show move values", moves);
-  SHOW_MOVE_VALUES = true;
-  clearEverything();
-  drawEverything();
+    //console.log("I should show move values", moves);
+    SHOW_MOVE_VALUES = true;
+	clearEverything();
+	drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
-  //console.log("I should hide move values");
-  SHOW_MOVE_VALUES = false;
-  clearEverything();
-  drawEverything();
+    //console.log("I should hide move values");
+    SHOW_MOVE_VALUES = false;
+	clearEverything();
+	drawEverything();
 };
 
 
