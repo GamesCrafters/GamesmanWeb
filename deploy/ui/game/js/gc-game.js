@@ -239,7 +239,7 @@ GCWeb.Game.prototype.start = function() {
   if (!this.local) {
     var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
       "/getMoveValue" + this.createParameterString();
-    var options = {cache: false, dataType: 'json', url: serverUrl};
+    var options = {dataType: 'json', url: serverUrl};
     options.success = function(data, textStatus, xhr) {
       if (data.status == 'ok') {
         var moveValue = data.response;
