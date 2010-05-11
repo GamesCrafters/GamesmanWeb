@@ -623,6 +623,7 @@ GCWeb.extend(Y, GCWeb.Game);
 
 Y.prototype.start = function(team) {
     this.player = team || GCWeb.Team.BLUE;
+    this.switchTeams();
     Y.superClass.start.call(this);
 };
 
@@ -645,43 +646,47 @@ Y.prototype.getDefaultBoardString = function() {
 };
 
 Y.prototype.handleNextValuesReceived = function(moveValues) {
-    console.log("I got move values! ", moveValues);
-	//if(SHOW_MOVE_VALUES==true) {
-		for(var m in moveValues) {
-			var centerIndex = parseInt(moveValues[m].move);
-			for(var i in centers) {
-				if(centers[i].index == centerIndex) {
-					if(moveValues[m].value=="win" && !centers[i].clicked) {
-						centers[i].red = WINNING_MOVE_COLOR.red;
-						centers[i].green = WINNING_MOVE_COLOR.green;
-						centers[i].blue = WINNING_MOVE_COLOR.blue;
-						break;
-					} else if(moveValues[m].value=="lose" && !centers[i].clicked) {
-						centers[i].red = LOSING_MOVE_COLOR.red;
-						centers[i].green = LOSING_MOVE_COLOR.green;
-						centers[i].blue = LOSING_MOVE_COLOR.blue;
-						break;
-					}
-				}
-			}
-		}
-		//clearEverything();
-		//drawEverything();
-	//}
-	clearEverything();
-	drawEverything();
+  console.log("I got move values! ", moveValues);
+  
+  this.switchTeams();
+  
+  //if(SHOW_MOVE_VALUES==true) {
+  for(var m in moveValues) {
+    var centerIndex = parseInt(moveValues[m].move);
+    for(var i in centers) {
+      if(centers[i].index == centerIndex) {
+	if (moveValues[m].value == "win" && !centers[i].clicked) {
+	  centers[i].red = WINNING_MOVE_COLOR.red;
+	  centers[i].green = WINNING_MOVE_COLOR.green;
+	  centers[i].blue = WINNING_MOVE_COLOR.blue;
+	  break;
+	} else if (moveValues[m].value=="lose" && !centers[i].clicked) {
+	  centers[i].red = LOSING_MOVE_COLOR.red;
+	  centers[i].green = LOSING_MOVE_COLOR.green;
+	  centers[i].blue = LOSING_MOVE_COLOR.blue;
+	  break;
+	}
+      }
+    }
+  }
+  //clearEverything();
+  //drawEverything();
+  //}
+  clearEverything();
+  drawEverything();
 };
+
 Y.prototype.showMoveValues = function(moves) {
-    //console.log("I should show move values", moves);
-    SHOW_MOVE_VALUES = true;
-	clearEverything();
-	drawEverything();
+  //console.log("I should show move values", moves);
+  SHOW_MOVE_VALUES = true;
+  clearEverything();
+  drawEverything();
 };
 Y.prototype.hideMoveValues = function() {
-    //console.log("I should hide move values");
-    SHOW_MOVE_VALUES = false;
-	clearEverything();
-	drawEverything();
+  //console.log("I should hide move values");
+  SHOW_MOVE_VALUES = false;
+  clearEverything();
+  drawEverything();
 };
 
 
