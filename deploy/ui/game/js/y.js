@@ -396,8 +396,11 @@ $(function() {
    } else {
        outerRows = parseInt(outerRows);
    }
-   if(centerRows<=1 && outerRows>3) {
+   if(centerRows<=1) {
        centerRows = 2;
+   }
+   if(outerRows<0) {
+		centerRows = 0;
    }
    // set the drop down menus to reflect the actual board
    orDropDown = document.getElementById('outerRowsFormID');
