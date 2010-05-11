@@ -693,7 +693,7 @@ Y.prototype.showMoveValues = function(moves) {
 };
 Y.prototype.hideMoveValues = function() {
     //console.log("I should hide move values");
-    //SHOW_MOVE_VALUES = false;
+    SHOW_MOVE_VALUES = false;
 	clearEverything();
 	drawEverything();
 };
@@ -747,7 +747,7 @@ var HIGHLIGHTED_COLOR = {red: 0, green: 0, blue: 0};
 var EDGE_WIDTH = 4;
 var P1TURN = true;
 var P2TURN = false;
-var SHOW_MOVE_VALUES = true;
+var SHOW_MOVE_VALUES = false;
 var CENTER_INDEX = 0;
 
 var canvasID = "board";
