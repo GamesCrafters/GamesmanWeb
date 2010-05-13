@@ -41,7 +41,7 @@ Connections.prototype.getDefaultBoardString = function() {
   var s = '';
   var dict = new Array();
   // Is Blue X or Red?
-  dict[''] = 'X';
+  dict['r'] = 'X';
   dict['b'] = 'O';
   dict[' '] = ' ';
   for (var i = boardArray.length-2; i >= 0; i -= 2) for (var j = 1; j < boardArray.length-1; j+=2) {
@@ -54,7 +54,7 @@ Connections.prototype.getDefaultBoardString = function() {
   return s;
 }
 
-Connections.prototype.createParameterString = function(board) {
+Connections.prototype.createParameterString = function() {
   var paramString = ";board=" + Connections.prototype.getDefaultBoardString();
   return paramString;
 };
@@ -86,11 +86,8 @@ Connections.prototype.showMoveValues = function() {
 	// for a board of size N (as defined by select dropdown) the # of possible moves
 	// assuming an empty board is (n-2)*n+(n-1)^2 = 2N^2 - 4N + 1
 	// clear move values
-	$('.win').removeClass('win');
-	$('.loss').removeClass('loss');
-	$('.tie').removeClass('tie');
-	if ($('#option-move-values:checked').val() == null) {
-		hideMoveValues();
+	hideMoveValues();
+	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
 	var vals = ['win', 'loss', 'tie'];

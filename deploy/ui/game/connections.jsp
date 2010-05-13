@@ -8,8 +8,6 @@
 	$('#board-options input').click(function() {
 		var game = new Connections({size: $('#board-options select').val()*2-1});
 		game.start();
-		game.displayMoveValues();
-		game.displayPrediction();
 	});
 	</script>
 
