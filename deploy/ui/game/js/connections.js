@@ -43,7 +43,7 @@ Connections.prototype.getDefaultBoardString = function() {
   // Is Blue X or Red?
   dict['r'] = 'X';
   dict['b'] = 'O';
-  dict[' '] = ' ';
+  dict[' '] = '%20';
   for (var i = boardArray.length-2; i >= 0; i -= 2) for (var j = 1; j < boardArray.length-1; j+=2) {
 	s += dict[boardArray[i][j]];
   }
@@ -87,7 +87,7 @@ Connections.prototype.showMoveValues = function() {
 	// for a board of size N (as defined by select dropdown) the # of possible moves
 	// assuming an empty board is (n-2)*n+(n-1)^2 = 2N^2 - 4N + 1
 	// clear move values
-	hideMoveValues();
+	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
