@@ -197,7 +197,7 @@ function checkPrimitive() {
       var prompt = 'RED WINS!';
       prompt += " Would you like to reset the game and play again?";
       var onAccept = function() {
-        var game = new Connections({size: $('#options select').val()*2-1});
+        var game = new Connections({size: $('#board-options select').val()*2-1});
 	game.start();
 	game.showMoveValues();
       };
@@ -207,7 +207,7 @@ function checkPrimitive() {
       var prompt = 'BLUE WINS!';
       prompt += " Would you like to reset the game and play again?";
       var onAccept = function() {
-        var game = new Connections({size: $('#options select').val()*2-1});
+        var game = new Connections({size: $('#board-options select').val()*2-1});
 	game.start();
 	game.showMoveValues();
       };

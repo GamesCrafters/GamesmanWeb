@@ -1,10 +1,3 @@
-h1 {
-	text-align: center;
-	font: 21pt georgia;
-}
-body {
-	font: 10pt verdana, tahoma, arial, sans;
-}
 #board {
 	/* padding = #board td's size / 4 */
 	margin: 0px auto;
@@ -60,24 +53,9 @@ body {
 #board .tie {
 	background-color: #FFFF00;
 }
-#options {
+#board-options {
 	width: 250px;
 	margin: 0px auto;
 	margin-bottom: 1em;
-	text-align: center;
-}
-#settings {
-	width: 220px;
-	margin: 1em auto;
-	padding: 2px;
-	padding-bottom: 4px;
-	text-align: center;
-}
-#settings legend {
-	margin-left: 45px;
-	font-weight: bold;
-}
-#prediction {
-	margin-top: 1em;
 	text-align: center;
 }
