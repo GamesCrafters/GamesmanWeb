@@ -56,6 +56,7 @@ Connections.prototype.getDefaultBoardString = function() {
 
 Connections.prototype.createParameterString = function() {
   var paramString = ";board=" + Connections.prototype.getDefaultBoardString();
+  alert(paramString);
   return paramString;
 };
 
