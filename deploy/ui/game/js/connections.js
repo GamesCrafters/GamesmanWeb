@@ -83,17 +83,16 @@ Connections.prototype.occupied = function(space) {
 }
 
 Connections.prototype.assignMoves = function() {
+	var i = 0;
 	$('#board .odd .odd').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).css('backgroundColor', '#000');
-		for (var i = 0; i < 1000000; i++);
-		$(this).css('backgroundColor', 'null');
+		$(this).html(i);
+		i++;
 	});
 	$('#board .even .even').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).css('backgroundColor', '#000');
-		for (var i = 0; i < 1000000; i++);
-		$(this).css('backgroundColor', 'null');
+		$(this).html(i);
+		i++;
 	});
 }
 
