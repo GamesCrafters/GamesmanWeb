@@ -78,20 +78,22 @@ Connections.prototype.occupied = function(space) {
 }
 
 Connections.prototype.assignMoves = function() {
-	var squares = $($('#board .even .even').get().reverse()).append($($('#board .odd .odd').get().reverse()));
-	var numMoves = squares.length;
-	var spaces = new Array(numMoves);
-	for (var i = 0; i < numMoves; i++) squares[i].click( function() { Connections.prototype.doMove(i); } );
+	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
+	var i = 0;
+	squares.each(function() {
+		if (Connections.prototype.occupied(this)) return;
+		this.click( function() { Connections.prototype.doMove(i); } );
+		i++;
+	});
 }
 
 Connections.prototype.showMoveValues = function() {
 	// clear move values
-	alert('show move values called');
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
-	var squares = $($('#board .even .even').get().reverse()).append($($('#board .odd .odd').get().reverse()));
+	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
