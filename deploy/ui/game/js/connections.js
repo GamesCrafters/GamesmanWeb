@@ -86,7 +86,7 @@ Connections.prototype.showMoveValues = function() {
 	// for a board of size N (as defined by select dropdown) the # of possible moves
 	// assuming an empty board is (n-2)*n+(n-1)^2 = 2N^2 - 4N + 1
 	// clear move values
-	alert(this.nextMoves.length);
+	alert(game.nextMoves.length);
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
