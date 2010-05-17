@@ -83,17 +83,25 @@ Connections.prototype.occupied = function(space) {
 }
 
 Connections.prototype.assignMoves = function() {
-	var i = 0;
+	var numMoves = 0;
 	$('#board .odd .odd').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).html(i);
-		i++;
+		numMoves++;
 	});
+	var $('#board .even .even').each(function() {
+		if (Connections.prototype.occupied(this)) return;
+		numMoves++;
+	});
+	var spaces = new Array(numMoves);
 	$('#board .even .even').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).html(i);
-		i++;
+		spaces[numMoves--] = $(this);
 	});
+	$('#board .odd .odd').each(function() {
+		if (Connections.prototype.occupied(this)) return;
+		spaces[numMoves--] = $(this);
+	});
+	for (var i = 0; i < numMoves.length; i++) numMoves[i].click( function() { Connections.prototype.doMove(i); } );
 }
 
 // for now just completely random since not hooked up to backend
@@ -201,7 +209,6 @@ Connections.prototype.generateBoard = function(size) {
     }
     $(this).children().addClass(colors[TURN]);
     $(this).children().show('fast');
-    Connections.prototype.doMove(Connections.prototype.getDefaultBoardString());
     nextTurn();
   }
   $('#board .odd .odd').click(clickFn);
