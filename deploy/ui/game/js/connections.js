@@ -62,6 +62,7 @@ Connections.prototype.createParameterString = function() {
 Connections.prototype.start = function(team) {
   this.player = team || GCWeb.Team.BLUE;
   this.switchTeams();
+  Connections.prototype.assignMoves();
   Connections.superClass.start.call(this);
 }
 
@@ -79,6 +80,21 @@ Connections.prototype.occupied = function(space) {
 		return true;
 	}
 	return false;
+}
+
+Connections.prototype.assignMoves = function() {
+	$('#board .odd .odd').each(function() {
+		if (Connections.prototype.occupied(this)) continue;
+		this.css('backgroundColor', '#000');
+		for (var i = 0; i < 1000000; i++);
+		this.css('backgronudColor', 'null');
+	});
+	$('#board .even .even').each(function() {
+		if (Connections.prototype.occupied(this)) continue;
+		this.css('backgroundColor', '#000');
+		for (var i = 0; i < 1000000; i++);
+		this.css('backgronudColor', 'null');
+	});
 }
 
 // for now just completely random since not hooked up to backend
@@ -179,7 +195,7 @@ Connections.prototype.generateBoard = function(size) {
     }
     $(this).children().addClass(colors[TURN]);
     $(this).children().show('fast');
-    Connections.prototype.getNextMoveValues();
+    Connections.prototype.doMove(Connections.prototype.getDefaultBoardString());
     nextTurn();
   }
   $('#board .odd .odd').click(clickFn);
