@@ -88,7 +88,7 @@ Connections.prototype.assignMoves = function() {
 		if (Connections.prototype.occupied(this)) return;
 		numMoves++;
 	});
-	var $('#board .even .even').each(function() {
+	$('#board .even .even').each(function() {
 		if (Connections.prototype.occupied(this)) return;
 		numMoves++;
 	});
