@@ -85,15 +85,15 @@ Connections.prototype.occupied = function(space) {
 Connections.prototype.assignMoves = function() {
 	$('#board .odd .odd').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		this.css('backgroundColor', '#000');
+		$(this).css('backgroundColor', '#000');
 		for (var i = 0; i < 1000000; i++);
-		this.css('backgronudColor', 'null');
+		$(this).css('backgroundColor', 'null');
 	});
 	$('#board .even .even').each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		this.css('backgroundColor', '#000');
+		$(this).css('backgroundColor', '#000');
 		for (var i = 0; i < 1000000; i++);
-		this.css('backgronudColor', 'null');
+		$(this).css('backgroundColor', 'null');
 	});
 }
 
