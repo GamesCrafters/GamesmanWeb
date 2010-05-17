@@ -27,7 +27,7 @@ Connections.prototype.constructor = function(config) {
   this.generateBoard(size);
   GCWeb.Game.prototype.constructor.call(this, Connections.NAME, size, size, config);
   $('#board').show();
-  //this.addEventListener('executingmove', this.handleExecutingMove);
+  this.addEventListener('executingmove', this.handleExecutingMove);
   this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived);
 }
 
@@ -55,7 +55,7 @@ Connections.prototype.createParameterString = function() {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  this.player = team || GCWeb.Team.BLUE;
+  this.player = team || GCWeb.Team.RED;
   this.switchTeams();
   Connections.superClass.start.call(this);
 }
