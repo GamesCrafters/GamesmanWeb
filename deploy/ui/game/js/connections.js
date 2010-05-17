@@ -2,18 +2,14 @@
  * connections.js
  * Extends GamesCrafters Web interface for Connections board game
  * Requires jquery, gc-game.js
- * Some issues:
- * This supports moves on the outer edge, solver version does not
- * Here red goes first
- * showMoveValues doesn't yet work, I think getDefaultBoardString & createParamString generate string for getNextMoveValues
  */
 
 var size;
-var RED = 0; var BLUE = 1;
-var colors = ['red', 'blue'];
+var BLUE = 0; var RED = 1;
+var colors = ['blue', 'red'];
 var boardArray = new Array();
 var TURN = 0;
-function nextTurn() { checkPrimitive(); TURN = (TURN == 0) ? 1 : 0; Connections.prototype.showMoveValues(); }
+function nextTurn() { checkPrimitive(); TURN = (TURN == 0) ? 1 : 0; }
 
 function Connections(options) {
   Connections.prototype.constructor.call(this, options);
@@ -21,9 +17,7 @@ function Connections(options) {
 GCWeb.extend(Connections, GCWeb.Game);
 
 Connections.NAME = 'connections';
-// size must be odd as defined here, 11 => top row has 5 squares, 6 empty
 Connections.DEFAULT_SIZE = 11;
-// array representation of board
 
 Connections.prototype.constructor = function(config) {
   config = config || {};
@@ -62,66 +56,48 @@ Connections.prototype.createParameterString = function() {
 Connections.prototype.start = function(team) {
   this.player = team || GCWeb.Team.BLUE;
   this.switchTeams();
-  Connections.prototype.assignMoves();
+  this.assignMoves();
   Connections.superClass.start.call(this);
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
 	this.switchTeams();
 	nextTurn();
+	this.showMoveValues();
 }
 
 Connections.prototype.occupied = function(space) {
 	var xpos = parseInt($(space).attr('id').split('_')[0]);
-    	var ypos = parseInt($(space).attr('id').split('_')[1]);
-    	if (boardArray[xpos][ypos] != ' ' ||
+    var ypos = parseInt($(space).attr('id').split('_')[1]);
+    if (boardArray[xpos][ypos] != ' ' ||
 		(TURN == 1 && (xpos == 0 || xpos == size-1)) ||
-      		(TURN == 0 && (ypos == 0 || ypos == size-1))) {
-		return true;
+    	(TURN == 0 && (ypos == 0 || ypos == size-1))) {
+			return true;
 	}
 	return false;
 }
 
 Connections.prototype.assignMoves = function() {
-	var numMoves = 0;
-	$('#board .odd .odd').each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		numMoves++;
-	});
-	$('#board .even .even').each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		numMoves++;
-	});
+	var squares = $('#board .even .even').reverse().append($('#board .odd .odd').reverse());
+	var numMoves = squares.length;
 	var spaces = new Array(numMoves);
-	$('#board .even .even').each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		spaces[numMoves--] = $(this);
-	});
-	$('#board .odd .odd').each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		spaces[numMoves--] = $(this);
-	});
-	for (var i = 0; i < numMoves.length; i++) numMoves[i].click( function() { Connections.prototype.doMove(i); } );
+	for (var i = 0; i < numMoves; i++) squares[i].click( function() { Connections.prototype.doMove(i); } );
 }
 
-// for now just completely random since not hooked up to backend
 Connections.prototype.showMoveValues = function() {
-	// for a board of size N (as defined by select dropdown) the # of possible moves
-	// assuming an empty board is (n-2)*n+(n-1)^2 = 2N^2 - 4N + 1
 	// clear move values
-	alert(this.nextMoves.length);
+	alert('show move values called');
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
-	var vals = ['win', 'loss', 'tie'];
-	$('#board .odd .odd').each(function() {
+	var squares = $('#board .even .even').reverse().append($('#board .odd .odd').reverse());
+	var vals = ['win', 'lose', 'tie'];
+	var i = 0;
+	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).addClass(vals[Math.floor(Math.random()*3)])
-	});
-	$('#board .even .even').each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		$(this).addClass(vals[Math.floor(Math.random()*3)])
+		$(this).addClass(vals[this.nextMoves[i].value]);
+		i++;
 	});
 }
 
@@ -209,7 +185,6 @@ Connections.prototype.generateBoard = function(size) {
     }
     $(this).children().addClass(colors[TURN]);
     $(this).children().show('fast');
-    nextTurn();
   }
   $('#board .odd .odd').click(clickFn);
   $('#board .even .even').click(clickFn);
@@ -217,7 +192,6 @@ Connections.prototype.generateBoard = function(size) {
 }
 
 var encountered = ['',''];
-
 function checkPrimitive() {
   encountered = ['',''];
   for (var i = 1; i < size; i+=2) {  
@@ -243,7 +217,6 @@ function checkPrimitive() {
     };
   }
 }
-
 function checkConnected(i, j, color) {
   var boardValue = boardArray[i][j];
   if (color == RED && boardValue == 'r');
@@ -264,6 +237,4 @@ function checkConnected(i, j, color) {
 
 window.onload = function() {
   $('#board').hide();
-  //var game = new Connections();
-  //game.start();
 }
