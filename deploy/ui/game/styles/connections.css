@@ -1,6 +1,7 @@
 #board {
 	/* padding = #board td's size / 4 */
 	margin: 0px auto;
+	margin-bottom: 15px;
 	padding: 10px;
 	border: 1px solid #ccc;
 	background-color: #eee;
