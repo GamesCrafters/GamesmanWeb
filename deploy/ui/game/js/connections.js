@@ -131,7 +131,14 @@ Connections.prototype.generateBoard = function(size) {
   // initialize board array
   boardArray = new Array(size);
   for (var i = 0; i < size; i++) boardArray[i] = new Array(size);
-  for (var i = 0; i < size; i++) for (var j = 0; j < size; j++) boardArray[i][j] = (i%2==j%2) ? ' ' : ((i%2==0) ? 'r' : 'b');
+  for (var i = 0; i < size; i++) for (var j = 0; j < size; j++) {
+	  // Since currently moving on outer spaces not allowed
+	  if (i == 0 || i == size-1 || j == 0 || j == size-1) {
+		  boardArray[i][j] = 'x';
+		  continue;
+	  }
+	  boardArray[i][j] = (i%2==j%2) ? ' ' : ((i%2==0) ? 'r' : 'b');
+  }
   boardArray[0][0] = boardArray[size-1][size-1] = boardArray[0][size-1] = boardArray[size-1][0] = 'x';
 
   // generate table structure
