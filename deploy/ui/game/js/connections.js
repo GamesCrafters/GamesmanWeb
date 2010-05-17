@@ -27,7 +27,7 @@ Connections.prototype.constructor = function(config) {
   this.generateBoard(size);
   GCWeb.Game.prototype.constructor.call(this, Connections.NAME, size, size, config);
   $('#board').show();
-  this.addEventListener('executingmove', this.handleExecutingMove);
+  //this.addEventListener('executingmove', this.handleExecutingMove);
   this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived);
 }
 
@@ -123,7 +123,7 @@ Connections.prototype.generateBoard = function(size) {
 		  boardArray[i][j] = 'x';
 		  continue;
 	  }
-	  boardArray[i][j] = (i%2==j%2) ? ' ' : ((i%2==0) ? 'r' : 'b');
+	  boardArray[i][j] = (i%2==j%2) ? ' ' : ((i%2==0) ? 'b' : 'r');
   }
   boardArray[0][0] = boardArray[size-1][size-1] = boardArray[0][size-1] = boardArray[size-1][0] = 'x';
 
@@ -138,14 +138,14 @@ Connections.prototype.generateBoard = function(size) {
   }
   $('#board tr:even').addClass('even'); 
   $('#board tr:odd').addClass('odd');
-  $('#board .even .odd .square').addClass('red');
-  $('#board .odd .even .square').addClass('blue');
+  $('#board .even .odd .square').addClass('blue');
+  $('#board .odd .even .square').addClass('red');
   
   // event handling
   
   function hoverIn() {
     if (Connections.prototype.occupied(this)) return;
-    $(this).css('backgroundColor', (TURN==0)?'pink':'lightblue');
+    $(this).css('backgroundColor', (TURN==0)?'lightblue':'pink');
   }
   function hoverOut() {
     $(this).css('backgroundColor', null);
