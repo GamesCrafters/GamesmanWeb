@@ -179,7 +179,7 @@ Connections.prototype.generateBoard = function(size) {
     }
     $(this).children().addClass(colors[TURN]);
     $(this).children().show('fast');
-    this.getNextMoveValues();
+    Connections.prototype.getNextMoveValues();
     nextTurn();
   }
   $('#board .odd .odd').click(clickFn);
