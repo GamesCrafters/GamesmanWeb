@@ -82,7 +82,7 @@ Connections.prototype.assignMoves = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		this.click( function() { Connections.prototype.doMove(i); } );
+		$(this).click( function() { Connections.prototype.doMove(i); } );
 		i++;
 	});
 }
