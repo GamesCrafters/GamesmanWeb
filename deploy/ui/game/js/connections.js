@@ -78,7 +78,7 @@ Connections.prototype.occupied = function(space) {
 }
 
 Connections.prototype.assignMoves = function() {
-	var squares = $($('#board .even .even').get()).reverse().append($('#board .odd .odd').reverse());
+	var squares = $($('#board .even .even').get().reverse()).append($('#board .odd .odd').reverse());
 	var numMoves = squares.length;
 	var spaces = new Array(numMoves);
 	for (var i = 0; i < numMoves; i++) squares[i].click( function() { Connections.prototype.doMove(i); } );
@@ -91,7 +91,7 @@ Connections.prototype.showMoveValues = function() {
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
-	var squares = $($('#board .even .even').get()).reverse().append($($('#board .odd .odd').get()).reverse());
+	var squares = $($('#board .even .even').get().reverse()).append($($('#board .odd .odd').get().reverse()));
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
