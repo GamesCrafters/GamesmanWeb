@@ -79,7 +79,7 @@ Connections.prototype.assignMoves = function() {
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
 		var moveDelta = moveDeltas[i]
-		$(this).click( function() { game.doMove(moveDelta); } );
+		$(this).click( function() { alert(moveDelta); game.doMove(moveDelta); } );
 		i++;
 	});
 }
