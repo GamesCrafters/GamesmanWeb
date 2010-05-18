@@ -57,10 +57,12 @@ Connections.prototype.start = function(team) {
   this.player = team || GCWeb.Team.RED;
   this.switchTeams();
   Connections.superClass.start.call(this);
-  this.showMoveValues();
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
+	alert('got next move values');
+	alert(this.nextMoves);
+	alert(Connections.prototype.nextMoves);
 	this.switchTeams();
 	nextTurn();
 	this.showMoveValues();
