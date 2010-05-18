@@ -81,7 +81,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	      if (this.nextMoves.length == 0) {
 	        //this.fireEvent('gameover');
 	      } else {
-	        this.fireEvent('nextvaluesreceived', this.nextMoves);
+	        Connections.prototype.handleNextValuesReceived();
 	        // Finally, handle pending doMove calls.
 	        //this._dequeueDoMoveRequest();
 	      }
