@@ -52,11 +52,11 @@ Connections.prototype.createParameterString = function() {
   return paramString;
 };
 
-Connections.prototype.doMove = function(moveDelta) {
+Connections.prototype.doMove = function(moveDelta, moves) {
 	  // Find the current move-value object that represents the specified move.
 	  var moveValue = null;
-	  for (var i = 0; (i < this.nextMoves.length) && (moveValue == null); i++) {
-	    if (this.nextMoves[i].move == moveDelta) {
+	  for (var i = 0; (i < moves.length) && (moveValue == null); i++) {
+	    if (moves[i].move == moveDelta) {
 	      moveValue = this.nextMoves[i];
 	    }
 	  }
@@ -89,7 +89,7 @@ Connections.prototype.occupied = function(space) {
 	return false;
 }
 
-Connections.prototype.assignMoves = function() {
+Connections.prototype.assignMoves = function(moves) {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	squares.unbind('click', moveHandler);
 	var i = 0;
@@ -99,12 +99,12 @@ Connections.prototype.assignMoves = function() {
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
 		var moveDelta = moveDeltas[i];
-		$(this).bind('click', {moveDelta: moveDelta}, moveHandler);
+		$(this).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
 		i++;
 	});
 }
 
-var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta); } 
+var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
 
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
@@ -119,7 +119,7 @@ Connections.prototype.showMoveValues = function(moves) {
 		$(this).addClass(moves[i].value);
 		i++;
 	});
-	this.assignMoves();
+	this.assignMoves(moves);
 }
 
 Connections.prototype.hideMoveValues = function() {
