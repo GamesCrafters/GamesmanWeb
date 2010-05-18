@@ -85,7 +85,7 @@ Connections.prototype.assignMoves = function() {
 	});
 }
 
-var moveHandler = function(e) { game.doMove(e.data.moveDelta); } 
+var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta); } 
 
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
