@@ -63,9 +63,9 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
+	Connections.prototype.showMoveValues(this.nextMoves.slice());
 	this.switchTeams();
 	nextTurn();
-	this.showMoveValues(this.nextMoves.slice(0));
 }
 
 Connections.prototype.occupied = function(space) {
@@ -84,12 +84,12 @@ Connections.prototype.assignMoves = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).click( function() { alert('doing move ' + i); Connections.prototype.doMove(i); } );
+		$(this).click( function() { alert('doing move ' + eval(i)); Connections.prototype.doMove(eval(i)); } );
 		i++;
 	});
 }
 
-Connections.prototype.showMoveValues = function(nextMoves) {
+Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
@@ -99,9 +99,8 @@ Connections.prototype.showMoveValues = function(nextMoves) {
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
-		//alert(vals[nextMoves[i].value]);
 		if (Connections.prototype.occupied(this)) return;
-		$(this).addClass(vals[nextMoves[i].value]);
+		$(this).addClass(vals[moves[i].value]);
 		i++;
 	});
 	this.assignMoves();
