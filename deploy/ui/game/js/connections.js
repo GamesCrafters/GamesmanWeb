@@ -60,12 +60,6 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      moveValue = moves[i];
 	    }
 	  }
-	  if (moveValue == null) {
-	    this.fireEvent("invalidmove");
-	    return false;
-	  }
-	  // Execute the valid move
-	  this.fireEvent("executingmove", moveValue);
 	  this.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
