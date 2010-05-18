@@ -96,6 +96,7 @@ Connections.prototype.showMoveValues = function(nextMoves) {
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
+		alert(vals[nextMoves[i].value]);
 		if (Connections.prototype.occupied(this)) return;
 		$(this).addClass(vals[nextMoves[i].value]);
 		i++;
