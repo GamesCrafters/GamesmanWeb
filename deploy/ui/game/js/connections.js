@@ -76,8 +76,7 @@ Connections.prototype.assignMoves = function() {
 	var game = this;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		alert(game + ' ' + i);
-		$(this).click( function() { game.doMove(i); } );
+		$(this).click( function() { alert(game + ' ' + i); game.doMove(i); } );
 		i++;
 	});
 }
