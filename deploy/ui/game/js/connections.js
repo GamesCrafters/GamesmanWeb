@@ -49,7 +49,7 @@ Connections.prototype.getDefaultBoardString = function() {
 }
 
 Connections.prototype.createParameterString = function(board) {
-  if (board != null && board.length >= 10) return ";board=" + board;
+  if (board != null && board.length >= 10) return ";board=" + board + ';side=' + ((boardArray.length-1)/2) + ';';
   var paramString = ";board=" + Connections.prototype.getDefaultBoardString();
   return paramString;
 };
