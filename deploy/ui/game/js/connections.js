@@ -75,7 +75,7 @@ Connections.prototype.assignMoves = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).click( function() { alert('doing move ' + eval(i)); Connections.prototype.doMove(eval(i)); } );
+		$(this).click( function() { alert('doing move ' + i); Connections.prototype.doMove(i); } );
 		i++;
 	});
 }
@@ -89,10 +89,9 @@ Connections.prototype.showMoveValues = function(moves) {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
-	alert(squares);
-	alert(moves);
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
+		alert(moves[i].value);
 		$(this).addClass(vals[moves[i].value]);
 		i++;
 	});
