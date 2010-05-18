@@ -60,6 +60,9 @@ Connections.prototype.start = function(team) {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
+	var msg = '';
+	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
+	alert(msg);
 	this.switchTeams();
 	nextTurn();
 	this.showMoveValues(this.nextMoves);
