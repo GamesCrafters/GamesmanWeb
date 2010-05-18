@@ -72,6 +72,7 @@ Connections.prototype.occupied = function(space) {
 
 Connections.prototype.assignMoves = function() {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
+	squares.unbind();
 	var i = 0;
 	var game = this;
 	var moveDeltas = new Array(squares.length);
@@ -79,13 +80,9 @@ Connections.prototype.assignMoves = function() {
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
 		var moveDelta = moveDeltas[i];
-		$(this).click( function() { alert(moveDelta); game.doMove(moveDelta); } );
+		$(this).click( function() { game.doMove(moveDelta); } );
 		i++;
 	});
-}
-
-Connections.prototype.doMove = function(moveDelta) {
-	
 }
 
 Connections.prototype.showMoveValues = function(moves) {
