@@ -59,15 +59,6 @@ Connections.prototype.start = function(team) {
   Connections.superClass.start.call(this);
 }
 
-Connections.prototype.handleNextValuesReceived = function() {
-	var msg = '';
-	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
-	alert(msg);
-	Connections.prototype.showMoveValues(this.nextMoves.slice());
-	this.switchTeams();
-	nextTurn();
-}
-
 Connections.prototype.occupied = function(space) {
 	var xpos = parseInt($(space).attr('id').split('_')[0]);
     var ypos = parseInt($(space).attr('id').split('_')[1]);
@@ -110,6 +101,15 @@ Connections.prototype.hideMoveValues = function() {
 	$('.win').removeClass('win');
 	$('.loss').removeClass('loss');
 	$('.tie').removeClass('tie');
+}
+
+Connections.prototype.handleNextValuesReceived = function() {
+	var msg = '';
+	this.showMoveValues(this.nextMoves.slice());
+	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
+	alert(msg);
+	this.switchTeams();
+	nextTurn();
 }
 
 Connections.prototype.generateBoard = function(size) {
