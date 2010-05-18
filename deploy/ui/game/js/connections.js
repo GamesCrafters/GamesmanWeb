@@ -87,12 +87,10 @@ Connections.prototype.showMoveValues = function(moves) {
 		return;
 	}
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
-	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		alert(moves[i].value);
-		$(this).addClass(vals[moves[i].value]);
+		$(this).addClass(moves[i].value);
 		i++;
 	});
 	this.assignMoves();
