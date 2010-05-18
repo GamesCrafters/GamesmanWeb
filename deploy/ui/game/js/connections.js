@@ -35,8 +35,8 @@ Connections.prototype.getDefaultBoardString = function() {
   var s = '';
   var dict = new Array();
   // Is Blue X or Red?
-  dict['r'] = 'X';
-  dict['b'] = 'O';
+  dict['b'] = 'X';
+  dict['r'] = 'O';
   dict[' '] = '%20';
   for (var i = boardArray.length-2; i >= 0; i -= 2) for (var j = 1; j < boardArray.length-1; j+=2) {
 	s += dict[boardArray[i][j]];
@@ -82,7 +82,7 @@ Connections.prototype.assignMoves = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).click( function() { Connections.prototype.doMove(i); } );
+		$(this).click( function() { alert('doing move ' + i); Connections.prototype.doMove(i); } );
 		i++;
 	});
 }
