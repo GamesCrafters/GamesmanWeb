@@ -62,7 +62,7 @@ Connections.prototype.start = function(team) {
 Connections.prototype.handleNextValuesReceived = function() {
 	this.switchTeams();
 	nextTurn();
-	this.showMoveValues();
+	this.showMoveValues(this.nextMoves);
 }
 
 Connections.prototype.occupied = function(space) {
@@ -86,7 +86,7 @@ Connections.prototype.assignMoves = function() {
 	});
 }
 
-Connections.prototype.showMoveValues = function() {
+Connections.prototype.showMoveValues = function(nextMoves) {
 	// clear move values
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
@@ -97,7 +97,7 @@ Connections.prototype.showMoveValues = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).addClass(vals[Connections.nextMoves[i].value]);
+		$(this).addClass(vals[nextMoves[i].value]);
 		i++;
 	});
 	this.assignMoves();
