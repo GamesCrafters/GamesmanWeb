@@ -60,7 +60,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      moveValue = moves[i];
 	    }
 	  }
-	  this.moveHistory.push(moveValue);
+	  //this.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
@@ -69,7 +69,7 @@ Connections.prototype.start = function(team) {
   var TURN = 0;
   this.switchTeams();
   this.player = team || GCWeb.Team.BLUE;
-  this.getNextMoveValues(this.getDefaultBoardString());
+  //this.getNextMoveValues(this.getDefaultBoardString());
   Connections.superClass.start.call(this);
 }
 
