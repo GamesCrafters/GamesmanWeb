@@ -73,9 +73,10 @@ Connections.prototype.occupied = function(space) {
 Connections.prototype.assignMoves = function() {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var i = 0;
+	var game = this;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).click( function() { this.doMove(i); } );
+		$(this).click( function() { game.doMove(i); } );
 		i++;
 	});
 }
