@@ -54,6 +54,7 @@ Connections.prototype.createParameterString = function() {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
+  this.switchTeams();
   this.player = team || GCWeb.Team.BLUE;
   Connections.superClass.start.call(this);
 }
