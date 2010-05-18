@@ -74,11 +74,11 @@ Connections.prototype.assignMoves = function() {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var i = 0;
 	var game = this;
-	var movesDeltas = new Array(squares.length);
+	var moveDeltas = new Array(squares.length);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		var moveDelta = moveDeltas[i]
+		var moveDelta = moveDeltas[i];
 		$(this).click( function() { alert(moveDelta); game.doMove(moveDelta); } );
 		i++;
 	});
