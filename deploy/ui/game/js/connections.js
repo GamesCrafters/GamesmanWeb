@@ -54,7 +54,7 @@ Connections.prototype.createParameterString = function() {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  this.player = team || GCWeb.Team.RED;
+  this.player = team || GCWeb.Team.BLUE;
   this.switchTeams();
   Connections.superClass.start.call(this);
 }
@@ -75,7 +75,7 @@ Connections.prototype.assignMoves = function() {
 	var i = 0;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
-		$(this).click( function() { alert('doing move ' + i); Connections.prototype.doMove(i); } );
+		$(this).click( function() { this.doMove(i); } );
 		i++;
 	});
 }
