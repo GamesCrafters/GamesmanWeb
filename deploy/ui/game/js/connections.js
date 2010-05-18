@@ -57,7 +57,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	  var moveValue = null;
 	  for (var i = 0; (i < moves.length) && (moveValue == null); i++) {
 	    if (moves[i].move == moveDelta) {
-	      moveValue = this.nextMoves[i];
+	      moveValue = moves[i];
 	    }
 	  }
 	  if (moveValue == null) {
