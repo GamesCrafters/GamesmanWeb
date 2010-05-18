@@ -75,7 +75,7 @@ Connections.prototype.start = function(team) {
   var TURN = 0;
   this.switchTeams();
   this.player = team || GCWeb.Team.BLUE;
-  Connections.superClass.start.call(this);
+  this.getNextMoveValues(this.getDefaultBoardString());
 }
 
 Connections.prototype.occupied = function(space) {
