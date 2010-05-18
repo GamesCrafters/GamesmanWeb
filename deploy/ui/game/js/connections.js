@@ -65,7 +65,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	alert(msg);
 	this.switchTeams();
 	nextTurn();
-	this.showMoveValues(this.nextMoves);
+	this.showMoveValues(this.nextMoves.slice(0));
 }
 
 Connections.prototype.occupied = function(space) {
@@ -99,7 +99,7 @@ Connections.prototype.showMoveValues = function(nextMoves) {
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
 	squares.each(function() {
-		alert(vals[nextMoves[i].value]);
+		//alert(vals[nextMoves[i].value]);
 		if (Connections.prototype.occupied(this)) return;
 		$(this).addClass(vals[nextMoves[i].value]);
 		i++;
