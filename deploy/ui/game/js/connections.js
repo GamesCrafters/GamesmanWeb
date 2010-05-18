@@ -29,6 +29,7 @@ Connections.prototype.constructor = function(config) {
   $('#board').show();
   //this.addEventListener('executingmove', this.handleExecutingMove);
   this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived);
+  this.name = 'connections';
 }
 
 Connections.prototype.getDefaultBoardString = function() {
