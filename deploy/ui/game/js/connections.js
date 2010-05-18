@@ -89,6 +89,8 @@ Connections.prototype.showMoveValues = function(moves) {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var vals = ['win', 'lose', 'tie'];
 	var i = 0;
+	alert(squares);
+	alert(moves);
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
 		$(this).addClass(vals[moves[i].value]);
