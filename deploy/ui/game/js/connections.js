@@ -34,7 +34,6 @@ Connections.prototype.constructor = function(config) {
 Connections.prototype.getDefaultBoardString = function() {
   var s = '';
   var dict = new Array();
-  // Is Blue X or Red?
   dict['b'] = 'X';
   dict['r'] = 'O';
   dict[' '] = '%20';
@@ -101,6 +100,7 @@ Connections.prototype.showMoveValues = function() {
 		$(this).addClass(vals[this.nextMoves[i].value]);
 		i++;
 	});
+	this.assignMoves();
 }
 
 Connections.prototype.hideMoveValues = function() {
@@ -187,6 +187,7 @@ Connections.prototype.generateBoard = function(size) {
     }
     $(this).children().addClass(colors[TURN]);
     $(this).children().show('fast');
+    nextTurn();
   }
   $('#board .odd .odd').click(clickFn);
   $('#board .even .even').click(clickFn);
