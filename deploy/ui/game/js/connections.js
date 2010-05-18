@@ -27,7 +27,7 @@ Connections.prototype.constructor = function(config) {
   this.generateBoard(size);
   GCWeb.Game.prototype.constructor.call(this, Connections.NAME, size, size, config);
   $('#board').show();
-  this.addEventListener('executingmove', this.handleExecutingMove);
+  //this.addEventListener('executingmove', this.handleExecutingMove);
   this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived);
 }
 
@@ -51,6 +51,25 @@ Connections.prototype.createParameterString = function() {
   var paramString = ";board=" + Connections.prototype.getDefaultBoardString();
   return paramString;
 };
+
+Connections.prototype.doMove = function(moveDelta) {
+	  // Find the current move-value object that represents the specified move.
+	  var moveValue = null;
+	  for (var i = 0; (i < this.nextMoves.length) && (moveValue == null); i++) {
+	    if (this.nextMoves[i].move == moveDelta) {
+	      moveValue = this.nextMoves[i];
+	    }
+	  }
+	  if (moveValue == null) {
+	    this.fireEvent("invalidmove");
+	    return false;
+	  }
+	  // Execute the valid move
+	  this.fireEvent("executingmove", moveValue);
+	  this.moveHistory.push(moveValue);
+	  this.getNextMoveValues(moveValue.board);
+	  return true;
+}
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
