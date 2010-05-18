@@ -76,14 +76,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	    if (data.status == "ok") {
 	      var moveValues = data.response;
 	      this.nextMoves = moveValues;
-	      
-	      // If there are no more next moves, the game is over.
-	      if (this.nextMoves.length == 0) {
-	        //this.fireEvent('gameover');
-	      } else {
-	        Connections.prototype.handleNextValuesReceived();
-	        // Finally, handle pending doMove calls.
-	        //this._dequeueDoMoveRequest();
+	      this.handleNextValuesReceived();
 	      }
 	    } else {
 	      var message = data.message ? '\n[' + data.message  + ']' : '';
