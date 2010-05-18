@@ -66,6 +66,39 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	  return true;
 }
 
+
+Connections.prototype.getNextMoveValues = function(board) {
+	  var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent('connections') +
+	    "/getNextMoveValues" + this.createParameterString(board);
+	  var options = {dataType: "json", url: serverUrl};
+	  options.success = function(data, textStatus, xhr) {
+	    if (data.status == "ok") {
+	      var moveValues = data.response;
+	      this.nextMoves = moveValues;
+	      
+	      // If there are no more next moves, the game is over.
+	      if (this.nextMoves.length == 0) {
+	        //this.fireEvent('gameover');
+	      } else {
+	        this.fireEvent('nextvaluesreceived', this.nextMoves);
+	        // Finally, handle pending doMove calls.
+	        //this._dequeueDoMoveRequest();
+	      }
+	    } else {
+	      var message = data.message ? '\n[' + data.message  + ']' : '';
+	      GCWeb.alert('The GamesCrafters server could not handle the request.' +
+	                  message);
+	      //this._clearDoMoveRequests();
+	    }
+	  }.bind(this);
+	  options.error = function(xhr, textStatus, errorThrown) {
+	    GCWeb.alert('The GamesCrafters server is not responding. [' + textStatus +
+	                ': ' + errorThrown + ']');
+	    //this._clearDoMoveRequests();
+	  }.bind(this);
+	  $.ajax(options);
+	};
+
 Connections.prototype.start = function(team) {
   var TURN = 0;
   this.switchTeams();
