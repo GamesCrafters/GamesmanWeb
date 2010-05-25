@@ -27,7 +27,6 @@ Connections.prototype.constructor = function(config) {
   this.generateBoard(size);
   GCWeb.Game.prototype.constructor.call(this, Connections.NAME, size, size, config);
   $('#board').show();
-  //this.addEventListener('executingmove', this.handleExecutingMove);
   this.addEventListener('nextvaluesreceived', this.handleNextValuesReceived);
   this.name = 'connections';
 }
@@ -68,6 +67,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 }
 
 
+/*
 Connections.prototype.getNextMoveValues = function(board) {
 	  var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent('connections') +
 	    "/getNextMoveValues" + this.createParameterString(board);
@@ -90,13 +90,12 @@ Connections.prototype.getNextMoveValues = function(board) {
 	    //this._clearDoMoveRequests();
 	  }.bind(this);
 	  $.ajax(options);
-	};
+	}
+*/
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
   this.player = team || GCWeb.Team.BLUE;
-  this.switchTeams();
-  //this.getNextMoveValues(this.getDefaultBoardString());
   Connections.superClass.start.call(this);
 }
 
