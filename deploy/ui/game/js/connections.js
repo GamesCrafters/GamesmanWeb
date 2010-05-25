@@ -170,8 +170,8 @@ Connections.prototype.handleNextValuesReceived = function() {
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	nextTurn();
+	this.switchTeams();
 	this.showMoveValues(this.nextMoves.slice());
-	//this.switchTeams();
 }
 
 Connections.prototype.generateBoard = function(size) {
