@@ -146,7 +146,7 @@ Connections.prototype.showMoveValues = function(moves) {
 	var squaresArray = squares.get();
 	for (var j = 0; j < squaresArray.length; j++) {
 		if (this.occupied(squaresArray[j])) {
-			squaresArray[j].addClass('occupied');
+			$(squaresArray[j]).addClass('occupied');
 			continue;
 		}
 		$(squaresArray[j]).addClass(moves[i].value);

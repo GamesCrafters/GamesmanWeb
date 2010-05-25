@@ -60,3 +60,6 @@
 	margin-bottom: 1em;
 	text-align: center;
 }
+.occupied {
+	border: 1px solid #000;
+}
