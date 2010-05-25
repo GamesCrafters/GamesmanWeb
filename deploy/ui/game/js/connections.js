@@ -18,7 +18,7 @@ GCWeb.extend(Connections, GCWeb.Game);
 
 Connections.NAME = 'connections';
 Connections.DEFAULT_SIZE = 11;
-Connections.moveHistory = [];
+Connections.prototype.moveHistory = [];
 
 Connections.prototype.constructor = function(config) {
   config = config || {};
@@ -63,7 +63,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      break;
 	    }
 	  }
-	  //this.moveHistory.push(moveValue);
+	  this.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
@@ -139,7 +139,6 @@ var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
-	alert('move values hidden');
 	if ($('#option-move-values:checked').val() != null) {	
 		var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 		var i = 0;
