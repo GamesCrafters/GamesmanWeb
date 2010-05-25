@@ -56,9 +56,10 @@ Connections.prototype.createParameterString = function(board) {
 Connections.prototype.doMove = function(moveDelta, moves) {
 	  // Find the current move-value object that represents the specified move.
 	  var moveValue = null;
-	  for (var i = 0; (i < moves.length) && (moveValue == null); i++) {
+	  for (var i = 0; i < moves.length; i++) {
 	    if (moves[i].move == moveDelta) {
 	      moveValue = moves[i];
+	      break;
 	    }
 	  }
 	  //this.moveHistory.push(moveValue);
@@ -73,8 +74,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	  var options = {dataType: "json", url: serverUrl};
 	  options.success = function(data, textStatus, xhr) {
 	    if (data.status == "ok") {
-	      var moveValues = data.response;
-	      this.nextMoves = moveValues;
+	      this.nextMoves = data.response;
 	      this.handleNextValuesReceived();
 	    } else {
 	      var message = data.message ? '\n[' + data.message  + ']' : '';
@@ -116,11 +116,10 @@ Connections.prototype.assignMoves = function(moves) {
 	for (var i = 0; i < squaresArray.length; i++) {
 		if (Connections.prototype.occupied(squaresArray[i])) continue;
 		count++;
-	}
-	alert(count);
-	var i = 0;
+	
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
+	var i = 0;
 	var j = 0;
 	while (j < squaresArray.length) {
 		if (Connections.prototype.occupied(squaresArray[j])) {
@@ -147,6 +146,7 @@ Connections.prototype.showMoveValues = function(moves) {
 	var squaresArray = squares.get();
 	for (var j = 0; j < squaresArray.length; j++) {
 		if (this.occupied(squaresArray[j])) {
+			squaresArray[j].addClass('occupied');
 			continue;
 		}
 		$(squaresArray[j]).addClass(moves[i].value);
@@ -165,7 +165,6 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
-	this.player = (this.player == GCWeb.Team.BLUE) ? GCWeb.Team.RED : GCWeb.Team.BLUE;
 	this.showMoveValues(this.nextMoves.slice());
 }
 
