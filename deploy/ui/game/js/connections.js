@@ -168,9 +168,9 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
+	this.showMoveValues(this.nextMoves.slice());
 	this.switchTeams();
 	nextTurn();
-	this.showMoveValues(this.nextMoves.slice());
 }
 
 Connections.prototype.generateBoard = function(size) {
