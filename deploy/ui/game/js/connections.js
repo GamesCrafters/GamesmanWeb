@@ -169,7 +169,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	this.showMoveValues(this.nextMoves.slice());
-	//this.switchTeams();
+	this.player = (this.player == GCWeb.Team.BLUE) ? GCWeb.Team.RED : GCWeb.Team.BLUE;
 	nextTurn();
 }
 
