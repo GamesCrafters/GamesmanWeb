@@ -115,14 +115,14 @@ Connections.prototype.assignMoves = function(moves) {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	squares.unbind('click', moveHandler);
 	var count = 0;
-	squares.each(function() {
-		if (Connections.prototype.occupied(this)) return;
+	var squaresArray = squares.get();
+	for (var i = 0; i < squaresArray.length; i++)
+		if (Connections.prototype.occupied(squaresArray[i])) continue;
 		count++;
-	});
+	}
 	var i = 0;
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
-	var squaresArray = squares.get();
 	var j = 0;
 	while (j < squaresArray.length) {
 		if (Connections.prototype.occupied(squaresArray[j])) {
@@ -167,9 +167,9 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
+	nextTurn();
 	this.showMoveValues(this.nextMoves.slice());
 	//this.switchTeams();
-	nextTurn();
 }
 
 Connections.prototype.generateBoard = function(size) {
