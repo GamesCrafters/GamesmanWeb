@@ -93,8 +93,8 @@ Connections.prototype.getNextMoveValues = function(board) {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  this.player = team || GCWeb.Team.BLUE;
   Connections.superClass.start.call(this);
+  this.player = team || GCWeb.Team.BLUE;
 }
 
 Connections.prototype.occupied = function(space) {
@@ -166,7 +166,6 @@ Connections.prototype.handleNextValuesReceived = function() {
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	this.player = (this.player == GCWeb.Team.BLUE) ? GCWeb.Team.RED : GCWeb.Team.BLUE;
-	nextTurn();
 	this.showMoveValues(this.nextMoves.slice());
 }
 
