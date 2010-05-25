@@ -76,7 +76,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	    if (data.status == "ok") {
 	      var moveValues = data.response;
 	      this.nextMoves = moveValues;
-	      Connections.prototype.handleNextValuesReceived();
+	      this.handleNextValuesReceived();
 	    } else {
 	      var message = data.message ? '\n[' + data.message  + ']' : '';
 	      GCWeb.alert('The GamesCrafters server could not handle the request.' +
@@ -146,11 +146,13 @@ Connections.prototype.showMoveValues = function(moves) {
 	}
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	var i = 0;
-	squares.each(function() {
-		if (Connections.prototype.occupied(this)) return;
-		$(this).addClass(moves[i].value);
+	var squaresArray = squares.get();
+	for (var j = 0; j < squaresArray.length; j++) {
+		if (Connections.prototype.occupied(squaresArray[j])) continue;
+		$(squaresArray[j]).addClass(moves[i].value);
 		i++;
-	});
+		j++;
+	}
 	this.assignMoves(moves);
 }
 
@@ -164,7 +166,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	this.showMoveValues(this.nextMoves.slice());
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
-	//alert(msg);
+	alert(msg);
 	this.switchTeams();
 	nextTurn();
 }
