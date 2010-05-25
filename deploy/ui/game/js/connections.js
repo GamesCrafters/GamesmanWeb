@@ -159,7 +159,7 @@ Connections.prototype.showMoveValues = function(moves) {
 
 Connections.prototype.hideMoveValues = function() {
 	$('.win').removeClass('win');
-	$('.loss').removeClass('loss');
+	$('.lose').removeClass('lose');
 	$('.tie').removeClass('tie');
 }
 
