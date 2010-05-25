@@ -116,7 +116,7 @@ Connections.prototype.assignMoves = function(moves) {
 	for (var i = 0; i < squaresArray.length; i++) {
 		if (Connections.prototype.occupied(squaresArray[i])) continue;
 		count++;
-	
+	}
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
 	var i = 0;
