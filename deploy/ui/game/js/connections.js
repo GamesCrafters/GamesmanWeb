@@ -116,7 +116,7 @@ Connections.prototype.assignMoves = function(moves) {
 	squares.unbind('click', moveHandler);
 	var count = 0;
 	var squaresArray = squares.get();
-	for (var i = 0; i < squaresArray.length; i++)
+	for (var i = 0; i < squaresArray.length; i++) {
 		if (Connections.prototype.occupied(squaresArray[i])) continue;
 		count++;
 	}
