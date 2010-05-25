@@ -76,7 +76,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	    if (data.status == "ok") {
 	      var moveValues = data.response;
 	      this.nextMoves = moveValues;
-	      this.handleNextValuesReceived();
+	      Connections.prototype.handleNextValuesReceived();
 	    } else {
 	      var message = data.message ? '\n[' + data.message  + ']' : '';
 	      GCWeb.alert('The GamesCrafters server could not handle the request.' +
