@@ -93,7 +93,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  //Connections.superClass.start.call(this);
+  Connections.superClass.start.call(this);
   this.player = team || GCWeb.Team.BLUE;
 }
 
@@ -127,7 +127,7 @@ Connections.prototype.assignMoves = function(moves) {
 			continue;
 		}
 		var moveDelta = moveDeltas[i];
-		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
+		$(squaresArray[j]).bind('click', {'moveDelta': moveDelta, 'moves': moves}, moveHandler);
 		i++;
 		j++;
 	}
@@ -138,21 +138,21 @@ var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
-	if ($('#option-move-values:checked').val() == null) {	
-		return;
-	}
-	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
-	var i = 0;
-	var squaresArray = squares.get();
-	for (var j = 0; j < squaresArray.length; j++) {
-		if (this.occupied(squaresArray[j])) {
-			$(squaresArray[j]).addClass('occupied');
-			continue;
+	if ($('#option-move-values:checked').val() != null) {	
+		var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
+		var i = 0;
+		var squaresArray = squares.get();
+		for (var j = 0; j < squaresArray.length; j++) {
+			if (this.occupied(squaresArray[j])) {
+				//$(squaresArray[j]).addClass('occupied');
+				continue;
+			}
+			
+			$(squaresArray[j]).addClass(moves[i].value);
+			i++;
 		}
-		$(squaresArray[j]).addClass(moves[i].value);
-		i++;
 	}
-	this.assignMoves(moves);
+	this.assignMoves(moves.slice());
 }
 
 Connections.prototype.hideMoveValues = function() {
