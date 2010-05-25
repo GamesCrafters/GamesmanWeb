@@ -123,7 +123,7 @@ Connections.prototype.assignMoves = function(moves) {
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
 	squares.each(function() {
-		if (Connections.prototype.occupied(this)) return;
+		if (Connections.prototype.occupied(this)) continue;
 		var moveDelta = moveDeltas[i];
 		$(this).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
 		i++;
