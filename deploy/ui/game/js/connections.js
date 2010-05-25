@@ -162,7 +162,7 @@ Connections.prototype.hideMoveValues = function() {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
-	Connections.superClass.switchTeams.call(this);
+	Connections.superClass.switchTeams.call();
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
