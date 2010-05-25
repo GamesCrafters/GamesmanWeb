@@ -67,7 +67,6 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 }
 
 
-/*
 Connections.prototype.getNextMoveValues = function(board) {
 	  var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent('connections') +
 	    "/getNextMoveValues" + this.createParameterString(board);
@@ -91,7 +90,6 @@ Connections.prototype.getNextMoveValues = function(board) {
 	  }.bind(this);
 	  $.ajax(options);
 	}
-*/
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
