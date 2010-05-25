@@ -63,7 +63,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      break;
 	    }
 	  }
-	  this.moveHistory.push(moveValue);
+	  GCWeb.Game.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
