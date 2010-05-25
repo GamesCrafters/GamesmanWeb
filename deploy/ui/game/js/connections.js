@@ -63,7 +63,7 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      break;
 	    }
 	  }
-	  Connections.superClass.moveHistory.push(moveValue);
+	  //this.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
