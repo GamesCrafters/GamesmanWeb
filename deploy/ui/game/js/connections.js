@@ -139,6 +139,7 @@ Connections.prototype.assignMoves = function(moves) {
 var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
 
 Connections.prototype.showMoveValues = function(moves) {
+	displayBoard();
 	// clear move values
 	Connections.prototype.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
@@ -165,11 +166,11 @@ Connections.prototype.hideMoveValues = function() {
 
 Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
-	this.showMoveValues(this.nextMoves.slice());
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	this.switchTeams();
 	nextTurn();
+	this.showMoveValues(this.nextMoves.slice());
 }
 
 Connections.prototype.generateBoard = function(size) {
@@ -299,6 +300,17 @@ function checkConnected(i, j, color) {
   if (i != 0) if (checkConnected(i-1,j,color)) return true;
   if (i != size-1) if (checkConnected(i+1,j,color)) return true;
   return false;
+}
+
+function displayBoard() {
+	var s='';
+	for (var i = 0; i < size; i++) {
+		for (var j = 0; j < size; j++) {
+			s += boardArray[i][j];
+		}
+		s+='\n';
+	}
+	alert(s);
 }
 
 window.onload = function() {
