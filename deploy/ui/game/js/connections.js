@@ -120,6 +120,7 @@ Connections.prototype.assignMoves = function(moves) {
 		if (Connections.prototype.occupied(squaresArray[i])) continue;
 		count++;
 	}
+	alert(count);
 	var i = 0;
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
@@ -130,7 +131,7 @@ Connections.prototype.assignMoves = function(moves) {
 			continue;
 		}
 		var moveDelta = moveDeltas[i];
-		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves.slice()}, moveHandler);
+		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
 		i++;
 		j++;
 	}
@@ -141,6 +142,7 @@ var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
+	alert(moves);
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
