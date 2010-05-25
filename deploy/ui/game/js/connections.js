@@ -136,12 +136,11 @@ Connections.prototype.assignMoves = function(moves) {
 	}
 }
 
-var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
+var moveHandler = function(e) { alert(e.data.moveDelta); Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
 
 Connections.prototype.showMoveValues = function(moves) {
-	displayBoard();
 	// clear move values
-	Connections.prototype.hideMoveValues();
+	this.hideMoveValues();
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
@@ -169,7 +168,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	this.showMoveValues(this.nextMoves.slice());
-	this.switchTeams();
+	//this.switchTeams();
 	nextTurn();
 }
 
