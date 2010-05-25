@@ -142,7 +142,6 @@ var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
-	alert(moves);
 	if ($('#option-move-values:checked').val() == null) {	
 		return;
 	}
@@ -150,7 +149,7 @@ Connections.prototype.showMoveValues = function(moves) {
 	var i = 0;
 	var squaresArray = squares.get();
 	for (var j = 0; j < squaresArray.length; j++) {
-		if (Connections.prototype.occupied(squaresArray[j])) {
+		if (this.occupied(squaresArray[j])) {
 			continue;
 		}
 		$(squaresArray[j]).addClass(moves[i].value);
