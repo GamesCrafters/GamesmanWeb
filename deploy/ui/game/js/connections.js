@@ -148,10 +148,11 @@ Connections.prototype.showMoveValues = function(moves) {
 	var i = 0;
 	var squaresArray = squares.get();
 	for (var j = 0; j < squaresArray.length; j++) {
-		if (Connections.prototype.occupied(squaresArray[j])) continue;
+		if (Connections.prototype.occupied(squaresArray[j])) {
+			continue;
+		}
 		$(squaresArray[j]).addClass(moves[i].value);
 		i++;
-		j++;
 	}
 	this.assignMoves(moves);
 }
