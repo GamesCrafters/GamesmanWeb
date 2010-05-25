@@ -18,7 +18,6 @@ GCWeb.extend(Connections, GCWeb.Game);
 
 Connections.NAME = 'connections';
 Connections.DEFAULT_SIZE = 11;
-Connections.prototype.moveHistory = [];
 
 Connections.prototype.constructor = function(config) {
   config = config || {};
@@ -63,7 +62,6 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	      break;
 	    }
 	  }
-	  GCWeb.Game.prototype.moveHistory.push(moveValue);
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
@@ -96,6 +94,7 @@ Connections.prototype.start = function(team) {
   var TURN = 0;
   Connections.superClass.start.call(this);
   this.player = team || GCWeb.Team.BLUE;
+  this.switchTeams();
 }
 
 Connections.prototype.occupied = function(space) {
@@ -163,6 +162,7 @@ Connections.prototype.hideMoveValues = function() {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
+	this.switchTeams();
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
