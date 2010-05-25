@@ -139,7 +139,7 @@ var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
-	return;
+	alert('move values hidden');
 	if ($('#option-move-values:checked').val() != null) {	
 		var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 		var i = 0;
