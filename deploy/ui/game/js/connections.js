@@ -122,12 +122,18 @@ Connections.prototype.assignMoves = function(moves) {
 	var i = 0;
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
-	squares.each(function() {
-		if (Connections.prototype.occupied(this)) continue;
+	var squaresArray = squares.get();
+	var j = 0;
+	while (j < squaresArray.length) {
+		if (Connections.prototype.occupied(squaresArray[j])) {
+			j++;
+			continue;
+		}
 		var moveDelta = moveDeltas[i];
-		$(this).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
+		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
 		i++;
-	});
+		j++;
+	}
 }
 
 var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
