@@ -93,7 +93,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  Connections.superClass.start.call(this);
+  //Connections.superClass.start.call(this);
   this.player = team || GCWeb.Team.BLUE;
 }
 
