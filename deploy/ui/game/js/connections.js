@@ -114,9 +114,13 @@ Connections.prototype.occupied = function(space) {
 Connections.prototype.assignMoves = function(moves) {
 	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
 	squares.unbind('click', moveHandler);
+	var count = 0;
+	squares.each(function() {
+		if (Connections.prototype.occupied(this)) return;
+		count++;
+	});
 	var i = 0;
-	var game = this;
-	var moveDeltas = new Array(squares.length);
+	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
 	squares.each(function() {
 		if (Connections.prototype.occupied(this)) return;
@@ -154,7 +158,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	var msg = '';
 	this.showMoveValues(this.nextMoves.slice());
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
-	alert(msg);
+	//alert(msg);
 	this.switchTeams();
 	nextTurn();
 }
