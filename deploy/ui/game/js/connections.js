@@ -130,13 +130,13 @@ Connections.prototype.assignMoves = function(moves) {
 			continue;
 		}
 		var moveDelta = moveDeltas[i];
-		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves}, moveHandler);
+		$(squaresArray[j]).bind('click', {moveDelta: moveDelta, moves: moves.slice()}, moveHandler);
 		i++;
 		j++;
 	}
 }
 
-var moveHandler = function(e) { alert(e.data.moveDelta); Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
+var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
 
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
