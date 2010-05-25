@@ -92,9 +92,9 @@ Connections.prototype.getNextMoveValues = function(board) {
 
 Connections.prototype.start = function(team) {
   var TURN = 0;
-  Connections.superClass.start.call(this);
   this.player = team || GCWeb.Team.BLUE;
   this.switchTeams();
+  Connections.superClass.start.call(this);
 }
 
 Connections.prototype.occupied = function(space) {
@@ -162,7 +162,7 @@ Connections.prototype.hideMoveValues = function() {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
-	//Connections.superClass.switchTeams.call();
+	this.switchTeams();
 	var msg = '';
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
