@@ -66,7 +66,7 @@ Connections.prototype.createParameterString = function(board) {
 
 Connections.prototype.doMove = function(moveDelta, moves) {
 	var s = 'moves: '
-		for (move in moves) s += move.move + ' ';
+		for (var i = 0; i < moves.length; i++) s += moves[i].move + ' ';
 	alert(s);
 		alert(moveDelta);
 	  // Find the current move-value object that represents the specified move.
