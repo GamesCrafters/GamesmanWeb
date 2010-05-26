@@ -9,6 +9,7 @@ var BLUE = 0; var RED = 1;
 var colors = ['blue', 'red'];
 var boardArray = new Array();
 var TURN = 0;
+var lastMove = null;
 function nextTurn() { TURN = (TURN == 0) ? 1 : 0; }
 
 function Connections(options) {
@@ -74,12 +75,17 @@ Connections.prototype.doMove = function(moveDelta, moves) {
 	  for (var i = 0; i < moves.length; i++) {
 	    if (moves[i].move == moveDelta) {
 	      moveValue = moves[i];
+	      lastMove = moves[i];
 	      break;
 	    }
 	  }
 	  this.getNextMoveValues(moveValue.board);
 	  return true;
 }
+
+Connections.prototype.getLastMoveValue = function() {
+	return lastMove;
+};
 
 
 Connections.prototype.getNextMoveValues = function(board) {
@@ -171,7 +177,7 @@ Connections.prototype.hideMoveValues = function() {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
-	this.switchTeams();
+	//this.switchTeams();
 	var msg = '';
 	if (this.nextMoves.length == 0) {
 		var prompt = colors[(TURN+1)%2].toUpperCase() + ' WINS!';
