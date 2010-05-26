@@ -171,7 +171,7 @@ Connections.prototype.hideMoveValues = function() {
 }
 
 Connections.prototype.handleNextValuesReceived = function() {
-	//this.switchTeams();
+	this.switchTeams();
 	var msg = '';
 	if (this.nextMoves.length == 0) {
 		var prompt = colors[(TURN+1)%2].toUpperCase() + ' WINS!';
