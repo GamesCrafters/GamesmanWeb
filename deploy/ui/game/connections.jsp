@@ -8,6 +8,7 @@
 	}
 	$('#board-options input').click(function() {
 		var game = new Connections({size: $('#board-options select').val()*2-1});
+		TURN = 0;
 		game.start();
 	});
 	</script>

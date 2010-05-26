@@ -67,8 +67,8 @@ Connections.prototype.createParameterString = function(board) {
 Connections.prototype.doMove = function(moveDelta, moves) {
 	var s = 'moves: '
 		for (var i = 0; i < moves.length; i++) s += moves[i].move + ' ';
-	alert(s);
-		alert(moveDelta);
+	//alert(s);
+		//alert(moveDelta);
 	  // Find the current move-value object that represents the specified move.
 	  var moveValue = null;
 	  for (var i = 0; i < moves.length; i++) {
@@ -183,7 +183,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	      GCWeb.confirm(prompt, onAccept);
 	}
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
-	alert(msg);
+	//alert(msg);
 	this.showMoveValues(this.nextMoves.slice());
 }
 
