@@ -65,7 +65,10 @@ Connections.prototype.createParameterString = function(board) {
 };
 
 Connections.prototype.doMove = function(moveDelta, moves) {
-	alert(moveDelta);
+	var s = 'moves: '
+		for (move in moves) s += move.move + ' ';
+	alert(s);
+		alert(moveDelta);
 	  // Find the current move-value object that represents the specified move.
 	  var moveValue = null;
 	  for (var i = 0; i < moves.length; i++) {
@@ -145,7 +148,7 @@ Connections.prototype.assignMoves = function(moves) {
 	}
 }
 
-var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves); } 
+var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves.slice()); } 
 
 Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
