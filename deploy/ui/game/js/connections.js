@@ -174,9 +174,10 @@ Connections.prototype.handleNextValuesReceived = function() {
 	//this.switchTeams();
 	var msg = '';
 	if (this.nextMoves.length == 0) {
-		var prompt = colors[TURN].toUpperCase() + ' WINS!';
+		var prompt = colors[(TURN+1)%2].toUpperCase() + ' WINS!';
 	      prompt += " Would you like to reset the game and play again?";
 	      var onAccept = function() {
+	    	TURN = 0;
 	        var game = new Connections({size: $('#board-options select').val()*2-1});
 	        game.start();
 	      };
