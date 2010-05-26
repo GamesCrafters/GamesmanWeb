@@ -137,8 +137,8 @@ Connections.prototype.displayPrediction = function() {
 		  if (nextMoves[i].remoteness > minLose) minLose = nextMoves[i].remoteness;
 	  }
 	}
-	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + minWin+1 + ' moves.');
-	else if (minLose > -1) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + minLose+1 + ' moves.');
+	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + (minWin+1) + ((minWin+1>1) ? ' moves.' : 'move.'));
+	else if (minLose > -1) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + (minLose+1) + ((minLose+1>1) ? ' moves.' : 'move.'));
 	else $('#prediction > span').html('Prediction unavailable');
 }
 
