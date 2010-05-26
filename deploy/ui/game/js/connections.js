@@ -87,6 +87,10 @@ Connections.prototype.getLastMoveValue = function() {
 	return lastMove;
 };
 
+GCWeb.Game.prototype.getLastMoveValue = function() {
+	  return lastMove;
+};
+
 
 Connections.prototype.getNextMoveValues = function(board) {
 	  var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent('connections') +
