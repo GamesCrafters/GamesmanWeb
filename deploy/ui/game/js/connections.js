@@ -37,12 +37,20 @@ Connections.prototype.getDefaultBoardString = function() {
   dict['b'] = 'X';
   dict['r'] = 'O';
   dict[' '] = '%20';
+  var squares = $('#board .even .even, #board .odd .odd').get().reverse()
+  for (var i = 0; i < squares.length; i++) {
+	  var xpos = parseInt($(squares[i]).attr('id').split('_')[0]);
+	  var ypos = parseInt($(squares[i]).attr('id').split('_')[1]);
+	  s+= dict[boardArray[xpos][ypos]];
+  }
+  /*
   for (var i = boardArray.length-2; i >= 0; i -= 2) for (var j = 1; j < boardArray.length-1; j+=2) {
 	s += dict[boardArray[i][j]];
   }
   for (var i = boardArray.length-3; i > 1; i -= 2) for (var j = 2; j < boardArray.length-2; j+=2) {
 	s += dict[boardArray[i][j]];
   }
+  */
   s += ';side=' + ((boardArray.length-1)/2) + ';';
   return s;
 }
