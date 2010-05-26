@@ -151,6 +151,7 @@ Connections.prototype.assignMoves = function(moves) {
 var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves.slice()); } 
 
 Connections.prototype.showMoveValues = function(moves) {
+	moves = moves || this.nextMoves;
 	// clear move values
 	this.hideMoveValues();
 	if ($('#option-move-values:checked').val() != null) {	
