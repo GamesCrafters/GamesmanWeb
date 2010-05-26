@@ -10,6 +10,7 @@ var colors = ['blue', 'red'];
 var boardArray = new Array();
 var TURN = 0;
 var lastMove = null;
+var nextMoves = null;
 function nextTurn() { TURN = (TURN == 0) ? 1 : 0; }
 
 function Connections(options) {
@@ -99,6 +100,7 @@ Connections.prototype.getNextMoveValues = function(board) {
 	  options.success = function(data, textStatus, xhr) {
 	    if (data.status == "ok") {
 	      this.nextMoves = data.response;
+	      nextMoves = data.response;
 	      this.handleNextValuesReceived();
 	    } else {
 	      var message = data.message ? '\n[' + data.message  + ']' : '';
@@ -155,7 +157,7 @@ Connections.prototype.assignMoves = function(moves) {
 var moveHandler = function(e) { Connections.prototype.doMove(e.data.moveDelta, e.data.moves.slice()); } 
 
 Connections.prototype.showMoveValues = function(moves) {
-	moves = this.nextMoves;
+	moves = nextMoves;
 	// clear move values
 	this.hideMoveValues();
 	if ($('#option-move-values:checked').val() != null) {	
