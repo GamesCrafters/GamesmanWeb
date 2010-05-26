@@ -126,7 +126,7 @@ Connections.prototype.start = function(team) {
 
 Connections.prototype.displayPrediction = function() {
 	var minWin = 100000;
-	var minLose = 100000;
+	var minLose = -1;
 	for (var i = 0; i < nextMoves.length; i++) {
 	  if (nextMoves[i].value == 'win') {
 	    if (nextMoves[i].remoteness < minWin) minWin = nextMoves[i].remoteness;
@@ -134,11 +134,11 @@ Connections.prototype.displayPrediction = function() {
 	}
 	for (var i = 0; i < nextMoves.length; i++) {
 	  if (nextMoves[i].value == 'lose') {
-		  if (nextMoves[i].remoteness < minLose) minLose = nextMoves[i].remoteness;
+		  if (nextMoves[i].remoteness > minLose) minLose = nextMoves[i].remoteness;
 	  }
 	}
-	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + minWin + ' moves.');
-	else if (minLose < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + minLose + ' moves.');
+	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + minWin+1 + ' moves.');
+	else if (minLose > -1) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + minLose+1 + ' moves.');
 	else $('#prediction > span').html('Prediction unavailable');
 }
 
