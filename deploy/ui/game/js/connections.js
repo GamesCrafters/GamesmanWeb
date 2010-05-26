@@ -9,7 +9,7 @@ var BLUE = 0; var RED = 1;
 var colors = ['blue', 'red'];
 var boardArray = new Array();
 var TURN = 0;
-function nextTurn() { checkPrimitive(); TURN = (TURN == 0) ? 1 : 0; }
+function nextTurn() { TURN = (TURN == 0) ? 1 : 0; }
 
 function Connections(options) {
   Connections.prototype.constructor.call(this, options);
@@ -174,13 +174,14 @@ Connections.prototype.handleNextValuesReceived = function() {
 	//this.switchTeams();
 	var msg = '';
 	if (this.nextMoves.length == 0) {
-		var prompt = colors[TURN].toUpper() + ' WINS!';
+		var prompt = colors[TURN].toUpperCase() + ' WINS!';
 	      prompt += " Would you like to reset the game and play again?";
 	      var onAccept = function() {
 	        var game = new Connections({size: $('#board-options select').val()*2-1});
 	        game.start();
 	      };
 	      GCWeb.confirm(prompt, onAccept);
+	      return;
 	}
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	//alert(msg);
