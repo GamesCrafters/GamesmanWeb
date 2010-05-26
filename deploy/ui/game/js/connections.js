@@ -126,24 +126,18 @@ Connections.prototype.occupied = function(space) {
 Connections.prototype.assignMoves = function(moves) {
 	var squares = $(getSquares()); //$($('#board .even .even, #board .odd .odd').get().reverse());
 	squares.unbind('click', moveHandler);
-	var count = 0;
 	var squaresArray = squares.get();
-	for (var i = 0; i < squaresArray.length; i++) {
-		if (Connections.prototype.occupied(squaresArray[i])) continue;
-		count++;
-	}
+	var count = squaresArray.length;
 	var moveDeltas = new Array(count);
 	for (var j = 0; j < moveDeltas.length; j++) moveDeltas[j] = j;
-	var i = 0;
 	var j = 0;
 	while (j < squaresArray.length) {
 		if (Connections.prototype.occupied(squaresArray[j])) {
 			j++;
 			continue;
 		}
-		var moveDelta = moveDeltas[i];
+		var moveDelta = moveDeltas[j];
 		$(squaresArray[j]).bind('click', {'moveDelta': moveDelta, 'moves': moves}, moveHandler);
-		i++;
 		j++;
 	}
 }
