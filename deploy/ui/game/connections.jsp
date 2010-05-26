@@ -16,4 +16,4 @@
 	<table id="board">
 	</table>
 
-	<p id="whoseTurn"></p>
+	<p id="whoseTurn" style="text-align: center; font-size: 9pt;"></p>
