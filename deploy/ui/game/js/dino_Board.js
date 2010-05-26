@@ -1,9 +1,10 @@
-function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
+function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	//Public instance variables 
 	this.boardWidth = sizeOfCenterArea + 2;
 	this.numPurplePieces = sizeOfCenterArea - 1; 
 	this.numGreenPieces = sizeOfCenterArea - 1; 
 	this.currentPlayer = firstPlayer; 
+	this.skinChoice = skin; 
 	
 	this.IDSeparater = "-"; 
 	this.greenPieceIDIdentifier = "GP";
@@ -13,20 +14,20 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	this.eastArrowIDIdentifier = "EA"; 
 	this.westArrowIDIdentifier = "WA"; 
 	
-	this.orangeSpaceAddress = "game/images/dino/grayspace.jpg";
-	this.greenSpaceAddress = "game/images/dino/redstart.jpg";
-	this.purpleSpaceAddress = "game/images/dino/bluestart.jpg";
-	this.greenGoalAddress = "game/images/dino/redgoal1.jpg";
-	this.purpleGoalAddress = "game/images/dino/bluegoal1.jpg";
-	this.transparentAddress = "game/images/dino/Transparent.png";  
+	this.orangeSpaceAddress = "CommonSquare.jpg";
+	this.greenSpaceAddress = "OStartSquare.jpg";
+	this.purpleSpaceAddress = "XStartSquare.jpg";
+	this.greenGoalAddress = "OGoalSquare.png";
+	this.purpleGoalAddress = "XGoalSquare.png";
+	this.transparentAddress = "Transparent.png";  
 	
-	this.northArrowAddress = "game/images/dino/suparrow.png"; 
-	this.eastArrowAddress = "game/images/dino/srightarrow.png"; 
-	this.southArrowAddress = "game/images/dino/sdownarrow.png";
-	this.westArrowAddress = "game/images/dino/sleftarrow.png";
+	this.northArrowAddress = "UpArrow.png"; 
+	this.eastArrowAddress = "RightArrow.png"; 
+	this.southArrowAddress = "DownArrow.png";
+	this.westArrowAddress = "LeftArrow.png";
 
-	this.purplePieceAddress = "game/images/dino/bluepiecelast.png";
-	this.greenPieceAddress = "game/images/dino/redpiecelast.png";
+	this.purplePieceAddress = "XPiece.png";
+	this.greenPieceAddress = "OPiece.png";
 	
 	this.transparentLocation = "T"; 
 	this.purpleGoalLocation = "PG";
@@ -38,42 +39,64 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	this.piecesOnBoard = new Array(this.boardWidth); 
 	this.purplePieces = new Array(this.numPurplePieces); 
 	this.greenPieces = new Array(this.numGreenPieces); 
+	this.skinSet = new Array(7); 
+	
+	this.currentPlayerCanMove = false; 
 	
 	//Public Methods
+	
+	//Initialization methods
 	this.populateArrayWithPieces = populateArrayWithPieces;
 	this.make2DArray = make2DArray; 
 	this.drawBoard = drawBoard; 
-	this.toggleNextPlayer = toggleNextPlayer; 
+	this.applyOffsetToAllArrows = applyOffsetToAllArrows;
+	this.applyOffsetToAllPieces = applyOffsetToAllPieces; 
+	this.applySkin = applySkin; 
+	
+	//Hide/show methods
 	this.hideGreenArrows = hideGreenArrows; 
 	this.hidePurpleArrows = hidePurpleArrows;
 	this.hideAllArrows = hideAllArrows; 
-	this.applyOffsetToAllArrows = applyOffsetToAllArrows; 
+	this.drawArrows = drawArrows;
+	
+	//Event handlers
 	this.setAllArrowsClickResponse = setAllArrowsClickResponse; 
 	this.setAllArrowsHoverResponse = setAllArrowsHoverResponse; 
-	this.drawArrows = drawArrows;
+	this.findPieceObject = findPieceObject;
+	
+	//Movement methods
+	this.toggleNextPlayer = toggleNextPlayer; 
 	this.currentPlayerWon = currentPlayerWon;
 	this.updateBoardRepresentation = updateBoardRepresentation; 
-	this.findPieceObject = findPieceObject; 
-	this.fixTableSpacing = fixTableSpacing; 
 	this.removePurplePiece = removePurplePiece;
 	this.removeGreenPiece = removeGreenPiece; 
-	this.playerTrapped = playerTrapped; 
+	this.removePieceOnGoal = removePieceOnGoal; 
+	this.showPlayerTrappedAlert = showPlayerTrappedAlert;
+	this.showGameOverAlert = showGameOverAlert; 
+	this.setupNextTurn = setupNextTurn; 
+	this.movingIntoGoal = movingIntoGoal; 
 	
-	//For debugging purposes
+	//Debugging methods
 	this.showGreenArrows = showGreenArrows;
 	this.showPurpleArrows = showPurpleArrows; 
 	this.showAllArrows = showAllArrows; 
 	this.printGreenPieces = printGreenPieces;
 	this.printPurplePieces = printPurplePieces; 
 	this.printPiecesOnBoard = printPiecesOnBoard; 
+	this.printSkinSet = printSkinSet; 
 	
 	//Constructor 
+	this.applySkin(); 
+	this.printSkinSet();
 	this.piecesOnBoard =  this.make2DArray(this.piecesOnBoard);
+	this.printSkinSet();
 	this.populateArrayWithPieces(); 
-	this.fixTableSpacing();
+	this.printSkinSet();
 	this.drawBoard(); 
+	this.printSkinSet();
 	var myThis = this;
 	setTimeout(function() {
+		myThis.applyOffsetToAllPieces(); 
 		myThis.applyOffsetToAllArrows();
 		myThis.hideAllArrows();
 		myThis.drawArrows();
@@ -81,6 +104,17 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	this.setAllArrowsClickResponse(clickHandlerFunction);
 	this.setAllArrowsHoverResponse(); 
 	//End of constructor
+	
+	function applySkin() {
+		this.orangeSpaceAddress = this.skinChoice + this.orangeSpaceAddress;
+		this.greenSpaceAddress = this.skinChoice + this.greenSpaceAddress;
+		this.purpleSpaceAddress = this.skinChoice + this.purpleSpaceAddress;
+		this.greenGoalAddress = this.skinChoice + this.greenGoalAddress;
+		this.purpleGoalAddress = this.skinChoice + this.purpleGoalAddress;
+		this.transparentAddress = this.skinChoice + this.transparentAddress;  
+		this.purplePieceAddress = this.skinChoice + this.purplePieceAddress;
+		this.greenPieceAddress = this.skinChoice + this.greenPieceAddress;
+	}
 	
 	function removePurplePiece(piece) {
 		piece.hide(); 
@@ -120,9 +154,6 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		var secondLastRow = this.piecesOnBoard.length-2;
 		var lastRow = this.piecesOnBoard.length-1;
 
-		////console.log(this.piecesOnBoard); 
-
-		
 		//Populates the first column of the array representing the game board
 		this.piecesOnBoard[firstColumn][firstRow] = this.transparentLocation; 
 		for(var i = secondRow; i <= thirdLastRow; i++) {							
@@ -158,15 +189,14 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	}
 	
 	function drawBoard() {
-
 		var greenPieceCount = 0;
 		var purplePieceCount = 0; 
 		for (var i = 0; i < this.boardWidth; i++){
 				var nextRow = document.createElement("tr");
+				
 				$('#board').append(nextRow);
 				for (var j = 0; j < this.boardWidth; j++){
 					var nextCell = document.createElement("td");
-					var boardSquare = document.createElement("img"); 
 					
 					var inFirstRow = (i == 0);
 					var inSecondRow = (i == 1);
@@ -179,13 +209,9 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 					
 					if (inLastRow){
 						if (inFirstTwoColumns || inLastColumn){
-							boardSquare.setAttribute("src", this.transparentAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							$(nextCell).append(boardSquare);  
-	
+							nextCell.setAttribute("style", "background-image:url('" + this.transparentAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						} else {
 							var purplePiece = document.createElement("img");
 							var pieceID = this.purplePieceIDIdentifier + this.IDSeparater + purplePieceCount; 
@@ -210,13 +236,11 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 							arrow3.setAttribute("src", this.westArrowAddress); 
 							arrow3.setAttribute("id", arrow3ID); 
 							arrow3.setAttribute("style", "position:absolute");
+						
+							nextCell.setAttribute("style", "background-image:url('" + this.purpleSpaceAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 							
-							boardSquare.setAttribute("src", this.purpleSpaceAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-
 							var tempSquare = this.piecesOnBoard[j][i]; 
 							this.purplePieces[purplePieceCount] = this.piecesOnBoard[j][i] = new Piece(i,j,"purple", pieceID, tempSquare, new Arrow(arrow1ID, null, "north"), new Arrow(arrow2ID, null, "east"), new Arrow(arrow3ID, null, "west")); 
 							this.purplePieces[purplePieceCount].arrows[0].myOwner = this.purplePieces[purplePieceCount]; 
@@ -224,56 +248,35 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 							this.purplePieces[purplePieceCount].arrows[2].myOwner = this.purplePieces[purplePieceCount]; 
 							
 							purplePieceCount += 1; 
-							
-							$(nextCell).append(purplePiece); 
+						
 							$(nextCell).append(arrow1);
 							$(nextCell).append(arrow2);
 							$(nextCell).append(arrow3);
-							$(nextCell).append(boardSquare); 
+							$(nextCell).append(purplePiece);
 						}
 					} else if (inSecondToLastRow){
 						if (inFirstColumn){
-							boardSquare.setAttribute("src", this.transparentAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.transparentAddress + "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						} else if (inLastColumn) {	
-							boardSquare.setAttribute("src", this.greenGoalAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.greenGoalAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						} else {
-							boardSquare.setAttribute("src", this.orangeSpaceAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare);  
+							nextCell.setAttribute("style", "background-image:url('" + this.orangeSpaceAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						}
 					} else if (inFirstRow) {
 						if (inFirstColumn || inLastColumn) {
-							boardSquare.setAttribute("src", this.transparentAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.transparentAddress + "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						} else {
-							boardSquare.setAttribute("src", this.purpleGoalAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.purpleGoalAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						}
 					} else {
 						if (inFirstColumn) {
@@ -301,11 +304,9 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 							arrow3.setAttribute("id", arrow3ID); 
 							arrow3.setAttribute("style", "position:absolute");
 							
-							boardSquare.setAttribute("src", this.greenSpaceAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
+							nextCell.setAttribute("style", "background-image:url('" + this.greenSpaceAddress + "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 							
 							var tempSquare = this.piecesOnBoard[j][i]; 
 							this.greenPieces[greenPieceCount] = this.piecesOnBoard[j][i] = new Piece(i,j,"green", pieceID, tempSquare, new Arrow(arrow1ID, null, "north"), new Arrow(arrow2ID, null, "east"), new Arrow(arrow3ID, null, "south")); 
@@ -315,41 +316,20 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 							
 							greenPieceCount += 1; 
 							
-							$(nextCell).append(greenPiece); 
 							$(nextCell).append(arrow1);
 							$(nextCell).append(arrow2);
 							$(nextCell).append(arrow3);
-							$(nextCell).append(boardSquare); 
+							$(nextCell).append(greenPiece); 
 						} else if (inLastColumn) {
-							boardSquare.setAttribute("src", this.greenGoalAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.greenGoalAddress + "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						} else {
-							boardSquare.setAttribute("src", this.orangeSpaceAddress); 
-							boardSquare.setAttribute("id", i + this.IDSeparater + j); 
-							boardSquare.setAttribute("border", "0");
-							boardSquare.setAttribute("cellspacing", "0"); 
-							boardSquare.setAttribute("cellpadding", "0"); 
-							
-							$(nextCell).append(boardSquare); 
+							nextCell.setAttribute("style", "background-image:url('" + this.orangeSpaceAddress+ "');");
+							nextCell.setAttribute("height", "100px");
+							nextCell.setAttribute("width", "100px");
 						}
-					}
-					//nextCell.setAttribute("class","all-cells"); //Gives each <td></td> a unique ID-- Not necessary at this point 
-					nextCell.setAttribute("cellspacing", "0");
-					nextCell.setAttribute("cellpadding", "0");
-					nextCell.setAttribute("border", "0");
-					nextCell.setAttribute("height", "100px");
-					nextCell.setAttribute("width", "100px");
-					//nextCell.setAttribute("style", "border-collapse:collapse;");
-					nextRow.setAttribute("cellspacing", "0");
-					nextRow.setAttribute("cellpadding", "0");
-					nextRow.setAttribute("border", "0");
-					//nextRow.setAttribute("style", "border-collapse:collapse;");
-					
+					}	
 					$(nextRow).append(nextCell);
 				}
 			}
@@ -368,7 +348,7 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		} else if (this.currentPlayer == "purple") {
 			this.currentPlayer = "green"; 
 		} else {
-			////console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
+			//console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
 		}
 	}
 	
@@ -393,60 +373,11 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		this.hideGreenArrows(); 
 	}
 	
-	function playerTrapped() {
-		if(this.currentPlayer == "green") {
-			for(var i = 0; i < this.greenPieces.length; i++) {
-				var piece = this.greenPieces[i];
-				if(piece != null) {
-					var row = this.greenPieces[i].myRow;
-					var col = this.greenPieces[i].myCol; 
-					if(this.piecesOnBoard[col][row-1] == this.emptyLocation || this.piecesOnBoard[col][row-1] == this.greenGoalLocation) { // check north of green piece
-						//console.log("player not trapped"); 
-						return false; 
-					} 
-					if(this.piecesOnBoard[col][row+1] == this.emptyLocation || this.piecesOnBoard[col][row+1] == this.greenGoalLocation) { //check south of green piece
-						////console.log("player not trapped");
-						return false; 
-					} 
-					if(this.piecesOnBoard[col+1][row] == this.emptyLocation || this.piecesOnBoard[col+1][row] == this.greenGoalLocation) { //check east of green piece
-						////console.log("player not trapped");
-						return false; 
-					} 
-				}
-			}
-			////console.log("player trapped");
-			return true; 
-		} else if(this.currentPlayer == "purple") {
-			for(var i = 0; i < this.purplePieces.length; i++) {
-				var piece = this.purplePieces[i];
-				if(piece != null) {
-					var row = this.purplePieces[i].myRow;
-					var col = this.purplePieces[i].myCol; 
-					if(this.piecesOnBoard[col][row-1] == this.emptyLocation || this.piecesOnBoard[col][row-1] == this.purpleGoalLocation) { // check north of purple piece
-						////console.log("player not trapped");
-						return false; 
-					} 
-					if(this.piecesOnBoard[col-1][row] == this.emptyLocation || this.piecesOnBoard[col][row+1] == this.purpleGoalLocation) { //check west of purple piece
-						////console.log("player not trapped");
-						return false; 
-					} 
-					if(this.piecesOnBoard[col+1][row] == this.emptyLocation || this.piecesOnBoard[col+1][row] == this.purpleGoalLocation) { //check east of purple piece
-						////console.log("player not trapped");
-						return false; 
-					} 
-				}
-			}
-			////console.log("player trapped");
-			return true; 
-		} else {
-			//console.error("drawArrows handled an invalid value of currentPlayer"); 
-		}
-	}
-	
 	function drawArrows() {
 	/* A piece can move to any empty space (signified by null) or 
 	 * to its goal area (signified by this.purpleGoalLocation/this.greenGoalLocation)
 	 */ 
+		this.currentPlayerCanMove = false; 
 		if(this.currentPlayer == "green") {
 			for(var i = 0; i < this.greenPieces.length; i++) {
 				var piece = this.greenPieces[i];
@@ -455,16 +386,19 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 					var col = this.greenPieces[i].myCol; 
 					if(this.piecesOnBoard[col][row-1] == this.emptyLocation || this.piecesOnBoard[col][row-1] == this.greenGoalLocation) { // check north of green piece
 						piece.drawNorthArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideNorthArrow(); 
 					}
 					if(this.piecesOnBoard[col][row+1] == this.emptyLocation || this.piecesOnBoard[col][row+1] == this.greenGoalLocation) { //check south of green piece
 						piece.drawSouthArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideSouthArrow(); 
 					}
 					if(this.piecesOnBoard[col+1][row] == this.emptyLocation || this.piecesOnBoard[col+1][row] == this.greenGoalLocation) { //check east of green piece
 						piece.drawEastArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideEastArrow(); 
 					}
@@ -478,16 +412,19 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 					var col = this.purplePieces[i].myCol; 
 					if(this.piecesOnBoard[col][row-1] == this.emptyLocation || this.piecesOnBoard[col][row-1] == this.purpleGoalLocation) { // check north of purple piece
 						piece.drawNorthArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideNorthArrow(); 
 					}
 					if(this.piecesOnBoard[col-1][row] == this.emptyLocation || this.piecesOnBoard[col][row+1] == this.purpleGoalLocation) { //check west of purple piece
 						piece.drawWestArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideWestArrow(); 
 					}
 					if(this.piecesOnBoard[col+1][row] == this.emptyLocation || this.piecesOnBoard[col+1][row] == this.purpleGoalLocation) { //check east of purple piece
 						piece.drawEastArrow(); 
+						this.currentPlayerCanMove = true; 
 					} else {
 						piece.hideEastArrow(); 
 					}
@@ -523,10 +460,10 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		for(var i = 0; i < this.piecesOnBoard.length; i++) {
 			for(var j = 0; j < this.piecesOnBoard[0].length; j++) {
 				if(this.piecesOnBoard[i][j] == piece) {
-					//alert("executed"); 
 					piece.myCurrentSquare = this.piecesOnBoard[piece.myCol][piece.myRow]; 
 					this.piecesOnBoard[i][j] = tmp; 
 					this.piecesOnBoard[piece.myCol][piece.myRow] = piece; 
+					this.removePieceOnGoal(piece); 
 					return; 
 				}
 			}
@@ -542,6 +479,19 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		for(var i = 0; i < this.greenPieces.length; i++) {
 			if(this.greenPieces[i] != null) {
 				this.greenPieces[i].applyOffsetToArrows();
+			}
+		}
+	}
+	
+	function applyOffsetToAllPieces() {
+		for(var i = 0; i < this.purplePieces.length; i++) {
+			if(this.purplePieces[i] != null) {
+				this.purplePieces[i].applyOffset();
+			}
+		}
+		for(var i = 0; i < this.greenPieces.length; i++) {
+			if(this.greenPieces[i] != null) {
+				this.greenPieces[i].applyOffset();
 			}
 		}
 	}
@@ -594,7 +544,7 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 					return this.greenPieces[i]; 
 				}
 			}
-		} else if (pieceColor == this.purplePieceIDIdentifier){ // purple piece
+		} else if (pieceColor == this.purplePieceIDIdentifier){ //purple piece
 			for(var i = 0; i < this.purplePieces.length; i++) {
 				if(this.purplePieces[i] !== null && this.purplePieces[i].myID == pieceID) {
 					return this.purplePieces[i]; 
@@ -604,20 +554,70 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 			//console.error("Board.findArrowObject(arrowID) did not extract a valid value for pieceColor"); 
 		}
 	}
+
+	function removePieceOnGoal(piece) {
+		if(piece.myCurrentSquare == this.greenGoalLocation) {
+			this.removeGreenPiece(piece); 
+		}
+		if(piece.myCurrentSquare == this.purpleGoalLocation) {
+			this.removePurplePiece(piece); 
+		}
+	}
 	
-	function fixTableSpacing() {
-		$(":image").attr({
-			border: '0',
-			cellpadding: '0',
-			cellspacing: '0'
-		});
+	function showGameOverAlert() {
+		var alertMsg = "Game Over.";
+		if(this.currentPlayer == "green") {
+			alertMsg = alertMsg + " Red player has won."; 
+		} else if (this.currentPlayer == "purple") {
+			alertMsg = alertMsg + " Blue player has won."; 
+		} else {
+			//console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
+		}
+		alert(alertMsg);
+	}
+	
+	function showPlayerTrappedAlert() {
+		var alertMsg = null; 
+		if(this.currentPlayer == "green") {
+			alertMsg = 'Red player\'s pieces are trapped.  Red player\'s turn is skipped.'; 
+		} else if (this.currentPlayer == "purple") {
+			alertMsg = 'Blue player\'s pieces are trapped.  Blue player\'s turn is skipped.'; 
+		} else {
+			//console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
+		} 
+		alert(alertMsg); 
+	}
+	
+	function setupNextTurn() {
+		if(this.currentPlayerWon()) {
+			this.hideAllArrows();
+			this.showGameOverAlert(); 
+		} else {
+			this.toggleNextPlayer(); 
+			this.drawArrows(); 
+			if(!this.currentPlayerCanMove) { 
+				this.showPlayerTrappedAlert(); 
+				this.toggleNextPlayer(); 
+				this.drawArrows(); 
+			}
+		}
+	}
+	
+	function movingIntoGoal(piece,arrow) {
+		var rtn = false;
+		if(piece.myPlayer == "green" && arrow.id.substring(arrow.id.length-2,arrow.id.length-1) == "E" && this.piecesOnBoard[piece.myCol+1][piece.myRow] == "GG") {
+			rtn = true; 
+		} else if (piece.myPlayer == "purple" && arrow.id.substring(arrow.id.length-2,arrow.id.length-1) == "N" && this.piecesOnBoard[piece.myCol][piece.myRow-1] == "PG"){
+			rtn = true; 
+		}
+		return rtn; 
 	}
 	
 	//For debugging purposes
 	function printGreenPieces() {
 		for(var i = 0; i < this.greenPieces.length; i++) {
 			if(this.greenPieces[i] !== null) {
-				////console.log(this.greenPieces[i]); 
+				//console.log(this.greenPieces[i]); 
 			}
 		}
 	}
@@ -626,7 +626,7 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	function printPurplePieces() {
 		for(var i = 0; i < this.purplePieces.length; i++) {
 			if(this.purplePieces[i] !== null) {
-				////console.log(this.purplePieces[i]); 	
+				//console.log(this.purplePieces[i]); 	
 			}
 		}
 	}
@@ -635,11 +635,11 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 	function printPiecesOnBoard() {
 		for(var i = 0; i < this.piecesOnBoard.length; i++) {
 			for(var j = 0; j < this.piecesOnBoard.length; j++) {
-				////console.log("Column: " + i + "||" +"Row: " + j); 
-				////console.log(this.piecesOnBoard[i][j]);
+				//console.log("Column: " + i + "||" +"Row: " + j); 
+				//console.log(this.piecesOnBoard[i][j]);
 			}
 		}
-		////console.log("------------------------------------------------------------------------------------"); 
+		//console.log("------------------------------------------------------------------------------------"); 
 	}
 	
 	//For debugging purposes
@@ -666,4 +666,10 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction) {
 		this.showGreenArrows(); 
 	}
 	
+	//For debugging purposes
+	function printSkinSet() {
+		for(var i = 0; i < this.skinSet.length; i++) {
+			//console.log(i + ":" + this.skinSet[i]); 
+		}
+	}
 }

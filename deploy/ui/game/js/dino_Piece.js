@@ -5,27 +5,29 @@
  
 function Piece(row, col, ownership, id, currentSquare, arrow1, arrow2, arrow3){ 
 	//Public instance variables 
+	
     this.myRow = row; 				
     this.myCol = col;
     this.myPlayer = ownership;
 	this.myCurrentSquare = currentSquare;
-	
 	this.myIDJQuery = '#' + id; 
 	this.myID = id; 
-	
-    this.moveIncrement = 100; //pixels, determined by the width/length of the board squares 
-	
+    this.moveIncrement = 100; //Measured in pixels; determined by the width/length of the board squares 
+
     this.arrows = new Array(3); //assumes a piece will never move towards it's starting area 
 	this.arrows[0] = arrow1;
 	this.arrows[1] = arrow2;
 	this.arrows[2] = arrow3; 
 	
 	//Public methods
-	this.hideArrows = hideArrows; 
-	this.applyOffsetToArrows = applyOffsetToArrows;
-	this.setArrowsClickResponse = setArrowsClickResponse; 
-	this.setArrowsHoverResponse = setArrowsHoverResponse; 
 	
+	//Initialization methods
+	this.applyOffsetToArrows = applyOffsetToArrows;
+	this.applyOffset = applyOffset; 
+	
+	//Hide/show methods
+	this.hide = hide; 
+	this.hideArrows = hideArrows; 
 	this.drawNorthArrow = drawNorthArrow;
 	this.drawSouthArrow = drawSouthArrow;
 	this.drawEastArrow = drawEastArrow;
@@ -34,37 +36,54 @@ function Piece(row, col, ownership, id, currentSquare, arrow1, arrow2, arrow3){
 	this.hideSouthArrow = hideSouthArrow;
 	this.hideEastArrow = hideEastArrow;
 	this.hideWestArrow = hideWestArrow; 
-	this.findArrow = findArrow; 
 	
-	this.animatePiece = animatePiece;
-	this.moveArrows = moveArrows; 
+	//Event handlers
 	this.arrowClicked = arrowClicked; 
-	this.hide = hide; 
+	this.findArrow = findArrow; 
+	this.setArrowsClickResponse = setArrowsClickResponse; 
+	this.setArrowsHoverResponse = setArrowsHoverResponse; 
 	
+	//Movement methods
+	this.animatePiece = animatePiece;
 	this.animatePieceNorth = animatePieceNorth; 
 	this.animatePieceSouth = animatePieceSouth; 
 	this.animatePieceWest = animatePieceWest; 
 	this.animatePieceEast = animatePieceEast; 
 	
+	this.moveArrows = moveArrows;
 	this.moveArrowsNorth = moveArrowsNorth;
 	this.moveArrowsSouth = moveArrowsSouth;
 	this.moveArrowsWest = moveArrowsWest;
 	this.moveArrowsEast = moveArrowsEast;
 	
-	//For debugging purposes
+	this.animatePieceToGoal = animatePieceToGoal; 
+	this.animatePieceNorthToGoal = animatePieceNorthToGoal;
+	this.animatePieceEastToGoal = animatePieceEastToGoal; 
+	
+	//Debugging methods
 	this.showArrows = showArrows; 
 	
-    function animatePiece(direction){
+    function animatePiece(direction, board, piece){
 		if(direction == "north") {
-			this.animatePieceNorth();
+			this.animatePieceNorth(board, piece);
 		} else if (direction == "south") {
-			this.animatePieceSouth();
+			this.animatePieceSouth(board, piece);
 		} else if(direction == "east") {
-			this.animatePieceEast();
+			this.animatePieceEast(board, piece);
 		} else if (direction == "west") {
-			this.animatePieceWest();
+			this.animatePieceWest(board, piece);
 		} else {
 			//console.error("The argument passed to Piece.animatePiece(direction) did not contain a valid value-- ie. \"north\" \"south\" \"east\" \"west\""); 
+		}
+	}
+	
+	function animatePieceToGoal(direction, board, piece){
+		if(direction == "north") {
+			this.animatePieceNorthToGoal(board, piece);
+		} else if(direction == "east") {
+			this.animatePieceEastToGoal(board, piece);
+		} else {
+			//console.error("The argument passed to Piece.animatePieceToGoal(direction) did not contain a valid value-- ie. \"north\" \"east\""); 
 		}
 	}
 	
@@ -106,25 +125,53 @@ function Piece(row, col, ownership, id, currentSquare, arrow1, arrow2, arrow3){
 		}
 	}
     
-    function animatePieceNorth(){
+    function animatePieceNorth(board, piece){
         this.myRow--;
-		$(this.myIDJQuery).animate({top: "-=105px"}); 
+		$(this.myIDJQuery).animate({top: "-="+this.moveIncrement+"px"}, function() {
+			board.updateBoardRepresentation(piece);
+			board.setupNextTurn(); 
+		} ); 
     }
     
-    function animatePieceSouth(){
+    function animatePieceSouth(board, piece){
         this.myRow++;
-		$(this.myIDJQuery).animate({top: "+=105px"}); 
+		$(this.myIDJQuery).animate({top: "+="+this.moveIncrement+"px"}, function() {
+			board.updateBoardRepresentation(piece);
+			board.setupNextTurn(); 
+		} ); 
     }
     
-    function animatePieceEast(){
+    function animatePieceEast(board, piece){
         this.myCol++;
-		$(this.myIDJQuery).animate({left: "+=100px"}); 
+		$(this.myIDJQuery).animate({left: "+="+this.moveIncrement+"px"}, function() {
+			board.updateBoardRepresentation(piece);
+			board.setupNextTurn(); 
+		} ); 
     }
     
-    function animatePieceWest(){
+    function animatePieceWest(board, piece){
         this.myCol--;
-		$(this.myIDJQuery).animate({left: "-=100px"});
+		$(this.myIDJQuery).animate({left: "-="+this.moveIncrement+"px"}, function() {
+			board.updateBoardRepresentation(piece);
+			board.setupNextTurn(); 
+		} );
     }
+	
+	function animatePieceNorthToGoal(board, piece) {
+		this.myRow--;
+		$(this.myIDJQuery).animate({opacity: 0, top: "-="+this.moveIncrement+"px"}, 500, function() {
+			board.updateBoardRepresentation(piece);
+			board.setupNextTurn(); 
+		} ); 
+	}
+	
+	function animatePieceEastToGoal(board, piece) {
+		this.myCol++;
+		$(this.myIDJQuery).animate({opacity: 0, left: "+="+this.moveIncrement+"px"}, 500, function() {
+			board.updateBoardRepresentation(piece); 
+			board.setupNextTurn(); 
+		} );
+	}
 	
 	function hideArrows() {
 		for(var i = 0; i < this.arrows.length; i++) {
@@ -144,6 +191,12 @@ function Piece(row, col, ownership, id, currentSquare, arrow1, arrow2, arrow3){
 		}
 	}
 	
+	function applyOffset() {
+		var el = document.getElementById(this.myID); 
+		var valAsString = $(this.myIDJQuery).css('top'); 
+		var numVal = parseInt(valAsString.substring(0,valAsString.length-2));
+		el.style.top = numVal - 50 + "px"; 
+	}
 	
 	function setArrowsClickResponse(fn) {
 		for(var i = 0; i < this.arrows.length; i++) {
@@ -206,15 +259,20 @@ function Piece(row, col, ownership, id, currentSquare, arrow1, arrow2, arrow3){
 		//console.error("Invalid direction argument given to Piece.findArrow()"); 
 	}
 	
-	function arrowClicked(arrowID) {
+	function arrowClicked(arrowID,movingIntoGoal,board,piece) {
 		var direction = "";
 		for(var i = 0; i < this.arrows.length; i++) {
 			if(this.arrows[i].myID == arrowID) {
 				direction = this.arrows[i].myDirection; 
 			}
 		}
-		this.animatePiece(direction);
-		this.moveArrows(direction); 
+		if(movingIntoGoal) {
+			this.animatePieceToGoal(direction, board, piece); 
+			this.moveArrows(direction); 
+		} else {
+			this.animatePiece(direction, board, piece);
+			this.moveArrows(direction); 
+		} 
 	} 
 	
 	function hide() {
