@@ -3,7 +3,6 @@
 <script type="text/javascript" src="game/js/dino_Arrow.js"></script>
 <form name="game-options">
 	<div>
-	<input type="submit" id="newgame" value="New Game">
 	<b> Board Size </b>
 	<select name="size" id="board-size">
 		<option value="3">3x3</option>
@@ -21,52 +20,66 @@
 		<option value="blue-human">Human</option>
 		<option value="blue-computer">Computer</option>
 	</select>
-	<button type="reset_game"> Reset Game </button>		
+	</select>
+	<b> Value Moves </b>
+	<select name="value-moves" id="value-moves">
+		<option value="on">On</option>
+		<option value="off">Off</option>
+	</select>	
+	</select>
+	<b> First player </b>
+	<select name="first" id="first-player">
+		<option value="green">Red</option>
+		<option value="purple">Blue</option>
+	</select>		
+	</select>
+	<b> Skin </b>
+	<select name="skin" id="skin-choice">
+		<option value="classic">Classic</option>
+		<option value="forest">Forest</option>
+	</select>			
 	</div>
-	<input type="hidden" name="game" value="dino" />
+	<input type="submit" id="newgame" value="New Game">
 </form>
-<div style="position:relative"> <table id="board" border="0" cellspacing="0" cellpadding="0"></table> </div> <!--style="border-collapse:collapse;"-->
+<div style="position:relative"> <table id="board" border="0" cellspacing="0" cellpadding="0"></table> </div> 
 <script type="text/javascript"> 	
-$(document).ready(function(){
-	//This block of code is executed when the DOM is ready to be manipulated 
-	function clickEvent() { //Game loop
-		dinoBoard.hideAllArrows();
-		
-		var piece = dinoBoard.findPieceObject(this.id); 
-		piece.arrowClicked(this.id); 
-
-		dinoBoard.updateBoardRepresentation(piece);
-		
-		if(piece.myCurrentSquare == dinoBoard.greenGoalLocation) {
-			dinoBoard.removeGreenPiece(piece); 
-		}
-		if(piece.myCurrentSquare == dinoBoard.purpleGoalLocation) {
-			dinoBoard.removePurplePiece(piece); 
-		}
-		
-		if(dinoBoard.currentPlayerWon()) {
-			dinoBoard.hideAllArrows();
-			var alertMsg = "Game Over."
-			if(dinoBoard.currentPlayer == "green") {
-				alertMsg = alertMsg + " Red player has won."; 
-			} else if (dinoBoard.currentPlayer == "purple") {
-				alertMsg = alertMsg + " Blue player has won."; 
+	$(document).ready(function(){
+		//This block of code is executed when the DOM is ready to be manipulated 
+		function gup(name) {
+			var originalArg = name; 
+			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+			var regexS = "[\\?&]"+name+"=([^&#]*)";
+			var regex = new RegExp( regexS );
+			var results = regex.exec( window.location.href );
+			if(results == null ) {
+				if(originalArg == "size") {
+					return 4;
+				} else if(originalArg == "first") {
+					return "green";
+				} else if (originalArg = "skin") {
+					return "classic";
+				} else {
+					return "";
+				}
 			} else {
-				//console.error("currentPlayer held a value not equal to \"green\"/\"purple\"");  
+				return results[1];
 			}
-			alert(alertMsg); 
-		} else {
-			dinoBoard.toggleNextPlayer(); 
-			//if(dinoBoard.playerTrapped()) {
-			//	dinoBoard.toggleNextPlayer();
-			//	dinoBoard.drawArrows();
-			//}
-			dinoBoard.drawArrows(); 
 		}
-		//For debugging purposes 
-		//dinoBoard.printPiecesOnBoard(); 
-	}
 
-	var dinoBoard = new Board(4, "green", clickEvent); 
-});
-</script>
+		allowUserToPick = true;
+		if(allowUserToPick) {
+			document.getElementById("board-size").value = gup("size");
+			document.getElementById("first-player").value = gup("first"); 
+			document.getElementById("skin-choice").value = gup("skin");
+			dinoBoard = new Board(parseInt(document.getElementById("board-size").value),document.getElementById("first-player").value, clickEvent, document.getElementById("skin-choice").value); //Defaults to 3x3
+		} else {
+			dinoBoard = new Board(4, "green", clickEvent, "classic"); 
+		}
+		
+		function clickEvent() { //Game loop
+			dinoBoard.hideAllArrows();
+			var piece = dinoBoard.findPieceObject(this.id); 	
+			piece.arrowClicked(this.id, dinoBoard.movingIntoGoal(piece,this), dinoBoard, piece); 
+		}
+	});
+</script> 
