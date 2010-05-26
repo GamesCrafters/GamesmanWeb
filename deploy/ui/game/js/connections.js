@@ -173,6 +173,15 @@ Connections.prototype.hideMoveValues = function() {
 Connections.prototype.handleNextValuesReceived = function() {
 	//this.switchTeams();
 	var msg = '';
+	if (this.nextMoves.length == 0) {
+		var prompt = colors[TURN].toUpper() + ' WINS!';
+	      prompt += " Would you like to reset the game and play again?";
+	      var onAccept = function() {
+	        var game = new Connections({size: $('#board-options select').val()*2-1});
+	        game.start();
+	      };
+	      GCWeb.confirm(prompt, onAccept);
+	}
 	for (var i = 0; i < this.nextMoves.length; i++) msg += this.nextMoves[i].value + '-';
 	alert(msg);
 	this.showMoveValues(this.nextMoves.slice());
