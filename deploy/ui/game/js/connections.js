@@ -47,6 +47,17 @@ Connections.prototype.getDefaultBoardString = function() {
   return s;
 }
 
+function getSquares() {
+	squares = [];
+	for (var i = boardArray.length-2; i >= 0; i -= 2) for (var j = 1; j < boardArray.length-1; j+=2) {
+		squares.push(document.getElementById(i+'_'+j));
+	 }
+	  for (var i = boardArray.length-3; i > 1; i -= 2) for (var j = 2; j < boardArray.length-2; j+=2) {
+		  squares.push(document.getElementById(i+'_'+j));
+	 }
+	return squares;
+}
+
 Connections.prototype.createParameterString = function(board) {
   if (board != null && board.length >= 10) return ";board=" + board + ';side=' + ((boardArray.length-1)/2) + ';';
   var paramString = ";board=" + Connections.prototype.getDefaultBoardString();
@@ -109,7 +120,7 @@ Connections.prototype.occupied = function(space) {
 }
 
 Connections.prototype.assignMoves = function(moves) {
-	var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
+	var squares = $(getSquares()); //$($('#board .even .even, #board .odd .odd').get().reverse());
 	squares.unbind('click', moveHandler);
 	var count = 0;
 	var squaresArray = squares.get();
@@ -139,7 +150,7 @@ Connections.prototype.showMoveValues = function(moves) {
 	// clear move values
 	this.hideMoveValues();
 	if ($('#option-move-values:checked').val() != null) {	
-		var squares = $($('#board .even .even, #board .odd .odd').get().reverse());
+		var squares = $(getSquares()); //$($('#board .even .even, #board .odd .odd').get().reverse());
 		var i = 0;
 		var squaresArray = squares.get();
 		for (var j = 0; j < squaresArray.length; j++) {
