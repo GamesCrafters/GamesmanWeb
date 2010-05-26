@@ -15,3 +15,5 @@
 
 	<table id="board">
 	</table>
+
+	<p id="whoseTurn"></p>
