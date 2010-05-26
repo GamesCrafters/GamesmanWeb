@@ -122,6 +122,7 @@ Connections.prototype.start = function(team) {
   this.player = team || GCWeb.Team.BLUE;
   this.switchTeams();
   Connections.superClass.start.call(this);
+  $('#whoseTurn').html('<span class="gc-blue">BLUE</span> to play.')
 }
 
 Connections.prototype.displayPrediction = function() {
@@ -137,8 +138,8 @@ Connections.prototype.displayPrediction = function() {
 		  if (nextMoves[i].remoteness > minLose) minLose = nextMoves[i].remoteness;
 	  }
 	}
-	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + (minWin+1) + ((minWin+1>1) ? ' moves.' : 'move.'));
-	else if (minLose > -1) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + (minLose+1) + ((minLose+1>1) ? ' moves.' : 'move.'));
+	if (minWin < 100000) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-win">wins</span> in ' + (minWin+1) + ((minWin+1>1) ? ' moves.' : ' move.'));
+	else if (minLose > -1) $('#prediction > span').html('<span class="gc-'+colors[TURN]+'">'+colors[TURN].toUpperCase()+'</span> <span class="gc-lose">loses</span> in ' + (minLose+1) + ((minLose+1>1) ? ' moves.' : ' move.'));
 	else $('#prediction > span').html('Prediction unavailable');
 }
 
@@ -219,6 +220,7 @@ Connections.prototype.handleNextValuesReceived = function() {
 	//alert(msg);
 	this.showMoveValues(this.nextMoves.slice());
 	this.displayPrediction();
+	$('#whoseTurn').html('<span class="gc-' + colors[TURN] + '">' + colors[TURN].toUpperCase() + '</span> to play.')
 }
 
 Connections.prototype.generateBoard = function(size) {
