@@ -4,6 +4,55 @@
  * Requires jquery, gc-game.js
  */
 
+
+GCWeb.Prediction.prototype.updatePrediction = function() {
+  var html = '';
+  var moveValue = Connections.prototype.getLastMoveValue();
+  if (!moveValue) {
+    html += 'Game not yet started.';
+  } else {
+    // If the current player changed since the last turn (usually players
+    // will alternate turns in most games), then reverse the move-value
+    // to be from the new current player's point of view.
+    if (this.game.player != this.lastPlayer) {
+      var reversedValue = moveValue.value;
+      if (moveValue.value == 'win') {
+        reversedValue = 'lose';
+      } else if (moveValue.value == 'lose') {
+        reversedValue = 'win';
+      }
+      moveValue = { value: reversedValue, remoteness: moveValue.remoteness };
+    }
+
+    if ((typeof moveValue.value) === 'string') {
+      html += '<span class="' +
+              ((this.game.player == GCWeb.Team.BLUE) ? 'gc-blue' : 'gc-red') +
+              '">' + this.game.player + '</span> ';
+      if (moveValue.value == 'win') {
+        html += '<span class="gc-win">wins</span>';
+      } else if (moveValue.value == 'lose') {
+        html += '<span class="gc-lose">loses</span>';
+      } else if (moveValue.value == 'tie') {
+        html += '<span class="gc-tie">ties</span>';
+      } else {
+        html += 'will finish the game';  // Lame, I know.
+      }
+
+      if ((typeof moveValue.remoteness) !== 'undefined') {
+        var remoteness = Math.round(moveValue.remoteness);
+        html += ' in ' + remoteness + ' move' + ((remoteness == 1) ? '' : 's');
+      }
+      html += '.';
+    } else {
+      html = 'Prediction unavailable.';
+    }
+  }
+  $("#prediction > span").html(html);
+  this.lastPlayer = this.game.player;
+  this.tryEnablePredictions();
+};
+
+
 var size;
 var BLUE = 0; var RED = 1;
 var colors = ['blue', 'red'];
