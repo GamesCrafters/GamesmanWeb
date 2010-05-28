@@ -29,6 +29,8 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	this.purplePieceAddress = "XPiece.png";
 	this.greenPieceAddress = "OPiece.png";
 	
+	this.imageDirectoryAddress = "game/images/dino/"; 
+	
 	this.transparentLocation = "T"; 
 	this.purpleGoalLocation = "PG";
 	this.greenGoalLocation = "GG";
@@ -106,14 +108,14 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	//End of constructor
 	
 	function applySkin() {
-		this.orangeSpaceAddress = this.skinChoice + this.orangeSpaceAddress;
-		this.greenSpaceAddress = this.skinChoice + this.greenSpaceAddress;
-		this.purpleSpaceAddress = this.skinChoice + this.purpleSpaceAddress;
-		this.greenGoalAddress = this.skinChoice + this.greenGoalAddress;
-		this.purpleGoalAddress = this.skinChoice + this.purpleGoalAddress;
-		this.transparentAddress = this.skinChoice + this.transparentAddress;  
-		this.purplePieceAddress = this.skinChoice + this.purplePieceAddress;
-		this.greenPieceAddress = this.skinChoice + this.greenPieceAddress;
+		this.orangeSpaceAddress = this.imageDirectoryAddress + this.skinChoice + this.orangeSpaceAddress;
+		this.greenSpaceAddress = this.imageDirectoryAddress + this.skinChoice + this.greenSpaceAddress;
+		this.purpleSpaceAddress = this.imageDirectoryAddress + this.skinChoice + this.purpleSpaceAddress;
+		this.greenGoalAddress = this.imageDirectoryAddress + this.skinChoice + this.greenGoalAddress;
+		this.purpleGoalAddress = this.imageDirectoryAddress + this.skinChoice + this.purpleGoalAddress;
+		this.transparentAddress = this.imageDirectoryAddress + this.skinChoice + this.transparentAddress;  
+		this.purplePieceAddress = this.imageDirectoryAddress + this.skinChoice + this.purplePieceAddress;
+		this.greenPieceAddress = this.imageDirectoryAddress + this.skinChoice + this.greenPieceAddress;
 	}
 	
 	function removePurplePiece(piece) {
