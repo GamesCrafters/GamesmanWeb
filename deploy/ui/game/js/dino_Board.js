@@ -6,6 +6,7 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	this.currentPlayer = firstPlayer; 
 	this.skinChoice = skin; 
 	
+	this.imageDirectoryAddress = "game/images/dino/"; 
 	this.IDSeparater = "-"; 
 	this.greenPieceIDIdentifier = "GP";
 	this.purplePieceIDIdentifier = "PP"; 
@@ -21,15 +22,13 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	this.purpleGoalAddress = "XGoalSquare.png";
 	this.transparentAddress = "Transparent.png";  
 	
-	this.northArrowAddress = "UpArrow.png"; 
-	this.eastArrowAddress = "RightArrow.png"; 
-	this.southArrowAddress = "DownArrow.png";
-	this.westArrowAddress = "LeftArrow.png";
+	this.northArrowAddress = this.imageDirectoryAddress + "UpArrow.png"; 
+	this.eastArrowAddress = this.imageDirectoryAddress + "RightArrow.png"; 
+	this.southArrowAddress = this.imageDirectoryAddress + "DownArrow.png";
+	this.westArrowAddress = this.imageDirectoryAddress + "LeftArrow.png";
 
 	this.purplePieceAddress = "XPiece.png";
 	this.greenPieceAddress = "OPiece.png";
-	
-	this.imageDirectoryAddress = "game/images/dino/"; 
 	
 	this.transparentLocation = "T"; 
 	this.purpleGoalLocation = "PG";
@@ -93,9 +92,9 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 	this.piecesOnBoard =  this.make2DArray(this.piecesOnBoard);
 	this.printSkinSet();
 	this.populateArrayWithPieces(); 
-	this.printSkinSet();
+	//this.printSkinSet();
 	this.drawBoard(); 
-	this.printSkinSet();
+	//this.printSkinSet();
 	var myThis = this;
 	setTimeout(function() {
 		myThis.applyOffsetToAllPieces(); 
