@@ -375,7 +375,7 @@ $(function() {
   if (div.clientWidth > canvasHeight) {
     var footer = document.getElementsByName('footer');
     canvasHeight = div.clientWidth;
-    canvasHeight = window.innerHeight - 250;
+    canvasHeight = window.innerHeight - 200;
   }
   // determine if the height or width is going to be the
   //constraining factor when drawing
