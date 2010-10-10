@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,17 +43,26 @@ import edu.berkeley.gcweb.servlet.thrift.GetNextMoveResponse;
  * 
  * This implementation uses TCP sockets to connect to a remote Python server.
  * 
- * @author Ide
+ * @author James Ide
  */
 @Path("/gamesman/puzzles")
 public class PuzzleServlet {
 
-    @Context
-    private static ServletContext servletContext; // why do I need this?
+    @Context private static ServletContext servletContext;
+    @Context private static HttpServletResponse servletResponse;
+
+    /**
+     * A convenience method to set the CORS HTTP headers to allow for
+     * cross-origin XMLHttpRequests.
+     * The CORS specification is at http://www.w3.org/TR/cors/
+     */
+    private void setCrossOriginHeaders() {
+	servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+    }
 
     @GET
     @Path("{puzzle}/isAlive")
-    @Produces("text/plain")
+    @Produces("text/javascript")
     public String isAlive(@PathParam("puzzle") String puzzle) {
 	Set<String> serverIndependent = new HashSet<String>();
 	serverIndependent.add("oskarscube");
@@ -67,12 +77,14 @@ public class PuzzleServlet {
             response = "{ status: 'error', " +
                 "message: 'failed to make JSON response with live-status' }";
         }
+
+	setCrossOriginHeaders();
         return response;
     }
 
     @GET
     @Path("/{puzzle}/getMoveValue")
-    @Produces("text/plain")
+    @Produces("text/javascript")
     public String getMoveValue(@PathParam("puzzle") String puzzle,
             @Context UriInfo uri) {
         String json = null;
@@ -110,12 +122,14 @@ public class PuzzleServlet {
                 throw new RuntimeException(e);
             }
         }
+
+	setCrossOriginHeaders();
         return json;
     }
 
     @GET
     @Path("/{puzzle}/getNextMoveValues")
-    @Produces("text/plain")
+    @Produces("text/javascript")
     public String getNextMoveValues(@PathParam("puzzle") String puzzle, @Context UriInfo uri) {
         String json = null;
         Socket socket = getGameConnectionInfo(puzzle, json);
@@ -155,6 +169,7 @@ public class PuzzleServlet {
             }
         }
 
+	setCrossOriginHeaders();
         return json;
     }
 
@@ -248,6 +263,7 @@ public class PuzzleServlet {
                 response = "{status: 'error', message: 'A JSON error occurred while handling an exception.'}";
             }
         }
+
         return response;
     }
 
