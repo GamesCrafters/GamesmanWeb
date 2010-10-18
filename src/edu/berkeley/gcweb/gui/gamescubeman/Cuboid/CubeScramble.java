@@ -37,7 +37,7 @@ public class CubeScramble extends Scramble {
 	private int[][][] image;
 
 	private static int getSizeFromVariation(String variation) {
-		return variation.isEmpty() ? 3 : Integer.parseInt(variation.split("x")[0]);
+		return variation.length() == 0 ? 3 : Integer.parseInt(variation.split("x")[0]);
 	}
 
 	public CubeScramble(String variation, int length, String generatorGroup, String... attrs) {
