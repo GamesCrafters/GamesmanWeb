@@ -137,8 +137,10 @@ function getMoveColumn(move) {
         if (move.charCodeAt(0) >= '0'.charCodeAt(0) &&
             move.charCodeAt(0) <= '9'.charCodeAt(0)) {
             return parseInt(move);
+        } else if (move.charCodeAt(0) < 'a'.charCodeAt(0)) {
+            return move.charCodeAt(0) - 'A'.charCodeAt(0);
         } else {
-	    return move.charCodeAt(0) - 'a'.charCodeAt(0);
+            return move.charCodeAt(0) - 'a'.charCodeAt(0);
         }
 }
 
