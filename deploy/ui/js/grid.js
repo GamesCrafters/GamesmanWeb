@@ -24,6 +24,7 @@ var nextMoves = [];
 var ttthack=true;
 
 var urlParams = window.location.toString().split("#")[0].split("?")[1].split("&");
+$(document).ready(function(){
 for (var i = 0; i < urlParams.length; i++) {
     var key = unescape(urlParams[i].split("=")[0]);
     var value = unescape(urlParams[i].split("=")[1]);
@@ -43,10 +44,10 @@ for (var i = 0; i < urlParams.length; i++) {
         $("#piecesinput").val(pcs)
     }
 }
+if (puzzletype=="atarigo") $("#piecesinput").hide();
 if (ttthack && puzzletype == "ttt") {
     width=3; height=3;
 }
-$(document).ready(function(){
   function startGame(){
     var mywidth = parseInt($("#widthinput").val());
     var myheight = parseInt($("#heightinput").val());
