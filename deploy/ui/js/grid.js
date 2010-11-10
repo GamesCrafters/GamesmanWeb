@@ -1,6 +1,6 @@
 var EMPTY = ' ';
-var width = 4;
-var height = 4;
+var width = 5;
+var height = 5;
 var puzzletype = "ttt";
 
 // N-ARY TIMES OPERATOR vs. LARGE CIRCLE
@@ -21,6 +21,8 @@ var moveValueNames = {1:'lose',2:'tie',3:'win','lose':'lose','tie':'tie','win':'
 var moveValueClasses = {'lose':'lose-move', 'tie':'tie-move', 'win':'win-move','draw':'tie-move'};
 var nextMoves = [];
 
+var ttthack=true;
+
 var urlParams = window.location.toString().split("#")[0].split("?")[1].split("&");
 for (var i = 0; i < urlParams.length; i++) {
     var key = unescape(urlParams[i].split("=")[0]);
@@ -29,17 +31,20 @@ for (var i = 0; i < urlParams.length; i++) {
         puzzletype = value;
     }
     if (key == "height") {
-        height = parseInt(value);
+        height = parseInt(value); ttthack=false;
         $("#heightinput").val(height)
     }
     if (key == "width") {
-        width = parseInt(value);
+        width = parseInt(value); ttthack=false;
         $("#widthinput").val(width)
     }
     if (key == "pieces") {
         pcs = parseInt(value);
         $("#piecesinput").val(pcs)
     }
+}
+if (ttthack && puzzletype == "ttt") {
+    width=3; height=3;
 }
 $(document).ready(function(){
   function startGame(){

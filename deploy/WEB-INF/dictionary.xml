@@ -23,10 +23,10 @@
   <game internal-name="dino" canonical-name="Dino Dodg'Em" visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="atarigo" canonical-name="Atari Go" ui="grid" visible="visible">
+  <game internal-name="atarigo" canonical-name="Atari Go" ui="grid" visible="visible" puzzle="puzzle">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid" visible="visible">
+  <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid" visible="visible" puzzle="puzzle">
     <server host="localhost" port="4242" />
   </game>
   <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
