@@ -6,9 +6,11 @@
   <game internal-name="1210" canonical-name="1, 2, ..., 10">
     <server host="localhost" port="24444" />
   </game>
+<!--
   <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
     <server host="localhost" port="24444" />
   </game>
+-->
   <game internal-name="othello" canonical-name="Othello">
     <server host="localhost" port="24444" />
   </game>
@@ -21,10 +23,10 @@
   <game internal-name="dino" canonical-name="Dino Dodg'Em" visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="atarigo" canonical-name="Tic-Tac-Toe" ui="grid">
+  <game internal-name="atarigo" canonical-name="Atari Go" ui="grid" visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid">
+  <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid" visible="visible">
     <server host="localhost" port="4242" />
   </game>
   <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
