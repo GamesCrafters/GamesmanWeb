@@ -47,6 +47,7 @@ for (var i = 0; i < urlParams.length; i++) {
 if (puzzletype=="atarigo") $("#piecesinput").hide();
 if (ttthack && puzzletype == "ttt") {
     width=3; height=3;
+    $("#heightinput").val(3); $("#widthinput").val(3);
 }
   function startGame(){
     var mywidth = parseInt($("#widthinput").val());
