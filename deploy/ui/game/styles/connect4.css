@@ -4,7 +4,7 @@
 }
 .connect4-grid td { margin: 0; padding: 0; line-height: 0 }
 .connect4-grid td[colspan] { vertical-align: top }
-.connect4-grid td img { z-index: 10; position: absolute }
+.connect4-grid td img { z-index: 10; position: relative }
 .piece { z-index: 5; position: absolute }
 
 .connect4-grid .win-marker {
