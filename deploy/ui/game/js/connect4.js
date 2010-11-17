@@ -308,20 +308,37 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
 };
 
 ConnectFour.prototype.showMoveValues = function() {
+  var dropArea = this.board.find("td[colspan]");
+  dropArea.children(".marker-block").remove();
   var topGameRow = this.board.find("tr:nth-child(2)");
   topGameRow.children("td").removeClass();
+  var columnWidth = Math.floor(this.board.width() / this.width);
+
   for (var i = 0; i < this.nextMoves.length; i++) {
     var move = this.nextMoves[i];
     if ((move.value !== undefined) && (move.move !== undefined)) {
+      // Add some color to the top cell of the column to which this move
+      // corresponds.
       var cssColumn = parseInt(move.move) + 1;
-      topGameRow.children("td:nth-child(" + cssColumn + ")")
-        .addClass(move.value + "-marker");
+      var cell = topGameRow.children("td:nth-child(" + cssColumn + ")");
+      cell.addClass(move.value + "-marker");
+
+      // In addition, add a block of color above the cell, in the row where the
+      // active piece slides back and forth.
+      var blockHeight = dropArea.height() / 4;
+      var colorBlock = $('<div/>')
+        .addClass(move.value + "-marker-block marker-block")
+        .width(columnWidth).height(blockHeight)
+        .css({ marginLeft: (cssColumn - 1) * columnWidth,
+               marginTop: dropArea.height() - blockHeight }) 
+        .appendTo(dropArea);
     }
   }
 };
 
 ConnectFour.prototype.hideMoveValues = function() {
   this.board.find("tr:nth-child(2) td").removeClass();
+  this.board.find(".marker-block").remove();
 };
 
 /** Represents a Connect Four piece. */
