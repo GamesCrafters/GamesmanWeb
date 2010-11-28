@@ -424,21 +424,28 @@ function updateMoveValues(nextMoves){
     // reset everything first
     for (i = 0; i < clickables.length; i++)
 		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).removeClass();
-	
+
+    var minRemote = nextMoves[0] && nextMoves[0].remoteness;
+    for(i = 0; i < nextMoves.length; i++) {
+        if (nextMoves[i].remoteness < minRemote)
+            minRemote = nextMoves[i].remoteness;
+    }
     // set background color to new values
     for(i = 0; i < nextMoves.length; i++) {
         move = nextMoves[i].move;
+        nextMoves[i].dremote = 2 - (nextMoves[i].remoteness - minRemote);
+        if (minRemote == 0) nextMoves[i].dremote -= 1;
         if (move == "R")
-			$("#cell-" + clickables[2][0] + "-" + clickables[2][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[2][0] + "-" + clickables[2][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
         else if (move == "L")
-			$("#cell-" + clickables[3][0] + "-" + clickables[3][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[3][0] + "-" + clickables[3][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
         else if (move == "D") {
-			$("#cell-" + clickables[0][0] + "-" + clickables[0][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
-			$("#cell-" + clickables[5][0] + "-" + clickables[5][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[0][0] + "-" + clickables[0][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
+			$("#cell-" + clickables[5][0] + "-" + clickables[5][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
 		}
         else if (move == "U") {
-			$("#cell-" + clickables[1][0] + "-" + clickables[1][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
-			$("#cell-" + clickables[4][0] + "-" + clickables[4][1]).addClass(moveValueClasses[nextMoves[i].value-1]);
+			$("#cell-" + clickables[1][0] + "-" + clickables[1][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
+			$("#cell-" + clickables[4][0] + "-" + clickables[4][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
 		}
     }
 }

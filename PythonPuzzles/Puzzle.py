@@ -40,7 +40,7 @@ class Puzzle:
         return (not self.is_a_solution()) and (self.is_leaf())
 
     def is_leaf(self):
-        return (len(self.generate_moves) == 0)
+        return (len(self.generate_moves()) == 0)
 
     def is_illegal(self):
         return False

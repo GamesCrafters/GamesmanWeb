@@ -107,6 +107,9 @@ class TCross(Puzzle):
         if self.exactSol: 
             gameboard = [15, 16, 24, 25, 29, 30, 10, 11, 12]
             return [TCross(gameboard, 0, True, self.circle, self.binArt, self.dots, self.exactSol)];
+        else:
+            return []
+        """
         elif self.circle and self.dots:
             return self.generateInexactSolutionsCD()
         elif self.circle and self.binArt:
@@ -115,7 +118,7 @@ class TCross(Puzzle):
             return self.generateInexactSolutionsDB()
         else:
             return [] # Let them be generated.
-            
+        """
     # circle/dots
     def generateInexactSolutionsCD(self):
         solutions = []
