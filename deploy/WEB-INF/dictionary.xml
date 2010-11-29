@@ -6,13 +6,11 @@
   <game internal-name="1210" canonical-name="1, 2, ..., 10">
     <server host="localhost" port="24444" />
   </game>
-<!--
   <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
     <server host="localhost" port="24444" />
   </game>
--->
-  <game internal-name="othello" canonical-name="Othello">
-    <server host="localhost" port="24444" />
+  <game internal-name="reversi" canonical-name="Othello" puzzle="puzzle" ui="grid" visible="visible">
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
     <server host="localhost" port="4240" />
@@ -42,19 +40,15 @@
   </game>
   <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)"
 	puzzle="puzzle">
-    <server host="localhost" port="1466" />
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle"
 	visible="visible">
-    <server host="localhost" port="1234" />
-  </game>
-  <game internal-name="lightsoutpm" canonical-name="Lights Out (Gamesman+-)"
-	puzzle="puzzle" ui="grid">
-    <server host="localhost" port="2779" />
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="lightsout" canonical-name="Lights Out" puzzle="puzzle"
 	visible="visible">
-    <server host="localhost" port="1055" />
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="oskarscube" canonical-name="Oskar's Cube"
 	puzzle="puzzle" visible="visible">

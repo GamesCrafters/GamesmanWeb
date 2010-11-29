@@ -64,6 +64,9 @@ class FCG(Puzzle):
                (2 ** 1) * self.G + \
                (2 ** 0) * self.B
 
+    def maxhash(self):
+        return 2**4
+
     def serialize(self):
         return str(self)
 
