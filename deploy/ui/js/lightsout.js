@@ -243,7 +243,21 @@ function updateMoveValues(nextMoves){
     clearMoveValues();
     
     // set background color to new values
+    var minremote = nextMoves[0].remoteness;
+    var maxremote = nextMoves[0].remoteness;
     for(i=0;i<nextMoves.length;i++) {
+        if (nextMoves[i].remoteness < minremote) minremote = nextMoves[i].remoteness;
+        if (nextMoves[i].remoteness > maxremote) maxremote = nextMoves[i].remoteness;
+    }
+    var dremote;
+    for(i=0;i<nextMoves.length;i++) {
+        if (minremote == 0 && maxremote == 1) {
+            dremote = 1 - nextMoves[i].remoteness;
+        } else if (minremote == 1 && maxremote == 1) {
+            dremote = 0;
+        } else {
+            dremote = 2 - (nextMoves[i].remoteness - minremote);
+        }
         // if the move were something like a3, then you would use the commented lines below instead
         row = height-nextMoves[i].move[1];
         col = nextMoves[i].move.charCodeAt(0)-'a'.charCodeAt(0);
@@ -253,7 +267,7 @@ function updateMoveValues(nextMoves){
         //col = 0;
         
         $('#cell-'+row+'-'+col + ' img')[0].src = $('#cell-'+row+'-'+col + ' img')[0].src.substr(0, 
-            $('#cell-'+row+'-'+col + ' img')[0].src.lastIndexOf('.')) + '-' + moveValueNames[nextMoves[i].value-1] + '.png';
+            $('#cell-'+row+'-'+col + ' img')[0].src.lastIndexOf('.')) + '-' + moveValueNames[dremote] + '.png';
                                                     
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
         //  $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);

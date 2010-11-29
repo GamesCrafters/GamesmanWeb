@@ -41,12 +41,17 @@ class TriangularPegSolitaire(UnreversePuzzle):
 	    
 	tmpBoard.size = len(tmpBoard.board)
 	tmpBoard.start = start
+        tmpBoard.maxRemoteness = tmpBoard.getMaxRemoteness()
 	return tmpBoard
 
     def __init__(self, size = 5, board = [[False], [True, True], [True, True, True], [True, True, True, True], [True, True, True, True, True]], start = 0):
 	self.size = size
 	self.board = copy.deepcopy(board)
 	self.start = start
+        self.maxRemoteness = self.getMaxRemoteness()
+
+    def getMaxRemoteness(self):
+        return int(self.size * (self.size+1) / 2) - 1
 
     def serialize(self):
 	string = ''

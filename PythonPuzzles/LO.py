@@ -69,7 +69,7 @@ class LO(Puzzle):
                 moves+=[i]
         return moves
         '''
-        return (chr(ord('a')+x/self.size) + str(x%self.size + 1) for x in range(self.size ** 2))
+        return [chr(ord('a')+x/self.size) + str(x%self.size + 1) for x in range(self.size ** 2)]
         
         '''
         moves = []

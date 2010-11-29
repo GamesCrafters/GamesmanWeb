@@ -1,4 +1,5 @@
 import pickle
+import sys
 
 # Don't want someone requesting "/etc/passwd" as a game name.
 def replacebadchars(fname):
@@ -97,7 +98,7 @@ class OpenDB(QueryPuzzle):
 		
 		pname = replacebadchars(self.header['puzzle'])
 		QueryPuzzle.__init__(self, pname)
-		print "Opened database "+fname
+		print >>sys.stderr, "Opened database "+fname
 
 	def unserializePuzzle(self, options):
 		for o in options.iterkeys():
@@ -108,7 +109,7 @@ class OpenDB(QueryPuzzle):
 	
 	def read(self, mypuzzle, mydict = None):
 		if mypuzzle.is_illegal() and not mypuzzle.is_a_solution:
-			print 'ILLEGAL: '+str(mypuzzle)
+			print >>sys.stderr, 'ILLEGAL: '+str(mypuzzle)
 			return None # Illegal position.
 		
 		h = hash(mypuzzle)

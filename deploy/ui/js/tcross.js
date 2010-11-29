@@ -425,16 +425,26 @@ function updateMoveValues(nextMoves){
     for (i = 0; i < clickables.length; i++)
 		$("#cell-" + clickables[i][0] + "-" + clickables[i][1]).removeClass();
 
-    var minRemote = nextMoves[0] && nextMoves[0].remoteness;
+    var minremote = nextMoves[0] && nextMoves[0].remoteness;
+    var maxremote = nextMoves[0] && nextMoves[0].remoteness;
     for(i = 0; i < nextMoves.length; i++) {
-        if (nextMoves[i].remoteness < minRemote)
-            minRemote = nextMoves[i].remoteness;
+        if (nextMoves[i].remoteness > maxremote)
+            maxremote = nextMoves[i].remoteness;
+        if (nextMoves[i].remoteness < minremote)
+            minremote = nextMoves[i].remoteness;
     }
     // set background color to new values
     for(i = 0; i < nextMoves.length; i++) {
         move = nextMoves[i].move;
-        nextMoves[i].dremote = 2 - (nextMoves[i].remoteness - minRemote);
-        if (minRemote == 0) nextMoves[i].dremote -= 1;
+        if (minremote == 0 && maxremote == 0) {
+            nextMoves[i].dremote = 1;
+        } else if (minremote == 0 && maxremote == 1) {
+            nextMoves[i].dremote = 1 - nextMoves[i].remoteness;
+        } else if (minremote == 1 && maxremote == 1) {
+            nextMoves[i].dremote = 0;
+        } else {
+            nextMoves[i].dremote = 2 - (nextMoves[i].remoteness - minremote);
+        }
         if (move == "R")
 			$("#cell-" + clickables[2][0] + "-" + clickables[2][1]).addClass(moveValueClasses[nextMoves[i].dremote]);
         else if (move == "L")
