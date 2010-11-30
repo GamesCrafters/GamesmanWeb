@@ -273,8 +273,6 @@ GCWeb.Game.prototype.start = function() {
   }
 };
 
-GCWeb
-
 GCWeb.Game.prototype.createParameterString = function(board) {
   board = board || this.defaultBoardString;
   var paramString = ";board=" + encodeURIComponent(board) +
