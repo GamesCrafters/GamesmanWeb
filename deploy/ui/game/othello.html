@@ -1,0 +1,114 @@
+		<script type="text/javascript">
+		function gup(name) {
+			var originalArg = name; 
+			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+			var regexS = "[\\?&]"+name+"=([^&#]*)";
+			var regex = new RegExp( regexS );
+			var results = regex.exec( window.location.href );
+			if(results == null ) {
+				if (originalArg == "size") {
+					return "4";
+				} else if (originalArg == "skin") {
+					return "classic";
+				} else if (originalArg == "valueMovesOn") {
+					return "false";
+				} else if (originalArg == "isBlackHuman") {
+					return "true";
+				} else if (originalArg == "blackName") {
+					return "Black Player";
+				} else if (originalArg == "isWhiteHuman") {
+					return "true";
+				} else if (originalArg == "whiteName") {
+					return "White Player";
+				} else if (originalArg == "autoPassOn") {
+					return "true";
+				} else {
+					return "";
+				}
+			} else {
+				return results[1].replace(/\+/g,' ');
+			}
+		}
+		
+		$(document).ready(function() {
+			document.getElementById("size").value = gup("size");
+			document.getElementById("skin").value = gup("skin");
+			document.getElementById("value-moves").value = gup("valueMovesOn");
+			document.getElementById("black-player").value = gup("isBlackHuman");
+			document.getElementById("black-name").value = gup("blackName");
+			document.getElementById("white-player").value = gup("isWhiteHuman");
+			document.getElementById("white-name").value = gup("whiteName");
+			document.getElementById("auto-pass").value = gup("autoPassOn");
+			updateUserOptions();
+		});
+		
+		function updateUserOptions() {
+			this.userOptions = $('#game-options').serializeArray();
+		}
+		
+		function getOptions() {
+			return this.userOptions;
+		}
+		
+		function undoClicked() {
+			undoButtonClicked();
+		}
+		</script>
+		<div>
+			<form name="game-options" id='game-options'>
+				<b> Board Size </b>
+				<select name="size" id="size">
+					<option value="4" selected="selected">4x4</option>
+				</select>
+			
+				<b> Skin </b>
+				<select name="skin" id="skin">
+					<option value="classic" selected="selected">Classic</option>
+				</select>	
+				
+				<b> Value Moves </b>
+				<select name="valueMovesOn" id="value-moves">
+					<option value="true">On</option>
+					<option value="false" selected="selected">Off</option>
+				</select>
+				
+				<b> Auto-Pass </b>
+				<select name="autoPassOn" id="auto-pass">
+					<option value="true" selected="selected">On</option>
+					<option value="false">Off</option>
+				</select>
+				
+				<br>
+				
+				<b> Black Player </b>
+				<select name="isBlackHuman" id="black-player">
+					<option value="true" selected="selected">Human</option>
+					<option value="false">Computer</option>
+				</select>
+				
+				<b> Black Player Name </b>
+				<input type="text" name="blackName" id="black-name" value="Black Player"/>
+				
+				<br>
+				
+				<b> White Player </b>
+				<select name="isWhiteHuman" id="white-player">
+					<option value="true" selected="selected">Human</option>
+					<option value="false">Computer</option>
+				</select>
+				
+				<b> White Player Name </b>
+				<input type="text" name="whiteName" id="white-name" value="White Player"/>
+				
+				<br>
+				
+				<button name="update" type="button" onclick="updateUserOptions();">Update</button>
+				<input type="reset" value="Reset Options">
+				<input type="submit" value="New Game">
+				
+				
+				<button name="undo" type="button" onclick="undoClicked();">Undo Last Move</button>
+
+			</form>
+			<canvas id="canvas" width="1000" height="1000"></canvas>
+		</div>
