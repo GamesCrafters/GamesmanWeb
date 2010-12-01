@@ -25,7 +25,7 @@ var PLAYER_O = "W";
 var COLOR_O = WHITE_COLOR;
 
 var FELT_BG_IMAGE = new Image(); 
-var FELT_BG_PATH = "felt.jpg"; 
+var FELT_BG_PATH = "game/images/othello/felt.jpg"; 
 FELT_BG_IMAGE.src = FELT_BG_PATH;
 
 var FELT_BG_FULL = new Image();
