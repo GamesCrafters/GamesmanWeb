@@ -13,7 +13,7 @@
   <property name="deploy" location="deploy"/>
   <property name="lib" location="${deploy}/WEB-INF/lib"/>
   <property name="build" location="${deploy}/WEB-INF/classes"/>
-  <property name="dist" location="C:\\Program Files\\Apache Software Foundation\\Tomcat 6.0\\webapps"/>
+  <property name="dist" location="."/>
   <property name="deploy-applet" location="${deploy}/ui/applets"/>
   
   <!-- targets -->
@@ -92,7 +92,7 @@
     </jar>
   </target>
 
-  <target name="clean-applet-source" description="Clean applet src directory">
+  <target name="clean-applet-source" description="Clean applet source directory">
     <delete>
       <fileset dir="${src}" includes="**/*.class"/>
     </delete>

@@ -9,7 +9,10 @@
   <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
     <server host="localhost" port="24444" />
   </game>
-  <game internal-name="reversi" canonical-name="Othello" puzzle="puzzle" ui="grid" visible="visible">
+  <game internal-name="othello" canonical-name="Othello" puzzle="puzzle" ui="othello" visible="visible">
+    <server host="localhost" port="24444" />
+  </game>
+  <game internal-name="reversi" canonical-name="Othello" puzzle="puzzle" ui="othello" visible="visible">
     <server host="localhost" port="4242" />
   </game>
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
