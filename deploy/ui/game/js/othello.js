@@ -29,19 +29,19 @@ var FELT_BG_PATH = "felt.jpg";
 FELT_BG_IMAGE.src = FELT_BG_PATH;
 
 var FELT_BG_FULL = new Image();
-var FELT_BG_FULL_PATH = "game/images/othellofeltbg.png";
+var FELT_BG_FULL_PATH = "game\images\othello\feltbg.png";
 FELT_BG_FULL.src = FELT_BG_FULL_PATH;
 
 var PIECE_WHITE_IMAGE = new Image();
-var PIECE_WHITE_PATH = "game/images/whitepiece3.png";
+var PIECE_WHITE_PATH = "game\images\othello\whitepiece3.png";
 PIECE_WHITE_IMAGE.src = PIECE_WHITE_PATH;
 
 var PIECE_BLACK_IMAGE = new Image();
-var PIECE_BLACK_PATH = "game/images/blackpiece3.png";
+var PIECE_BLACK_PATH = "game\images\othello\blackpiece3.png";
 PIECE_BLACK_IMAGE.src = PIECE_BLACK_PATH;
 
 var RECESS_IMAGE = new Image();
-var RECESS_PATH = "game/images/rec2.png";
+var RECESS_PATH = "game\images\othello\rec2.png";
 RECESS_IMAGE.src = RECESS_PATH;
 
 var INDEX_SIZE = 0;
