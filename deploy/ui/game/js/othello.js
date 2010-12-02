@@ -235,7 +235,7 @@ function Game() {
 		}
 	
 		var ctx = document.getElementById('canvas').getContext('2d');
-		ctx.fillStyle = BLACK_COLOR;
+		ctx.fillStyle = WHITE_COLOR;
 		ctx.font = "20pt Arial";
 		ctx.textAlign = "center";
 		ctx.fillText(displayStr, boardWidth * myBoard.getSpaceSide() / 2.0, boardHeight * myBoard.getSpaceSide() + 50);	
