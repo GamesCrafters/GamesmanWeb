@@ -120,7 +120,9 @@ function Game() {
 	var animating = false;
 	var myMoveGenerator;
 	
-	var winningMessage = null;
+	var winningMessage = "";
+	var winningMessageBottom = "";
+	var lastPlayerPassed = false;
 	
 	this.handleMouseMove = handleMouseMove;
 	this.getNextMoveValues = getNextMoveValues;
@@ -230,7 +232,7 @@ function Game() {
 			displayStr += " (WHITE)";
 		}
 		
-		if (winningMessage != null) {
+		if (winningMessage != "") {
 			displayStr = winningMessage;
 		}
 	
@@ -239,6 +241,10 @@ function Game() {
 		ctx.font = "20pt Arial";
 		ctx.textAlign = "center";
 		ctx.fillText(displayStr, boardWidth * myBoard.getSpaceSide() / 2.0, boardHeight * myBoard.getSpaceSide() + 50);	
+		
+		if (winningMessage != "") {
+			ctx.fillText(winningMessageBottom, boardWidth * myBoard.getSpaceSide() / 2.0, boardHeight * myBoard.getSpaceSide() + 75);
+		}
 	}
 	
 	function handleClick(ev) {
@@ -266,10 +272,16 @@ function Game() {
 		if (possibleMoves.length == 0) {
 			endGame();
 		} else if (possibleMoves[0].move == "P") {
-			if (options[INDEX_AUTO_PASS].value == "false") {
+			if (lastPlayerPassed) {
+				endGame();
+				return;
+			} else if (options[INDEX_AUTO_PASS].value == "false") {
+				lastPlayerPassed = true;
 				alertTurnSkip();
 			}
 			endCurrentTurn();
+		} else {
+			lastPlayerPassed = false;
 		}
 	}
 	
@@ -279,14 +291,17 @@ function Game() {
 		endAlert = "";
 		if (XCount == OCount) {
 			endAlert += options[INDEX_BLACK_NAME].value + " and " + options[INDEX_WHITE_NAME].value;
-			endAlert += "\n have tied.";
+			winningMessage = endAlert;
+			winningMessageBottom = " have tied.";
+			endAlert += winningMessageBottom;
 		} else if (XCount > OCount) {
 			endAlert += options[INDEX_BLACK_NAME].value + " has won!";
+			winningMessage = endAlert;
 		} else {
 			endAlert += options[INDEX_WHITE_NAME].value + " has won!";
+			winningMessage = endAlert;
 		}
 		
-		winningMessage = endAlert;
 		alert(endAlert);
 	}
 	
@@ -353,6 +368,7 @@ function Game() {
 			possibleMoves = null;
 			animating = true;
 			myColorBar.animateToBoard(myBoard.getRepresentation());
+			winningMessage = "";
 			setTimeout('undoAnimationEnded()', ANIMATION_DELAY_MS);
 		}
 	}
@@ -759,7 +775,7 @@ function Board(width, height, game) {
 		count = 0;
 		for (var i = 0; i < boardWidth; i++) {
 			for (var j = 0; j < boardHeight; j++) {
-				if (boardRep[i][j].getFutureOwner() == PLAYER_X) {
+				if (boardRep[i][j] != emptySpace && boardRep[i][j].getFutureOwner() == PLAYER_X) {
 					count++;
 				}
 			}
@@ -771,7 +787,7 @@ function Board(width, height, game) {
 		count = 0;
 		for (var i = 0; i < boardWidth; i++) {
 			for (var j = 0; j < boardHeight; j++) {
-				if (boardRep[i][j].getFutureOwner() == PLAYER_O) {
+				if (boardRep[i][j] != emptySpace && boardRep[i][j].getFutureOwner() == PLAYER_O) {
 					count++;
 				}
 			}
@@ -1112,7 +1128,7 @@ function MoveGenerator(/*gameOption*/) {
 		return URL_BASE + URL_BOARD + board + URL_PLAYER + currentPlayer + URL_OPTION + gameOption;
 	}
 	
-	//Initiliaze state  (pseudo-constructor) 
+	//Initialize state  (pseudo-constructor) 
 	init(); 
 	
 	

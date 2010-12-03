@@ -1,0 +1,446 @@
+<script type="text/javascript">
+	function TTTMoveGenerator() {
+	//Constants
+	var SPACE;
+	var X_PIECE; 
+	var O_PIECE; 
+
+	var URL_BASE;
+	var URL_BOARD;
+	var URL_WIDTH;
+	var URL_HEIGHT;
+	var URL_PIECES;
+
+	var gameOption; 
+	
+	//Constructor 
+	function init() {
+		SPACE = " ";
+		X_PIECE = "X";
+		O_PIECE = "O"; 
+	
+		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/ttt/getNextMoveValues";
+		URL_BOARD = ";board="; 
+		URL_WIDTH = ";width=";
+		URL_HEIGHT = ";height=";
+		URL_PIECES = ";pieces=";
+		
+		gameOption = 3; 
+	}
+	
+	//Private method
+	function assembleString(board, width, height, pieces) {	
+		return URL_BASE + URL_BOARD + board + URL_WIDTH + width + URL_HEIGHT + height + URL_PIECES + pieces;
+	}
+	
+	//Initiliaze state  (pseudo-constructor) 
+	init(); 
+		
+	return {
+		//Public method
+		getNextMoveValues: function(board, width, height, pieces) {
+				if(width >6 || height > 6 || pieces>6){
+					ret = [];
+					piece = THE_GAME.turn;
+					for(var index in board){
+						if(isEmpty(board,index)){
+							ret.push({value:'unknown',board:board.substring(0,index)+piece+board.substring(index-0+1)});
+						}
+					}
+				return ret;
+				}
+				var rtn;
+				$.ajax({
+					url: assembleString(board, width, height, pieces),
+					async: false,
+					dataType: 'json', 
+					success: 
+						function(data) {
+							if(data.status != "ok") {
+								//console.error("Return status not \'ok\' in TTTMoveGenerator::getNextMoveValues \n");
+								return false; 
+							} else {
+								//console.log("MoveGenerator::getNextMoveValues:rtn= \t" + data.response + "\n");
+								rtn = data.response; 
+							}
+					}});
+					return rtn; 
+		}
+	};
+}
+	
+	//VARIABLES
+	var THE_GAME;
+	var hover;
+	var MOVE_GEN = TTTMoveGenerator();
+	var ShowMoveVals = false;
+	var ShowTextualVals = false;
+	var ShowPredictions = false;
+	
+	//CONSTANTS [IF YOU WANT TO CHANGE THE COLOR OR SIZES CHANGE THESE VALUES ONLY]
+	var PLAYERX_PIECE = 'X';
+	var PLAYER0_PIECE = 'O';
+	var EMPTY_PIECE = ' ';
+		//COLORS
+		var BACKGROUND_COLOR = "#006006";
+		var BOARD_BACKGROUND_COLOR = "rgb(192,192,192)"; //GREY
+		var BOARD_LINES_COLOR =	"#000000"; //BLACK
+		var O_COLOR = "#ff3300";
+		var X_COLOR = "#0000c8";
+		var WIN_VALUE_COLOR = '#00FF00';
+		var TIE_VALUE_COLOR = '#FFFF00';
+		var LOSE_VALUE_COLOR = '#FF0000';
+		var REGULAR_OPACITY = 1;
+		var HOVER_OPACITY = .5;
+		//SIZES
+		var BOARD_MAX_HEIGHT = window.innerHeight/1.5;
+		var BOARD_MAX_WIDTH = window.innerWidth/1.5;
+		var BOARD_SIZE_FACTOR = 500;
+		var BOARD_LINE_WIDTH_FACTOR = 5;
+		var BOARD_O_RADIUS_FACTOR = .4;
+		var BOARD_X_LENGTH_FACTOR = .66;
+		var O_FILL_WIDTH_FACTOR=.1;
+		var X_WIDTH_FACOTR=.1;
+		var BOARD_LINE_WIDTH_FACTOR = .05;
+		var VALUE_RADIUS_FACTOR = .05;
+		//OTHERS
+		
+	//GAME CONSTRUCTOR
+	function Game(width,height,pieces,type){
+		this.PIECE_WIDTH = width;
+		this.PIECE_HEIGHT = height;
+		this.REQUIRED_PIECES = pieces;//number of pieces needed in a row
+		this.BOARD_HEIGHT = (this.PIECE_HEIGHT/this.PIECE_WIDTH)*BOARD_SIZE_FACTOR;
+		this.BOARD_WIDTH = (this.PIECE_WIDTH/this.PIECE_HEIGHT)*(this.PIECE_HEIGHT/this.PIECE_WIDTH)*BOARD_SIZE_FACTOR;
+		
+		while(this.BOARD_HEIGHT>BOARD_MAX_HEIGHT||this.BOARD_WIDTH>BOARD_MAX_WIDTH){
+			this.BOARD_HEIGHT/=1.25;
+			this.BOARD_WIDTH/=1.25;
+		}
+		
+		this.INITIAL_BOARD = '';
+		this.BOARD_LINE_WIDTH = ((this.BOARD_WIDTH)/(this.PIECE_WIDTH))*BOARD_LINE_WIDTH_FACTOR;
+		this.O_FILL_WIDTH = (this.BOARD_WIDTH)/(this.PIECE_WIDTH)*O_FILL_WIDTH_FACTOR;
+		this.X_WIDTH = (this.BOARD_WIDTH)/(this.PIECE_WIDTH)*X_WIDTH_FACOTR;
+		this.X_LENGTH = (this.BOARD_WIDTH)/(this.PIECE_WIDTH)*BOARD_X_LENGTH_FACTOR;
+		this.O_RADIUS = (this.BOARD_WIDTH)/(this.PIECE_WIDTH)*BOARD_O_RADIUS_FACTOR;
+		this.VALUE_RADIUS = (this.BOARD_WIDTH)/(this.PIECE_WIDTH)*VALUE_RADIUS_FACTOR;
+		
+		for(i = 0;i<this.PIECE_HEIGHT*this.PIECE_WIDTH;i++){
+			this.INITIAL_BOARD += ' ';
+		}
+
+		
+		this.board = this.INITIAL_BOARD;
+		this.turn = PLAYERX_PIECE;
+		this.hover = 'off';
+		this.board_stack = [];
+		this.remoteness_stack = [];
+		document.getElementById('canvas').height = this.BOARD_HEIGHT;
+		document.getElementById('canvas').width = this.BOARD_WIDTH;
+			document.getElementById('Predictions').disabled = false;
+			document.getElementById('TextualValueHistory').disabled = false;
+		if(width!=3 || height!= 3 || pieces != 3){
+			document.getElementById('Predictions').disabled = true;
+			document.getElementById('TextualValueHistory').disabled = true;
+			$('#TextualVals').hide();
+			$('#predictions').hide();
+			$('#p').hide();
+			$('#t').hide();
+			ShowPredictions = false;
+			ShowTextualVals = false;
+		}
+	}
+	
+	//GAME METHODS
+	//REDRAWS THE BOARD
+	function redraw(option){
+               var ctx = document.getElementById('canvas').getContext('2d');
+               ctx.fillStyle = BOARD_BACKGROUND_COLOR;
+               ctx.fillRect(0,0,THE_GAME.BOARD_WIDTH,THE_GAME.BOARD_HEIGHT);
+               ctx.strokeStyle = BOARD_LINES_COLOR;
+               ctx.lineWidth = THE_GAME.BOARD_LINE_WIDTH;
+			   ctx.beginPath();
+					for(i = 1;i<THE_GAME.PIECE_WIDTH;i++){
+						ctx.moveTo(i*THE_GAME.BOARD_WIDTH/THE_GAME.PIECE_WIDTH,0);
+						ctx.lineTo(i*THE_GAME.BOARD_WIDTH/THE_GAME.PIECE_WIDTH,THE_GAME.BOARD_HEIGHT);
+					}
+					for(i = 1;i<THE_GAME.PIECE_HEIGHT;i++){
+						ctx.moveTo(0,i*THE_GAME.BOARD_HEIGHT/THE_GAME.PIECE_HEIGHT);
+						ctx.lineTo(THE_GAME.BOARD_WIDTH,i*THE_GAME.BOARD_HEIGHT/THE_GAME.PIECE_HEIGHT);
+					}
+				ctx.stroke();
+				for(var i in THE_GAME.board)
+					drawShape(THE_GAME.board[i],i);
+				if(ShowMoveVals)
+					for(var i in THE_GAME.possible_moves)
+						drawMoveValue(getIndexofdifference(THE_GAME.possible_moves[i].board),THE_GAME.possible_moves[i].value);
+				if(option == 'dont_draw_hover')
+					return;
+                if(option == 'draw_hover')
+                       drawShape(THE_GAME.turn,hover,'opacitate');
+    }
+	
+	function drawMoveValue(index,value){
+		var ctx = document.getElementById('canvas').getContext('2d');
+		ctx.save();
+		if(value == 'unknown')
+			return;
+		else if(value == 'win')
+			ctx.fillStyle = WIN_VALUE_COLOR;
+		else if(value == 'lose')
+			ctx.fillStyle = LOSE_VALUE_COLOR;
+		else if(value == 'tie')
+			ctx.fillStyle = TIE_VALUE_COLOR;
+		else {0/0;}
+		x =  THE_GAME.BOARD_WIDTH/(2*THE_GAME.PIECE_WIDTH) + THE_GAME.BOARD_WIDTH*(index%THE_GAME.PIECE_WIDTH)/THE_GAME.PIECE_WIDTH;
+		y =  THE_GAME.BOARD_HEIGHT/(2*THE_GAME.PIECE_HEIGHT) + THE_GAME.BOARD_WIDTH*(Math.floor(index/THE_GAME.PIECE_WIDTH))/THE_GAME.PIECE_WIDTH;
+		ctx.beginPath();
+		ctx.arc(x,y,THE_GAME.VALUE_RADIUS,0,Math.PI*2,true);
+		ctx.fill();
+		ctx.restore();
+	}
+	
+	function drawShape(turn,index,o){
+		if(turn != 'O' && turn != 'X'){
+			return;
+		}
+		else{
+			x = THE_GAME.BOARD_WIDTH/(2*THE_GAME.PIECE_WIDTH) + THE_GAME.BOARD_WIDTH*(index%THE_GAME.PIECE_WIDTH)/THE_GAME.PIECE_WIDTH;
+			y = THE_GAME.BOARD_HEIGHT/(2*THE_GAME.PIECE_HEIGHT) + THE_GAME.BOARD_WIDTH*(Math.floor(index/THE_GAME.PIECE_WIDTH))/THE_GAME.PIECE_WIDTH;
+			var ctx = document.getElementById('canvas').getContext('2d');
+			ctx.save();
+			if(o) ctx.globalAlpha = 0.5;
+			else ctx.globalAlpha = 1;
+			if(turn == 'X'){
+				ctx.strokeStyle = X_COLOR;
+				ctx.lineWidth = THE_GAME.X_WIDTH;
+				ctx.beginPath();
+				ctx.moveTo(x-THE_GAME.X_LENGTH/1.7,y-THE_GAME.X_LENGTH/1.7);
+				ctx.lineTo(x+THE_GAME.X_LENGTH/1.7,y+THE_GAME.X_LENGTH/1.7);
+				ctx.moveTo(x+THE_GAME.X_LENGTH/1.7,y-THE_GAME.X_LENGTH/1.7);
+				ctx.lineTo(x-THE_GAME.X_LENGTH/1.7,y+THE_GAME.X_LENGTH/1.7);
+				ctx.stroke();
+				ctx.restore();
+			}
+			if(turn == 'O'){
+				ctx.strokeStyle = O_COLOR;
+				ctx.lineWidth = THE_GAME.O_FILL_WIDTH;
+				ctx.beginPath();
+				ctx.arc(x,y,THE_GAME.O_RADIUS,0,2*Math.PI,true);
+				ctx.stroke();
+				ctx.restore();
+			}
+		}
+	}
+	
+	function isEmpty(board,index){
+		return board[index] == EMPTY_PIECE;
+	}
+	
+	function toggleTurn(){
+		THE_GAME.turn = ((THE_GAME.turn=='O') ? 'X' : 'O');
+	}
+	
+	function getIndex(event){
+			var x=event.clientX - canvas.offsetLeft;
+			var y=event.clientY - canvas.offsetTop;
+			return Math.floor((x/THE_GAME.BOARD_WIDTH)*THE_GAME.PIECE_WIDTH)+Math.floor((y/THE_GAME.BOARD_HEIGHT)*THE_GAME.PIECE_HEIGHT)*THE_GAME.PIECE_WIDTH;
+	}
+	
+	function getIndexofdifference(board){
+		for(var i in board){
+			if(board[i]!=THE_GAME.board[i])
+				return i;
+		}
+		return 0;		
+	}
+	
+	function remote(result){
+		min = 9;
+		max = 0;
+		for(var i in THE_GAME.possible_moves){
+			if(THE_GAME.possible_moves[i].remoteness<min)
+				min = THE_GAME.possible_moves[i].remoteness;
+			if(THE_GAME.possible_moves[i].remoteness>max)
+				max = THE_GAME.possible_moves[i].remoteness;
+			}
+		if(result == 'win')
+			return min;
+		return max;
+	}
+	
+	function bestoutcome(){
+		var ret ='lose';
+		for(var i in THE_GAME.possible_moves){
+			if(THE_GAME.possible_moves[i].value=='win')
+				return 'win';
+			if(THE_GAME.possible_moves[i].value=='tie')
+				ret = 'tie';
+			}
+		return ret;
+	}
+	
+	function valueHistory(outcome,remote){
+		var ret = 0;
+		if(outcome == 'tie'){
+			return ret;
+			}
+		if((outcome == 'win' && THE_GAME.turn == 'X' )||( outcome == 'lose' && THE_GAME.turn == 'O')){
+			return 9-remote;
+			}
+		return -9+remote;
+	}
+	
+	function toStringvalueHistory(val){
+		temp = ['_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'];
+
+		
+		temp[val+9] = '^';
+		ret = '';
+		for(var i in temp)
+			ret+=temp[i]+' ';
+		return 'O ' + ret + 'X';
+	}
+		
+	function hasWin(){
+		for(var i in THE_GAME.possible_moves){
+				if(THE_GAME.possible_moves[i].value == 'win')
+					return true;
+		}
+		return false;
+	}
+	
+	
+	//HANDLE EVENTS
+	function HandleToggle(){
+		if(ShowPredictions){
+			$('#predictions').show();$('#p').show();}
+		else{
+			$('#predictions').hide();$('#p').hide();}
+		if(ShowTextualVals){
+			$('#TextualVals').show();$('#t').show();}
+		else{
+			$('#TextualVals').hide();$('#t').hide();}
+	}
+	
+	function HandleClick(event){
+			hover = 'off';
+			var index = getIndex(event);
+			for(var i in THE_GAME.possible_moves){
+				if(getIndexofdifference(THE_GAME.possible_moves[i].board)==index){
+					toggleTurn();
+					THE_GAME.board_stack.push(THE_GAME.board);
+					THE_GAME.board = THE_GAME.possible_moves[i].board;
+					redraw('dont_draw_hover');
+					var lastmovewin = hasWin();
+					THE_GAME.possible_moves = MOVE_GEN.getNextMoveValues(THE_GAME.board,THE_GAME.PIECE_WIDTH,THE_GAME.PIECE_HEIGHT,THE_GAME.REQUIRED_PIECES);
+					redraw('dont_draw_hover');
+					if(THE_GAME.possible_moves.length){
+						var b = bestoutcome();
+						document.getElementById('TextualVals').innerHTML += '<p>' + toStringvalueHistory(valueHistory(b,remote(b))) + '</p>';
+						document.getElementById('predictions').innerHTML = THE_GAME.turn + ' ' + b +'s in ' + remote(b);
+						}
+					else{
+						document.getElementById('TextualVals').innerHTML += '<p>' + ' </p>';
+						document.getElementById('predictions').innerHTML = '';
+						}
+					if(THE_GAME.possible_moves.length == 0){
+						toggleTurn();
+						if (lastmovewin)
+							alert('THE GAME HAS ENDED PLAYER '+ THE_GAME.turn +' IS THE WINNER!');
+						else
+							alert('GAME ENDED IN A TIE');
+						toggleTurn();
+						hover = 'offf';
+					}
+					break;
+				}
+			}
+	}
+
+	
+	function HandleHover(event){
+		if(hover == 'offf')
+			return;
+		var index = getIndex(event);
+		if(!isEmpty(THE_GAME.board,index)){
+			hover = 'off';
+			redraw('dont_draw_hover');}
+		else if(!isEmpty(THE_GAME.board,index) && hover!=-1)
+			redraw('draw_hover');
+		else{
+			hover=index;
+			redraw('draw_hover');
+		}
+	}
+	
+	
+	function unDo(){
+		if(THE_GAME.board_stack.length!=0){
+			THE_GAME.board = THE_GAME.board_stack.pop();
+			toggleTurn();
+			redraw();
+			THE_GAME.possible_moves = MOVE_GEN.getNextMoveValues(THE_GAME.board,THE_GAME.PIECE_WIDTH,THE_GAME.PIECE_HEIGHT,THE_GAME.REQUIRED_PIECES);
+			document.getElementById('predictions').innerHTML = THE_GAME.turn + ' ' + bestoutcome() +'s in ' + remote(b);
+			$('#TextualVals').children().last().remove();
+			redraw();
+		}
+	}
+	
+	function initialize(w,h,p){
+		if(THE_GAME){
+		var ctx = document.getElementById('canvas').getContext('2d');
+        ctx.fillStyle = BACKGROUND_COLOR;
+        ctx.fillRect(0,0,THE_GAME.BOARD_WIDTH,THE_GAME.BOARD_HEIGHT);
+		}
+		if(w && h && p){
+			THE_GAME = new Game(3,3,3);
+		}
+		else{
+			THE_GAME = new Game(document.getElementById('HeightText').value,
+			document.getElementById('WidthText').value,
+			document.getElementById('PieceText').value);
+		}
+		THE_GAME.possible_moves = MOVE_GEN.getNextMoveValues(THE_GAME.board,THE_GAME.PIECE_WIDTH,THE_GAME.PIECE_HEIGHT,THE_GAME.REQUIRED_PIECES);
+		b = bestoutcome()
+		document.getElementById('predictions').innerHTML = THE_GAME.turn + ' ' + b +'s in ' + remote(b);
+		document.getElementById('TextualVals').innerHTML = '<p>' + toStringvalueHistory(valueHistory(b,remote(b))) + '</p>';
+		redraw();
+		HandleToggle();
+		redraw();
+		redraw();
+		redraw();
+	}
+		
+	
+		</script>
+
+<body onload="initialize(3,3,3);" style = "background-color:#006;"  scrolling="no"; ><br/>
+
+<button id='newgame' onclick="initialize(); redraw();">New Game</button>
+	<a  style="color:white">
+	<b>Width:</b><input type="text" id='HeightText' size=3 value=3>
+	<b>Height:</b><input type="text" id='WidthText' size=3 value=3>
+	<b>Pieces:</b><input type="text" id='PieceText' size=3 value=3>
+	<b>Type:</b><input type="text" id='Type' size=3 value='regular'>
+	</a>
+<br/>
+	<button id='undo' onclick="unDo()">Undo Move</button>
+	<button id='MoveValuesButton' onclick="ShowMoveVals = !ShowMoveVals; redraw();">Move Values</button>
+	<button id='Predictions' onclick="ShowPredictions = !ShowPredictions; HandleToggle(); redraw();">Predictions</button>
+	<button id='TextualValueHistory' onclick="ShowTextualVals = !ShowTextualVals; HandleToggle(); redraw();">Textual Value History</button>
+<br/>
+
+<canvas style='float:left'; id="canvas" height='500' width='500' 
+onclick=HandleClick(event);
+onmousemove=HandleHover(event); 
+onmouseout=redraw('dont_draw_hover');></canvas>
+<div style='color:white';>
+<h3 id='p'>Predictions</h3>
+<a  style='color:white'; id='predictions'></a>
+<h3 id='t'>Textual Value History</h3>
+<a  style='color:white'; id='TextualVals'></a>
+
+</div>
+		
