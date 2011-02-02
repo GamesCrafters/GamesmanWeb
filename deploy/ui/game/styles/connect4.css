@@ -18,9 +18,9 @@
 }
 
 .connect4-grid .marker-block { position: absolute; z-index: 1 }
-.connect4-grid .win-marker-block { background: url("../images/win.png") }
-.connect4-grid .tie-marker-block { background: url("../images/tie.png") }
-.connect4-grid .lose-marker-block { background: url("../images/lose.png") }
+.connect4-grid .win-marker-block { background: url("../../images/win.png") }
+.connect4-grid .tie-marker-block { background: url("../../images/tie.png") }
+.connect4-grid .lose-marker-block { background: url("../../images/lose.png") }
 
 /* Configuration form */
 #connect4-options table { margin: 0 auto }
