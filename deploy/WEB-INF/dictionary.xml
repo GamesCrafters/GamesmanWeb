@@ -5,8 +5,8 @@
         visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="1210" canonical-name="1, 2, ..., 10">
-    <server host="localhost" port="24444" />
+  <game internal-name="onetwoten" canonical-name="1, 2, ..., 10">
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
     <server host="localhost" port="24444" />
@@ -19,7 +19,7 @@
     <server host="localhost" port="4242" />
   </game> -->
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
-    <server host="localhost" port="4242" />
+    <server host="localhost" port="4243" />
   </game>
   <game internal-name="connections" canonical-name="Connections"
         visible="visible">

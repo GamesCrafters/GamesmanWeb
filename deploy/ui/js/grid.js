@@ -23,7 +23,7 @@ var nextMoves = [];
 
 var ttthack=true;
 
-var urlParams = window.location.toString().split("#")[0].split("?")[1].split("&");
+var urlParams = "http://nyc.cs.berkeley.edu:8080/ui/puzzle.jsp?puzzle=ttt".split("#")[0].split("?")[1].split("&");
 $(document).ready(function(){
 for (var i = 0; i < urlParams.length; i++) {
     var key = unescape(urlParams[i].split("=")[0]);
@@ -50,7 +50,7 @@ if (ttthack && puzzletype == "ttt") {
     $("#heightinput").val(3); $("#widthinput").val(3);
 }
   function startGame(){
-    var mywidth = parseInt($("#widthinput").val());
+	var mywidth = parseInt($("#widthinput").val());
     var myheight = parseInt($("#heightinput").val());
     var pieces = parseInt($("#piecesinput").val());
     if (! (mywidth > 0 && myheight > 0)) {

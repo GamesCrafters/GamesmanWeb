@@ -97,6 +97,8 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
                  Move-values</label></li>
       <li><label><input type="checkbox" id="option-prediction">
                  Prediction</label></li>
+      <li><label><input type="checkbox" id="option-move-value-history">
+                 Move-Value History</label></li>
     </ul>
     </div> 
     <div id="main">
