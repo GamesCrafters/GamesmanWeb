@@ -63,6 +63,7 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
   <script type="text/javascript" src="game/js/<%= uiName %>.js"></script>
   <script type="text/javascript" src="game/js/vvh.js"></script>
   <script type="text/javascript">
+  
     $(document).ready(function() {
       $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
       if ($("#option-prediction:checked").length == 0) {

@@ -186,6 +186,9 @@ GCWeb.Game = function(name, width, height, config) {
 
   this.addEventListener('gameover', this.handleGameOver.bind(this));
   this.prediction = new GCWeb.Prediction(this);
+  
+  
+  
 }
 /** The URL of the server that is the gateway to the Gamesman provider. */
 GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
@@ -533,6 +536,7 @@ GCWeb.Prediction = function(game) {
   var handler = this.updatePrediction.bind(this);
   this.game.addEventListener('nextvaluesreceived', handler);
   this.game.addEventListener('gameover', handler);
+  drawMoveValueHistory(name.moveHistory);
 };
 
 GCWeb.Prediction.prototype.updatePrediction = function() {
@@ -591,6 +595,34 @@ GCWeb.Prediction.prototype.tryEnablePredictions = function() {
     checkbox.attr('disabled', 'disabled');
   }
 };
+
+GCWeb.Prediction.prototype.drawMoveValueHistory = function(pMoves) {
+				document.getElementById("history-graph").innerHTML = "<canvas id='canvas' width='150' height='300'>";
+	                /* find maximum remoteness */
+	                var m = 0;
+	                for (var i = 0; i < pMoves.length; i++) {
+					m = Math.max(m, pMoves[i].remoteness)};
+					m+=1;
+					var r = [m];
+					var w = [2];
+					var p = [1];
+	                for(var i = 0; i < pMoves.length; i++){
+					r.push(pMoves[i].remoteness);
+					switch(pMoves[i].value){
+					case "win": w.push(1); break;
+					case "tie": w.push(2); break;
+					case "lose": w.push(3); break;
+					}
+					p.push(i % 2);
+					}					
+	                if($('#option-move-value-history').is(':checked')) {
+	                    // Draw graph
+	                    main("Player 1","Player 2",r,w,p,m);
+	                    // Scroll to bottom
+	                    $("#history-graph-container").scrollTop(10000);
+	                }
+                };
+
 
 /** Binds the specified objects to "this" and arguments like currying. */
 Function.prototype.bind = function __Function_bind() {
