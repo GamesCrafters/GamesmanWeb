@@ -61,6 +61,7 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
   <script type="text/javascript" src="game/js/gc-game.js"></script>
   <script type="text/javascript" src="game/js/<%= uiName %>.js"></script>
+  <script type="text/javascript" src="game/js/vvh.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $("#moves").css("min-height", Math.max($("#moves").height(), $("#main").height()));
@@ -126,6 +127,14 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
       <h1>Prediction</h1>
       <span>Game not started</span>
     </div>
+	
+	<div id="move-value-history">
+          <h1>Move-value History</h1>
+<div id="history-graph-container">
+              <div id="history-graph"></div>
+          </div>
+</div>
+	
     </div> 
   </div> 
   <!-- site footer --> 
