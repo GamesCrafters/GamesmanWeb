@@ -23,7 +23,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}*/
 		var vvh = new vvh((canvas.width - 40) / (2 * (rmax * 1 + 1)), 10, 10,
 				1, 1 + Math.floor(rmax * 10 / canvas.width), 1, "#66FF00",
-				"#FFFF00", "#FF0000", "#FFFFFF", "#000066");
+				"#FFFF00", "#800000", "#FFFFFF", "#000066");
 		canvas.height = (input.length + 3) * vvh.ts;
 		draw(game, vvh, canvas, input, rmax);
 
