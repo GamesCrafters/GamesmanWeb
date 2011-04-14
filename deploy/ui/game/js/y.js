@@ -287,6 +287,9 @@ var getClickedCenter = function(boardX, boardY) {
   return null;
 };
 var handleClick = function(e) {
+	if(y.handlingDoMove){
+		return;
+	}
   //console.log('clicked');
   var offsets = {x: document.getElementById(canvasID).offsetLeft,
                  y: document.getElementById(canvasID).offsetTop};
