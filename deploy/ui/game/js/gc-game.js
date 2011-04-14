@@ -537,7 +537,7 @@ GCWeb.Prediction = function(game) {
   var handler = this.updatePrediction.bind(this);
   this.game.addEventListener('nextvaluesreceived', handler);
   this.game.addEventListener('gameover', handler);
-  drawMoveValueHistory(name.moveHistory);
+//  drawMoveValueHistory(name.moveHistory);
 };
 
 GCWeb.Prediction.prototype.updatePrediction = function() {
