@@ -102,6 +102,14 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
       <li><label><input type="checkbox" id="option-move-value-history">
                  Move-Value History</label></li>
     </ul>
+        <% if (uifile.equals("y")) { %>
+<h2>Rules for Y:</h2>
+
+Players take turns playing at any point on the board not yet filled.
+The first player to build a chain of pieces which connects all 3 edges together wins the game.
+A corner piece counts as both edges.
+
+        <% } %>
     </div> 
     <div id="main">
       <h1 id="gameheader"><%= canonicalName %></h1>
