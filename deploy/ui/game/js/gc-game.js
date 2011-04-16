@@ -5,6 +5,8 @@
  * @author  ide
  */
 
+//VVH added
+
 // Create the GCWeb namespace if it doesn't already exist.
 var GCWeb = GCWeb || {};
 
@@ -182,13 +184,14 @@ GCWeb.Game = function(name, width, height, config) {
     if (this.showingMoveValues) {
       this.showMoveValues(this.nextMoves);
     }
+	if (this.showingMoveHistory) {
+      this.drawMoveValueHistory();
+    }
   }.bind(this));
-
-  this.addEventListener('gameover', this.handleGameOver.bind(this));
+  
+  this.addEventListener('gameover',
+	this.handleGameOver.bind(this));
   this.prediction = new GCWeb.Prediction(this);
-  
-  
-  
 }
 /** The URL of the server that is the gateway to the Gamesman provider. */
 GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
@@ -213,6 +216,7 @@ GCWeb.Game.getScreenWidth = function() {
  */
 GCWeb.Game.prototype.start = function() {
   this.showingMoveValues = $("#option-move-values:checked").length > 0;
+  this.showingMoveHistory = $("#option-move-value-history:checked").length > 0;
   // Unbind old event handlers to release references to any old Games.
   $("#option-move-values").unbind('click').click(function() {
     this.showingMoveValues = $("#option-move-values:checked").length > 0;
@@ -222,6 +226,14 @@ GCWeb.Game.prototype.start = function() {
       this.hideMoveValues(this.nextMoves);
     }
   }.bind(this));
+  $("#option-move-value-history").unbind('click').click(function() {
+    this.showingMoveHistory = $("#option-move-value-history:checked").length > 0;
+	if (this.showingMoveHistory) {
+      this.drawMoveValueHistory();
+    } else {
+    }
+  }.bind(this));
+  
   // Prevent the user from making any moves (move-making will be restored
   // in the callback from getNextMoveValues).
   this.handlingDoMove = true;
@@ -392,6 +404,7 @@ GCWeb.Game.prototype.handleGameOver = function() {
   this._clearDoMoveRequests();
   
   var lastMove = this.getLastMoveValue();
+  this.drawMoveValueHistory();
   // Display a prompt to the user.
   var prompt;
   var value = lastMove ? lastMove.value : null;
@@ -422,7 +435,7 @@ GCWeb.Game.prototype.getLastMoveValue = function() {
  * @param board the string that represents the current state of the board
  */
 GCWeb.Game.prototype.getNextMoveValues = function(board) {
-this.drawMoveValueHistory();
+
   var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
     "/getNextMoveValues" + this.createParameterString(board);
   var options = {dataType: "json", url: serverUrl};
@@ -537,7 +550,6 @@ GCWeb.Prediction = function(game) {
   var handler = this.updatePrediction.bind(this);
   this.game.addEventListener('nextvaluesreceived', handler);
   this.game.addEventListener('gameover', handler);
-//  drawMoveValueHistory(name.moveHistory);
 };
 
 GCWeb.Prediction.prototype.updatePrediction = function() {
@@ -597,7 +609,8 @@ GCWeb.Prediction.prototype.tryEnablePredictions = function() {
   }
 };
 
-GCWeb.Prediction.prototype.drawMoveValueHistory = function() {
+
+GCWeb.Game.prototype.drawMoveValueHistory = function() {
 //document.getElementById("history-graph").innerHTML = "<canvas id='canvas' width='150' height='300'></canvas>";
 
 pMoves = this.moveHistory;
@@ -606,22 +619,32 @@ pMoves = this.moveHistory;
     for (var i = 0; i<pMoves.length; i++){
 	m = Math.max(m,pMoves[i].remoteness)};
     m+=1;
-    var r,w,p;
-
+    var r = new Array();
+	var w = new Array();
+	var p = new Array();
+	
     for(var i = 0; i<pMoves.length; i++){
+
 	r.push(pMoves[i].remoteness);
+	
 	switch(pMoves[i].value){
 	case "win":w.push(1); break;
 	case "tie": w.push(2); break;
 	case "lose": w.push(3); break;
 	}
-	p.push(i%2);
+	p.push((i+1)%2);
     }
+	w[0] = 4-w[0];
+	
     if($('#option-move-value-history').is(':checked')){
 	main("Player 1","Player 2",r,w,p,m);
 	$("#history-graph-container").scrollTop(10000);
+	//alert(r+" | "+w+" | "+p);
     }
 };
+
+
+
 
 /** Binds the specified objects to "this" and arguments like currying. */
 Function.prototype.bind = function __Function_bind() {
@@ -636,3 +659,4 @@ Function.prototype.bind = function __Function_bind() {
     return fn.apply(thisContext, curryArguments.concat(argumentArray));
   };
 };
+

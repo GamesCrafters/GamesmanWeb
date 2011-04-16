@@ -8,6 +8,7 @@ function load() {
 // Draws VVH on Canvas
 // Takes player names and arrays of remoteness and move-values
 function main(name1, name2, rv, mv, pv, rmax) {
+//alert(rv+" | "+mv+" | "+pv);
 	var temp;
 		var input = new Array();
 		for (var i = 0; i < rv.length; i++) {
@@ -23,8 +24,10 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}*/
 		var vvh = new vvh((canvas.width - 40) / (2 * (rmax * 1 + 1)), 10, 10,
 				1, 1 + Math.floor(rmax * 10 / canvas.width), 1, "#66FF00",
-				"#FFFF00", "#800000", "#FFFFFF", "#000066");
+				"#FFFF00", "#8A0000", "#FFFFFF", "#000066");
 		canvas.height = (input.length + 3) * vvh.ts;
+		
+		//alert(vvh.win+" | "+vvh.tie+" | "+vvh.lose);
 		draw(game, vvh, canvas, input, rmax);
 
 	function game(p1, p2) {
@@ -254,6 +257,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}
 
 		function dots(rc, tc, t) {
+		//alert(t);
 			var canvas = document.getElementById("canvas");
 			var ctx = canvas.getContext("2d");
 			// Choose Dot + Line Color
@@ -271,6 +275,8 @@ function main(name1, name2, rv, mv, pv, rmax) {
 				ctx.fillStyle = vvh.lose;
 				break;
 			}
+			//alert(vvh.win + " | " + vvh.lose);
+			//alert(ctx.fillStyle+" | "+ctx.strokeStyle);
 			// Draw Dot
 			ctx.save();
 			dot(rc, tc);

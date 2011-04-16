@@ -81,10 +81,11 @@ String uifile = gameDictionary.getUI(internalName);
     <script type="text/javascript" src="js/jquery.flot.js"></script>
         <% if (uifile.equals("grid")) { %>
     <script type="text/javascript" src="js/gcweb-ttt.js"></script>
+    <script type="text/javascript" src="game/js/vvh.js"></script>
         <% } else { %>
     <script type="text/javascript" src="js/gcweb.js"></script>
-        <% } %>
     <script type="text/javascript" src="js/vvh.js"></script>
+        <% } %>
     <script type="text/javascript" src="js/<%= uifile %>.js"></script>
     <script type="text/javascript">
       $(document).ready(function() {
