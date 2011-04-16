@@ -15,7 +15,7 @@ body > .header h1 {
   vertical-align: top; margin: 0.15em 0 0 0.25em
 }
 
-#container { padding-left: 10em; padding-right: 15em }
+#container { padding-left: 10em; padding-right: 330px }
 .nav, #main, #moves { float: left; padding-bottom: 1em }
 #main { width: 100%; padding-left: 1.5em; padding-right: 1.5em; margin-right: -3em }
 #moves { margin: 1em 0 }
@@ -51,6 +51,8 @@ body > .header h1 {
 #moves h1 { }
 #moves * + h1 { margin-top: 0.5em }
 
+#moves-inside { width: 250px; }
+
 #timer { float: right; margin: 2px; padding-left: 1em; padding-right: 0.5em; font-size: 2.5em; text-align: center}
 #nr-moves { float: right; margin: 2px; padding: 0.5em; font-size: 1.5em; text-align: left}
 
@@ -60,7 +62,7 @@ body > .header h1 {
 #move-value-key img { width: 1em; height: 1em; border: 1px #000 solid }
 
 #move-value-history { margin-top: 0.5em }
-#history-tree { height: 20em; overflow-y: scroll; border: 2px #88f inset; background: #116 }
+#history-tree { min-height: 20em }
 
 #move-value-history-labels{width: 85%;}
 #min-remoteness, #mid-remoteness, #max-remoteness {width: 33%;}
@@ -68,11 +70,8 @@ body > .header h1 {
 #mid-remoteness {text-align: center;}
 #max-remoteness {text-align: right;}
 
-#history-graph-container { width: 160px; height: 20em; overflow-y: scroll; border: 2px #88f inset; background: #116; padding: 0; }
-#history-graph {
-	width: 143px;
-	overflow: hidden;
-}
+#history-graph-container { padding-left: 5px; padding-right: 5px; width: 100%; min-height: 20em }
+#history-graph { width: 100%; padding: 0 }
 
 body > .footer {
   clear: both; color: #fc3; text-align: center; background: #006;

@@ -164,7 +164,7 @@ String uifile = gameDictionary.getUI(internalName);
           <div id="history-tree">
           </div> -->
           <div id="history-graph-container">
-              <div id="history-graph"></div>
+              <div id="history-graph"><canvas id='history-graph-canvas'></canvas></div>
           </div>
         </div>
       </div> 

@@ -112,7 +112,6 @@ GCWeb = {
                 },				
 				
                 drawMoveValueHistory: function(pMoves) {
-				document.getElementById("history-graph").innerHTML = "<canvas id='canvas' width='150' height='300'>";
 	                /* find maximum remoteness */
 	                var m = 0;
 	                for (var i = 0; i < pMoves.length; i++) {

@@ -15,7 +15,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		temp = new value(rv[i],mv[i],pv[i]);
 		input.push(temp);
 		}
-		var canvas = document.getElementById("canvas");
+		var canvas = document.getElementById("history-graph-canvas");
 		var game = new game(name1, name2);
 		/*
 		var rmax = 0;
@@ -203,7 +203,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}
 
 		function link(roc, toc, rc, tc, t, to) {
-			var canvas = document.getElementById("canvas");
+			var canvas = document.getElementById("history-graph-canvas");
 			var ctx = canvas.getContext("2d");
 			// Choose Dot + Line Color
 			switch (t) {
@@ -258,7 +258,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 
 		function dots(rc, tc, t) {
 		//alert(t);
-			var canvas = document.getElementById("canvas");
+			var canvas = document.getElementById("history-graph-canvas");
 			var ctx = canvas.getContext("2d");
 			// Choose Dot + Line Color
 			switch (t) {
@@ -287,7 +287,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}
 
 		function line(x1, y1, x2, y2) {
-			var canvas = document.getElementById("canvas");
+			var canvas = document.getElementById("history-graph-canvas");
 			var ctx = canvas.getContext("2d");
 			ctx.beginPath();
 			ctx.moveTo(x1, y1);
@@ -296,7 +296,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}
 
 		function gridline(x) {
-			var canvas = document.getElementById("canvas");
+			var canvas = document.getElementById("history-graph-canvas");
 			var ctx = canvas.getContext("2d");
 			if(x<canvas.width/2){x=Math.floor(x)+0.5;}
 			else if (x>canvas.width/2){x=Math.ceil(x)-0.5;}
@@ -314,7 +314,7 @@ function main(name1, name2, rv, mv, pv, rmax) {
 		}
 
 		function dot(x, y) {
-			var canvas = document.getElementById("canvas");
+			var canvas = document.getElementById("history-graph-canvas");
 			var ctx = canvas.getContext("2d");
 			ctx.beginPath();
 			ctx.arc(x, y, vvh.ds / 2, 0, Math.PI * 2, true);

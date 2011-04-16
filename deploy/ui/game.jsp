@@ -111,7 +111,8 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
     </div> 
     <!-- sidebar --> 
     <div id="moves" class="aside">
-    <div id="move-value-key">
+    <div id="moves-inside">
+     <div id="move-value-key">
       <h1>Move-value Key</h1>
       <table>
       <tr>
@@ -132,8 +133,9 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
 	<div id="move-value-history">
           <h1>Move-value History</h1>
 <div id="history-graph-container">
-              <div id="history-graph"></div>
+              <div id="history-graph"><canvas id="history-graph-canvas" width="250" /></div>
           </div>
+</div>
 </div>
 	
     </div> 
