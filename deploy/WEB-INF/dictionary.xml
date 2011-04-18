@@ -5,6 +5,10 @@
         visible="visible">
     <server host="localhost" port="4242" />
   </game>
+  <game internal-name="quickcross" canonical-name="quickcross" ui="quickcross"
+        visible="visible">
+    <server host="localhost" port="4242" />
+  </game>
   <game internal-name="onetwoten" canonical-name="1, 2, ..., 10">
     <server host="localhost" port="4242" />
   </game>
