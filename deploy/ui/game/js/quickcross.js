@@ -77,25 +77,25 @@ var gameover = false;
 
 //images used
 var cell_img = new Image();
-cell_img.src = "images/quickcross/cell2.png";
+cell_img.src = "game/images/quickcross/cell2.png";
 var h_img = new Image();
-h_img.src = "images/quickcross/horizontal3.png";
+h_img.src = "game/images/quickcross/horizontal3.png";
 var v_img = new Image();
-v_img.src = "images/quickcross/vertical3.png";
+v_img.src = "game/images/quickcross/vertical3.png";
 var empty_img = new Image();
-empty_img.src = "images/quickcross/empty.png";
+empty_img.src = "game/images/quickcross/empty.png";
 var lose_v_img = new Image();
-lose_v_img.src = "images/quickcross/lose_v.png";
+lose_v_img.src = "game/images/quickcross/lose_v.png";
 var lose_h_img = new Image();
-lose_h_img.src = "images/quickcross/lose_h.png";
+lose_h_img.src = "game/images/quickcross/lose_h.png";
 var win_v_img = new Image();
-win_v_img.src = "images/quickcross/win_v.png";
+win_v_img.src = "game/images/quickcross/win_v.png";
 var win_h_img = new Image();
-win_h_img.src = "images/quickcross/win_h.png";
+win_h_img.src = "game/images/quickcross/win_h.png";
 var tie_v_img = new Image();
-tie_v_img.src = "images/quickcross/tie_v.png";
+tie_v_img.src = "game/images/quickcross/tie_v.png";
 var tie_h_img = new Image();
-tie_h_img.src = "images/quickcross/tie_h.png";
+tie_h_img.src = "game/images/quickcross/tie_h.png";
 
 // initialization function
 function init() {

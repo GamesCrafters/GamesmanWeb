@@ -6,7 +6,7 @@
 </head>
 <body>
 	<h1>QuickCross</h1><br>
-	<form id="gameform" onsubmit="submitclick();return false">
+	<form id="gameform" onsubmit="try{submitclick();}catch(e){};return false">
 		<p>Row<input type="text" name="row" value="4"/> </p>
 		<p>Column<input type="text" name="col" value="4"/> </p>
 		<input type="submit" value="Submit">
