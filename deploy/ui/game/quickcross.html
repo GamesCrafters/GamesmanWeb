@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<script src="js/jquery-1.4.3.min.js"></script>
+	<script src="js/quickcross.js" type="text/javascript"></script>
+
+	
+</head>
+<body>
+	<h1>QuickCross</h1><br>
+	<form id="gameform">
+		<p>Row<input type="text" name="row" value="4"/> </p>
+		<p>Column<input type="text" name="col" value="4"/> </p>
+		<input type="submit" value="Submit" onClick="submitclick();return false">
+	</form>
+	<p id="playerturn">Turn: Player 1</p>
+	<canvas id="canvas"></canvas>
+	<input type="submit" value="show value moves" onClick="valuechange();return false">
+</body>
