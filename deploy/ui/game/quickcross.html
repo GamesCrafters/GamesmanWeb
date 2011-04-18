@@ -8,10 +8,10 @@
 </head>
 <body>
 	<h1>QuickCross</h1><br>
-	<form id="gameform">
+	<form id="gameform" onsubmit="submitclick();return false">
 		<p>Row<input type="text" name="row" value="4"/> </p>
 		<p>Column<input type="text" name="col" value="4"/> </p>
-		<input type="submit" value="Submit" onClick="submitclick();return false">
+		<input type="submit" value="Submit">
 	</form>
 	<p id="playerturn">Turn: Player 1</p>
 	<canvas id="canvas"></canvas>
