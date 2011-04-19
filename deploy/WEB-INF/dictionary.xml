@@ -23,7 +23,7 @@
     <server host="localhost" port="4242" />
   </game> -->
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
-    <server host="localhost" port="4243" />
+    <server host="localhost" port="4242" />
   </game>
   <game internal-name="connections" canonical-name="Connections"
         visible="visible">
