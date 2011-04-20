@@ -177,7 +177,7 @@ function updateMoveValues(nextMoves){
         col = 0;
         
         // adds the css class to the table cell depending on whether it's a lose, draw, or win
-        $('#cell-'+row+'-'+col).addClass(moveValueClasses[nextMoves[i].value-1]);
+        $('#cell-'+row+'-'+col).addClass(nextMoves[i].value+"-move");
     }*/
 }
 
