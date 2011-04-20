@@ -19,9 +19,9 @@ var TIE_COLOR = "rgb(255,255, 51)";
 var LOSE_COLOR = "rgb(139,0,0)";
 var COLOR_DARK_GREEN = "rgb(0,40,0)";
 
-var PLAYER_X = "B";
+var PLAYER_X = "x";
 var COLOR_X = BLACK_COLOR;
-var PLAYER_O = "W";
+var PLAYER_O = "o";
 var COLOR_O = WHITE_COLOR;
 
 var FELT_BG_IMAGE = new Image(); 
@@ -390,7 +390,7 @@ function Board(width, height, game) {
 	var boardSize = Math.min(width, height);
 	var borderSize = 2;
 	
-	var emptySpace = '_';
+	var emptySpace = ' ';
 	var piece1 = PLAYER_X;
 	var piece2 = PLAYER_O;
 	
@@ -1110,7 +1110,7 @@ function MoveGenerator(/*gameOption*/) {
 		WHITE_PIECE = "W"; 
 		BLACK_PLAYER = 1;
 		WHITE_PLAYER = 2; 
-		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/othello/getNextMoveValues";
+		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/reversi/getNextMoveValues";
 		URL_BOARD = ";board=";
 		URL_PLAYER = ";player=";
 		URL_OPTION = ";option=";
