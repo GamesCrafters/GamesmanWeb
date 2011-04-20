@@ -637,7 +637,7 @@ pMoves = this.moveHistory;
 	w[0] = 4-w[0];
 	
     if($('#option-move-value-history').is(':checked')){
-	main("Player 1","Player 2",r,w,p,m);
+	vvh_main("Player 1","Player 2",r,w,p,m);
 	$("#history-graph-container").scrollTop(10000);
 	//alert(r+" | "+w+" | "+p);
     }
