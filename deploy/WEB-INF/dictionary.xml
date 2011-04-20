@@ -75,4 +75,7 @@
 	visible="visible">
     <server host="localhost" port="4242" />
   </game>
+  <game internal-name="onetwoten" canonical-name="12..10">
+        <server host="localhost" port="4242" />
+  </game>
 </game-dictionary>
