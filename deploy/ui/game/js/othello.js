@@ -19,10 +19,11 @@ var TIE_COLOR = "rgb(255,255, 51)";
 var LOSE_COLOR = "rgb(139,0,0)";
 var COLOR_DARK_GREEN = "rgb(0,40,0)";
 
-var PLAYER_X = "x";
+var PLAYER_X = "X";
 var COLOR_X = BLACK_COLOR;
-var PLAYER_O = "o";
+var PLAYER_O = "O";
 var COLOR_O = WHITE_COLOR;
+var emptySpace = " ";
 
 var FELT_BG_IMAGE = new Image(); 
 var FELT_BG_PATH = "game/images/othello/felt.jpg"; 
@@ -114,15 +115,15 @@ function Game() {
 	var player1Turn = true;
 	var possibleMoves;
 	
-	var legalLetters = ["a","b","c","d","e","f","g","h"];
-	var legalIndeces = [];
-	
 	var animating = false;
 	var myMoveGenerator;
 	
 	var winningMessage = "";
 	var winningMessageBottom = "";
 	var lastPlayerPassed = false;
+	
+	var legalLetters = ["A","B","C","D","E","F","G","H"];
+	var legalIndeces = [];
 	
 	this.handleMouseMove = handleMouseMove;
 	this.getNextMoveValues = getNextMoveValues;
@@ -151,7 +152,7 @@ function Game() {
 		myColorBar = new ColorBar(boardWidth * myBoard.getSpaceSide(), colorBarHeight);
 
 		for (var i = 0; i < boardHeight; i++) {
-			legalIndeces[i] = "" + (myBoard.getBoardHeight() - i);
+			legalIndeces[i] = "" + (1 + i); // (boardHeight - i);
 		}
 		
 		var ctx = document.getElementById('canvas').getContext('2d');
@@ -266,12 +267,15 @@ function Game() {
 	}
 	
 	function queryServer() {
-		possibleMoves = getNextMoveValues(myBoard.toString(), player1Turn);	
+		console.log(myBoard.toString());
+		possibleMoves = getNextMoveValues(myBoard.toString(), player1Turn);
 		myBoard.setPossibleMoves(possibleMoves);
+		console.log(possibleMoves);
+		console.log(possibleMoves);
 		
 		if (possibleMoves.length == 0) {
 			endGame();
-		} else if (possibleMoves[0].move == "P") {
+		} else if (possibleMoves[0].move == "P" || possibleMoves[0].move == "pass") {
 			if (lastPlayerPassed) {
 				endGame();
 				return;
@@ -377,8 +381,6 @@ function Game() {
 		animating = false;
 		endCurrentTurn();
 	}
-}
-
 function Board(width, height, game) {
 	
 	var myGame = game;
@@ -390,12 +392,8 @@ function Board(width, height, game) {
 	var boardSize = Math.min(width, height);
 	var borderSize = 2;
 	
-	var emptySpace = ' ';
 	var piece1 = PLAYER_X;
 	var piece2 = PLAYER_O;
-	
-	var legalLetters = ["a","b","c","d","e","f","g","h"];
-	var legalIndeces = [];
 	
 	var possibleMoves = [];
 	
@@ -421,10 +419,6 @@ function Board(width, height, game) {
 		for (var j = 0; j < boardHeight; j++) {
 			boardRep[i][j] = emptySpace;
 		}
-	}
-	
-	for (var i = 0; i < boardHeight; i++) {
-		legalIndeces[i] = "" + (boardHeight - i);
 	}
 	
 	bottomLeftX = Math.floor(boardWidth / 2) - 1;
@@ -712,6 +706,7 @@ function Board(width, height, game) {
 	
 	
 	function updateBoard(newBoard, moveX, moveY) {
+		newBoard = newBoard.substr(1);
 		playedMoves.push(toString());
 		
 		var newBoardSlot;
@@ -1017,7 +1012,6 @@ function ColorBar(length, height) {
 	var animatingToLeft = false;
 	var currentAnimPoint = 0;
 		
-	var emptySpace = "_";
 	
 	this.draw = draw;
 	this.update = update;
@@ -1105,17 +1099,14 @@ function MoveGenerator(/*gameOption*/) {
 	
 	//Constructor 
 	function init() {
-		SPACE = "_";
-		BLACK_PIECE = "B";
-		WHITE_PIECE = "W"; 
-		BLACK_PLAYER = 1;
-		WHITE_PLAYER = 2; 
-		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/reversi/getNextMoveValues";
+		SPACE = " ";
+		BLACK_PIECE = "X";
+		WHITE_PIECE = "O"; 
+		BLACK_PLAYER = "X";
+		WHITE_PLAYER = "O"; 
+		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/othello/getNextMoveValues";
 		URL_BOARD = ";board=";
-		URL_PLAYER = ";player=";
-		URL_OPTION = ";option=";
-		
-		gameOption = 136; 
+		URL_OPTION = ";width=4;height=4";
 	}
 	
 	// player's value is determined based on the question: 'Is the current player player 1?'
@@ -1125,7 +1116,7 @@ function MoveGenerator(/*gameOption*/) {
 	
 	function assembleString(board, player) {	
 		currentPlayer = determineCurrentPlayer(player);
-		return URL_BASE + URL_BOARD + board + URL_PLAYER + currentPlayer + URL_OPTION + gameOption;
+		return URL_BASE + URL_BOARD + currentPlayer + board + URL_OPTION;
 	}
 	
 	//Initialize state  (pseudo-constructor) 
@@ -1142,9 +1133,9 @@ function MoveGenerator(/*gameOption*/) {
 				async: false,
 				dataType: 'json', 
 				success: function(data) {
-						if(data.status != "ok") {
-						//console.err("Return status not \'ok\' in MoveGenerator::queryServer");
-						return false; 
+					if(data.status != "ok") {
+						console.err("Return status not \'ok\' in MoveGenerator::queryServer");
+						return {};
 					} else {
 						//console.log("MoveGenerator::queryServer::rtn:" + data.response);
 						rtn = data.response; 
@@ -1153,4 +1144,5 @@ function MoveGenerator(/*gameOption*/) {
 				return rtn; 
 			}
 		};
+}
 }

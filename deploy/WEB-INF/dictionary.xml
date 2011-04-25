@@ -16,7 +16,7 @@
     <server host="localhost" port="24444" />
   </game>
   <game internal-name="othello" canonical-name="Othello" visible="visible">
-    <server host="localhost" port="24444" />
+    <server host="localhost" port="4242" />
   </game>
 <!--  <game internal-name="reversi" canonical-name="Othello" ui="othello"
         visible="visible">

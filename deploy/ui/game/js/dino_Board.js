@@ -198,6 +198,7 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 				$('#board').append(nextRow);
 				for (var j = 0; j < this.boardWidth; j++){
 					var nextCell = document.createElement("td");
+					$(nextRow).append(nextCell);
 					
 					var inFirstRow = (i == 0);
 					var inSecondRow = (i == 1);
@@ -243,17 +244,18 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 							nextCell.setAttribute("width", "100px");
 							
 							var tempSquare = this.piecesOnBoard[j][i]; 
+						
+							$(nextCell).append(arrow1);
+							$(nextCell).append(arrow2);
+							$(nextCell).append(arrow3);
+							$(nextCell).append(purplePiece);
+
 							this.purplePieces[purplePieceCount] = this.piecesOnBoard[j][i] = new Piece(i,j,"purple", pieceID, tempSquare, new Arrow(arrow1ID, null, "north"), new Arrow(arrow2ID, null, "east"), new Arrow(arrow3ID, null, "west")); 
 							this.purplePieces[purplePieceCount].arrows[0].myOwner = this.purplePieces[purplePieceCount]; 
 							this.purplePieces[purplePieceCount].arrows[1].myOwner = this.purplePieces[purplePieceCount]; 
 							this.purplePieces[purplePieceCount].arrows[2].myOwner = this.purplePieces[purplePieceCount]; 
 							
 							purplePieceCount += 1; 
-						
-							$(nextCell).append(arrow1);
-							$(nextCell).append(arrow2);
-							$(nextCell).append(arrow3);
-							$(nextCell).append(purplePiece);
 						}
 					} else if (inSecondToLastRow){
 						if (inFirstColumn){
@@ -310,17 +312,18 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 							nextCell.setAttribute("width", "100px");
 							
 							var tempSquare = this.piecesOnBoard[j][i]; 
+							
+							$(nextCell).append(arrow1);
+							$(nextCell).append(arrow2);
+							$(nextCell).append(arrow3);
+							$(nextCell).append(greenPiece); 
+
 							this.greenPieces[greenPieceCount] = this.piecesOnBoard[j][i] = new Piece(i,j,"green", pieceID, tempSquare, new Arrow(arrow1ID, null, "north"), new Arrow(arrow2ID, null, "east"), new Arrow(arrow3ID, null, "south")); 
 							this.greenPieces[greenPieceCount].arrows[0].myOwner = this.greenPieces[greenPieceCount]; 
 							this.greenPieces[greenPieceCount].arrows[1].myOwner = this.greenPieces[greenPieceCount]; 
 							this.greenPieces[greenPieceCount].arrows[2].myOwner = this.greenPieces[greenPieceCount]; 
 							
 							greenPieceCount += 1; 
-							
-							$(nextCell).append(arrow1);
-							$(nextCell).append(arrow2);
-							$(nextCell).append(arrow3);
-							$(nextCell).append(greenPiece); 
 						} else if (inLastColumn) {
 							nextCell.setAttribute("style", "background-image:url('" + this.greenGoalAddress + "');");
 							nextCell.setAttribute("height", "100px");
@@ -331,7 +334,6 @@ function Board(sizeOfCenterArea, firstPlayer, clickHandlerFunction, skin) {
 							nextCell.setAttribute("width", "100px");
 						}
 					}	
-					$(nextRow).append(nextCell);
 				}
 			}
 		}
