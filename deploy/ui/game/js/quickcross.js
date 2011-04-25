@@ -188,6 +188,11 @@ function event_handle(x,y) {
 				document.getElementById("playerturn").innerHTML = "Turn: Left Player"
 			}
 		}
+		if(player == 1){
+			document.getElementById("playerturn").innerHTML.style.textAlign="left";
+		}else{
+			document.getElementById("playerturn").innerHTML.style.textAlign="right";
+		}
 	}
 }
 
