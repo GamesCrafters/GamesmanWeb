@@ -182,10 +182,10 @@ function event_handle(x,y) {
 		if (!gameover) {
 			if (player == 1) {
 				player = 2;
-				document.getElementById("playerturn").innerHTML = "Turn: Player 2"
+				document.getElementById("playerturn").innerHTML = "Turn: Right Player"
 			} else {
 				player = 1;
-				document.getElementById("playerturn").innerHTML = "Turn: Player 1"
+				document.getElementById("playerturn").innerHTML = "Turn: Left Player"
 			}
 		}
 	}
