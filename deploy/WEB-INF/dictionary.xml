@@ -5,7 +5,7 @@
         visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="quickcross" canonical-name="quickcross" ui="quickcross"
+  <game internal-name="quickcross" canonical-name="Quickcross" ui="quickcross"
         visible="visible">
     <server host="localhost" port="4242" />
   </game>
