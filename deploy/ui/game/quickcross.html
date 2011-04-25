@@ -5,13 +5,14 @@
 	
 </head>
 <body>
-	<h1>QuickCross</h1><br>
+	
 	<form id="gameform" onsubmit="try{submitclick();}catch(e){};return false">
 		<p>Row<input type="text" name="row" value="4"/> </p>
 		<p>Column<input type="text" name="col" value="4"/> </p>
 		<input type="submit" value="Submit">
 	</form>
-	<p id="playerturn">Turn: Player 1</p>
+	<p id="playerturn">Turn: Left Player</p>
+	
 	<canvas id="canvas"></canvas>
 	<input type="submit" value="show value moves" onClick="valuechange();return false">
 </body>
