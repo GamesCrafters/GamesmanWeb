@@ -20,6 +20,7 @@ window.onresize = function(event) {
 		cell_size = canvas_size/row;
 	}
 	
+	$(document.getElementById("playerturn")).css("width", cell_size*col);
 	canvas.setAttribute("width",cell_size*col);
 	canvas.setAttribute("height",cell_size*row);
 	drawBoard(board,-1);
@@ -77,25 +78,25 @@ var gameover = false;
 
 //images used
 var cell_img = new Image();
-cell_img.src = "game/images/quickcross/cell2.png";
+cell_img.src = "games/images/quickcross/cell2.png";
 var h_img = new Image();
-h_img.src = "game/images/quickcross/horizontal3.png";
+h_img.src = "games/images/quickcross/horizontal3.png";
 var v_img = new Image();
-v_img.src = "game/images/quickcross/vertical3.png";
+v_img.src = "games/images/quickcross/vertical3.png";
 var empty_img = new Image();
-empty_img.src = "game/images/quickcross/empty.png";
+empty_img.src = "games/images/quickcross/empty.png";
 var lose_v_img = new Image();
-lose_v_img.src = "game/images/quickcross/lose_v.png";
+lose_v_img.src = "games/images/quickcross/lose_v.png";
 var lose_h_img = new Image();
-lose_h_img.src = "game/images/quickcross/lose_h.png";
+lose_h_img.src = "games/images/quickcross/lose_h.png";
 var win_v_img = new Image();
-win_v_img.src = "game/images/quickcross/win_v.png";
+win_v_img.src = "games/images/quickcross/win_v.png";
 var win_h_img = new Image();
-win_h_img.src = "game/images/quickcross/win_h.png";
+win_h_img.src = "games/images/quickcross/win_h.png";
 var tie_v_img = new Image();
-tie_v_img.src = "game/images/quickcross/tie_v.png";
+tie_v_img.src = "games/images/quickcross/tie_v.png";
 var tie_h_img = new Image();
-tie_h_img.src = "game/images/quickcross/tie_h.png";
+tie_h_img.src = "games/images/quickcross/tie_h.png";
 
 // initialization function
 function init() {
@@ -115,6 +116,7 @@ function init() {
 		cell_size = canvas_size/row;
 	}
 	
+	$(document.getElementById("playerturn")).css("width", cell_size*col);
 	canvas.setAttribute("width",cell_size*col);
 	canvas.setAttribute("height",cell_size*row);
 	
@@ -189,9 +191,11 @@ function event_handle(x,y) {
 			}
 		}
 		if(player == 1){
-			document.getElementById("playerturn").innerHTML.style.textAlign="left";
+			//document.getElementById("playerturn").innerHTML.style.textAlign="left";
+			$(document.getElementById("playerturn")).css("text-align", "left");
 		}else{
-			document.getElementById("playerturn").innerHTML.style.textAlign="right";
+			//document.getElementById("playerturn").innerHTML.style.textAlign="right";
+			$(document.getElementById("playerturn")).css("text-align", "right");
 		}
 	}
 }
