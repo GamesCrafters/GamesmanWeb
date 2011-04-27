@@ -184,10 +184,10 @@ function event_handle(x,y) {
 		if (!gameover) {
 			if (player == 1) {
 				player = 2;
-				document.getElementById("playerturn").innerHTML = "Turn: Right Player"
+				document.getElementById("playerturn").innerHTML = "Right Player Turn"
 			} else {
 				player = 1;
-				document.getElementById("playerturn").innerHTML = "Turn: Left Player"
+				document.getElementById("playerturn").innerHTML = "Left Player Turn"
 			}
 		}
 		if(player == 1){
@@ -398,7 +398,8 @@ function loadvalues_and_children() {
 
 //delayed alert function to indicate someone has won
 function alerter(){
-	alert("player "+ player +" WINS");
+	if(player == 1)	alert("Left Player Wins");
+	else alert("Right Player Wins");
 }
 
 //tempory gameend function only for 4x4 board
