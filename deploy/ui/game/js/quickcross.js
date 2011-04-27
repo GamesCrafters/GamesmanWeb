@@ -31,9 +31,16 @@ function submitclick() {
 	var f = document.getElementById("gameform");
 	var r = parseInt(f.row.value);
 	var c = parseInt(f.col.value);
+	var w = parseInt(f.dropmenu.value);
 	
 	if (isNaN(f.row.value) || isNaN(f.col.value) || f.row.value == "" || f.col.value == "" || f.row.value <= 0 || f.col.value <= 0)
 		alert("invalid row or column");
+	if(w == 1) alert("option: 1");
+	if(w == 2) alert("option: 2");
+	if(w == 3) alert("option: 3");
+	if(w == 4) alert("option: 4");
+		
+		
 	else {
 		row = r;
 		col = c;
