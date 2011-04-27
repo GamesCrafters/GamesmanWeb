@@ -83,8 +83,10 @@ templateFile += new File(absoluteJsp).exists() ? ".jsp" : ".html";
     <p id="timer">&nbsp;</p>
     <p id="nr-moves">&nbsp;</p>
   <div class="header">
+    <a href="/">
     <img src="images/gamescrafters-logo.png" alt="GamesCrafters">
-    <h1>GamesmanWeb</h1> 
+    <h1>GamesmanWeb</h1>
+    </a>
   </div>
   <div id="container"> 
     <!-- game commands --> 

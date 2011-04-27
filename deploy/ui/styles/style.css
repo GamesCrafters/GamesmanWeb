@@ -12,7 +12,8 @@ body > .header {
 }
 body > .header h1 {
   display: inline-block; font: bold 2.5em Calibri, Helvetica, Arial, sans-serif;
-  vertical-align: top; margin: 0.15em 0 0 0.25em
+  vertical-align: top; margin: 0.15em 0 0 0.25em;
+  color: white;
 }
 
 #container { padding-left: 10em; padding-right: 330px }
