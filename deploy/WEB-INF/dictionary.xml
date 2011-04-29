@@ -55,6 +55,9 @@
 	puzzle="puzzle">
     <server host="localhost" port="4242" />
   </game>
+  <game internal-name="quarto" canonical-name="Quarto" visible="visible">
+    <server host="localhost" port="4242" />
+  </game>
   <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle"
 	visible="visible">
     <server host="localhost" port="4242" />
