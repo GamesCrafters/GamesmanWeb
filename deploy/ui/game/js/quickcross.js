@@ -1,36 +1,41 @@
 //The number of pieces necessary to win.
 var winningPieces = 3;
 
+var gameStart = false;
+
 // function called on page load
 $(document).ready(function(){
 	//does nothing
 });
 
 window.onresize = function(event) {
-	// set the canvas dementions
-	//if(window.innerWidth < 500 || window.innerHeight < 500) {
-		canvas_size = Math.min(window.innerWidth,window.innerHeight);
-	//}
-	//else {
-	//	canvas_size = 500;
-	//}
-	var canvas = document.getElementById('canvas');
+	if(gameStart) {
+		// set the canvas dementions
+		//if(window.innerWidth < 500 || window.innerHeight < 500) {
+			canvas_size = Math.min(window.innerWidth,window.innerHeight);
+		//}
+		//else {
+		//	canvas_size = 500;
+		//}
+		var canvas = document.getElementById('canvas');
 	
-	//calculate cell size
-	if (canvas_size/row > canvas_size/col) {
-		cell_size = canvas_size/col;
-	} else {
-		cell_size = canvas_size/row;
+		//calculate cell size
+		if (canvas_size/row > canvas_size/col) {
+			cell_size = canvas_size/col;
+		} else {
+			cell_size = canvas_size/row;
+		}
+	
+		$(document.getElementById("playerturn")).css("width", cell_size*col);
+		canvas.setAttribute("width",cell_size*col);
+		canvas.setAttribute("height",cell_size*row);
+		drawBoard(board,-1);
 	}
-	
-	$(document.getElementById("playerturn")).css("width", cell_size*col);
-	canvas.setAttribute("width",cell_size*col);
-	canvas.setAttribute("height",cell_size*row);
-	drawBoard(board,-1);
 }
 
 //function called when the submit button is clicked
 function submitclick() {
+	gameStart = true;
 	var f = document.getElementById("gameform");
 	var r = parseInt(f.row.value);
 	var c = parseInt(f.col.value);
