@@ -37,8 +37,8 @@ window.onresize = function(event) {
 function submitclick() {
 	gameStart = true;
 	var f = document.getElementById("gameform");
-	var r = parseInt(f.row.value);
-	var c = parseInt(f.col.value);
+//	var r = parseInt(f.row.value);
+//	var c = parseInt(f.col.value);
 	var w = parseInt(f.dropmenu.value);
 	
 //	if (isNaN(f.row.value) || isNaN(f.col.value) || f.row.value == "" || f.col.value == "" || f.row.value <= 0 || f.col.value <= 0)
