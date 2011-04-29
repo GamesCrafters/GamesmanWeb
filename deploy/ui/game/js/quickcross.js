@@ -1,3 +1,6 @@
+//The number of pieces necessary to win.
+var winningPieces = 3;
+
 // function called on page load
 $(document).ready(function(){
 	//does nothing
@@ -33,24 +36,33 @@ function submitclick() {
 	var c = parseInt(f.col.value);
 	var w = parseInt(f.dropmenu.value);
 	
-	if (isNaN(f.row.value) || isNaN(f.col.value) || f.row.value == "" || f.col.value == "" || f.row.value <= 0 || f.col.value <= 0)
-		alert("invalid row or column");
-	if(w == 1) alert("option: 1");
-	if(w == 2) alert("option: 2");
-	if(w == 3) alert("option: 3");
-	if(w == 4) alert("option: 4");
-		
-		
-	else {
-		row = r;
-		col = c;
-		//initialize and draw the board
-		init();
-		drawBoard(board,-1);
-	
-		//hideform
-		f.style.display = "none";
+//	if (isNaN(f.row.value) || isNaN(f.col.value) || f.row.value == "" || f.col.value == "" || f.row.value <= 0 || f.col.value <= 0)
+//		alert("invalid row or column");
+	if(w == 1) {
+		row = 3;col = 3;
+		winningPieces = 3;
 	}
+	if(w == 2) {
+		row = 3;
+		col = 4;
+		winningPieces = 3;
+	}
+	if(w == 3) {
+		row = 4;
+		col = 3;
+		winningPieces = 4;
+	}
+	if(w == 4) {
+		row = 4;
+		col = 4;
+		winningPieces = 3;
+	}
+	//initialize and draw the board
+	init();
+	drawBoard(board,-1);
+	
+	//hideform
+	f.style.display = "none";
 }
 
 //function called to change the showvalue variable
