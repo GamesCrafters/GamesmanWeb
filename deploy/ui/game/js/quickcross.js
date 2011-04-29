@@ -53,8 +53,8 @@ function submitclick() {
 		winningPieces = 3;
 	}
 	if(w == 3) {
-		row = 4;
-		col = 3;
+		row = 3;
+		col = 4;
 		winningPieces = 4;
 	}
 	if(w == 4) {
