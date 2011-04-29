@@ -193,8 +193,15 @@ GCWeb.Game = function(name, width, height, config) {
 	this.handleGameOver.bind(this));
   this.prediction = new GCWeb.Prediction(this);
 }
+
+GCWeb.Game.useAPI = false;
+
 /** The URL of the server that is the gateway to the Gamesman provider. */
-GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
+if (GCWeb.Game.useAPI) {
+  GCWeb.Game.serviceUrl = "http://solvedgames.appspot.com/api/";
+} else {
+  GCWeb.Game.serviceUrl = "/gcweb/service/gamesman/puzzles/";
+}
 
 /** Generates a unique ID for a game instance. */
 GCWeb.Game.generateId = function() {
@@ -252,15 +259,32 @@ GCWeb.Game.prototype.start = function() {
   // Get the move-value of the initial board state, and then get the values
   // of all of the next moves that can be made.
   if (!this.local) {
-    var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
-      "/getMoveValue" + this.createParameterString();
+    var serverUrl;
+    if (GCWeb.Game.useAPI) {
+      serverUrl = GCWeb.Game.serviceUrl +
+        encodeURIComponent(this.name) + this.createVariantParameterString() +
+        "/initial-position-value";
+    } else {
+      serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
+        "/getMoveValue" + this.createParameterString();
+    }
     var options = {dataType: 'json', url: serverUrl};
     options.success = function(data, textStatus, xhr) {
+      //if(1){var moveValue = data;
       if (data.status == 'ok') {
         var moveValue = data.response;
+        if (!moveValue.board) {
+          moveValue.board = moveValue.position;
+          var colon = moveValue.position.indexOf(":");
+          if (colon != -1) {
+            moveValue.board = moveValue.position.substr(colon+1)
+            moveValue.turn = moveValue.position.substr(0, colon) - 0
+          }
+        }
+        
         this.moveHistory.push(moveValue);
         chooseMoveValueDisplay.call(this, moveValue);        
-        this.getNextMoveValues(moveValue.board);
+        this.getNextMoveValues(moveValue.board, moveValue.turn);
       } else {
         var message = data.message ? '\n[' + data.message + ']' : '';
         GCWeb.alert('The GamesCrafters server could not handle the request.' +
@@ -288,19 +312,43 @@ GCWeb.Game.prototype.start = function() {
   }
 };
 
-GCWeb.Game.prototype.createParameterString = function(board) {
-  board = board || this.defaultBoardString;
-  var paramString = ";board=" + encodeURIComponent(board) +
-    ";width=" + encodeURIComponent(this.width) +
-    ";height=" + encodeURIComponent(this.height);
-  for (var key in this.options) {
-    if ((key != "width") && (key != "height")) {
+if (GCWeb.Game.useAPI) {
+  GCWeb.Game.prototype.createBoardParameterString = function(board, player) {
+    return ";position=" + encodeURIComponent((player||0) + ":" + board)
+  }
+
+  GCWeb.Game.prototype.createVariantParameterString = function(board) {
+    var paramString =
+      ";v=0" +
+      ";width=" + encodeURIComponent(this.width) +
+      ";height=" + encodeURIComponent(this.height);
+    for (var key in this.options) {
       paramString += ";" + encodeURIComponent(key) +
         "=" + encodeURIComponent(this.options[key]);
     }
+    return paramString;
+  };
+} else {
+  GCWeb.Game.prototype.createParameterString = function(board) {
+    board = board || this.defaultBoardString;
+    return ";board=" + encodeURIComponent(board) +
+           this.createVariantParameterString();
   }
-  return paramString;
-};
+
+  GCWeb.Game.prototype.createVariantParameterString = function(board) {
+    board = board || this.defaultBoardString;
+    var paramString =
+      ";width=" + encodeURIComponent(this.width) +
+      ";height=" + encodeURIComponent(this.height);
+    for (var key in this.options) {
+      if ((key != "width") && (key != "height")) {
+        paramString += ";" + encodeURIComponent(key) +
+          "=" + encodeURIComponent(this.options[key]);
+      }
+    }
+    return paramString;
+  };
+}
 
 /**
  * Creates a game piece of the specified type and adds it to the game's
@@ -386,7 +434,7 @@ GCWeb.Game.prototype.doMove = function(moveDelta) {
   
   // Request the next move values.
   if (!this.local) {
-    this.getNextMoveValues(moveValue.board);
+    this.getNextMoveValues(moveValue.board, moveValue.turn);
   } else {
     this.nextMoves = this.localGetNextMoveValues(moveValue.board);
     if (this.nextMoves.length == 0) {
@@ -434,16 +482,43 @@ GCWeb.Game.prototype.getLastMoveValue = function() {
  * performed on the board with the specified board string.
  * @param board the string that represents the current state of the board
  */
-GCWeb.Game.prototype.getNextMoveValues = function(board) {
-
-  var serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
-    "/getNextMoveValues" + this.createParameterString(board);
+GCWeb.Game.prototype.getNextMoveValues = function(board, turn) {
+  var serverUrl;
+  if (GCWeb.Game.useAPI) {
+    serverUrl = GCWeb.Game.serviceUrl +
+      encodeURIComponent(this.name) + this.createVariantParameterString() +
+      "/next-position-values" + this.createBoardParameterString(board, turn);
+  } else {
+    serverUrl = GCWeb.Game.serviceUrl + encodeURIComponent(this.name) +
+      "/getNextMoveValues" + this.createParameterString(board, turn);
+  }
   var options = {dataType: "json", url: serverUrl};
   options.success = function(data, textStatus, xhr) {
+    //if(1){var moveValues = data;
     if (data.status == "ok") {
       var moveValues = data.response;
-      this.nextMoves = moveValues;
-      
+      this.nextMoves = []
+      for (var key in moveValues) {
+        var moveValue = moveValues[key];
+        moveValue.move = key;
+        if (typeof(moveValue)=="object") {
+          this.nextMoves.push(moveValue);
+          if (!moveValue.board) {
+            moveValue.board = moveValue.position;
+            var colon = moveValue.position.indexOf(":");
+            if (colon != -1) {
+              moveValue.board = moveValue.position.substr(colon+1)
+              moveValue.turn = moveValue.position.substr(0, colon) - 0
+            }
+          }
+          if (!moveValue.moveValue) {
+            moveValue.moveValue = moveValue.value;
+          }
+          // PRHFIXME: Enormous hack! Right thing is to fix the games.
+          moveValue.value = moveValue.moveValue;
+        }
+      }
+
       // If there are no more next moves, the game is over.
       if (this.nextMoves.length == 0) {
         this.fireEvent('gameover');
