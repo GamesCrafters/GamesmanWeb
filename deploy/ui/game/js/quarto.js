@@ -427,7 +427,7 @@ Quarto.Piece = function(x, y, player, color, shape, holey, short) {
             ctx.fillStyle = color;
             if(this.short) {
                 ctx.save();
-                ctx.globalAlpha = 0.7;
+                ctx.globalAlpha = 0.4;
 //                        this.radius = this.radius*0.85;
                 
             } else { 
@@ -457,7 +457,7 @@ Quarto.Piece = function(x, y, player, color, shape, holey, short) {
             if(this.short) {
                 //        this.radius = this.radius*0.85;
                 ctx.save();
-                ctx.globalAlpha = 0.6;
+                ctx.globalAlpha = 0.4;
             } else { 
                 //        this.radius = this.radius*1.10;
             }
@@ -529,11 +529,12 @@ Quarto.Piece = function(x, y, player, color, shape, holey, short) {
 };
 Quarto.onClick =  function(e) { 
     var x = e.clientX-Quarto.canvas.offsetLeft;
-    var y = e.clientY-Quarto.canvas.offsetTop + document.body.scrollTop;
+    var y = e.clientY-Quarto.canvas.offsetTop + document.body.scrollTop + document.documentElement.scrollTop;
+
+
     var click = new Quarto.Location(x, y);
     if (!Quarto.thisGame.pieceSelected) {
-        if(Quarto.thisGame.turn) {
-            for (var i = 0; i < 8; i++) {
+            for (var i = 0; i < 16; i++) {
                 var piece = Quarto.Pieces[i];
                 //if a piece hasn't yet been clicked 
                 if (!piece.used) {
@@ -546,30 +547,32 @@ Quarto.onClick =  function(e) {
                     }
                 }
             }
-        } else {
-            for (var i = 8; i < 16; i++) {
-                var piece = Quarto.Pieces[i];
-                //if a piece hasn't yet been clicked 
-                if (!piece.used) {
-                    if (!(Quarto.thisGame.pieceClicked)) {					
-                        //mark the correct one clicked
-                        if (piece.isUnderClick(x, y)) {
-                            piece.click();
-                            return;
-                        }	
-                    }
-                }
-            }
-        }
+//        else {
+//            for (var i = 8; i < 16; i++) {
+//                var piece = Quarto.Pieces[i];
+//                if a piece hasn't yet been clicked 
+//                if (!piece.used) {
+//                    if (!(Quarto.thisGame.pieceClicked)) {					
+//                        mark the correct one clicked
+//                        if (piece.isUnderClick(x, y)) {
+//                            piece.click();
+//                            return;
+//                        }	
+//                    }
+//                }
+//            }
+//        }
     } else if(click.grid) {
         if(  Quarto.squaresCoords[click.col][click.row].piece === null) {
             Quarto.thisGame.selectedPiece.moveTo(click.col, click.row);
             Quarto.squaresCoords[click.col][click.row].piece = Quarto.thisGame.selectedPiece;
+            Quarto.squaresCoords[click.col][click.row].moveValue = false;
         }
     }
 
 
 };
+
 
 Quarto.onMouseover = function(e) {
     var x = e.clientX-Quarto.canvas.offsetLeft;
