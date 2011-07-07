@@ -14,8 +14,8 @@ function initQuarto() {
 
 Quarto.canvas = document.getElementById('canvas');
 Quarto.ctx = Quarto.canvas.getContext('2d');
-Quarto.canvas.width = window.innerHeight*0.92;
-Quarto.canvas.height = window.innerHeight*0.92;
+Quarto.canvas.width = (window.innerHeight-Quarto.canvas.offsetTop)*0.92;
+Quarto.canvas.height = (window.innerHeight-Quarto.canvas.offsetTop)*0.92;
 
 Quarto.TOTAL_WIDTH = Quarto.canvas.width;
 Quarto.TOTAL_HEIGHT = Quarto.canvas.height;
