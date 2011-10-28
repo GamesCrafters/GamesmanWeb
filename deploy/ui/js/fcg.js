@@ -31,7 +31,7 @@ $(document).ready(function(){
         isValidMove: isValidMove,
         onExecutingMove: onExecutingMove,
         updateMoveValues: updateMoveValues, 
-        clearMoveValues: clearMoveValues,
+        clearMoveValues: clearMoveValues
         //getPositionValue: getPositionValue,
         //getNextMoveValues: getNextMoveValues,
         //debug: 1
