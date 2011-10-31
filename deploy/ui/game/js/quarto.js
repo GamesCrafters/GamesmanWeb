@@ -1,3 +1,4 @@
+//quarto.js
 var Quarto = {};
 
 function initQuarto() {
