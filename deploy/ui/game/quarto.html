@@ -1,21 +1,11 @@
 <html>
-<head>
-<title>Quarto</title>
-
 <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 <script type="text/javascript" src="js/drawing.js"></script>
 <script type="text/javascript" src="js/quarto.js"></script>
 <!--[if IE]><script src="game/js/excanvas.js"></script><![endif]-->
 
-</head>
-<body>
-    <div>
+<div id='canvasContainer'>
 <canvas id="canvas" width="700" height="700" style="position: relative; align: center; margin: 0 auto;">Your browser does not support the Canvas element</canvas>
-</body>
-
-<script>
-    //window.onresize = Quarto.resize;
-</script>
 <div  onresize='Quarto.onResize();' type=text id="playerTurn" style="font-family : geneva; position: relative;"></div>
 </div>
 </html>
