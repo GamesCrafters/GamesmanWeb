@@ -5,9 +5,10 @@
 
 #canvasContainer {
     margin: 0 auto;
+    text-align: center;
 }
 
-#canvas, #playerTurn {
+#canvas {
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
@@ -15,3 +16,7 @@
     display: block;
 }
 
+#playerTurn {
+/*    float: left*/
+ display: inline-block
+ }
