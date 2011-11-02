@@ -5,8 +5,8 @@ function initQuarto() {
     Quarto.IMAGE_DIR = "game/images/quarto/";
     Quarto.canvas = document.getElementById('canvas');
     Quarto.ctx = Quarto.canvas.getContext('2d');
-    Quarto.canvas.width = Math.min(window.innerHeight-Quarto.canvas.offsetTop, window.innerWidth-Quarto.canvas.offsetTop)*0.92;
-    Quarto.canvas.height = Math.min(window.innerHeight-Quarto.canvas.offsetTop, window.innerWidth-Quarto.canvas.offsetTop)*0.92;
+    Quarto.canvas.width = Math.min($('#canvasContainer').innerHeight()-Quarto.canvas.offsetTop, $('#canvasContainer').innerWidth()-Quarto.canvas.offsetTop)*0.92;
+    Quarto.canvas.height = Math.min($('#canvasContainer').innerHeight()-Quarto.canvas.offsetTop, $('#canvasContainer').innerWidth()-Quarto.canvas.offsetTop)*0.92;
 
     Quarto.TOTAL_WIDTH = Quarto.canvas.width;
     Quarto.TOTAL_HEIGHT = Quarto.canvas.height;
