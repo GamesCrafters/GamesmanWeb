@@ -2,11 +2,12 @@
 var Quarto = {};
 
 function initQuarto() {
+    Quarto.IMAGE_DIR = "images/quarto/";
     Quarto.canvas = document.getElementById('canvas');
     Quarto.ctx = Quarto.canvas.getContext('2d');
     Quarto.canvas.width = (window.innerHeight-Quarto.canvas.offsetTop)*0.92;
     Quarto.canvas.height = (window.innerHeight-Quarto.canvas.offsetTop)*0.92;
-    
+
     Quarto.TOTAL_WIDTH = Quarto.canvas.width;
     Quarto.TOTAL_HEIGHT = Quarto.canvas.height;
     Quarto.LINE_WIDTH = Quarto.TOTAL_WIDTH/600;
@@ -24,20 +25,27 @@ function initQuarto() {
     Quarto.HOLEY = false;
     Quarto.NONHOLEY = true;
     Quarto.Pieces = [];
-    
-    var boardwood = new Image();
-    boardwood.src = 'boardwood.jpg';
+
+    var boardwood = new Image();    
+    boardwood.src = Quarto.IMAGE_DIR+'boardwood.jpg';
+    console.log(boardwood.src);
     Quarto.BOARDWOOD = boardwood;
 
-    var redwoodSquares = []; var redwoodSrcs = ['square1.jpg', 'square2.jpg','square3.jpg', 'square4.jpg', 'square5.jpg', 'square6.jpg',
+    var redwoodSquares = []; 
+    var redwoodSrcs = ['square1.jpg', 'square2.jpg','square3.jpg', 'square4.jpg', 'square5.jpg', 'square6.jpg',
     'square7.jpg', 'square8.jpg', 'square9.jpg', 'square10.jpg', 'square11.jpg', 'square12.jpg', 'square13.jpg', 'square14.jpg',
-    'square15.jpg', 'square16.jpg']; for( var i = 0; i < 16; i++ ) { redwoodSquares[i] = new Image(); redwoodSquares[i].src =
-    redwoodSrcs[i]; } Quarto.REDWOOD_SQUARES = redwoodSquares;
+    'square15.jpg', 'square16.jpg']; 
+    for( var i = 0; i < 16; i++ ) { 
+        redwoodSquares[i] = new Image(); 
+        redwoodSquares[i].src = Quarto.IMAGE_DIR+redwoodSrcs[i]; 
+    } 
+
+    Quarto.REDWOOD_SQUARES = redwoodSquares;
 
     var redwoodCircle = new Image();
-    redwoodCircle.src = 'platform.png';
+    redwoodCircle.src = Quarto.IMAGE_DIR+'platform.png';
     Quarto.REDWOOD_CIRCLE = redwoodCircle;
-    
+
     Quarto.drawFromString = function(boardString) {
         if(boardString[16] == ' ') {
             Quarto.thisGame.pieceChosen = false;
@@ -76,7 +84,7 @@ function initQuarto() {
 
         Quarto.update()
     }
-    
+
     Quarto.pieceBinaryFromChar = function(aChar) {
         var charHex = aChar.charCodeAt(0) - 1;
         // console.log(charHex);
@@ -87,7 +95,7 @@ function initQuarto() {
         console.log('binary '+binary);
         return binary;
     }
-    
+
     Quarto.pieceAttrObjFromBinary = function(charBinary) {
         if(Quarto.Pieces.length == 0) {
             Quarto.Pieces.initVert();
@@ -96,7 +104,7 @@ function initQuarto() {
         var piece = Quarto.Pieces[parseInt(charBinary, 2)];
         return { color: piece.color, shape: piece.shape, holeyness: piece.holey, hollowness: piece.hollow };
     }
-    
+
     Quarto.Pieces.draw = function () {
         for (var i = 0; i < Quarto.Pieces.length; i++) {
             if (Quarto.Pieces[i] !== undefined) {
@@ -105,7 +113,7 @@ function initQuarto() {
             }
         }
     }; 
-    
+
     Quarto.Pieces.initVert = function () {
         var originX = Quarto.Grid.originX/4+Quarto.PIECERADIUS/3;
         var originY = Quarto.Grid.originY+Quarto.Grid.spaceWidth/2;
@@ -128,7 +136,7 @@ function initQuarto() {
         Quarto.Pieces[parseInt('1010',2)] = new Quarto.Piece     
         (originX + 1*xInc, originY + 3*inc, "black", "square", true, false);
     }; 
-        
+
     Quarto.Pieces.initHoriz = function () {
         var originY = Quarto.Grid.originY/4+Quarto.PIECERADIUS/3;
         var originX = Quarto.Grid.originX+Quarto.Grid.spaceWidth/2;
@@ -151,16 +159,16 @@ function initQuarto() {
         Quarto.Pieces[parseInt('1011',2)] = new Quarto.Piece    
         (originX + 3*inc, originY + 1*yInc, "black", "square", true, true);
     }; 
-       
+
     Quarto.Pieces.init = function () {
         if(Quarto.Pieces.length == 0)
         Quarto.Pieces.initVert();
         Quarto.Pieces.initHoriz();
         Quarto.Pieces.draw();
     };
-       
 
-       
+
+
     Quarto.Game = function(options) {
         this.options = options || {};
         this.turn = Quarto.LEFT_PLAYER;
@@ -169,10 +177,10 @@ function initQuarto() {
         } else {
             document.getElementById('playerTurn').innerHTML = "Right Player Turn";
         }
-        this.prototype = GCWeb.Game.prototype;
+        // this.prototype = GCWeb.Game.prototype;
         this.pieceChosen = false;
         this.chosenPiece = null;
-    
+
         this.init = function () {
             Quarto.Background.draw();
             Quarto.Grid.draw();
@@ -181,7 +189,7 @@ function initQuarto() {
             // Quarto.update();
         };
     };
-        
+
     Quarto.update = function () {
         Quarto.Background.draw();
         Quarto.Grid.draw();
@@ -209,13 +217,11 @@ function initQuarto() {
             ctx.save();
             ctx.fillStyle = "black";
             roundRect(ctx, originX, originY, width, height, 5, true, false);
-            ctx.drawImage(Quarto.BOARDWOOD, spaceAroundSquares, 
-                spaceAroundSquares, width - spaceAroundSquares*2, 
-                height - spaceAroundSquares*2);
+            ctx.drawImage(Quarto.BOARDWOOD, spaceAroundSquares, spaceAroundSquares, width - spaceAroundSquares*2, height - spaceAroundSquares*2);
             ctx.restore();
         }
     };
-       
+
     Quarto.Grid = {
         width: Quarto.TOTAL_WIDTH*0.75,
         height: Quarto.TOTAL_HEIGHT*0.75,
@@ -327,18 +333,18 @@ function initQuarto() {
 
         }
     } 
-       
+
     Quarto.PIECERADIUS = Quarto.Grid.squareWidth/3.7;
-    
+
     Quarto.Platform = {
         centerX: (Quarto.Background.width - Quarto.Grid.width)/1.7,
         centerY: (Quarto.Background.height - Quarto.Grid.height)/1.7,
         radius: ((Quarto.Background.width - Quarto.Grid.width)/1.7)*0.6,
         //whether there is piece placed on platform or not; default false
         loaded: false,
-    
+
         draw: function() {
-    
+
             var ctx = Quarto.ctx;
             var centerX = this.centerX;
             var centerY = this.centerY;
@@ -347,7 +353,7 @@ function initQuarto() {
                 x: centerX,
                 y: centerY
             };
-    
+
             ctx.save();
             ctx.drawImage(Quarto.REDWOOD_CIRCLE, centerX-radius*0.925, centerY-radius*0.925, 1.85*radius, 1.85*radius); 
             ctx.restore();
@@ -373,8 +379,8 @@ function initQuarto() {
         this.innerStrokeStyle = this.color;
         this.moveValue = 'green';
         this.outerStrokeStyle = this.color;
-        
-    
+
+
         this.drawHole = function() {
             ctx.save();
             ctx.beginPath();
@@ -386,7 +392,7 @@ function initQuarto() {
                 // ctx.stroke();
                 ctx.restore();
             }
-    
+
             ctx.clip();
             if(this.location.valid) {
                 Quarto.Platform.draw();
@@ -396,8 +402,8 @@ function initQuarto() {
             }
             ctx.restore();
         }
-    
-    
+
+
         //draws the piece based on its characteristics and location
         this.put = function() {
             ctx.save();
@@ -411,15 +417,19 @@ function initQuarto() {
                 ctx.beginPath();
                 ctx.arc(this.location.x, this.location.y, this.radius, 0, Math.PI*2, false);
                 ctx.fill();
-                ctx.strokeStyle = this.outerStrokeStyle;
+                ctx.restore();
+                ctx.save();
                 ctx.lineWidth = this.strokeLineWidth;
-                // ctx.stroke();
+                ctx.strokeStyle = this.moveValue;
+                if (Quarto.thisGame.options.valueMoves) {
+                    ctx.stroke();
+                }
 
                 ctx.restore();
-    
+
 
             }
-    
+
             if (this.shape == "square") {
                 if(this.hollow) {
                     ctx.save();
@@ -427,28 +437,30 @@ function initQuarto() {
                 }
                 Quarto.Grid.drawRect(this.location.x, this.location.y, this.radius*2, this.radius*2, this.color, ctx);
                 ctx.restore();
-                ctx.strokeStyle = this.outerStrokeStyle;
                 ctx.lineWidth = this.strokeLineWidth;
-                // ctx.stroke();
+                ctx.strokeStyle = this.moveValue;
+                if (Quarto.thisGame.options.valueMoves) {
+                    ctx.stroke();
+                }
             }
-            
+
             if(this.holey) {
                 this.drawHole();
             }
             ctx.restore();
         };
-    
-    
+
+
         this.click = function () {
             Quarto.thisGame.chosenPiece = this;
             Quarto.thisGame.pieceChosen = true;
             this.moveTo("platform");
-            
-    
+
+
         };
         this.moveTo = function (col, row) {
             if( arguments[0] == "platform" ) {
-                
+
                 this.location = new Quarto.Location(Quarto.Platform.centerX, Quarto.Platform.centerY); 
                 Quarto.thisGame.pieceChosen = true;
                 Quarto.thisGame.turn = !Quarto.thisGame.turn;
@@ -463,13 +475,11 @@ function initQuarto() {
                 Quarto.thisGame.pieceChosen = false;
                 grid[col][row].piece = this;
                 this.used = true;
-                // if(Quarto.thisGame.chosenPiece == this) {
-                //     Quarto.thisGame.chosenPiece = null;
-                // }
+
             }
             Quarto.update();
         };
-    
+
         this.returnToOrigPosition = function() {
             var col = this.location.col;
             var row = this.location.row;
@@ -480,7 +490,7 @@ function initQuarto() {
             this.used = false;
             // Quarto.thisGame.pieceChosen = false;
         }
-    
+
         //determines whether a piece is at the given column and row on the grid
         this.isAt = function (col, row) {
             if (arguments[0] == "platform") {
@@ -492,7 +502,7 @@ function initQuarto() {
                 return false;
             }
         };
-    
+
         this.isUnderClick = function (x, y) {
             if (this.shape == "round" ) {
                 return ((Math.pow(x-this.location.x, 2) + Math.pow(y-this.location.y, 2)) < Math.pow(this.radius,2));
@@ -503,26 +513,26 @@ function initQuarto() {
             }
         };
     };
-    
+
     Quarto.onClick =  function(e) { 
         var x = e.clientX-Quarto.canvas.offsetLeft;
         var y = e.clientY-Quarto.canvas.offsetTop + document.body.scrollTop + document.documentElement.scrollTop;
-    
-    
+
+
         var click = new Quarto.Location(x, y);
         if (!Quarto.thisGame.pieceChosen) {
             for (var i = 0; i < 16; i++) {
                 var piece = Quarto.Pieces[i];
                 //if a piece hasn't yet been clicked 
                 if (!piece.used) {
-                        //mark the correct one clicked
-                        if (piece.isUnderClick(x, y)) {
-                            piece.click();
-                            return;
-                        }    
+                    //mark the correct one clicked
+                    if (piece.isUnderClick(x, y)) {
+                        piece.click();
+                        return;
+                    }    
                 }
             }
-    
+
         } else if(click.grid) {
             if(  Quarto.squaresCoords[click.col][click.row].piece === null) {
                 console.log('putting piece at '+click.col+','+click.row);
@@ -531,10 +541,10 @@ function initQuarto() {
                 Quarto.squaresCoords[click.col][click.row].moveValue = false;
             }
         }
-    
-    
+
+
     };
-    
+
     Quarto.onMouseover = function(e) {
         var x = e.clientX-Quarto.canvas.offsetLeft;
         var y = e.clientY-Quarto.canvas.offsetTop;
@@ -543,7 +553,7 @@ function initQuarto() {
         // Quarto.update();
     };
     Quarto.innerHeight = window.innerHeight*0.92;
-    
+
     Quarto.resize = function() {
         Quarto.canvas.width = window.innerHeight*0.92;
         Quarto.canvas.height = window.innerHeight*0.92;
@@ -553,11 +563,11 @@ function initQuarto() {
         Quarto.innerHeight = window.innerHeight*0.92;
         Quarto.update();
         Quarto.ctx.restore();     
-    
-    
+
+
         console.log('resized');
     };
-    
+
     Quarto.processCoords = function (x, y) {
         // console.log('calling processCoords');
         var spaceWidth = Quarto.Grid.spaceWidth;
@@ -565,16 +575,16 @@ function initQuarto() {
         var squareBorderWidth = (spaceWidth - squareWidth)/2;
         var gridLeftBound = Quarto.Grid.originX;
         var gridTopBound = Quarto.Grid.originY;
-    
+
         //make 2D array of board square boundaries; horizonal array with arrays coming down for columns
         var squaresCoords = new Array(4);
-    
+
         for (var col = 0; col < 4; col++) {
             squaresCoords[col] = new Array(4);
-    
+
             for (var row = 0; row < 4; row++) {
                 squaresCoords[col][row] = {
-    
+
                     left: gridLeftBound + col*spaceWidth + squareBorderWidth,
                     right: gridLeftBound + (col+1)*spaceWidth - squareBorderWidth,
                     top: gridTopBound + row*spaceWidth + squareBorderWidth,
@@ -588,8 +598,8 @@ function initQuarto() {
         if (arguments[0] == "squaresCoords") { 
             return squaresCoords;
         }
-    
-    
+
+
         //detect in which square on the grid the mouse coords lie
         for (var col = 0; col < 4; col++) {
             for (var row = 0; row < 4; row++) {
@@ -597,7 +607,7 @@ function initQuarto() {
                 var right = squaresCoords[col][row].right;
                 var top = squaresCoords[col][row].top;
                 var bottom = squaresCoords[col][row].bottom;
-    
+
                 if (x > left && x < right && y > top && y < bottom) {
                     return { platform: false, grid: true, col: col, row: row};
                 }
@@ -611,9 +621,9 @@ function initQuarto() {
         }
         return false;
     };
-    
+
     Quarto.squaresCoords = Quarto.processCoords("squaresCoords");
-    
+
     Quarto.Location = function (x, y) {
         this.x = x;
         this.y = y;
@@ -635,7 +645,7 @@ function initQuarto() {
         }
         this.valid = false;
     };
-    
+
     Quarto.startGame = function() {
         Quarto.thisGame = new Quarto.Game({'valueMoves': true});
         Quarto.canvas.addEventListener("mousedown", Quarto.onClick, false);
