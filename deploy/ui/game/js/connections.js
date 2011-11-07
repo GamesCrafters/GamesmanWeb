@@ -146,8 +146,8 @@ function drawLine(x, y, val) {
 
 //Note: the mouse clicking stuff is not done yet
 function connectionsClick(e) {
-    var x = getCursorPosition(e, 'x');
-	var y = getCursorPosition(e, 'y');
+    var x = e.clientX-canvas.offsetLeft;
+	var y = e.clientY-canvas.offsetTop + document.body.scrollTop + document.documentElement.scrollTop;
 	console.log("x, y: ", x, y);
 	//Now we need to convert x and y into board coordinates
 	x = parseInt(x / canvasWidth * divFactor);
