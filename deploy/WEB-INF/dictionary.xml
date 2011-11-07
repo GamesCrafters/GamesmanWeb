@@ -25,10 +25,10 @@
   <game internal-name="y" canonical-name="The Game of Y" visible="visible">
     <server host="localhost" port="4242" />
   </game>
-  <game internal-name="connections" canonical-name="Connections"
+  <!-- <game internal-name="connections" canonical-name="Connections"
         visible="visible">
     <server host="localhost" port="4242"/>
-  </game>
+  </game> -->
   <game internal-name="dino" canonical-name="Dino Dodg'Em" visible="visible">
     <server host="localhost" port="4242" />
   </game>
@@ -56,6 +56,9 @@
     <server host="localhost" port="4242" />
   </game>
   <game internal-name="quarto" canonical-name="Quarto" visible="visible">
+    <server host="localhost" port="4242" />
+  </game>
+  <game internal-name="connections" canonical-name="Connections" visible="visible">
     <server host="localhost" port="4242" />
   </game>
   <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle"
