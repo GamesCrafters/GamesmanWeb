@@ -9,12 +9,12 @@ var boardString; //String that represents the board
 $(document).ready(
 function() 
 	{
-		canvasHeight = $(window).height() * 0.95; 
-		canvasWidth = $(window).width() * 0.95;
-		canvasHeight = Math.min(canvasHeight, canvasWidth);
-		canvasWidth = canvasHeight;
-		$('#canvasContainer').append('<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>');
+		$('#canvasContainer').append('<canvas id="canvas"></canvas>');
 		canvas = document.getElementById('canvas');
+		canvas.width = (window.innerHeight-canvas.offsetTop)*0.92;
+        canvas.height = (window.innerHeight-canvas.offsetTop)*0.92;
+        canvasWidth = canvas.width;
+        canvasHeight = canvas.height;
 		ctx = canvas.getContext('2d');
 		addEventListener("click", connectionsClick, false);
 		boardSize = 3;
