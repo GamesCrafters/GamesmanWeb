@@ -1,5 +1,6 @@
 var ctx;
 var canvas;
+var boardGradient;
 var canvasWidth = 500;
 var canvasHeight = 500;
 var boardSize; //Size of board
@@ -16,17 +17,22 @@ function()
         canvasWidth = canvas.width;
         canvasHeight = canvas.height;
 		ctx = canvas.getContext('2d');
+		boardGradient = ctx.createRadialGradient(canvasWidth/2, canvasHeight/2, 0, canvasWidth/2, canvasHeight/2, canvasWidth*.5);
+		//boardGradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+		boardGradient.addColorStop(0, "#E0FFFF"); //grey85
+		boardGradient.addColorStop(1, "#A2B5CD"); //grey74
 		addEventListener("click", connectionsClick, false);
 		boardSize = 3;
 		//boardString = "20000001020002000301000000"
 		//boardString = "20000001020002000301000000"
 		boardString = "30000000000000000000000000000000000000000000000000"
-		drawBoard(boardSize, boardString, player);
+		drawBoard(boardSize, boardString);
 	}	
 )
 
-function drawBoard(size, board, player){ //size is an int, board is a string depiction, player is player #
-	ctx.fillStyle = "#E8E8E8"
+function drawBoard(size, board){ //size is an int, board is a string depiction, player is player #
+	ctx.fillStyle = boardGradient;
+	//ctx.fillStyle = "#E8E8E8"
 	ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 	divFactor = size*2+1;
 	componentLength = canvasWidth/divFactor;
@@ -48,6 +54,11 @@ function drawBoard(size, board, player){ //size is an int, board is a string dep
 	var boardArray = makeArray(board);
 	drawArray(boardArray);
 	drawNextMoves(player, boardArray);
+	//Writes player number
+	if (player == 1){
+		document.getElementById('playerTurn').innerHTML = "Blue Player's Turn";
+	}else if (player == 2){
+		document.getElementById('playerTurn').innerHTML = "Red Player's Turn"}
 }
 	
 function drawSquares(){
@@ -83,7 +94,7 @@ function drawNextMoves(player, array){ //Fills in possible next moves
 	for(x = 1; x < divFactor - 1; x++){
 		for(y = 1; y < divFactor - 1; y++){
 			if (array[x][y] == 0 && (x+y)%2 == 0){
-				drawOneSquare(x, y, 1, "33CCCC");
+				drawOneSquare(x, y, 1, "rgba(0, 255, 255, 0.6)");
 			}
 		}
 	}
@@ -171,25 +182,26 @@ function connectionsClick(e) {
 		}
 	else{y = -1;}
 	console.log("Converted x, y: ", x, y);
-	if (x >= 0 && y >= 0 && x < divFactor && y < divFactor) {
-		boardString = changeBoard(boardString, x, y, player);
-		console.log("New boardString: ", boardString);
+	if (x > 0 && y > 0 && x < divFactor - 1 && y < divFactor - 1) {
+		boardString = changeBoard(boardString, x, y);
 		drawBoard(boardSize, boardString);
-		player = player%2 + 1;
-		console.log("Next Player: ", player);
-		drawNextMoves(player, boardString);
 		}
 }
 
-function changeBoard(board, x, y, player) {
+function changeBoard(board, x, y) {
 	var newBoard = board;
 	//Change the string board at coordinate x, y
+	if (x%2 == y%2){
 	var strPos = y*divFactor + x + 1
 	if (board.charAt(strPos) == 0) {
 		newBoard = newBoard.substr(0, strPos) + player + newBoard.substr(strPos + 1);
 	}
 	else {
 		newBoard = newBoard.substr(0, strPos) + 0 + newBoard.substr(strPos + 1);
+	}
+	player = player%2 + 1;
+	console.log("New boardString: ", boardString);
+	console.log("Next Player: ", player);
 	}
 	return newBoard;
 }
