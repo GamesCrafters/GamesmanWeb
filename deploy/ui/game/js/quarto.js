@@ -429,7 +429,7 @@ function initQuarto() {
                 ctx.save();
                 ctx.lineWidth = this.strokeLineWidth;
                 var colors = Quarto.thisGame.options.valueMoves ? [Quarto.RED,Quarto.GREEN,Quarto.YELLOW] : [Quarto.CYAN];
-                ctx.strokeStyle = colors[Math.floor ( Math.random() * colors.length )];                
+                ctx.strokeStyle = colors[Math.floor ( Math.random() * colors.length )]; 
                 if (Quarto.thisGame.options.valueMoves && !used && Quarto.thisGame.boardString[16] == ' ') {
                     ctx.stroke();
                 }
@@ -529,6 +529,10 @@ function initQuarto() {
         var click = new Quarto.Location(x, y);
         var boardString = Quarto.thisGame.boardString;
         var usedPieces = new Array(17);
+        if(click.platform) {
+            Quarto.thisGame.options.valueMoves = !Quarto.thisGame.options.valueMoves;
+            Quarto.drawFromString(Quarto.thisGame.boardString);
+        }
         for(var i in boardString) {
             if(boardString[i] != ' ') {
                 usedPieces[parseInt(boardString[i],16)] = true;
@@ -594,7 +598,7 @@ function initQuarto() {
         var gridLeftBound = Quarto.Grid.originX;
         var gridTopBound = Quarto.Grid.originY;
         var squaresCoords = new Array(4);
-
+        
         //make 2D array of board square boundaries; horizonal array with arrays coming down for columns
         if (arguments[0] == "squaresCoords") { 
             for (var col = 0; col < 4; col++) {
@@ -638,12 +642,12 @@ function initQuarto() {
             }   
         }
        
-        // var platformCenterX = Quarto.Platform.centerX;
-        //  var platformCenterY = Quarto.Platform.centerY;
-        //  var platformRadius = Quarto.Platform.radius;
-        //  if ((Math.pow(x-platformCenterX, 2) + Math.pow(y-platformCenterY, 2)) < Math.pow(platformRadius+5,2)) {
-        //      return { platform: true, grid: false };
-        //  }
+        var platformCenterX = Quarto.Platform.centerX;
+                var platformCenterY = Quarto.Platform.centerY;
+                var platformRadius = Quarto.Platform.radius;
+                if ((Math.pow(x-platformCenterX, 2) + Math.pow(y-platformCenterY, 2)) < Math.pow(platformRadius+5,2)) {
+                    return { platform: true, grid: false };
+                }
         return false;
     };
 
@@ -655,14 +659,12 @@ function initQuarto() {
         var processCoordsOutput = Quarto.processCoords(x, y);
         if (processCoordsOutput) {
             if (processCoordsOutput.grid) {
-                this.valid = true;
                 this.grid = true;
                 this.platform = false;
                 this.row = processCoordsOutput.row;
                 this.col = processCoordsOutput.col;
                 return;
             } else if (processCoordsOutput.platform) {
-                this.valid = true;
                 this.grid = false;
                 this.platform = true;
                 return;
@@ -682,6 +684,7 @@ function initQuarto() {
 $(document).ready(function() {
     initQuarto();
     Quarto.startGame();
+    setTimeout(function() {Quarto.drawFromString('                 ')},1);
 });
 
 function setCharAt(str,index,chr) {
