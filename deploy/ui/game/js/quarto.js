@@ -2,7 +2,7 @@
 var Quarto = {};
 
 function initQuarto() {
-    Quarto.IMAGE_DIR = "game/images/quarto/";
+    Quarto.IMAGE_DIR = "images/quarto/";
     Quarto.canvas = document.getElementById('canvas');
     Quarto.ctx = Quarto.canvas.getContext('2d');
     Quarto.canvas.width = (window.innerHeight-Quarto.canvas.offsetTop)*0.92;
