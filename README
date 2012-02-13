@@ -22,5 +22,3 @@ There is an Ant build script provided, which will compile the necessary
 classes, organize the class files and JAR dependencies into the WAR format, 
 and then copy the WAR package to a specified directory. This WAR package 
 will be expanded by the application server (e.g., Tomcat).
-
-
