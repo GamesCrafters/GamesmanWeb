@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>
+      What is this I don't even
+    </title>
+  </head>
+
+  <style type="text/css">
+    body {
+      margin: 0;
+    }
+  </style>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> 
+  <script type="text/javascript">
+    function draw() {
+      var canvas = document.getElementById("fullsize");
+      if(canvas.getContext) {
+        var context = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        var w = canvas.width;
+        var h = canvas.height;	
+	
+        context.rect(0,0,w,h);
+        context.fillStyle="#FFFFFF";
+        context.fill();
+
+        var dan = new Image();
+        dan.onload = function() {
+          context.lineWidth = 10;
+          context.strokeStyle="#00FF00";
+          context.moveTo(0,0);
+          context.lineTo(w,h);
+          context.stroke();
+          context.moveTo(w,0);
+          context.lineTo(0,h);
+          context.stroke();
+          context.drawImage(dan, w/4, h/4, w/2, h/2);
+        }
+        dan.src = 'http://www.cs.berkeley.edu/~ddgarcia/i/DanGarciaUCBFaculty2004Eyebrow_320.jpg';
+      }
+    }
+
+    $(document).ready(draw);
+    $(window).resize(draw);
+  </script>
+  <body>
+    <canvas id="fullsize">
+      Sorry your browser doesn't support &lt;canvas&gt;
+    </canvas>
+  </body>
+</html>
