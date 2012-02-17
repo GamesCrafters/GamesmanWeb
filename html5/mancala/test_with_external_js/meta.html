@@ -1,0 +1,307 @@
+<html>
+<head>
+<title> Basic Structure for Gamescrafters HTML Games - Title Here! </title>
+<meta name="author" content="Sung Roa Yoon" />
+<meta name="description" content="Version 1.2" />
+<style type="text/css">
+    body {
+      margin: 0;
+      background-image:url('background.png');
+      background-size:100% 100%;
+	  width: window.innerWidth;
+	  height: window.innerHeight;
+    }
+</style>
+
+<canvas id="optionsTab" width=1 height=1 onClick="clickOptions(event)" onMouseDown="mouseDownOptions(event)" onMouseUp="mouseUpOptions(event)">
+</canvas><canvas id="gameInterface" width=1 height=1 onClick="clickInterface(event)"  onMouseDown="mouseDownInterface(event)" onMouseUp="mouseUpInterface(event)"></canvas>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript">
+/**
+These variables will determine the size of the screen and the appropriate ratios.
+*/
+var windowWidth = window.innerWidth;
+var windowHeight = window.innerHeight;
+var interfaceWidth = windowWidth;
+var interfaceHeight = windowHeight;
+var optionsWidth = 0;
+var optionsHeight = 0;
+    
+optionsTab.width = optionsWidth;
+optionsTab.height = optionsHeight;
+gameInterface.width = interfaceWidth;
+gameInterface.height = interfaceHeight;
+
+/**
+This resizes the variables when the window is changed.
+*/
+$(window).resize(sizeUpdate);
+
+/**
+These variables are required to interface with the screen.
+*/
+var interfacecxt = document.getElementById("gameInterface").getContext("2d");
+var optionscxt = document.getElementById("optionsTab").getContext("2d");
+
+/**
+These variables relate to the players.
+*/
+var player1Turn = true;
+
+/**
+These are the variables related to game positions
+*/
+var currentPosition;
+var pastMoves = new Array();
+var redoMoves = new Array();
+
+/**
+These are the variables related to the options menu.
+*/
+var optionsBoolean = false;
+
+/**
+These are all of the images used in the game infrastructure.
+*/
+var imageHeight = Math.floor(optionsHeight / 12);
+var imageAdjustor = Math.floor(optionsHeight / 6);
+var playerSettingsImage = new Image();
+playerSettingsImage.src = 'players@2x.png';
+playerSettingsImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(playerSettingsImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight)
+}
+var undoImage = new Image();
+undoImage.src = 'undo@2x.png';
+undoImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(undoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight)
+}
+var redoImage = new Image();
+redoImage.src = 'redo@2x.png';
+redoImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(redoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+var vvhistImage = new Image(); // Visual Value History
+vvhistImage.src = 'vvh@2x.png';
+vvhistImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(vvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+var gameOpImage = new Image(); // Game Options (Game Specific)
+gameOpImage.src = 'variants@2x.png';
+gameOpImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(gameOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+var mvhistImage = new Image(); // Move Value History
+mvhistImage.src = 'values@2x.png';
+mvhistImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(mvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+var genOpImage = new Image(); // General Options Image
+genOpImage.src = 'settings@2x.png';
+genOpImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(genOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+var homeImage = new Image(); // Home image
+homeImage.src = 'home@2x.png';
+homeImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(homeImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+
+/**
+This updates the size of the screen.
+*/
+function sizeUpdate() {
+	optionsTab.width = 1;
+    optionsTab.height = 1;
+    gameInterface.width = 1;
+    gameInterface.height = 1;
+	
+	setTimeout("sizeUpdate2()", 1);
+}
+
+function sizeUpdate2() {
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+    interfaceWidth = Math.floor(windowWidth * .9);
+    interfaceHeight = windowHeight;
+    optionsWidth = windowWidth - interfaceWidth;
+    optionsHeight = windowHeight;
+    
+    optionsTab.width = optionsWidth;
+    optionsTab.height = optionsHeight;
+    gameInterface.width = interfaceWidth;
+    gameInterface.height = interfaceHeight;
+    
+    imageHeight = Math.floor(optionsHeight / 10);
+	imageAdjustor = Math.floor(optionsHeight / 10);
+    
+	drawOptionsBar();
+    drawInterface();
+}
+
+/**
+This is the function that draws the option bar.
+*/
+function drawOptionsBar() {
+    optionscxt.clearRect(0, 0, optionsWidth, optionsHeight);
+	optionscxt.fillStyle = '000000';
+	optionscxt.fillRect(0, imageAdjustor * 3 / 4, imageAdjustor / 4 + imageHeight, imageHeight * 8 + imageAdjustor / 2);
+	undoImage.drawNow(0);
+	redoImage.drawNow(1);
+	playerSettingsImage.drawNow(2);
+	vvhistImage.drawNow(3);
+	gameOpImage.drawNow(4);
+	mvhistImage.drawNow(5);
+	genOpImage.drawNow(6);
+	homeImage.drawNow(7);
+}
+
+
+/**
+This is the function that activates when something is clicked in the option bar.
+*/
+function clickOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    
+}
+
+/**
+This is the function that activates when the interface is clicked. If the options tab is open, then it does what the option should, otherwise it does normal click function as given by the actual game.
+*/
+function clickInterface(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+        
+    } else {
+        clickFunction(xPos, yPos);
+    }
+}
+
+/**
+This is the function that activates when the options bar has something pressed in it.
+*/
+function mouseDownOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+
+}
+function mouseUpOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    
+}
+
+/**
+This is the function that activates when the interface is pressed. If the options tab is open, then it works in the options area, but otherwise does normal press function as given by the actual game.
+*/
+function mouseDownInterface(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+        
+    } else {
+        downFunction(xPos, yPos);
+    }
+}
+function mouseUpInterface(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+        
+    } else {
+        upFunction(xPos, yPos);
+    }
+}
+
+/**
+This is the function that stores the current position into a stack so that undo and redo moves can be done.
+*/
+function storeCurrentPosition(position) {
+
+}
+
+/**
+WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
+*/
+var src = "mancala.js";
+var headTag = document.getElementsByTagName("head")[0];
+var newScript = document.createElement("script");
+newScript.setAttribute("id","gameJS");
+newScript.setAttribute("src", src);
+headTag.appendChild(newScript);
+
+//In case we need to remove the game script, call this function
+function removeGameScript(){
+	headTag.removeChild(newScript);
+}
+/**
+You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
+*/
+function drawInterface() {
+    // This should be at the front of your code!
+    interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
+    
+    // YOUR CODE STARTS HERE
+	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
+	
+    
+    
+    
+    // YOUR CODE ENDS HERE
+    
+    // This should be at the bottom of your code!
+	setTimeout("drawInterface()", 10);
+}
+
+/**
+This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
+*/
+function clickFunction(xPos, yPos) {
+    
+}
+
+/**
+This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such are happening.
+*/
+function downFunction(xPos, yPos) {
+
+}
+function upFunction(xPos, yPos) {
+
+}
+
+/**
+This is the function you will use to initialize your game. It doesn't matter what you do in it, just please keep the position storage in there after you are done initializing. PLEASE Update current position whenever you call this with the boardstate!
+*/
+function initializeGame() {
+	
+	// This code should be at the bottom of the initializeGame.
+	storeCurrentPosition(currentPosition);
+}
+
+/**
+This is the function you will use to perform moves. It doesn't matter what you do in it, just please keep this position storage in there. You can also have any inputs that you want in perform move too. I just left it blank because I don't know what you guys want for specific games. PLEASE Update current position whenever you call this with the boardstate!
+*/
+function performMove() {
+	
+	
+	// This code should be at the bottom of the perform move.
+	storeCurrentPosition(currentPosition);
+	redoMoves = new Array();
+}
+
+</script>
+</head>
+<body onLoad=sizeUpdate()>
+</body>
+</html>
