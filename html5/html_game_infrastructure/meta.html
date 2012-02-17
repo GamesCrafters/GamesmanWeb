@@ -50,6 +50,13 @@ These variables relate to the players.
 var player1Turn = true;
 
 /**
+These are the variables related to game positions
+*/
+var currentPosition;
+var pastMoves = new Array();
+var redoMoves = new Array();
+
+/**
 These are the variables related to the options menu.
 */
 var optionsBoolean = false;
@@ -217,6 +224,13 @@ function mouseUpInterface(e) {
 }
 
 /**
+This is the function that stores the current position into a stack so that undo and redo moves can be done.
+*/
+function storeCurrentPosition(position) {
+
+}
+
+/**
 WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
 */
 
@@ -228,6 +242,7 @@ function drawInterface() {
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
     
     // YOUR CODE STARTS HERE
+	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
     
     
@@ -256,19 +271,23 @@ function upFunction(xPos, yPos) {
 }
 
 /**
-This is the function you will use to initialize your game. It doesn't matter what you do in it, just please keep the position storage in there after you are done initializing.
+This is the function you will use to initialize your game. It doesn't matter what you do in it, just please keep the position storage in there after you are done initializing. PLEASE Update current position whenever you call this with the boardstate!
 */
 function initializeGame() {
 	
+	// This code should be at the bottom of the initializeGame.
+	storeCurrentPosition(currentPosition);
 }
 
 /**
-This is the function you will use to perform moves. It doesn't matter what you do in it, just please keep this position storage in there. You can also have any inputs that you want in perform move too. I just left it blank because I don't know what you guys want for specific games.
+This is the function you will use to perform moves. It doesn't matter what you do in it, just please keep this position storage in there. You can also have any inputs that you want in perform move too. I just left it blank because I don't know what you guys want for specific games. PLEASE Update current position whenever you call this with the boardstate!
 */
 function performMove() {
 	
 	
 	// This code should be at the bottom of the perform move.
+	storeCurrentPosition(currentPosition);
+	redoMoves = new Array();
 }
 
 </script>
