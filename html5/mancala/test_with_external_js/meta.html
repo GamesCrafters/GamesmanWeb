@@ -247,9 +247,46 @@ function removeGameScript(){
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
+
+
+/*objects
+*/
+function pebbles(x, y, width, height, color) {
+	this.x = x; //x cor
+	this.y = y; //y cor
+	this.width = width;
+	this.height = height;
+	this.p = new Image();
+	this.p.src = color + ".jpg";
+	this.update = function() {
+		interfacecxt.drawImage(this.p, this.x, this.y, this.width, this.height)
+	}
+	
+}
+function pocket(x, y, width, height, image, update, contents ) {
+	this.x = x; //x cor
+	this.y = y; //y cor
+	this.width = width;
+	this.height = height;
+	this.image = image;
+	this.contents = contents;
+	this.update = function(x, y) {
+		//write code here
+	}
+}
+var pe = new pebbles(1,1, 200, 200, "blue"); //bad place for a variable, will figure out later
+var i = 0 ;
 function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
+	pe.x = i + 100;
+	pe.y = 100*Math.sin(.05 * i) + 150;	
+	i = (i + 1) % 850;
+	
+	pe.update();
+
+
+	
     
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
