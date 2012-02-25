@@ -233,17 +233,54 @@ function storeCurrentPosition(position) {
 /**
 WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
 */
-var src = "mancala.js";
-var headTag = document.getElementsByTagName("head")[0];
-var newScript = document.createElement("script");
-newScript.setAttribute("id","gameJS");
-newScript.setAttribute("src", src);
-headTag.appendChild(newScript);
+var dimDivID = "dimDiv";
+askForGamePreferences();
+//Dim the interface and display form to ask for game preferences
+function askForGamePreferences(){
+	//Create and modify dimmed div (encompasses the whole interface)
+	var dimDiv = document.createElement("div");
+	dimDiv.setAttribute("id",dimDivID);
+	dimDiv.style.position = "absolute";
+	dimDiv.style.width = interfaceWidth;
+	dimDiv.style.height = interfaceHeight;
+	dimDiv.style.backgroundColor="black";
+	dimDiv.style.left = "0";
+	dimDiv.style.top = "0";
+	dimDiv.style.background = "rgba(0,0,0,0.5)";
 
-//In case we need to remove the game script, call this function
-function removeGameScript(){
-	headTag.removeChild(newScript);
+	//Create div that will contain the form
+	var formDiv = document.createElement("div");
+	formDiv.style.position = "absolute";
+	formDiv.style.width = "300px";
+	formDiv.style.height = "200px";
+	formDiv.style.backgroundColor = "white";
+	formDiv.style.left = Math.floor((interfaceWidth - 300)/2);
+	formDiv.style.top = Math.floor((interfaceHeight - 200)/2);
+	formDiv.style.borderRadius = "15px";
+	formDiv.style.padding = "10px";
+
+	//Create form and its elements
+	var form = document.createElement("form");
+	var okButton = document.createElement("input");
+	okButton.setAttribute("type","button");
+	okButton.setAttribute("value","Destroy Form");
+	okButton.onclick = destroyForm;
+	
+	
+	//nest elements
+	form.appendChild(okButton);
+	formDiv.appendChild(form);
+	dimDiv.appendChild(formDiv);
+	var body =document.getElementsByTagName("body")[0];
+	body.appendChild(dimDiv);
 }
+
+//Destroys the form that asks for game preferences
+function destroyForm(){
+	var dimDiv = document.getElementById(dimDivID);
+	dimDiv.parentNode.removeChild(dimDiv);
+}
+
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
