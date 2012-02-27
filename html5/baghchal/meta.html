@@ -244,6 +244,19 @@ function drawInterface() {
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
+	function drawBoard(){
+	var boardWidth = interfaceWidth/2;
+	var boardHeight = interfaceWidth/2;
+	interfacecxt.fillStyle= 'green';
+	interfacecxt.fillRect(interfaceWidth/2 - boardWidth*.80, interfaceHeight/2 - boardHeight/2, boardWidth, boardHeight);
+	
+		
+	}
+
+	drawBoard();
+	
+	console.log(interfaceHeight/2);
+	console.log(interfaceWidth/2);
     
     
     
