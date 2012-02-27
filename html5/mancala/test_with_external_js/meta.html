@@ -288,39 +288,81 @@ You can use this as the main graphics function. It will call itself over and ove
 
 /*objects
 */
+function board(x, y, width, height) {
+	this.x = x; //x cor
+	this.y = y; //y cor
+	this.width = width;
+	this.height = height;
+	this.p = new Image();
+	this.p.src = "board.png";
+	this.update = function() {
+		interfacecxt.drawImage(this.p, this.x, this.y, this.width, this.height)
+	}
+	
+}
+
 function pebbles(x, y, width, height, color) {
 	this.x = x; //x cor
 	this.y = y; //y cor
 	this.width = width;
 	this.height = height;
 	this.p = new Image();
-	this.p.src = color + ".jpg";
+	this.p.src = "pebble"+color + ".png";
 	this.update = function() {
-		interfacecxt.drawImage(this.p, this.x, this.y, this.width, this.height)
+		interfacecxt.drawImage(this.p, this.x - this.width/2, this.y - this.height/2, this.width, this.height)
 	}
 	
 }
-function pocket(x, y, width, height, image, update, contents ) {
+function pocket(x, y, radius) {
 	this.x = x; //x cor
 	this.y = y; //y cor
-	this.width = width;
-	this.height = height;
-	this.image = image;
-	this.contents = contents;
-	this.update = function(x, y) {
-		//write code here
+	this.radius = radius;
+	this.contents = 0;
+	this.pebbleCollection = new Array();
+	this.addPebble = function() {
+		var p = new pebbles(x + (Math.floor(Math.random()*this.radius*2) - this.radius)*.5,y + (Math.floor(Math.random()*this.radius*2) - this.radius)*.5,39, 25, colors[Math.floor(Math.random()*4)])
+		this.pebbleCollection[this.contents] = p;
+		this.contents = this.contents + 1;
+	}
+	this.update = function() {
+		for (var i = 0; i < this.contents; i++) {
+			this.pebbleCollection[i].update();
+		}
 	}
 }
-var pe = new pebbles(1,1, 200, 200, "blue"); //bad place for a variable, will figure out later
-var i = 0 ;
+
+var pockets = new Array();
+
+
+	for (var j = 0; j < 4;j++){
+		pockets[j] = new pocket(350+ 173*j, 235, 76);
+	}
+	
+var colors = new Array();
+colors[0] = "red";
+colors[1] = "blue";
+colors[2] = "green";
+colors[3] = "purple";
+for (var s = 0; s < 4; s++) {
+	for (var i = 0; i < 8; i++) {
+
+		pockets[s].addPebble();
+
+	}
+}	
+var board = new board(100,100, 1013, 437);
+
 function drawInterface() {
+
+
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
-	pe.x = i + 100;
-	pe.y = 100*Math.sin(.05 * i) + 150;	
-	i = (i + 1) % 850;
+	board.update();
+	for ( i = 0; i < 4; i++) {
+		pockets[i].update();
+	}
+
 	
-	pe.update();
 
 
 	
@@ -341,6 +383,7 @@ function drawInterface() {
 This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
 */
 function clickFunction(xPos, yPos) {
+	alert("click");
     
 }
 
