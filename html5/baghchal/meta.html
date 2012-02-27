@@ -247,18 +247,41 @@ function drawInterface() {
 	function drawBoard(){
 	var boardWidth = interfaceWidth/2;
 	var boardHeight = interfaceWidth/2;
+	var boardX = interfaceWidth/2 - boardWidth*.80
+	var boardY = interfaceHeight/2 - boardHeight/2
 	interfacecxt.fillStyle= 'green';
-	interfacecxt.fillRect(interfaceWidth/2 - boardWidth*.80, interfaceHeight/2 - boardHeight/2, boardWidth, boardHeight);
+	interfacecxt.fillRect(boardX,boardY , boardWidth, boardHeight);
+	console.log(boardWidth);
 	
-		
+	function drawLines(){
+	//interfacecxt.beginPath();
+	//vertical lines
+	for(x=boardX+boardWidth/4;x<boardX+boardWidth; x+=boardWidth/4){			interfacecxt.moveTo(x,boardY);
+		interfacecxt.lineTo(x,boardY+boardHeight);
+		interfacecxt.stroke();
+
+
+
+		}
+	//horizontal lines
+	for(y=boardY+boardHeight/4;y<boardY+boardHeight; y+=boardHeight/4){			interfacecxt.moveTo(boardX,y);
+		interfacecxt.lineTo(boardX+boardHeight,y);
+		interfacecxt.stroke();
+
+
+
+		}
+
+	//Major diagonals
+
+	
+		}
+	
+	drawLines();	
 	}
 
 	drawBoard();
 	
-	console.log(interfaceHeight/2);
-	console.log(interfaceWidth/2);
-    
-    
     
     // YOUR CODE ENDS HERE
     
