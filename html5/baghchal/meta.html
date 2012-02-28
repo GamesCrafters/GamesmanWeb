@@ -247,8 +247,8 @@ function drawInterface() {
 	function drawBoard(){
 	var boardWidth = interfaceWidth/2;
 	var boardHeight = interfaceWidth/2;
-	var boardX = interfaceWidth/2 - boardWidth*.80
-	var boardY = interfaceHeight/2 - boardHeight/2
+	var boardX = interfaceWidth/2 - boardWidth*.80;
+	var boardY = interfaceHeight/2 - boardHeight/2;
 	interfacecxt.fillStyle= 'green';
 	interfacecxt.fillRect(boardX,boardY , boardWidth, boardHeight);
 	console.log(boardWidth);
@@ -258,31 +258,45 @@ function drawInterface() {
 	//vertical lines
 	for(x=boardX+boardWidth/4;x<boardX+boardWidth; x+=boardWidth/4){			interfacecxt.moveTo(x,boardY);
 		interfacecxt.lineTo(x,boardY+boardHeight);
-		interfacecxt.stroke();
+		
 
 
 
 		}
 	//horizontal lines
 	for(y=boardY+boardHeight/4;y<boardY+boardHeight; y+=boardHeight/4){			interfacecxt.moveTo(boardX,y);
-		interfacecxt.lineTo(boardX+boardHeight,y);
-		interfacecxt.stroke();
+		interfacecxt.lineTo(boardX+boardWidth,y);
+		
 
 
 
 		}
 
 	//Major diagonals
+		interfacecxt.moveTo(boardX,boardY);
+		interfacecxt.lineTo(boardX+boardWidth,boardY+boardHeight);
+		
 
+		interfacecxt.moveTo(boardX+boardWidth,boardY);
+		interfacecxt.lineTo(boardX,boardY+boardHeight);
+		
 	
 		}
+
+	//border
+	interfacecxt.moveTo(boardX,boardY);
+	interfacecxt.lineTo(boardX+boardWidth,boardY);
+	interfacecxt.lineTo(boardX+boardWidth,boardY+boardHeight);
+	interfacecxt.lineTo(boardX,boardY+boardHeight);
+	interfacecxt.lineTo(boardX,boardY);
+
 	
 	drawLines();	
 	}
 
 	drawBoard();
 	
-    
+    interfacecxt.stroke();
     // YOUR CODE ENDS HERE
     
     // This should be at the bottom of your code!
