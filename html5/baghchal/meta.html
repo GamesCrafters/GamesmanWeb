@@ -1,6 +1,6 @@
 <html>
 <head>
-<title> Basic Structure for Gamescrafters HTML Games - Title Here! </title>
+<title>Bagh Chal</title>
 <meta name="author" content="Sung Roa Yoon" />
 <meta name="description" content="Version 1.2" />
 <style type="text/css">
@@ -280,9 +280,10 @@ function drawInterface() {
 		interfacecxt.moveTo(boardX+boardWidth,boardY);
 		interfacecxt.lineTo(boardX,boardY+boardHeight);
 		
-	
-		}
 
+	
+	
+	
 	//border
 	interfacecxt.moveTo(boardX,boardY);
 	interfacecxt.lineTo(boardX+boardWidth,boardY);
@@ -291,12 +292,30 @@ function drawInterface() {
 	interfacecxt.lineTo(boardX,boardY);
 
 	
+	interfacecxt.moveTo(boardX,boardY+boardHeight/2);	
+	interfacecxt.lineTo(boardX+boardWidth/2,boardY);
+	interfacecxt.lineTo(boardX+boardWidth,boardY+boardHeight/2);
+	interfacecxt.lineTo(boardX+boardWidth/2,boardY+boardHeight);
+	interfacecxt.lineTo(boardX,boardY+boardHeight/2);
+
+	
+
+
+
+
+
+		}
+
+	
 	drawLines();	
 	}
 
 	drawBoard();
-	
+	interfacecxt.lineWidth =3;
+	interfacecxt.strokeStyle = 'black';
     interfacecxt.stroke();
+    
+
     // YOUR CODE ENDS HERE
     
     // This should be at the bottom of your code!
