@@ -244,11 +244,13 @@ function drawInterface() {
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
-	function drawBoard(){
 	var boardWidth = interfaceWidth/2;
 	var boardHeight = interfaceWidth/2;
 	var boardX = interfaceWidth/2 - boardWidth*.80;
 	var boardY = interfaceHeight/2 - boardHeight/2;
+
+	function drawBoard(){
+	
 	interfacecxt.fillStyle= 'green';
 	interfacecxt.fillRect(boardX,boardY , boardWidth, boardHeight);
 	console.log(boardWidth);
@@ -299,7 +301,9 @@ function drawInterface() {
 	interfacecxt.lineTo(boardX,boardY+boardHeight/2);
 
 	
-
+	interfacecxt.lineWidth =3;
+	interfacecxt.strokeStyle = 'black';
+    interfacecxt.stroke();
 
 
 
@@ -310,10 +314,37 @@ function drawInterface() {
 	drawLines();	
 	}
 
+	var pieceWidth = boardWidth/4;
+	var pieceHeight = boardHeight/4;
+
+	function drawPieces(){
+		var tiger = new Image();
+		var goat = new Image();
+
+		tiger.src = "red.png";
+		goat.src = "blue.png";
+
+		var drawNow = function(n){
+			this.n = n;
+			var x = boardX + (n%5)*pieceWidth;
+			var y = boardY + Math.floor(n/5)*pieceHeight;
+
+			//centering image onto the node
+			x-=pieceWidth/2;
+			y-=pieceHeight/2;
+			
+			interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
+
+		};
+
+
+		tiger.drawNow(7);
+		tiger.drawNow(8);
+	}
+
 	drawBoard();
-	interfacecxt.lineWidth =3;
-	interfacecxt.strokeStyle = 'black';
-    interfacecxt.stroke();
+	
+    drawPieces();
     
 
     // YOUR CODE ENDS HERE
