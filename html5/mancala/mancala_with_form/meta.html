@@ -281,7 +281,10 @@ function popLastPosition() {
 /**
 WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
 */
+//Variables for Mancala
 var dimDivID = "dimDiv";
+var chosePreference = false;
+
 askForGamePreferences();
 //Dim the interface and display form to ask for game preferences
 function askForGamePreferences(){
@@ -289,11 +292,11 @@ function askForGamePreferences(){
 	var dimDiv = document.createElement("div");
 	dimDiv.setAttribute("id",dimDivID);
 	dimDiv.style.position = "absolute";
-	dimDiv.style.width = interfaceWidth;
-	dimDiv.style.height = interfaceHeight;
+	dimDiv.style.width = interfaceWidth - optionsTab.width;
+	dimDiv.style.height = interfaceHeight - optionsTab.height;
 	dimDiv.style.backgroundColor="black";
-	dimDiv.style.left = "0";
-	dimDiv.style.top = "0";
+	dimDiv.style.left = optionsTab.width;
+	dimDiv.style.top = "0px";
 	dimDiv.style.background = "rgba(0,0,0,0.5)";
 
 	//Create div that will contain the form
@@ -302,8 +305,8 @@ function askForGamePreferences(){
 	formDiv.style.width = "300px";
 	formDiv.style.height = "200px";
 	formDiv.style.backgroundColor = "white";
-	formDiv.style.left = Math.floor((interfaceWidth - 300)/2);
-	formDiv.style.top = Math.floor((interfaceHeight - 200)/2);
+	formDiv.style.left = Math.floor((gameInterface.width - 300)/2);
+	formDiv.style.top = Math.floor((gameInterface.height - 200)/2);
 	formDiv.style.borderRadius = "15px";
 	formDiv.style.padding = "10px";
 
@@ -321,12 +324,17 @@ function askForGamePreferences(){
 	dimDiv.appendChild(formDiv);
 	var body =document.getElementsByTagName("body")[0];
 	body.appendChild(dimDiv);
+
 }
 
 //Destroys the form that asks for game preferences
 function destroyForm(){
 	var dimDiv = document.getElementById(dimDivID);
 	dimDiv.parentNode.removeChild(dimDiv);
+}
+//Draws buttons on canvas to either default game or to call 
+function drawChoosePreference(){
+	
 }
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
@@ -337,7 +345,9 @@ function drawInterface() {
     
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
-	
+	if(!chosePreference){
+		drawChoosePreference();
+	}	
     
     
     
@@ -370,7 +380,7 @@ function upFunction(xPos, yPos) {
 This is the function you will use to initialize your game. It doesn't matter what you do in it, just please keep the position storage in there after you are done initializing. PLEASE Update current position whenever you call this with the boardstate!
 */
 function initializeGame() {
-	
+
 	// This code should be at the bottom of the initializeGame.
 	pushPosition(currentPosition);
 }
