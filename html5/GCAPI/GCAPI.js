@@ -1,16 +1,12 @@
-function GCConnection(name){
+function GCConnection(name, notifierClass){
   this.gameName = name;
-
-  this.setGameName = function(name, notifierClass){
-    this.gameName = name;
-    this.height = 0;
-    this.width = 0;
-    this.misere = false;
-    this.pieces = 0;
-    this.notifier = notifierClass;
-    this.baseUrl = "http://nyc.cs.berkeley.edu:8080/gcweb/service/" + 
-                   "gamesman/puzzles/";
-  }
+  this.height = 0;
+  this.width = 0;
+  this.misere = false;
+  this.pieces = 0;
+  this.notifier = notifierClass;
+  this.baseUrl = "http://nyc.cs.berkeley.edu:8080/gcweb/service/" + 
+                 "gamesman/puzzles/";
 
   this.setBoardHeight = function(height){
     this.height = height;
@@ -40,23 +36,29 @@ function GCConnection(name){
     this.pieces = pieces;
   }
 
+  this.setDrawProcedure = function(draw){
+    this.draw = draw;
+  }
+
+  this.getUrlTail = function(board){
+    return ";width=" + this.width + ";height=" + this.height + 
+           ";pieces=" + this.pieces + ";board=" + escape(board);
+  }
   this.getBoardValues = function(board, notifier){
-    requestUrl = this.baseUrl + this.gameName + "/getMoveValue;" +
-                 "width=" + this.width + ";height=" + this.height + 
-                 ";pieces=" + this.pieces + ";board=" + escape(board);
+    requestUrl = this.baseUrl + this.gameName + "/getMoveValue" +
+                 this.getUrlTail(board)
     $.ajax({
       url: requestUrl,
       dataType: "json",
       success: function(data){
         notifier(data)
-      }
+      },
     });
   }
 
   this.getPossibleMoves = function(board, notifier){
-    requestUrl = this.baseUrl + this.gameName + "/getNextMoveValues;" +
-                 "width=" + this.width + ";height=" + this.height + 
-                 ";pieces=" + this.pieces + ";board=" + escape(board);
+    requestUrl = this.baseUrl + this.gameName + "/getNextMoveValues" +
+                 this.getUrlTail(board)
     $.ajax({
       url: requestUrl,
       dataType: "json",
@@ -65,18 +67,39 @@ function GCConnection(name){
       }
     });
   }
+
+  this.storeBoardValue = function(value){
+    this.value = value
+    this.getPossibleMoves(value['response']['board'], this.storePossibleMoves)
+  }
+
+  this.storePossibleMoves = function(moves){
+    this.moves = moves;
+    retval = Object();
+    retval.value = this.value
+    retval.moves = this.moves
+    this.notifier.draw(retval)
+  }
+
+  this.makeMove = function(board){
+    this.getBoardValues(board, this.storeBoardValue)
+  }
+}
+
+function tttNotify(){
+  this.draw = function(data){
+    alert(JSON.stringify(data))
+  }
 }
 
 function loadBoard(){
-  data = new GCConnection("ttt");
+  notifier = new tttNotify()
+  data = new GCConnection("ttt", notifier);
   data.setBoardHeight(3);
   data.setBoardWidth(3);
-  // data.getBoardValues("         ", function(data){ alert(data); });
   data.getPossibleMoves("         ", 
-    function(data){ 
-      alert(data['status']); 
-      for(i = 0; i < data['response'].length; i++){
-        alert(JSON.stringify(data['response'][i]));
-      }
-    });
+    function(d){ 
+      data.makeMove(d['response'][0]['board'])
+    }
+  );
 }
