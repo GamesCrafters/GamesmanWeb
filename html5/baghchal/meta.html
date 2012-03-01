@@ -237,6 +237,49 @@ WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR COD
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
+
+var boardWidth = interfaceWidth/2;
+var boardHeight = interfaceWidth/2;
+var boardX = interfaceWidth/2 - boardWidth*.80;
+var boardY = interfaceHeight/2 - boardHeight/2;
+var locations = new Array(15);
+var pieceWidth = boardWidth/4;
+var pieceHeight = boardHeight/4;
+
+function drawPieces(){
+		var tiger = new Image();
+		var goat = new Image();
+
+		tiger.src = "red.png";
+		goat.src = "blue.png";
+
+		var drawNow = function(n){
+			this.n = n;
+			var x = boardX + (n%5)*pieceWidth;
+			var y = boardY + Math.floor(n/5)*pieceHeight;
+
+			//centering image onto the node
+			x-=pieceWidth/2;
+			y-=pieceHeight/2;
+			
+			interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
+
+		};
+
+		tiger.drawNow = drawNow;
+		goat.drawNow = drawNow;
+
+
+		for(i=0; i<locations.length; i++){
+			if(locations[i]==-1){
+				tiger.drawNow(i);
+			}else if(locations[i]==1){
+				goat.drawNow(i);
+			}
+		}
+	}
+
+
 function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
@@ -244,16 +287,12 @@ function drawInterface() {
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
-	var boardWidth = interfaceWidth/2;
-	var boardHeight = interfaceWidth/2;
-	var boardX = interfaceWidth/2 - boardWidth*.80;
-	var boardY = interfaceHeight/2 - boardHeight/2;
+	
 
 	function drawBoard(){
 	
 	interfacecxt.fillStyle= 'green';
 	interfacecxt.fillRect(boardX,boardY , boardWidth, boardHeight);
-	console.log(boardWidth);
 	
 	function drawLines(){
 	//interfacecxt.beginPath();
@@ -300,10 +339,10 @@ function drawInterface() {
 	interfacecxt.lineTo(boardX+boardWidth/2,boardY+boardHeight);
 	interfacecxt.lineTo(boardX,boardY+boardHeight/2);
 
-	
 	interfacecxt.lineWidth =3;
 	interfacecxt.strokeStyle = 'black';
     interfacecxt.stroke();
+	
 
 
 
@@ -314,39 +353,11 @@ function drawInterface() {
 	drawLines();	
 	}
 
-	var pieceWidth = boardWidth/4;
-	var pieceHeight = boardHeight/4;
+	
 
-	function drawPieces(){
-		var tiger = new Image();
-		var goat = new Image();
-
-		tiger.src = "red.png";
-		goat.src = "blue.png";
-
-		var drawNow = function(n){
-			this.n = n;
-			var x = boardX + (n%5)*pieceWidth;
-			var y = boardY + Math.floor(n/5)*pieceHeight;
-
-			//centering image onto the node
-			x-=pieceWidth/2;
-			y-=pieceHeight/2;
-			
-			interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
-
-		};
-
-		tiger.drawNow = drawNow;
-		goat.drawNow = drawNow;
-
-
-		tiger.drawNow(10);
-		tiger.drawNow(8);
-		goat.drawNow(1);
-	}
-
+	
 	drawBoard();
+	
 	
     drawPieces();
     
@@ -365,10 +376,29 @@ function clickFunction(xPos, yPos) {
 }
 
 /**
-This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such are happening.
+This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such ar2e happening.
 */
 function downFunction(xPos, yPos) {
+	var x = xPos;
+	var y = yPos;
+	if((x>=boardX && x<=boardX+boardWidth) && (y>=boardY && y<=boardY+boardHeight)){
+	x+= pieceWidth/2;
+	y+= pieceHeight/2;
+	x-=boardX;
+	y-=boardY;
+	x/=pieceWidth;//remainder n%5
+	y/=pieceWidth;//quotirent n//5
+	var n = y*5+x;
+	n-=4;
 
+	n=Math.round(n);
+	console.log("adding -1 to "+n);
+	if(n<25 && n>=1)
+		locations[n]=-1;
+	drawPieces();
+	}else{
+		//do other stuff here like clear selection
+	}
 }
 function upFunction(xPos, yPos) {
 
