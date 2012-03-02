@@ -1,7 +1,7 @@
 <html>
 <head>
-<title> Nine Men's Morris </title>
-<meta name="author" content="Sung Roa Yoon, Sean Mozarmi, Bing Chong Lim, Kenny Shiu" />
+<title> Basic Structure for Gamescrafters HTML Games - Title Here! </title>
+<meta name="author" content="Sung Roa Yoon" />
 <meta name="description" content="Version 1.2" />
 <style type="text/css">
     body {
@@ -48,12 +48,6 @@ var optionscxt = document.getElementById("optionsTab").getContext("2d");
 These variables relate to the players.
 */
 var player1Turn = true;
-var player1Name = "Bob";
-var player2Name = "Annie";
-var player1AI = false;
-var player2AI = false;
-var randomness1 = 0;
-var randomness2 = 0;
 
 /**
 These are the variables related to game positions
@@ -100,9 +94,7 @@ undoImage.drawNow = function(n) {
 }
 undoImage.clicked = playerSettingsImage.clicked;
 undoImage.activateFunction = function() {
-	if (pastMoves.length > 1) {
-		currentPosition = popLastPosition();
-	}
+
 }
 var redoImage = new Image();
 redoImage.src = 'redo@2x.png';
@@ -112,10 +104,7 @@ redoImage.drawNow = function(n) {
 }
 redoImage.clicked = playerSettingsImage.clicked;
 redoImage.activateFunction = function() {
-	if (redoMoves.length > 0) {
-		currentPosition = redoMoves.pop();
-		pastMoves.push(currentPosition);
-	}
+
 }
 var vvhistImage = new Image(); // Visual Value History
 vvhistImage.src = 'vvh@2x.png';
@@ -156,9 +145,7 @@ homeImage.drawNow = function(n) {
 	optionscxt.drawImage(homeImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
 }
 homeImage.clicked = playerSettingsImage.clicked;
-homeImage.activateFunction = function() {
-	
-}
+homeImage.activateFunction = playerSettingsImage.activateFunction;
 
 /**
 This updates the size of the screen.
@@ -284,44 +271,55 @@ function mouseUpInterface(e) {
 /**
 This is the function that stores the current position into a stack so that undo and redo moves can be done.
 */
-function storeCurrentPosition(position) {
-	pastMoves.push(position);
+function pushPosition(position) {
+
 }
 function popLastPosition() {
-	position = pastMoves.pop();
-	redoMoves.push(position);
-	position = pastMoves.pop();
-	pastMoves.push(position);
-	return position;
+
 }
 
 /**
 WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
 */
 
+var offsetX = 20;
+var offsetY = 20;
+
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
-
-var boardWidth = interfaceWidth/2;
-var boardHeight = interfaceWidth/2;
-var blockSize = boardWidth/6;
-var boardX = interfaceWidth/2 - boardWidth*.80;
-var boardY = interfaceHeight/2 - boardHeight/2;
-var locations = new Array(15);
-var pieceWidth = boardWidth/8;
-var pieceHeight = boardHeight/8;
-
-function drawLines(){
-	//horizontal lines
-	
-}
-
 function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
-    
-    // YOUR CODE STARTS HERE
+	var interfaceSideLength = 1;
+	if (interfaceWidth > interfaceHeight){
+	   	interfaceSideLength = interfaceHeight - offsetY*2;
+	}
+	else{
+		 interfaceSideLength = interfaceWidth - offsetX*2;
+	}
+	interfacecxt.lineWidth = 3;
+	interfacecxt.strokeStyle = 'black';
+	
+    interfacecxt.strokeRect(offsetX, offsetY, interfaceSideLength, interfaceSideLength);
+	interfacecxt.strokeRect(1/6 * interfaceSideLength + offsetX, 1/6 * interfaceSideLength + offsetY, 2/3 * interfaceSideLength, 2/3 * interfaceSideLength);
+    interfacecxt.strokeRect(2/6 * interfaceSideLength + offsetX, 2/6 * interfaceSideLength + offsetY, 2/6 * interfaceSideLength, 2/6 * interfaceSideLength);
+	
+	interfacecxt.moveTo(interfaceSideLength/2 + offsetX, offsetY);
+	interfacecxt.lineTo(interfaceSideLength/2 + offsetX, interfaceSideLength/3 + offsetY);
+	
+	interfacecxt.moveTo(interfaceSideLength/2 + offsetX, interfaceSideLength*2/3 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength/2 + offsetX, interfaceSideLength + offsetY);
+	
+	interfacecxt.moveTo(offsetX, interfaceSideLength/2 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength/3 + offsetX, interfaceSideLength/2 + offsetY);
+	
+	interfacecxt.moveTo(interfaceSideLength*2/3 + offsetX, interfaceSideLength/2 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength + offsetX, interfaceSideLength/2 + offsetY);
+	
+	
+	interfacecxt.stroke();
+	// YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
     
