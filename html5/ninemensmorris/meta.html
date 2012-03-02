@@ -1,7 +1,7 @@
 <html>
 <head>
-<title> Basic Structure for Gamescrafters HTML Games - Title Here! </title>
-<meta name="author" content="Sung Roa Yoon" />
+<title> Nine Men's Morris</title>
+<meta name="author" content="Sung Roa Yoon, Sean Mozarmi, Bing Chong Lim, Kenny Shiu" />
 <meta name="description" content="Version 1.2" />
 <style type="text/css">
     body {
@@ -284,6 +284,21 @@ WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR COD
 
 var offsetX = 20;
 var offsetY = 20;
+var interfaceSideLength = 1;
+if (interfaceWidth > interfaceHeight){
+   	interfaceSideLength = interfaceHeight - offsetY*2;
+}
+else{
+	interfaceSideLength = interfaceWidth - offsetX*2;
+}
+
+function drawPiece(x, y){
+	interfacecxt.beginPath();
+	interfacecxt.fillStyle = "rgb(255, 0, 0)";
+	interfacecxt.arc(x,y,interfaceSideLength/16, 0, Math.PI*2, true);
+	interfacecxt.fill();
+	interfacecxt.stroke();
+}
 
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
@@ -291,13 +306,7 @@ You can use this as the main graphics function. It will call itself over and ove
 function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
-	var interfaceSideLength = 1;
-	if (interfaceWidth > interfaceHeight){
-	   	interfaceSideLength = interfaceHeight - offsetY*2;
-	}
-	else{
-		 interfaceSideLength = interfaceWidth - offsetX*2;
-	}
+	
 	interfacecxt.lineWidth = 3;
 	interfacecxt.strokeStyle = 'black';
 	
@@ -319,6 +328,9 @@ function drawInterface() {
 	
 	
 	interfacecxt.stroke();
+	
+	//testing drawPiece
+	drawPiece(100, 50);
 	// YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
