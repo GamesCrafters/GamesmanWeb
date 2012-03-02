@@ -247,6 +247,9 @@ var pieceWidth = boardWidth/4;
 var pieceHeight = boardHeight/4;
 
 function drawPieces(){
+
+
+	 
 		var tiger = new Image();
 		var goat = new Image();
 
@@ -282,12 +285,21 @@ function drawPieces(){
 
 function drawInterface() {
     // This should be at the front of your code!
+    boardWidth = interfaceWidth/2;
+	boardHeight = interfaceWidth/2;
+	boardX = interfaceWidth/2 - boardWidth*.80;
+	boardY = interfaceHeight/2 - boardHeight/2;
+	locations = new Array(15);
+	pieceWidth = boardWidth/4;
+	pieceHeight = boardHeight/4;
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
     
     // YOUR CODE STARTS HERE
 	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
 	
 	
+
+	 
 
 	function drawBoard(){
 	
