@@ -1,0 +1,523 @@
+<html>
+<head>
+<title> Nine Men's Morris</title>
+<meta name="author" content="Sung Roa Yoon, Sean Mozarmi, Bing Chong Lim, Kenny Shiu" />
+<meta name="description" content="Version 1.2" />
+<style type="text/css">
+    body {
+      margin: 0;
+      background-image:url('background.png');
+      background-size:100% 100%;
+	  width: window.innerWidth;
+	  height: window.innerHeight;
+    }
+</style>
+
+<canvas id="optionsTab" width=1 height=1 onClick="clickOptions(event)" onMouseDown="mouseDownOptions(event)" onMouseUp="mouseUpOptions(event)">
+</canvas><canvas id="gameInterface" width=1 height=1 onClick="clickInterface(event)"  onMouseDown="mouseDownInterface(event)" onMouseUp="mouseUpInterface(event)"></canvas>
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript">
+/**
+These variables will determine the size of the screen and the appropriate ratios.
+*/
+var windowWidth = window.innerWidth;
+var windowHeight = window.innerHeight;
+var interfaceWidth = windowWidth;
+var interfaceHeight = windowHeight;
+var optionsWidth = 0;
+var optionsHeight = 0;
+    
+optionsTab.width = optionsWidth;
+optionsTab.height = optionsHeight;
+gameInterface.width = interfaceWidth;
+gameInterface.height = interfaceHeight;
+
+/**
+This resizes the variables when the window is changed.
+*/
+$(window).resize(sizeUpdate);
+
+/**
+These variables are required to interface with the screen.
+*/
+var interfacecxt = document.getElementById("gameInterface").getContext("2d");
+var optionscxt = document.getElementById("optionsTab").getContext("2d");
+
+/**
+These variables relate to the players.
+*/
+var player1Turn = true;
+
+/**
+These are the variables related to game positions
+*/
+var currentPosition;
+var pastMoves = new Array();
+var redoMoves = new Array();
+
+/**
+These are the variables related to the options menu.
+*/
+var optionsBoolean = false;
+
+/**
+These are all of the images used in the game infrastructure.
+*/
+var imageHeight = Math.floor(optionsHeight / 12);
+var imageAdjustor = Math.floor(optionsHeight / 6);
+var playerSettingsImage = new Image();
+playerSettingsImage.src = 'players@2x.png';
+playerSettingsImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(playerSettingsImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+playerSettingsImage.clicked = function(xPos, yPos) {
+	if ((xPos > 0) & (xPos < imageHeight)) {
+		if ((yPos > (this.n * imageHeight + imageAdjustor)) & (yPos < ((this.n + 1) * imageHeight + imageAdjustor))) {
+			this.activateFunction();
+		}
+	}
+}
+playerSettingsImage.activateFunction = function() {
+	optionsBoolean = true;
+	interfacecxt.fillStyle = "000000";
+	optionscxt.fillStyle = "000000";
+	interfacecxt.fillRect(0, imageAdjustor * 3 / 4, interfaceWidth * .9, imageHeight * 8 + imageAdjustor / 2);
+	optionscxt.fillRect(imageHeight, imageAdjustor * 3 / 4, optionsWidth - imageHeight, imageHeight * 8 + imageAdjustor / 2);
+}
+var undoImage = new Image();
+undoImage.src = 'undo@2x.png';
+undoImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(undoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight)
+}
+undoImage.clicked = playerSettingsImage.clicked;
+undoImage.activateFunction = function() {
+
+}
+var redoImage = new Image();
+redoImage.src = 'redo@2x.png';
+redoImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(redoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+redoImage.clicked = playerSettingsImage.clicked;
+redoImage.activateFunction = function() {
+
+}
+var vvhistImage = new Image(); // Visual Value History
+vvhistImage.src = 'vvh@2x.png';
+vvhistImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(vvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+vvhistImage.clicked = playerSettingsImage.clicked;
+vvhistImage.activateFunction = playerSettingsImage.activateFunction;
+var gameOpImage = new Image(); // Game Options (Game Specific)
+gameOpImage.src = 'variants@2x.png';
+gameOpImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(gameOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+gameOpImage.clicked = playerSettingsImage.clicked;
+gameOpImage.activateFunction = playerSettingsImage.activateFunction;
+var mvhistImage = new Image(); // Move Value History
+mvhistImage.src = 'values@2x.png';
+mvhistImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(mvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+mvhistImage.clicked = playerSettingsImage.clicked;
+mvhistImage.activateFunction = playerSettingsImage.activateFunction;
+var genOpImage = new Image(); // General Options Image
+genOpImage.src = 'settings@2x.png';
+genOpImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(genOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+genOpImage.clicked = playerSettingsImage.clicked;
+genOpImage.activateFunction = playerSettingsImage.activateFunction;
+var homeImage = new Image(); // Home image
+homeImage.src = 'home@2x.png';
+homeImage.drawNow = function(n) {
+	this.n = n;
+	optionscxt.drawImage(homeImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+}
+homeImage.clicked = playerSettingsImage.clicked;
+homeImage.activateFunction = playerSettingsImage.activateFunction;
+
+/**
+This updates the size of the screen.
+*/
+function sizeUpdate() {
+	optionsTab.width = 1;
+    optionsTab.height = 1;
+    gameInterface.width = 1;
+    gameInterface.height = 1;
+	
+	setTimeout("sizeUpdate2()", 1);
+}
+
+function sizeUpdate2() {
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+    interfaceWidth = Math.floor(windowWidth * .9);
+    interfaceHeight = windowHeight;
+    optionsWidth = windowWidth - interfaceWidth;
+    optionsHeight = windowHeight;
+    
+    optionsTab.width = optionsWidth;
+    optionsTab.height = optionsHeight;
+    gameInterface.width = interfaceWidth;
+    gameInterface.height = interfaceHeight;
+    
+    imageHeight = Math.floor(optionsHeight / 10);
+	imageAdjustor = Math.floor(optionsHeight / 10);
+    
+	drawOptionsBar();
+    drawInterface();
+}
+
+/**
+This is the function that draws the option bar.
+*/
+function drawOptionsBar() {
+    optionscxt.clearRect(0, 0, optionsWidth, optionsHeight);
+	optionscxt.fillStyle = '000000';
+	optionscxt.fillRect(0, imageAdjustor * 3 / 4, imageAdjustor / 4 + imageHeight, imageHeight * 8 + imageAdjustor / 2);
+	undoImage.drawNow(0);
+	redoImage.drawNow(1);
+	playerSettingsImage.drawNow(2);
+	vvhistImage.drawNow(3);
+	gameOpImage.drawNow(4);
+	mvhistImage.drawNow(5);
+	genOpImage.drawNow(6);
+	homeImage.drawNow(7);
+}
+
+
+/**
+This is the function that activates when something is clicked in the option bar.
+*/
+function clickOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    playerSettingsImage.clicked(xPos, yPos);
+	undoImage.clicked(xPos, yPos);
+	redoImage.clicked(xPos, yPos);
+	vvhistImage.clicked(xPos, yPos);
+	gameOpImage.clicked(xPos, yPos);
+	mvhistImage.clicked(xPos, yPos);
+	genOpImage.clicked(xPos, yPos);
+	homeImage.clicked(xPos, yPos);
+}
+
+/**
+This is the function that activates when the interface is clicked. If the options tab is open, then it does what the option should, otherwise it does normal click function as given by the actual game.
+*/
+function clickInterface(e) {
+	xPos = e.clientX - optionsWidth;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+        if ((xPos < interfaceWidth * .9) & (yPos > (imageAdjustor * 3 / 4)) & (yPos < (imageAdjustor * 5 / 4 + imageHeight * 8))) {
+			
+		} else {
+			drawInterface();
+			drawOptionsBar();
+			optionsBoolean = false;
+		}
+    } else {
+        clickFunction(xPos, yPos);
+    }
+}
+
+/**
+This is the function that activates when the options bar has something pressed in it.
+*/
+function mouseDownOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+
+}
+function mouseUpOptions(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    
+}
+
+/**
+This is the function that activates when the interface is pressed. If the options tab is open, then it works in the options area, but otherwise does normal press function as given by the actual game.
+*/
+function mouseDownInterface(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+		
+    } else {
+        downFunction(xPos, yPos);
+    }
+}
+function mouseUpInterface(e) {
+	xPos = e.clientX;
+	yPos = e.clientY;
+    if (optionsBoolean) {
+        
+    } else {
+        upFunction(xPos, yPos);
+    }
+}
+
+/**
+This is the function that stores the current position into a stack so that undo and redo moves can be done.
+*/
+function pushPosition(position) {
+
+}
+function popLastPosition() {
+
+}
+
+/**
+WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
+*/
+
+var offsetX = 40;
+var offsetY = 40;
+var interfaceSideLength = 1;
+
+
+if (interfaceWidth > interfaceHeight){
+   	interfaceSideLength = interfaceHeight - offsetY*2;
+}
+else{
+	interfaceSideLength = interfaceWidth - offsetX*2;
+}
+
+
+function drawPiece(x, y){
+	interfacecxt.beginPath();
+	interfacecxt.fillStyle = "rgb(255, 0, 0)";
+	interfacecxt.arc(x,y,interfaceSideLength/25, 0, Math.PI*2, true);
+	interfacecxt.fill();
+	interfacecxt.stroke();
+}
+
+var radius = interfaceSideLength/75;
+function drawDot(x, y){
+	interfacecxt.beginPath();
+	//interfacecxt.fillStyle = "rgb(255, 0, 0)";
+	interfacecxt.arc(x,y,radius, 0, Math.PI*2, true);
+	interfacecxt.fill();
+	interfacecxt.stroke();
+}
+
+/**
+You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
+*/
+function drawInterface() {
+
+    // This should be at the front of your code!
+    interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
+	
+	interfacecxt.lineWidth = 5;
+	interfacecxt.strokeStyle = 'black';
+	
+    interfacecxt.strokeRect(offsetX, offsetY, interfaceSideLength, interfaceSideLength);
+	interfacecxt.strokeRect(1/6 * interfaceSideLength + offsetX, 1/6 * interfaceSideLength + offsetY, 2/3 * interfaceSideLength, 2/3 * interfaceSideLength);
+    interfacecxt.strokeRect(2/6 * interfaceSideLength + offsetX, 2/6 * interfaceSideLength + offsetY, 2/6 * interfaceSideLength, 2/6 * interfaceSideLength);
+	
+	interfacecxt.moveTo(interfaceSideLength/2 + offsetX, offsetY);
+	interfacecxt.lineTo(interfaceSideLength/2 + offsetX, interfaceSideLength/3 + offsetY);
+	
+	interfacecxt.moveTo(interfaceSideLength/2 + offsetX, interfaceSideLength*2/3 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength/2 + offsetX, interfaceSideLength + offsetY);
+	
+	interfacecxt.moveTo(offsetX, interfaceSideLength/2 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength/3 + offsetX, interfaceSideLength/2 + offsetY);
+	
+	interfacecxt.moveTo(interfaceSideLength*2/3 + offsetX, interfaceSideLength/2 + offsetY);
+	interfacecxt.lineTo(interfaceSideLength + offsetX, interfaceSideLength/2 + offsetY);
+	
+	
+	interfacecxt.stroke();
+	
+
+	// YOUR CODE STARTS HERE
+	// You MUST draw the interface based on the currentPosition variable for any none-permanent graphics! (Like piece locations and such)
+	// Draw the dots for the board (1st Row)
+	drawDot(offsetX, offsetY);
+	drawDot(interfaceSideLength/2 + offsetX, offsetY);
+	drawDot(interfaceSideLength + offsetX, offsetY);
+	
+	// Draw the dots for the board (2nd Row)
+	drawDot(interfaceSideLength/6 + offsetX, interfaceSideLength/6 + offsetY);
+    drawDot(interfaceSideLength/2 + offsetX, interfaceSideLength/6 + offsetY);
+    drawDot(interfaceSideLength*5/6 + offsetX, interfaceSideLength/6 + offsetY);
+	
+	// Draw the dots for the board (3rd Row)
+	drawDot(interfaceSideLength*2/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+    drawDot(interfaceSideLength*3/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+	drawDot(interfaceSideLength*4/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+	
+	// Draw the dots for the board (4th Row)
+	drawDot(offsetX, interfaceSideLength*3/6 + offsetY);
+	drawDot(interfaceSideLength/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	drawDot(interfaceSideLength*2/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	drawDot(interfaceSideLength*4/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	drawDot(interfaceSideLength*5/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	drawDot(interfaceSideLength + offsetX, interfaceSideLength*3/6 + offsetY);
+	
+	// Draw the dots for the board (5th Row)
+	drawDot(interfaceSideLength*2/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+    drawDot(interfaceSideLength*3/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+	drawDot(interfaceSideLength*4/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+    
+	// Draw the dots for the board (6th Row)
+	drawDot(interfaceSideLength/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+    drawDot(interfaceSideLength*3/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+    drawDot(interfaceSideLength*5/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+	
+	// Draw the dots for the board (7th Row)
+	drawDot(offsetX, interfaceSideLength + offsetY);
+	drawDot(interfaceSideLength/2 + offsetX, interfaceSideLength + offsetY);
+	drawDot(interfaceSideLength + offsetX, interfaceSideLength + offsetY);
+	
+
+	// YOUR CODE ENDS HERE
+    /*
+	I commented this out, because I decided that it wasn't really necessary to keep refreshing the page, when we only need to really change the page whenever we make a change to the board. Please let me know if you believe otherwise and confer with me! Sung Roa.
+    // This should be at the bottom of your code!
+	setTimeout("drawInterface()", 10);
+	*/
+}
+
+/**
+This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
+*/
+function clickFunction(xPos, yPos) {
+	
+	// Conditions for placing pieces on 1st Row
+	if(xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){ 
+    	drawPiece(offsetX, offsetY);
+		}
+	else if (xPos <= interfaceSideLength/2 + offsetX + radius*1.5 && xPos >= interfaceSideLength/2 + offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength/2 + offsetX, offsetY);
+		 }
+	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength + offsetX, offsetY);
+		 }
+	
+	// Conditions for placing pieces on 2nd Row
+	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength/2 + offsetX + radius*1.5 && xPos >= interfaceSideLength/2 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength/2 + offsetX, interfaceSideLength/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength/6 + offsetY);
+		 }
+		 
+	// Conditions for placing pieces on 3rd Row
+	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 }
+		 
+	// Conditions for placing pieces on 4th Row
+	else if (xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength + offsetX, interfaceSideLength*3/6 + offsetY);
+		 }
+	
+	// Conditions for placing pieces on 5th Row
+	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 }
+		 
+	// Conditions for placing pieces on 6th Row
+	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 }
+		 
+	// Conditions for placing pieces on 7th Row
+	else if (xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
+		 drawPiece(offsetX, interfaceSideLength + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength + offsetY);
+		 }
+	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
+		 drawPiece(interfaceSideLength + offsetX, interfaceSideLength + offsetY);
+		 }
+		
+}
+
+/**
+This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such are happening.
+*/
+function downFunction(xPos, yPos) {
+
+}
+function upFunction(xPos, yPos) {
+
+}
+
+/**
+This is the function you will use to initialize your game. It doesn't matter what you do in it, just please keep the position storage in there after you are done initializing. PLEASE Update current position whenever you call this with the boardstate!
+*/
+function initializeGame() {
+	
+	// This code should be at the bottom of the initializeGame.
+	pushPosition(currentPosition);
+}
+
+/**
+This is the function you will use to perform moves. It doesn't matter what you do in it, just please keep this position storage in there. You can also have any inputs that you want in perform move too. I just left it blank because I don't know what you guys want for specific games. PLEASE Update current position whenever you call this with the boardstate!
+*/
+function performMove() {
+	
+	
+	// This code should be at the bottom of the perform move.
+	drawInterface();
+	storeCurrentPosition(currentPosition);
+	redoMoves = new Array();
+}
+
+</script>
+</head>
+<body onLoad="sizeUpdate()">
+</body>
+</html>
