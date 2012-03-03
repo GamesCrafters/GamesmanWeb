@@ -286,17 +286,16 @@ var offsetX = 40;
 var offsetY = 40;
 var interfaceSideLength = 1;
 
-function resetInterfaceLength(){
+
 if (interfaceWidth > interfaceHeight){
    	interfaceSideLength = interfaceHeight - offsetY*2;
 }
 else{
 	interfaceSideLength = interfaceWidth - offsetX*2;
 }
-}
+
 
 function drawPiece(x, y){
-
 	interfacecxt.beginPath();
 	interfacecxt.fillStyle = "rgb(255, 0, 0)";
 	interfacecxt.arc(x,y,interfaceSideLength/25, 0, Math.PI*2, true);
@@ -304,29 +303,22 @@ function drawPiece(x, y){
 	interfacecxt.stroke();
 }
 
-
+var radius = interfaceSideLength/75;
 function drawDot(x, y){
-
-	var radius = interfaceSideLength/75;
-	
 	interfacecxt.beginPath();
 	//interfacecxt.fillStyle = "rgb(255, 0, 0)";
 	interfacecxt.arc(x,y,radius, 0, Math.PI*2, true);
 	interfacecxt.fill();
 	interfacecxt.stroke();
 }
-resetInterfaceLength();
+
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
 function drawInterface() {
 
-	
-
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
-	
-	//resetInterfaceLength();
 	
 	interfacecxt.lineWidth = 5;
 	interfacecxt.strokeStyle = 'black';
@@ -404,8 +396,6 @@ function drawInterface() {
 This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
 */
 function clickFunction(xPos, yPos) {
-	
-
 	
 	// Conditions for placing pieces on 1st Row
 	if(xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){ 
