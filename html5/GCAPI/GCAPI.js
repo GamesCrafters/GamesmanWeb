@@ -89,20 +89,3 @@ Game.prototype.startGame = function(){
   this.notifier.drawBoard(this.currentBoard)
   this.getPossibleMoves(this.currentBoard, this.notifier.drawMoves)
 }
-
-function TTTNotify(canvas){
-  this.canvas = canvas;
-}
-
-TTTNotify.prototype.drawBoard = function(board){
-}
-
-TTTNotify.prototype.drawMoves = function(data){
-  alert(JSON.stringify(data))
-}
-
-function loadBoard(){
-  notifier = new TTTNotify()
-  data = new Game("ttt", 3, 3, notifier, "         ");
-  data.startGame()
-}

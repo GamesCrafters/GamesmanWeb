@@ -2,7 +2,23 @@
 <head>
 <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="GCAPI.js"></script>
+<script>
+function TTTNotify(canvas){
+  this.canvas = canvas;
+}
 
+TTTNotify.prototype.drawBoard = function(board){
+}
+
+TTTNotify.prototype.drawMoves = function(data){
+  alert(JSON.stringify(data))
+}
+function loadBoard(){
+  notifier = new TTTNotify()
+  data = new Game("ttt", 3, 3, notifier, "         ");
+  data.startGame()
+}
+</script>
 </head>
 <body onload="loadBoard();">
 <body>
