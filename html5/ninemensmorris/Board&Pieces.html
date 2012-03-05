@@ -285,7 +285,112 @@ WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR COD
 var offsetX = 40;
 var offsetY = 40;
 var interfaceSideLength = 1;
+var location_arr = new Array();
 
+for(i = 0; i<24; i++){
+	location_arr[i] = false;
+	}
+	
+function redraw(i){
+	// Draw the dots for the board (1st Row)
+	if(i==0){
+	drawPiece(offsetX, offsetY);
+	}
+	else if (i==1){
+	drawPiece(interfaceSideLength/2 + offsetX, offsetY);
+	}
+	else if (i==2){
+	drawPiece(interfaceSideLength + offsetX, offsetY);
+	}
+	
+	// Draw the dots for the board (2nd Row)
+	else if (i==3){
+	drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength/6 + offsetY);
+	}
+	else if (i==4){
+    drawPiece(interfaceSideLength/2 + offsetX, interfaceSideLength/6 + offsetY);
+	}
+	else if (i==5){
+    drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength/6 + offsetY);
+	}
+	
+	// Draw the dots for the board (3rd Row)
+	else if (i==6){
+	drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+	}
+	else if (i==7){
+    drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+	}
+	else if (i==8){
+	drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+	}
+	
+	
+	// Draw the dots for the board (4th Row)
+	else if (i==9){
+	drawPiece(offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	else if (i==10){
+	drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	else if (i==11){
+	drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	else if (i==12){
+	drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	else if (i==13){
+	drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	else if (i==14){
+	drawPiece(interfaceSideLength + offsetX, interfaceSideLength*3/6 + offsetY);
+	}
+	
+	
+	// Draw the dots for the board (5th Row)
+	else if (i==15){
+	drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+	}
+	else if (i==16){
+    drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+	}
+	else if (i==17){
+	drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+    }
+	
+	// Draw the dots for the board (6th Row)
+	else if (i==18){
+	drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+	}
+	else if (i==19){
+    drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+	}
+	else if (i==20){
+    drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+	}
+	
+	
+	// Draw the dots for the board (7th Row)
+	else if (i==21){
+	drawPiece(offsetX, interfaceSideLength + offsetY);
+	}
+	else if (i==22){
+	drawPiece(interfaceSideLength/2 + offsetX, interfaceSideLength + offsetY);
+	}
+	else if (i==23){
+	drawPiece(interfaceSideLength + offsetX, interfaceSideLength + offsetY);
+	}
+}
+	
+function redrawPieces(){
+	for(i = 0; i < location_arr.length; i++){
+		if(location_arr[i] == true){
+			redraw(i);
+			}
+	} 
+}
+
+	
 function resetInterfaceLength(){
 if (interfaceWidth > interfaceHeight){
    	interfaceSideLength = interfaceHeight - offsetY*2;
@@ -315,18 +420,16 @@ function drawDot(x, y){
 	interfacecxt.fill();
 	interfacecxt.stroke();
 }
-resetInterfaceLength();
+
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
 function drawInterface() {
 
-	
+	resetInterfaceLength();
 
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
-	
-	//resetInterfaceLength();
 	
 	interfacecxt.lineWidth = 5;
 	interfacecxt.strokeStyle = 'black';
@@ -391,6 +494,8 @@ function drawInterface() {
 	drawDot(interfaceSideLength/2 + offsetX, interfaceSideLength + offsetY);
 	drawDot(interfaceSideLength + offsetX, interfaceSideLength + offsetY);
 	
+	redrawPieces();
+	
 
 	// YOUR CODE ENDS HERE
     /*
@@ -410,87 +515,111 @@ function clickFunction(xPos, yPos) {
 	// Conditions for placing pieces on 1st Row
 	if(xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){ 
     	drawPiece(offsetX, offsetY);
+		location_arr[0] = true;
 		}
 	else if (xPos <= interfaceSideLength/2 + offsetX + radius*1.5 && xPos >= interfaceSideLength/2 + offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength/2 + offsetX, offsetY);
+		 location_arr[1] = true;
 		 }
 	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= offsetY + radius*1.5 && yPos >= offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength + offsetX, offsetY);
+		 location_arr[2] = true;
 		 }
 	
 	// Conditions for placing pieces on 2nd Row
 	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength/6 + offsetY);
+		 location_arr[3] = true;
 		 }
 	else if (xPos <= interfaceSideLength/2 + offsetX + radius*1.5 && xPos >= interfaceSideLength/2 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength/2 + offsetX, interfaceSideLength/6 + offsetY);
+		 location_arr[4] = true;
 		 }
 	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength/6 + offsetY);
+		 location_arr[5] = true;
 		 }
 		 
 	// Conditions for placing pieces on 3rd Row
 	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 location_arr[6] = true;
 		 }
 	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 location_arr[7] = true;
 		 }
 	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*2/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*2/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*2/6 + offsetY);
+		 location_arr[8] = true;
 		 }
 		 
 	// Conditions for placing pieces on 4th Row
 	else if (xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[9] = true;
 		 }
 	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[10] = true;
 		 }
 	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[11] = true;
 		 }
 	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[12] = true;
 		 }
 	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[13] = true;
 		 }
 	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= interfaceSideLength*3/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*3/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength + offsetX, interfaceSideLength*3/6 + offsetY);
+		 location_arr[14] = true;
 		 }
 	
 	// Conditions for placing pieces on 5th Row
 	else if (xPos <= interfaceSideLength*2/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*2/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*2/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 location_arr[15] = true;
 		 }
 	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 location_arr[16] = true;
 		 }
 	else if (xPos <= interfaceSideLength*4/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*4/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*4/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*4/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*4/6 + offsetX, interfaceSideLength*4/6 + offsetY);
+		 location_arr[17] = true;
 		 }
 		 
 	// Conditions for placing pieces on 6th Row
 	else if (xPos <= interfaceSideLength/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 location_arr[18] = true;
 		 }
 	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 location_arr[19] = true;
 		 }
 	else if (xPos <= interfaceSideLength*5/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*5/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength*5/6 + offsetY + radius*1.5 && yPos >= interfaceSideLength*5/6 + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*5/6 + offsetX, interfaceSideLength*5/6 + offsetY);
+		 location_arr[20] = true;
 		 }
 		 
 	// Conditions for placing pieces on 7th Row
 	else if (xPos <= offsetX + radius*1.5 && xPos >= offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
 		 drawPiece(offsetX, interfaceSideLength + offsetY);
+		 location_arr[21] = true;
 		 }
 	else if (xPos <= interfaceSideLength*3/6 + offsetX + radius*1.5 && xPos >= interfaceSideLength*3/6 + offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength*3/6 + offsetX, interfaceSideLength + offsetY);
+		 location_arr[22] = true;
 		 }
 	else if (xPos <= interfaceSideLength + offsetX + radius*1.5 && xPos >= interfaceSideLength + offsetX - radius*1.5 && yPos <= interfaceSideLength + offsetY + radius*1.5 && yPos >= interfaceSideLength + offsetY - radius*1.5){
 		 drawPiece(interfaceSideLength + offsetX, interfaceSideLength + offsetY);
+		 location_arr[23] = true;
 		 }
 		
 }
