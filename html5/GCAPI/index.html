@@ -8,11 +8,11 @@ function TTTNotify(canvas){
 }
 
 TTTNotify.prototype.drawBoard = function(board){
-  $('#outputs').append("Drawing board: '" + board + "'\n");
+  $('#outputs').append("Drawing board: '" + board + "'<br />");
 }
 
 TTTNotify.prototype.drawMoves = function(data){
-  $('#outputs').append("Drawing Moves: '" + JSON.stringify(data) + "'\n")
+  $('#outputs').append("Drawing Moves: '" + JSON.stringify(data) + "'<br />")
   game.makeMove(data[0]);
 }
 var notifier = null
