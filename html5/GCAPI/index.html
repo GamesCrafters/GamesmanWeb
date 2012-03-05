@@ -8,18 +8,25 @@ function TTTNotify(canvas){
 }
 
 TTTNotify.prototype.drawBoard = function(board){
+  $('#outputs').append("Drawing board: '" + board + "'\n");
 }
 
 TTTNotify.prototype.drawMoves = function(data){
-  alert("Draw Moves: " + JSON.stringify(data))
+  $('#outputs').append("Drawing Moves: '" + JSON.stringify(data) + "'\n")
+  game.makeMove(data[0]);
 }
+var notifier = null
+var game = null
 function loadBoard(){
   notifier = new TTTNotify()
-  data = new Game("ttt", 3, 3, notifier, "         ");
-  data.startGame()
+  game = new Game("ttt", 3, 3, notifier, "         ");
+  game.startGame()
 }
 </script>
 </head>
 <body onload="loadBoard();">
+<div id="outputs">
+
+</div>
 <body>
 </html>

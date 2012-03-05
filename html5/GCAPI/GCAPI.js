@@ -78,14 +78,32 @@ Game.prototype.getPossibleMoves = function(board, notifier){
 }
 
 Game.prototype.undo = function(){
-  // Undo here
+  if(this.previousBoards.length > 0){
+    this.nextBoards.push(this.currentBoard);
+    this.currentBoard = this.previousBoards.pop();
+    this.updateBoard();
+  }
 }
 
 Game.prototype.redo = function(){
-  // redo here.
+  if(this.nextBoards.length > 0){
+    this.previousBoards.push(this.currentBoard);
+    this.currentBoard = this.nextBoards.pop();
+    this.updateBoard();
+  }
 }
 
 Game.prototype.startGame = function(){
-  this.notifier.drawBoard(this.currentBoard)
-  this.getPossibleMoves(this.currentBoard, this.notifier.drawMoves)
+  this.updateBoard();
+}
+
+Game.prototype.makeMove = function(move){
+  this.previousBoards.push(this.currentBoard);
+  this.currentBoard = move.board;
+  this.updateBoard();
+}
+
+Game.prototype.updateBoard = function(){
+  this.notifier.drawBoard(this.currentBoard);
+  this.getPossibleMoves(this.currentBoard, this.notifier.drawMoves);
 }
