@@ -11,9 +11,18 @@ TTTNotify.prototype.drawBoard = function(board){
   $('#outputs').append("Drawing board: '" + board + "'<br />");
 }
 
+var done = false;
 TTTNotify.prototype.drawMoves = function(data){
   $('#outputs').append("Drawing Moves: '" + JSON.stringify(data) + "'<br />")
-  game.makeMove(data[0]);
+  if(data.length > 0 && !done)
+    game.makeMove(data[0]);
+  else if(done){
+    game.undo()
+  }else{
+    done = true;
+    $('#outputs').append("End of Game<br />");
+    game.undo()
+  }
 }
 var notifier = null
 var game = null
@@ -25,7 +34,9 @@ function loadBoard(){
 </script>
 </head>
 <body onload="loadBoard();">
+<pre>
 <div id="outputs">
 </div>
+</pre>
 <body>
 </html>
