@@ -381,13 +381,13 @@ function drawPits(startX,startY){
 	bufferContext.font = (playerPitWidth-40) + "px Arial";
 	//Draw player1 pit
 	bufferContext.fillRect(horizPadding,vertPadding,playerPitWidth,playerPitHeight);
-	bufferContext.fillStyle = "rgba(256,256,256,0.5)";
+	bufferContext.fillStyle = "rgba(256,256,256,0.6)";
 	bufferContext.fillText(p1Text,horizPadding+10,vertPadding+(playerPitWidth-40));
 	
 	bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 	//Draw Player2 pit
 	bufferContext.fillRect(bufferCanvas.width-horizPadding-playerPitWidth,vertPadding,playerPitWidth,playerPitHeight);
-	bufferContext.fillStyle = "rgba(256,256,256,0.5)";
+	bufferContext.fillStyle = "rgba(256,256,256,0.6)";
 	bufferContext.fillText(p2Text,bufferCanvas.width-horizPadding-playerPitWidth+10,vertPadding+(playerPitWidth-40));
 
 	var startingPoint = horizPadding + playerPitWidth;
@@ -400,8 +400,8 @@ function drawPits(startX,startY){
 		}
 		bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 		bufferContext.fillRect(startingPoint+horizPadding+i*pitWidth,vertPadding,pitWidth-2*horizPadding,pitHeight-2*vertPadding);
-		bufferContext.fillStyle = "rgba(256,256,256,0.5)";
-		bufferContext.fillText(text,startingPoint+horizPadding+i*pitWidth+10,vertPadding+pitWidth-40);
+		bufferContext.fillStyle = "rgba(256,256,256,0.6)";
+		bufferContext.fillText(text,startingPoint+horizPadding+i*pitWidth+10,vertPadding+pitWidth-50);
 	}
 
 	//Draw the individual pits on bottom
@@ -414,9 +414,9 @@ function drawPits(startX,startY){
 		bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 		bufferContext.fillRect(startingPoint+horizPadding+i*pitWidth,bufferCanvas.height-pitHeight+vertPadding,
 				pitWidth-2*horizPadding,pitHeight-2*vertPadding);
-		bufferContext.fillStyle = "rgba(256,256,256,0.5)";
+		bufferContext.fillStyle = "rgba(256,256,256,0.6)";
 		bufferContext.fillText(text,startingPoint+horizPadding+i*pitWidth+10,bufferCanvas.height-pitHeight+vertPadding
-			+(playerPitWidth-30));
+			+(playerPitWidth-40));
 	}
 			
 	bufferContext.restore();
@@ -445,7 +445,13 @@ function clickOp(x,y){
 			sideOnePits[xPos-1].pebbleNum = 0;
 			clickOpHelper(xPos-2,yPos+1,currentPebbles,true);
 		}else{
-			alert("Player" + turn + "'s turn. Cannot choose from these pits.");
+			if(xPos != 0 && xPos != (pitsPerSide+1)){
+				if(turn == 1){
+					alert("Player1's turn: Choose from the bottom.");
+				}else{
+					alert("Player2's turn: Choose from the top.");
+				}
+			}
 		}
 	}
 }
@@ -558,10 +564,10 @@ function initializeGame() {
 
 	boardImage = new Image();
 	boardImage.onload = function(){imageLoaded=true;};
-	boardImage.src = "wood.jpg";	
+	boardImage.src = "light_wood.jpg";	
 	bufferCanvas = document.createElement("canvas");
 	bufferCanvas.setAttribute("width","1400px");
-	bufferCanvas.setAttribute("height","900px");
+	bufferCanvas.setAttribute("height","800px");
 	bufferContext = bufferCanvas.getContext("2d");
 	// This code should be at the bottom of the initializeGame.
 	//pushPosition(currentPosition);
