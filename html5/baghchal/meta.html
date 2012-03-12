@@ -245,6 +245,14 @@ var boardY = interfaceHeight/2 - boardHeight/2;
 var locations = new Array(15);
 var pieceWidth = boardWidth/4;
 var pieceHeight = boardHeight/4;
+var phaseOne = true;
+var numGoats = 20;
+//starting sheep position
+locations[0]=-1;
+locations[4]=-1;
+locations[24]=-1;
+locations[20]=-1;
+
 
 function drawPieces(){
 
@@ -285,8 +293,8 @@ function drawPieces(){
 
 function drawInterface() {
     // This should be at the front of your code!
-    boardWidth = interfaceWidth/2;
-	boardHeight = interfaceWidth/2;
+    boardWidth = Math.min(interfaceHeight*.9,interfaceWidth/2);
+	boardHeight = Math.min(interfaceHeight*.9, interfaceWidth/2);
 	boardX = interfaceWidth/2 - boardWidth*.80;
 	boardY = interfaceHeight/2 - boardHeight/2;
 	pieceWidth = boardWidth/4;
@@ -312,7 +320,6 @@ function drawInterface() {
 	for(x=boardX+boardWidth/4;x<boardX+boardWidth; x+=boardWidth/4){			interfacecxt.moveTo(x,boardY);
 		interfacecxt.lineTo(x,boardY+boardHeight);
 		
-
 
 
 		}
@@ -391,9 +398,14 @@ function clickFunction(xPos, yPos) {
 This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such ar2e happening.
 */
 function downFunction(xPos, yPos) {
+	
 	var x = xPos;
 	var y = yPos;
 	if((x>=boardX && x<=boardX+boardWidth) && (y>=boardY && y<=boardY+boardHeight)){
+	console.log("WITHIN BOARD!");
+	console.log(x);
+	console.log(y);
+	
 	x+= pieceWidth/2;
 	y+= pieceHeight/2;
 	x-=boardX;
@@ -401,16 +413,23 @@ function downFunction(xPos, yPos) {
 	x/=pieceWidth;//remainder n%5
 	y/=pieceWidth;//quotirent n//5
 	var n = y*5+x;
-	n-=4;
+	 n-=4;
 
 	n=Math.round(n);
 	console.log("adding -1 to "+n);
-	if(n<25 && n>=1)
-		locations[n]=-1;
+	if(n<25 && n>=1){
+		if(phaseOne){
+		locations[n]=1;
+		numGoats-=1;
+		}
+	}
 	drawPieces();
+	
 	}else{
 		//do other stuff here like clear selection
 	}
+
+	myTurn = !myTurn;
 }
 function upFunction(xPos, yPos) {
 
