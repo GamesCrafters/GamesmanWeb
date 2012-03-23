@@ -47,13 +47,29 @@ var optionscxt = document.getElementById("optionsTab").getContext("2d");
 /**
 These variables relate to the players.
 */
-var player1Turn = true;
+var PLAYER1 = true;
+var PLAYER2 = false;
+var playerTurn = PLAYER1;
 var player1Name = "Bob";
 var player2Name = "Annie";
 var player1AI = false;
 var player2AI = false;
-var randomness1 = 0;
-var randomness2 = 0;
+var randomness1 = 0; // Only applicable if there is AI involved.
+var randomness2 = 0; // Only applicable if there is AI involved.
+var showPredictions = false;
+var showMoveValues = false;
+var showDeltaRemoteness = false; // Should only work if showMoveValues is true
+var computerPauseTime = 1000; // Only applicable if there is AI involved.
+var animationSpeed = 100;
+var winStateColor = '00FF00';
+var loseStateColor = 'FF0000';
+var drawTieStateColor = 'FFFF00';
+var gameSpecificOption1 = false;
+var gameSpecificOption2 = false;
+var gameSpecificOption3 = false;
+var gameSpecificOption1Name = "Input name here";
+var gameSpecificOption2Name = "Input name here";
+var gameSpecificOption3Name = "Input name here";
 
 /**
 These are the variables related to game positions

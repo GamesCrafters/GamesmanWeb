@@ -162,7 +162,7 @@ function clickFunction(xPos, yPos) {
 		dotYPos = possiblePositions[i][1];
 		
 		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 && yPos >= dotYPos - radius*2){
-			if(player1Turn == true){
+			if(playerTurn == PLAYER1){
 				P1PieceLocations[i] = true;
 				P1PiecesToPlace -= 1;
 				P1PiecesOnBoard += 1;
@@ -178,7 +178,7 @@ function clickFunction(xPos, yPos) {
 				interfacecxt.fillStyle = 'black';
 				interfacecxt.fillText("P2 Pieces left to place: "+P2PiecesToPlace, interfaceWidth - 200, interfaceHeight - 200);
 			}
-		player1Turn = !player1Turn;
+		playerTurn = !playerTurn;
 		}
 	}
 	
