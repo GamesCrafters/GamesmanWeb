@@ -28,7 +28,11 @@ var notifier = null
 var game = null
 function loadBoard(){
   notifier = new TTTNotify()
-  game = new Game("ttt", 3, 3, notifier, "         ");
+  game = new Game("ttt", {
+    width: 3,
+    height: 3,
+    pieces: 3
+  }, notifier, "         ");
   game.startGame()
 }
 </script>

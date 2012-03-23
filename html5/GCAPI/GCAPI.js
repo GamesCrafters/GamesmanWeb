@@ -1,9 +1,6 @@
-function Game(name, height, width, notifierClass, board){
+function Game(name, parameters, notifierClass, board){
   this.gameName = name;
-  this.height = height;
-  this.width = width;
-  this.misere = false;
-  this.pieces = 0;
+  this.params = parameters;
   this.notifier = notifierClass;
   this.previousBoards = Array();
   this.nextBoards = Array();
@@ -12,42 +9,19 @@ function Game(name, height, width, notifierClass, board){
                  "gamesman/puzzles/";
 }
 
-Game.prototype.setBoardHeight = function(height){
-  this.height = height;
-}
-
-Game.prototype.getBoardHeight = function(){
-  return this.height;
-}
-
-Game.prototype.setBoardWidth = function(width){
-  this.width = width;
-}
-
-Game.prototype.getBoardWidth = function(){
-  return this.width;
-}
-
-Game.prototype.setMisere = function(misere){
-  this.misere = misere;
-}
-
-Game.prototype.getMisere = function(){
-  return this.misere;
-}
-
-Game.prototype.setPieces = function(pieces){
-  this.pieces = pieces;
-}
-
 Game.prototype.setDrawProcedure = function(draw){
   this.draw = draw;
 }
 
 Game.prototype.getUrlTail = function(board){
-  return ";width=" + this.width + ";height=" + this.height + 
-         ";pieces=" + this.pieces + ";board=" + escape(board);
+  retval = ""
+  for(key in this.params){
+    retval += ";" + key + "=" + this.params[key]
+  }
+  retval += ";board=" + escape(board);
+  return retval
 }
+
 Game.prototype.getBoardValues = function(board, notifier){
   requestUrl = this.baseUrl + this.gameName + "/getMoveValue" +
                this.getUrlTail(board)
