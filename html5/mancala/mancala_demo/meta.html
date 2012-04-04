@@ -328,17 +328,22 @@ var boardW = 0;
 //Draws the board on the canvas
 function drawBoard(){
 	if(imageLoaded){
-		var height = gameInterface.height - (gameInterface.height % 6);
+		var height;
+		var boardHeight;
+		var boardWidth;
+		
+		height = gameInterface.height - (gameInterface.height % 6);
 		verticalMargin = Math.floor(height/12);
-		var boardHeight = height - 2*verticalMargin;
+		boardHeight = height - 2*verticalMargin;
 		
 		//Decrease height so that width(2*height) is not larger than canvas width
 		while(boardHeight*2 > gameInterface.width){
 			boardHeight -= 2;
 			verticalMargin += 1;
 		}
-		var boardWidth = boardHeight * 2;
+		boardWidth = boardHeight * 2;
 		horizontalMargin = Math.floor((gameInterface.width + optionsTab.width - boardWidth)/2) - optionsTab.width;
+
 		if(horizontalMargin < 0){
 			horizontalMargin = 0;
 		}
@@ -381,13 +386,13 @@ function drawPits(startX,startY){
 	bufferContext.font = (playerPitWidth-40) + "px Arial";
 	//Draw player1 pit
 	bufferContext.fillRect(horizPadding,vertPadding,playerPitWidth,playerPitHeight);
-	bufferContext.fillStyle = "rgba(256,256,256,0.6)";
+	bufferContext.fillStyle = "rgba(256,256,256,0.8)";
 	bufferContext.fillText(p1Text,horizPadding+10,vertPadding+(playerPitWidth-40));
 	
 	bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 	//Draw Player2 pit
 	bufferContext.fillRect(bufferCanvas.width-horizPadding-playerPitWidth,vertPadding,playerPitWidth,playerPitHeight);
-	bufferContext.fillStyle = "rgba(256,256,256,0.6)";
+	bufferContext.fillStyle = "rgba(256,256,256,0.8)";
 	bufferContext.fillText(p2Text,bufferCanvas.width-horizPadding-playerPitWidth+10,vertPadding+(playerPitWidth-40));
 
 	var startingPoint = horizPadding + playerPitWidth;
@@ -400,7 +405,7 @@ function drawPits(startX,startY){
 		}
 		bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 		bufferContext.fillRect(startingPoint+horizPadding+i*pitWidth,vertPadding,pitWidth-2*horizPadding,pitHeight-2*vertPadding);
-		bufferContext.fillStyle = "rgba(256,256,256,0.6)";
+		bufferContext.fillStyle = "rgba(256,256,256,0.8)";
 		bufferContext.fillText(text,startingPoint+horizPadding+i*pitWidth+10,vertPadding+pitWidth-50);
 	}
 
@@ -414,7 +419,7 @@ function drawPits(startX,startY){
 		bufferContext.fillStyle = "rgba(0,0,0,0.5)";
 		bufferContext.fillRect(startingPoint+horizPadding+i*pitWidth,bufferCanvas.height-pitHeight+vertPadding,
 				pitWidth-2*horizPadding,pitHeight-2*vertPadding);
-		bufferContext.fillStyle = "rgba(256,256,256,0.6)";
+		bufferContext.fillStyle = "rgba(256,256,256,0.8)";
 		bufferContext.fillText(text,startingPoint+horizPadding+i*pitWidth+10,bufferCanvas.height-pitHeight+vertPadding
 			+(playerPitWidth-40));
 	}
@@ -564,7 +569,8 @@ function initializeGame() {
 
 	boardImage = new Image();
 	boardImage.onload = function(){imageLoaded=true;};
-	boardImage.src = "light_wood.jpg";	
+	boardImage.src = "light_wood.jpg";
+	
 	bufferCanvas = document.createElement("canvas");
 	bufferCanvas.setAttribute("width","1400px");
 	bufferCanvas.setAttribute("height","800px");
