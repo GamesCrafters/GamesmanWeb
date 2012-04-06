@@ -237,6 +237,7 @@ var dimDivID = "dimDiv";
 askForGamePreferences();
 //Dim the interface and display form to ask for game preferences
 function askForGamePreferences(){
+	return;
 	//Create and modify dimmed div (encompasses the whole interface)
 	var dimDiv = document.createElement("div");
 	dimDiv.setAttribute("id",dimDivID);
@@ -308,57 +309,164 @@ function pebbles(x, y, width, height, color) {
 	this.height = height;
 	this.p = new Image();
 	this.p.src = "pebble"+color + ".png";
+	this.color = color;
 	this.update = function() {
 		interfacecxt.drawImage(this.p, this.x - this.width/2, this.y - this.height/2, this.width, this.height)
 	}
 	
 }
-function pocket(x, y, radius, next, prev) {
+function pit(x, y, radius, nextpit, prevpit) {
 	this.x = x; //x cor
 	this.y = y; //y cor
-	this.nextPocket = next;
-	this.prevPocket = prev;
+	this.nextpit = nextpit;
+	this.prevpit = prevpit;
 	this.radius = radius;
-	this.contents = 0;
+	this.pebbles = 0;
 	this.pebbleCollection = new Array();
-	this.addPebble = function() {
-		var p = new pebbles(x + (Math.floor(Math.random()*this.radius*2) - this.radius)*.5,y + (Math.floor(Math.random()*this.radius*2) - this.radius)*.5,39, 25, colors[Math.floor(Math.random()*4)])
-		this.pebbleCollection[this.contents] = p;
-		this.contents = this.contents + 1;
+	
+	
+	this.xcor = function(x, radius) {
+		return x + (Math.floor(Math.random()*radius*2) - radius)*.5;
 	}
+	this.ycor = function(y, radius) {
+		return y + (Math.floor(Math.random()*radius*2) - radius)*.5;
+	}
+	this.addPebble = function() {
+		var WIDTH = 39;
+		var HEIGHT = 25;
+		var p = new pebbles(this.xcor(this.x, this.radius),this.ycor(this.y, this.radius),WIDTH, HEIGHT, colors[Math.floor(Math.random()*4)])
+		this.pebbleCollection[this.pebbles] = p;
+		this.pebbles = this.pebbles + 1;
+	}
+	this.insertPebble = function(p, x, y) {
+		if (p == null) {
+			return;
+		}
+		var newPebble = new pebbles(x, y, p.width, p.height, p.color);
+		this.pebbleCollection[this.pebbles] = newPebble;
+		this.pebbles = this.pebbles + 1;
+	}
+	this.removePebble = function() {
+		if (this.pebbles == 0) {
+			return null;
+		}
+		else {
+			this.pebbles = this.pebbles - 1;
+			var removedPebble = this.pebbleCollection[this.pebbles];
+			this.pebbleCollection[this.pebbles] = null;
+			return removedPebble;
+		}
+		
+	}
+	
+	
+	
+	this.movePebble = function(nextPit) {
+		var removedPebble = this.removePebble();
+		if (removedPebble != null) {
+			nextPit.insertPebble(removedPebble, removedPebble.x, removedPebble.y);
+			xcor = nextPit.xcor(nextPit.x, nextPit.radius);
+			ycor = nextPit.ycor(nextPit.y, nextPit.radius);
+			aPebble = nextPit.pebbleCollection[nextPit.pebbles-1];
+			angle = Math.atan2((ycor - aPebble.y),(xcor - aPebble.x));
+			goalx = xcor;
+			goaly = ycor;
+			animateLock = true;
+
+			animatePebble();
+		}
+		
+	
+	}
+	
+	
+
 	this.update = function() {
-		for (var i = 0; i < this.contents; i++) {
+		for (var i = 0; i < this.pebbles; i++) {
 			this.pebbleCollection[i].update();
 		}
 	}
 }
+	var goalx = 0;
+	var goaly = 0;
+	var angle = 0;
+	var v = .13;
+	var aPebble = null;
+	var animateLock = false;
+	function animatePebble() {
+		animateLock = true;
+		var distance = Math.sqrt((aPebble.x-goalx)*(aPebble.x-goalx) + (aPebble.y-goaly)*(aPebble.y-goaly));
+		if (distance > 15) {
+			aPebble.x = aPebble.x + distance*v*Math.cos(angle);
+			aPebble.y = aPebble.y + distance*v*Math.sin(angle);
+			setTimeout("animatePebble()", 100);
+		}
+		else {
+			animateLock = false;
+		}
 
-var pockets = new Array();
-
-var leftPocket = new pocket(350-173, 295, 76, null, null);
-pockets[0] = leftPocket;
-
-
-	for (var j = 1; j < 5;j++){
-			pockets[j] = new pocket(350+ 173*(j-1), 235, 76, null, pockets[j-1]);
-			pockets[j-1].next = pockets[j];
 	}
-	pockets[j-1].next = pockets[0];
-	
-	
+
+
 var colors = new Array();
 colors[0] = "red";
 colors[1] = "blue";
 colors[2] = "green";
 colors[3] = "purple";
-for (var s = 0; s < 5; s++) {
-	for (var i = 0; i < s*2+1; i++) {
 
-		pockets[s].addPebble();
+var leftpit = new pit(350-173+10, 310, 76, null, null);
+var rightpit = new pit(350+4*173 - 20, 310, 76, null, null);
+	
+	//createBoard();
+	
 
-	}
-}	
+	
+	
+	
+
+
+
+
+createBoard();
+addSomePebbles();	
+	
 var board = new board(100,100, 1013, 437);
+
+
+function addSomePebbles() {
+	temp = leftpit;
+	for ( var i = 0; i < 11; i++) {
+		temp.addPebble();
+		temp = temp.nextpit;
+	}
+
+}
+
+
+function createBoard() {
+	var prevpit = leftpit;
+	for (var j = 1; j < 5; j++) {
+		prevpit.nextpit = new pit(350+ 173*(j-1), 235, 76, null, prevpit);
+		prevpit = prevpit.nextpit;
+	}
+	prevpit.nextpit = rightpit;
+	rightpit.prevpit = prevpit;
+	prevpit = prevpit.nextpit;
+	for (j = 4; j > 0; j--) {
+		prevpit.nextpit = new pit(350+ 173*(j-1), 405, 76, null, prevpit);
+		prevpit = prevpit.nextpit;
+	}
+	
+		prevpit.nextpit = leftpit;
+		leftpit.prevpit = prevpit;
+
+}
+
+
+function mainf() {
+	drawInterface();
+}
+
 
 function drawInterface() {
 
@@ -366,10 +474,12 @@ function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
 	board.update();
-	for ( i = 0; i < 5; i++) {
-		if (pockets[i] != null)
-			pockets[i].update();
-	}
+	temp = leftpit;
+	do {
+		if (temp != null)
+			temp.update();
+		temp = temp.nextpit;
+	} while(temp!= leftpit);
 
 	
 
@@ -385,7 +495,7 @@ function drawInterface() {
     // YOUR CODE ENDS HERE
     
     // This should be at the bottom of your code!
-	setTimeout("drawInterface()", 10);
+	setTimeout("drawInterface()", 100);
 }
 
 /**
@@ -393,26 +503,17 @@ This is the function you will use to register clicks. The xPos and yPos are the 
 */
 function clickFunction(xPos, yPos) {
 
-	for (j = 0; j < 5; j++) {
-		var distance = Math.sqrt((pockets[j].x-xPos)*(pockets[j].x-xPos) + (pockets[j].y-yPos)*(pockets[j].y-yPos));
-		
-		//if (j == 4) {
-			//alert("xpos:"+xPos+", ypos:"+yPos+"xpos4:"+pockets[4].x+", ypos4:"+pockets[4].y+", dx:"+distance);
-		//}
-		if (distance<= pockets[j].radius) {
-			alert("pocket "+j);
-			//for ( k = pockets[j].contents; k >= 0; k--) {
-				pockets[j].contents--;
-				pockets[j].pebbleCollection[pockets[j].contents] = null;
-				pockets[j].prev.addPebble();
-			//}
-
-			
+	temp = leftpit;
+	do {
+		var distance = Math.sqrt((temp.x-xPos)*(temp.x-xPos) + (temp.y-yPos)*(temp.y-yPos));
+		if (distance <= temp.radius) {
+				temp.movePebble(temp.nextpit);
 		}
-	}
+		temp = temp.nextpit;
+	} while (temp != leftpit);
     
 }
-
+ 
 /**
 This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such are happening.
 */
@@ -445,6 +546,6 @@ function performMove() {
 
 </script>
 </head>
-<body onLoad=sizeUpdate()>
+<body onLoad=mainf()>
 </body>
 </html>
