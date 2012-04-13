@@ -332,12 +332,16 @@ locations[20]=-1;
 function drawPieces(){
 
 
-	 
+	 	/**
 		var tiger = new Image();
 		var goat = new Image();
 
 		tiger.src = "red.png";
 		goat.src = "blue.png";
+		**/
+
+		var tiger = {color :"#FF4500"};
+		var goat = {color : "#0D56A6"};
 
 		var drawNow = function(n){
 			this.n = n;
@@ -345,10 +349,24 @@ function drawPieces(){
 			var y = boardY + Math.floor(n/5)*pieceHeight;
 
 			//centering image onto the node
-			x-=pieceWidth/2;
-			y-=pieceHeight/2;
+			//x-=pieceWidth/2;
+			//y-=pieceHeight/2;
+
+			function drawCircle(x, y, radius, color,selectColor){
+				selectColor = selectColor || "black"; //default parameter is black
+
+				interfacecxt.beginPath();
+    			interfacecxt.arc(x, y, radius, 0, 2 * Math.PI, false);
+    			interfacecxt.fillStyle = color;
+	    		interfacecxt.fill();
+	    		interfacecxt.lineWidth = radius/10;
+	    		interfacecxt.strokeStyle = selectColor;
+	    		interfacecxt.stroke();
+			}
 			
-			interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
+			drawCircle(x,y,pieceWidth/2, this.color);
+			//interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
+
 
 		};
 
@@ -455,9 +473,10 @@ function drawInterface() {
 	
     drawPieces();
     
-    interfacecxt.fillText("topleft", boardX, boardY); 
-    interfacecxt.fillText("bottomright", boardX+boardWidth, boardY+boardHeight); 
+     
     // YOUR CODE ENDS HERE
+
+   
     
     // This should be at the bottom of your code!
 	//setTimeout("drawInterface()", 10);
@@ -475,15 +494,16 @@ function clickFunction(xPos, yPos) {
 This is the function you will use to register mouse pressed down and let go. The xPos and yPos are the coordinates while such ar2e happening.
 */
 function downFunction(xPos, yPos) {
-	
+	//revision plans create clickable areas.2
+
 	var x = xPos;
 	var y = yPos;
-	console.log('( '+x+' , '+y+' )');
-	console.log('boardX: '+boardX);
+	//console.log('( '+x+' , '+y+' )');
+	//console.log('boardX: '+boardX);
 	var s =boardX+boardWidth;
-	console.log('boardX+boardWidth: '+ s);
+	//console.log('boardX+boardWidth: '+ s);
 
-	console.log('boardWidth: '+boardWidth);
+	//console.log('boardWidth: '+boardWidth);
 
 	if((x>=boardX+optionsWidth && x<=boardX+boardWidth+optionsWidth) && (y>=boardY && y<=boardY+boardHeight)){
 	
