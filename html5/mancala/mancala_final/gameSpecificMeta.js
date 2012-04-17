@@ -108,7 +108,7 @@ function drawBufferToCanvas(){
 function drawPitsToBuffer(){
 	bufferContext.save();
 
-	var vertPadding = Math.floor(bufferCanvas.height/20)
+	var vertPadding = Math.floor(bufferCanvas.height/20);
 	var horizPadding = 10;
 	var pitWidth = Math.floor((bufferCanvas.width-10)/(PITS_PER_PLAYER + 2));
 	var pitHeight = 6*vertPadding;
@@ -292,6 +292,43 @@ function animateTransition(pebble,srcPitIndex,destPitIndex){
 	*/
 }
 
+//Returns the coordinatePair object of the position of the pit. Takes index of the pit
+function pitIndexToCoor(index){
+	//Calculations from drawPitsToBuffer(). This will be generalized
+	var vertPadding = Math.floor(bufferCanvas.height/20);
+	var horizPadding = 10;
+
+	var pitSize = Math.floor((1400 - horizPadding*2)/(PITS_PER_PLAYER + 2));
+	var leftToRightPos = 0;
+	var top;
+	var x = 0;
+	var y = 0;
+
+	if(index < PITS_PER_PLAYER){
+		leftToRightPos = index + 1;
+		top = false;
+	}else if((index < pits.length) && (index > PITS_PER_PLAYER)){
+		leftToRightPos = PITS_PER_PLAYER - (index - 1 - PITS_PER_PLAYER);
+		top = true;
+	}else{
+		//This happens when the index belongs to a player pit
+		leftToRightPos = null;
+	}
+
+	if(leftToRightPos != null){
+		x = (pitSize * leftToRightPos) + horizPadding;
+		if(top){
+			y = vertPadding;
+		}else{
+			y = 700 - (pitSize + vertPadding);
+		}
+
+		return new coordinatePair(x,y);
+	}else{
+		return null;
+	}
+}
+
 /*
 *Objects
 */
@@ -300,25 +337,37 @@ function animateTransition(pebble,srcPitIndex,destPitIndex){
 function pit(){
 	this.pebbles = new Array();
 	this.highlighted = false;
+	this.coordinates = new coordinatePair(0,0);
 
-	//Method to add pebble
+	//Add pebble
 	this.addPebble = function(pebble){
 		this.pebbles.push(pebble);
 	}
 	
-	//Method to remove pebble. Return the pebble being removed
+	//Remove pebble. Return the pebble being removed
 	this.removePebble = function(){
 		return this.pebbles.pop();
 	}
 	
-	//Method to get the number of pebbles the pit has
+	//Get the number of pebbles the pit has
 	this.getNumOfPebbles = function(){
 		return this.pebbles.length;
 	}
+	
+	//Get the x and y coordinates, returns a coordinatePair object
+	this.getCoordinates = function(){
+		return this.coordinates;
+	}
 }
+
 
 function pebble(){
 	//TODO
+}
+
+function coordinatePair(xCoor,yCoor){
+	this.x = xCoor;
+	this.y = yCoor;
 }
 
 /**
