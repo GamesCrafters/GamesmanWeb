@@ -375,6 +375,15 @@ function pitIndexToCoor(index){
 	}
 }
 
+function mancalaDelay(millis) 
+{
+var date = new Date();
+var current = null;
+
+do { curDate = new Date(); } 
+while(current-date < millis);
+} 
+
 /*
 *Objects
 */
