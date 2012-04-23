@@ -318,16 +318,30 @@ var boardHeight = interfaceWidth/2;
 var boardX = interfaceWidth/2 - boardWidth*.80;
 var boardY = interfaceHeight/2 - boardHeight/2;
 var locations = new Array(15);
+var selectedPiece = -1; // which node is selected;
 var pieceWidth = boardWidth/4;
 var pieceHeight = boardHeight/4;
 var phaseOne = true;
 var numGoats = 20;
+var tiger = {color :"#FF4500"};
+var goat = {color : "#0D56A6"};
 //starting sheep position
 locations[0]=-1;
 locations[4]=-1;
 locations[24]=-1;
 locations[20]=-1;
 
+function drawCircle(x, y, radius, color,outlineColor){
+
+	interfacecxt.beginPath();
+	interfacecxt.arc(x, y, radius, 0, 2 * Math.PI, false);
+	interfacecxt.fillStyle = color;
+	interfacecxt.fill();
+	interfacecxt.lineWidth = radius/10;
+	interfacecxt.strokeStyle = outlineColor;
+	interfacecxt.stroke();
+}
+			
 
 function drawPieces(){
 
@@ -340,10 +354,9 @@ function drawPieces(){
 		goat.src = "blue.png";
 		**/
 
-		var tiger = {color :"#FF4500"};
-		var goat = {color : "#0D56A6"};
+		
 
-		var drawNow = function(n){
+		var drawNow = function(n,outlineColor){
 			this.n = n;
 			var x = boardX + (n%5)*pieceWidth;
 			var y = boardY + Math.floor(n/5)*pieceHeight;
@@ -352,19 +365,10 @@ function drawPieces(){
 			//x-=pieceWidth/2;
 			//y-=pieceHeight/2;
 
-			function drawCircle(x, y, radius, color,selectColor){
-				selectColor = selectColor || "black"; //default parameter is black
+			outlineColor = outlineColor|| "black"; //default parameter is black
 
-				interfacecxt.beginPath();
-    			interfacecxt.arc(x, y, radius, 0, 2 * Math.PI, false);
-    			interfacecxt.fillStyle = color;
-	    		interfacecxt.fill();
-	    		interfacecxt.lineWidth = radius/10;
-	    		interfacecxt.strokeStyle = selectColor;
-	    		interfacecxt.stroke();
-			}
 			
-			drawCircle(x,y,pieceWidth/2, this.color);
+			drawCircle(x,y,pieceWidth/2, this.color,outlineColor);
 			//interfacecxt.drawImage(this, x, y, pieceWidth,pieceHeight);
 
 
@@ -372,6 +376,7 @@ function drawPieces(){
 
 		tiger.drawNow = drawNow;
 		goat.drawNow = drawNow;
+
 
 
 		for(i=0; i<locations.length; i++){
@@ -383,6 +388,30 @@ function drawPieces(){
 		}
 	}
 
+function drawValues(){
+	function drawDot(n, valueColor){
+		
+		var x = boardX + (n%5)*pieceWidth;
+		var y = boardY + Math.floor(n/5)*pieceHeight;
+
+		drawCircle(x,y,pieceWidth/8, valueColor,valueColor);
+
+	}
+
+	for(i=0; i<locations.length; i++){
+			if(locations[i]===undefined){
+				drawDot(i,"yellow");
+			}else{
+				if(locations[i]==-1){
+					tiger.drawNow(i,"yellow");
+				}
+
+				if(locations[i]==1){
+					goat.drawNow(i,"yellow")
+				}
+			}
+		}
+}
 
 function drawInterface() {
     // This should be at the front of your code!
@@ -473,6 +502,11 @@ function drawInterface() {
 	
     drawPieces();
     
+
+    var vvv = false;
+    if(vvv){
+    drawValues();
+	}
      
     // YOUR CODE ENDS HERE
 
@@ -528,7 +562,7 @@ function downFunction(xPos, yPos) {
 		numGoats-=1;
 		}
 	}
-	drawPieces();
+	drawInterface();
 	
 	}else{
 		//do other stuff here like clear selection
