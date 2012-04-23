@@ -283,6 +283,7 @@ function getRandomPebble(){
 
 //Animates the transition of a pebbles between two pits
 function animateTransition(pebble,srcPitIndex,destPitIndex){
+	alert(pitIndexToCoor(1).x);
 	/*Instructions:
 	1.Call drawBoardToBuffer() to draw the board to the buffer with all the pits and other pebbles not
 		including the one being animated
@@ -291,6 +292,7 @@ function animateTransition(pebble,srcPitIndex,destPitIndex){
 	4.Repeat until the pebble is where you want it.
 	*/
 }
+
 
 //Returns the coordinatePair object of the position of the pit. Takes index of the pit
 function pitIndexToCoor(index){
@@ -359,6 +361,8 @@ function pit(){
 		return this.coordinates;
 	}
 }
+
+
 
 
 function pebble(){

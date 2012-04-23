@@ -35,10 +35,10 @@ function pebbles(x, y, width, height, color) {
 	this.width = width;
 	this.height = height;
 	this.p = new Image();
-	this.p.src = color + ".png";
-	this.p.drawNow = function() {
-	interfacecxt.drawImage(this.p, x, y, width, height)
-}
+	this.p.src = color + ".jpg";
+	this.update = function() {
+		interfacecxt.drawImage(this.p, x, y, width, height)
+	}
 	
 }
 
@@ -75,13 +75,13 @@ var optionsHeight = 0;
     
 optionsTab.width = optionsWidth;
 optionsTab.height = optionsHeight;
-gameInterface.width = 300;//interfaceWidth;
-gameInterface.height = 500;//interfaceHeight;
+gameInterface.width = 900;//interfaceWidth;
+gameInterface.height = 800;//interfaceHeight;
 
 /**
 This resizes the variables when the window is changed.
 */
-$(window).resize(sizeUpdate);
+//$(window).resize(sizeUpdate);
 
 /**
 These variables are required to interface with the screen.
@@ -180,7 +180,7 @@ function sizeUpdate() {
     imageHeight = Math.floor(optionsHeight / 9);
     
 	drawOptionsBar();
-    //drawInterface();
+    drawInterface();
 	
 }
 
@@ -266,11 +266,14 @@ WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR COD
 /**
 You can use this as the main graphics function. It will call itself over and over every .01 seconds. Please try to make it to just display graphics based on data rather than manipulating data. Otherwise, it may have errors with screen size change and such.
 */
+
 function drawInterface() {
     // This should be at the front of your code!
     interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
     
-    // YOUR CODE STARTS HERE
+	
+	//pe.derp();
+    //pe.update();
 	
     
     
@@ -297,9 +300,21 @@ function downFunction(xPos, yPos) {
 function upFunction(xPos, yPos) {
 
 }
+function main() {
+	var ar = new Array();
+	for ( i = 0; i <= 5; i++) {
+		ar[i] = new pebbles(110*i, 30,100, 100, "blue");
+		ar[i].update();
+	}
+	//var pe = new pebbles(20, 30,150, 150, "blue");
+		//var pe2 = new pebbles(520, 30,450, 450, "red");
+	//pe.update();
+	//pe2.update();
+	//sizeUpdate();
+}
 
 </script>
 </head>
-<body onLoad=sizeUpdate()>
+<body onLoad=main()>
 </body>
 </html>
