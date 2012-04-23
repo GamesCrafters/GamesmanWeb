@@ -2,7 +2,8 @@
 <head>
 <title> Basic Structure for Gamescrafters HTML Games - Title Here! </title>
 <meta name="author" content="Sung Roa Yoon" />
-<meta name="description" content="Version 1.2" />
+<meta name="description" content="Version 1.3" />
+<LINK REL=StyleSheet HREF="highwaygoth/stylesheet.css" TYPE="text/css" MEDIA=screen>
 <style type="text/css">
     body {
       margin: 0;
@@ -50,8 +51,8 @@ These variables relate to the players.
 var PLAYER1 = true;
 var PLAYER2 = false;
 var playerTurn = PLAYER1;
-var player1Name = "Bob";
-var player2Name = "Annie";
+var player1Name = "Player 1";
+var player2Name = "Player 2";
 var player1AI = false;
 var player2AI = false;
 var randomness1 = 0; // Only applicable if there is AI involved.
@@ -79,100 +80,275 @@ var pastMoves = new Array();
 var redoMoves = new Array();
 
 /**
-These are the variables related to the options menu.
+These are all of the options related functions used in the game infrastructure.
 */
-var optionsBoolean = false;
-
-/**
-These are all of the images used in the game infrastructure.
-*/
-var imageHeight = Math.floor(optionsHeight / 12);
-var imageAdjustor = Math.floor(optionsHeight / 6);
-var playerSettingsImage = new Image();
-playerSettingsImage.src = 'players@2x.png';
-playerSettingsImage.drawNow = function(n) {
+var buttonArray = new Array();
+var imageHeight = Math.floor(interfaceHeight / 12);
+var imageAdjustor = Math.floor(interfaceHeight / 6);
+// This is the button class for the options button.
+function buttonClass(n, iconImage) {
 	this.n = n;
-	optionscxt.drawImage(playerSettingsImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
-}
-playerSettingsImage.clicked = function(xPos, yPos) {
-	if ((xPos > 0) & (xPos < imageHeight)) {
-		if ((yPos > (this.n * imageHeight + imageAdjustor)) & (yPos < ((this.n + 1) * imageHeight + imageAdjustor))) {
-			this.activateFunction();
+	this.iconImage = new Image();
+	this.iconImage.src = iconImage;
+	this.displayCheck = false;
+	buttonArray.push(this);
+	this.draw = function() {
+		optionscxt.drawImage(this.iconImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+		if (this.displayCheck) {
+			interfacecxt.fillStyle = "000000";
+			optionscxt.fillStyle = "000000";
+			interfacecxt.fillRect(0, this.n * imageHeight + imageAdjustor, interfaceWidth * .4, imageHeight * 3);
+			optionscxt.fillRect(imageHeight, this.n * imageHeight + imageAdjustor, optionsWidth - imageHeight, imageHeight * 3);
+			this.canvasDraw();
 		}
 	}
+	this.optionsClickCheck = function(xPos, yPos) {
+		if ((xPos > 0) & (xPos < imageHeight)) {
+			if ((yPos > (this.n * imageHeight + imageAdjustor)) & (yPos < ((this.n + 1) * imageHeight + imageAdjustor))) {
+				if (this.displayCheck) {
+					this.displayCheck = false;
+				} else {
+					this.optionsClickEvent();
+				}
+			} else {
+				this.displayCheck = false;
+			}
+		} else if (true) {
+			
+		}else {
+			this.displayCheck = false;
+		}
+	}
+	this.canvasClickCheck = function(xPos, yPos) {
+		if (this.displayCheck) {
+			if ((xPos <= interfaceWidth * .4) & (yPos > this.n * imageHeight + imageAdjustor) & (yPos < this.n * imageHeight + imageAdjustor + imageHeight * 3)) {
+				this.canvasClickEvent(xPos, yPos);
+			} else {
+				this.displayCheck = false;
+			}
+		}
+	}
+	this.optionsClickEvent = function() {}
+	this.canvasClickEvent = function(xPos, yPos) {}
+	this.canvasDraw = function() {}
 }
-playerSettingsImage.activateFunction = function() {
-	optionsBoolean = true;
-	interfacecxt.fillStyle = "000000";
-	optionscxt.fillStyle = "000000";
-	interfacecxt.fillRect(0, imageAdjustor * 3 / 4, interfaceWidth * .9, imageHeight * 8 + imageAdjustor / 2);
-	optionscxt.fillRect(imageHeight, imageAdjustor * 3 / 4, optionsWidth - imageHeight, imageHeight * 8 + imageAdjustor / 2);
+
+// This is the boolean checker class for the yes/no options.
+function booleanChecker(string, xLocRatio, yLocRatio) {
+	this.variable = false;
+	this.string = string;
+	this.xLocRatio = xLocRatio;
+	this.yLocRatio = yLocRatio;
+	this.draw = function() {
+		textSize = interfaceWidth / 100;
+		xStart = this.xLocRatio * interfaceWidth;
+		yStart = this.yLocRatio * interfaceHeight;
+		
+		// Variable name
+		interfacecxt.font = textSize + "pt Times New Roman";
+		interfacecxt.fillStyle = 'FFFFFF';
+		interfacecxt.fillText(string, xStart, yStart + textSize, interfaceWidth * .2);
+		
+		// First circle
+		interfacecxt.beginPath();
+		interfacecxt.fillStyle = 'FFFFFF';
+		interfacecxt.strokeStyle = 'FFFFFF';
+		interfacecxt.arc(xStart + interfaceWidth * .2 + textSize / 2, yStart + textSize / 2, textSize / 2, 0, 2 * Math.PI);
+		interfacecxt.stroke();
+		interfacecxt.closePath();
+		
+		// Yes
+		interfacecxt.fillStyle = 'FFFFFF';
+		interfacecxt.fillText("Yes", xStart + interfaceWidth * .2 + textSize * 2, yStart + textSize, interfaceWidth * .2);
+		
+		// Second Circle
+		interfacecxt.beginPath();
+		interfacecxt.fillStyle = 'FFFFFF';
+		interfacecxt.strokeStyle = 'FFFFFF';
+		interfacecxt.arc(xStart + interfaceWidth * .3 + textSize / 2, yStart + textSize / 2, textSize / 2, 0, 2 * Math.PI);
+		interfacecxt.stroke();
+		interfacecxt.closePath();
+		
+		// No
+		interfacecxt.fillStyle = 'FFFFFF';
+		interfacecxt.fillText("No", xStart + interfaceWidth * .3 + textSize * 2, yStart + textSize, interfaceWidth * .2);
+		
+		// Which circle is filled
+		interfacecxt.beginPath();
+		interfacecxt.fillStyle = 'FF0000';
+		if (this.variable) {
+			interfacecxt.arc(xStart + interfaceWidth * .2 + textSize / 2, yStart + textSize / 2, textSize / 4, 0, 2 * Math.PI);
+		} else {
+			interfacecxt.arc(xStart + interfaceWidth * .3 + textSize / 2, yStart + textSize / 2, textSize / 4, 0, 2 * Math.PI);
+		}
+		interfacecxt.fill();
+		interfacecxt.closePath();
+	}
+	this.canvasClickCheck = function(xPos, yPos) {
+		textSize = interfaceWidth / 100;
+		xStart = this.xLocRatio * interfaceWidth;
+		yStart = this.yLocRatio * interfaceHeight;
+		if ((yPos > (yStart)) & (yPos < (yStart + textSize * 1))) {
+			if ((xPos > (xStart + interfaceWidth * .2)) & (xPos < (xStart + interfaceWidth * .2 + textSize * 1))) {
+				this.variable = true;
+			}
+			if ((xPos > (xStart + interfaceWidth * .3)) & (xPos < (xStart + interfaceWidth * .3 + textSize * 1))) {
+				this.variable = false;
+			}
+		}
+		return this.variable
+	}
 }
-var undoImage = new Image();
-undoImage.src = 'undo@2x.png';
-undoImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(undoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight)
+
+// This is the bar class for the bar of range of numbers in options
+function barClass(string, barPercent, minValue, maxValue, xLocRatio, yLocRatio) {
+	this.string = string;
+	this.barPercent = barPercent;
+	this.minValue = minValue;
+	this.maxValue = maxValue;
+	this.xLocRatio = xLocRatio;
+	this.yLocRatio = yLocRatio;
+	this.draw = function() {
+		xStart = this.xLocRatio * interfaceWidth;
+		yStart = this.yLocRatio * interfaceHeight;
+		thickness = interfaceHeight * .0125;
+		textSize = interfaceWidth / 100;
+		interfacecxt.font = textSize + "pt Times New Roman";
+		interfacecxt.fillStyle = "FFFFFF";
+		interfacecxt.fillText(string, xStart, yStart + textSize);
+		interfacecxt.fillStyle = "C0C0C0";
+		interfacecxt.strokeStyle = "FF0000";
+		interfacecxt.fillRect(xStart, yStart + thickness * 2, interfaceWidth * .2, thickness);
+		interfacecxt.strokeRect(xStart, yStart + thickness * 2, interfaceWidth * .2, thickness);
+		interfacecxt.fillRect(xStart + this.barPercent * interfaceWidth * .2 - thickness / 4, yStart + 6 / 4 * thickness, thickness / 2, thickness * 2);
+		interfacecxt.strokeRect(xStart + this.barPercent * interfaceWidth * .2 - thickness / 4, yStart + 6 / 4 * thickness, thickness / 2, thickness * 2);
+	}
+	this.canvasClickCheck = function(xPos, yPos) {
+		xStart = this.xLocRatio * interfaceWidth;
+		yStart = this.yLocRatio * interfaceHeight;
+		thickness = interfaceHeight * .0125;
+		textSize = interfaceWidth / 100;
+		
+		if ((xPos >= xStart) & (xPos <= (xStart + interfaceWidth * .2))) {
+			if ((yPos >= (yStart + 6/4 * thickness)) & (yPos <= (yStart + 3.5 * thickness))) {
+				this.barPercent = (xPos - xStart) / (interfaceWidth * .2);
+			}
+		}
+		return this.barPercent;
+	}
 }
-undoImage.clicked = playerSettingsImage.clicked;
-undoImage.activateFunction = function() {
+
+/**
+These are the eight buttons that will be on the side.
+*/
+undoButton = new buttonClass(0, "undo@2x.png");
+redoButton = new buttonClass(1, "redo@2x.png");
+playerSettingsButton = new buttonClass(2, "players@2x.png");
+vvhistButton = new buttonClass(3, "vvh@2x.png");
+variantsButton = new buttonClass(4, "variants@2x.png");
+mvhistButton = new buttonClass(5, "values@2x.png");
+genSettingsButton = new buttonClass(6, "settings@2x.png");
+homeButton = new buttonClass(7, "home@2x.png");
+
+/**
+These are the functions that the buttons will have upon being clicked in the options canvas.
+*/
+undoButton.optionsClickEvent = function() {
 	if (pastMoves.length > 1) {
 		currentPosition = popLastPosition();
 	}
 }
-var redoImage = new Image();
-redoImage.src = 'redo@2x.png';
-redoImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(redoImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
-}
-redoImage.clicked = playerSettingsImage.clicked;
-redoImage.activateFunction = function() {
+redoButton.optionsClickEvent = function() {
 	if (redoMoves.length > 0) {
 		currentPosition = redoMoves.pop();
 		pastMoves.push(currentPosition);
 	}
 }
-var vvhistImage = new Image(); // Visual Value History
-vvhistImage.src = 'vvh@2x.png';
-vvhistImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(vvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+playerSettingsButton.player1AIButton = new booleanChecker("Set Player 1 to AI", 0, (playerSettingsButton.n * imageHeight + imageAdjustor) / interfaceHeight);
+playerSettingsButton.player2AIButton = new booleanChecker("Set Player 2 to AI", 0, (playerSettingsButton.n * imageHeight + imageHeight * 1.5 + imageAdjustor) / interfaceHeight);
+playerSettingsButton.player1Bar = new barClass("AI 1 Randomness", 0, 0, 100, 0, (playerSettingsButton.n * imageHeight + imageHeight * 0.5 + imageAdjustor) / interfaceHeight) ;
+playerSettingsButton.player2Bar = new barClass("AI 2 Randomness", 0, 0, 100, 0, (playerSettingsButton.n * imageHeight + imageHeight * 2 + imageAdjustor) / interfaceHeight) ;
+playerSettingsButton.optionsClickEvent = function() {
+	this.displayCheck = true;
 }
-vvhistImage.clicked = playerSettingsImage.clicked;
-vvhistImage.activateFunction = playerSettingsImage.activateFunction;
-var gameOpImage = new Image(); // Game Options (Game Specific)
-gameOpImage.src = 'variants@2x.png';
-gameOpImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(gameOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+playerSettingsButton.canvasDraw = function() {
+	this.player1AIButton.draw();
+	this.player2AIButton.draw();
+	if (player1AI) {
+		this.player1Bar.draw();
+	}
+	if (player2AI) {
+		this.player2Bar.draw();
+	}
 }
-gameOpImage.clicked = playerSettingsImage.clicked;
-gameOpImage.activateFunction = playerSettingsImage.activateFunction;
-var mvhistImage = new Image(); // Move Value History
-mvhistImage.src = 'values@2x.png';
-mvhistImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(mvhistImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+playerSettingsButton.canvasClickEvent = function(xPos, yPos) {
+	player1AI = this.player1AIButton.canvasClickCheck(xPos, yPos);
+	player2AI = this.player2AIButton.canvasClickCheck(xPos, yPos);
+	if (player1AI) {
+		randomness1  = this.player1Bar.canvasClickCheck(xPos, yPos);
+	}
+	if (player2AI) {
+		randomness2 = this.player2Bar.canvasClickCheck(xPos, yPos);
+	}
 }
-mvhistImage.clicked = playerSettingsImage.clicked;
-mvhistImage.activateFunction = playerSettingsImage.activateFunction;
-var genOpImage = new Image(); // General Options Image
-genOpImage.src = 'settings@2x.png';
-genOpImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(genOpImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+vvhistButton.optionsClickEvent = playerSettingsButton.optionsClickEvent;
+variantsButton.optionsClickEvent = playerSettingsButton.optionsClickEvent;
+variantsButton.option1 = new booleanChecker(gameSpecificOption1Name, 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * .5) / interfaceHeight);
+variantsButton.option2 = new booleanChecker(gameSpecificOption2Name, 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * 1.5) / interfaceHeight);
+variantsButton.option3 = new booleanChecker(gameSpecificOption3Name, 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * 2.5) / interfaceHeight);
+variantsButton.canvasDraw = function() {
+	if (gameSpecificOption1Name != "Input name here") {
+		this.option1.draw();
+	}
+	if (gameSpecificOption2Name != "Input name here") {
+		this.option2.draw();
+	}
+	if (gameSpecificOption3Name != "Input name here") {
+		this.option3.draw();
+	}
 }
-genOpImage.clicked = playerSettingsImage.clicked;
-genOpImage.activateFunction = playerSettingsImage.activateFunction;
-var homeImage = new Image(); // Home image
-homeImage.src = 'home@2x.png';
-homeImage.drawNow = function(n) {
-	this.n = n;
-	optionscxt.drawImage(homeImage, 0, this.n * imageHeight + imageAdjustor, imageHeight, imageHeight);
+variantsButton.canvasClickEvent = function(xPos, yPos) {
+	if (gameSpecificOption1Name != "Input name here") {
+		gameSpecificOption1 = this.option1.canvasClickCheck(xPos, yPos);
+	}
+	if (gameSpecificOption2Name != "Input name here") {
+		gameSpecificOption2 = this.option2.canvasClickCheck(xPos, yPos);
+	}
+	if (gameSpecificOption3Name != "Input name here") {
+		gameSpecificOption3 = this.option3.canvasClickCheck(xPos, yPos);
+	}
 }
-homeImage.clicked = playerSettingsImage.clicked;
-homeImage.activateFunction = function() {
+mvhistButton.optionsClickEvent = playerSettingsButton.optionsClickEvent;
+mvhistButton.optionsClickEvent = playerSettingsButton.optionsClickEvent;
+mvhistButton.predictionButton = new booleanChecker("Show Predictions", 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * 1.5) / interfaceHeight);
+mvhistButton.mvButton = new booleanChecker("Show Move Values", 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * 2.5) / interfaceHeight);
+mvhistButton.deltaButton = new booleanChecker("Show Delta Remoteness", 0, (variantsButton.n * imageHeight + imageAdjustor + imageHeight * 3.5) / interfaceHeight);
+mvhistButton.canvasDraw = function() {
+	this.predictionButton.draw();
+	this.mvButton.draw();
+	if (showMoveValues) {
+		this.deltaButton.draw();
+	}
+}
+mvhistButton.canvasClickEvent = function(xPos, yPos) {
+	showPredictions = this.predictionButton.canvasClickCheck(xPos, yPos);
+	showMoveValues = this.mvButton.canvasClickCheck(xPos, yPos);
+	if (showMoveValues) {
+		showDeltaRemoteness = this.deltaButton.canvasClickCheck(xPos, yPos);
+	}
+}
+genSettingsButton.optionsClickEvent = playerSettingsButton.optionsClickEvent;
+genSettingsButton.computerPause = new barClass("Computer Pause", 0, 0, 2000, 0, (playerSettingsButton.n * imageHeight + imageHeight * 5 + imageAdjustor) / interfaceHeight) ;
+genSettingsButton.animationSpeed = new barClass("Animation Speed", 0, 0, 900, 0, (playerSettingsButton.n * imageHeight + imageHeight * 6 + imageAdjustor) / interfaceHeight) ;
+genSettingsButton.canvasDraw = function() {
+	genSettingsButton.computerPause.draw();
+	genSettingsButton.animationSpeed.draw();
+}
+genSettingsButton.canvasClickEvent = function(xPos, yPos) {
+	computerPauseTime  = genSettingsButton.computerPause.canvasClickCheck(xPos, yPos);
+	animationSpeed = 1000 - genSettingsButton.animationSpeed.canvasClickCheck(xPos, yPos);
+}
+homeButton.optionsClickEvent = function() {
 	
 }
 
@@ -204,8 +380,8 @@ function sizeUpdate2() {
     imageHeight = Math.floor(optionsHeight / 10);
 	imageAdjustor = Math.floor(optionsHeight / 10);
     
-	drawOptionsBar();
     drawInterface();
+	drawOptionsBar();
 }
 
 /**
@@ -215,14 +391,10 @@ function drawOptionsBar() {
     optionscxt.clearRect(0, 0, optionsWidth, optionsHeight);
 	optionscxt.fillStyle = '000000';
 	optionscxt.fillRect(0, imageAdjustor * 3 / 4, imageAdjustor / 4 + imageHeight, imageHeight * 8 + imageAdjustor / 2);
-	undoImage.drawNow(0);
-	redoImage.drawNow(1);
-	playerSettingsImage.drawNow(2);
-	vvhistImage.drawNow(3);
-	gameOpImage.drawNow(4);
-	mvhistImage.drawNow(5);
-	genOpImage.drawNow(6);
-	homeImage.drawNow(7);
+	optionsNumber = buttonArray.length;
+	for (var x = 0; x < optionsNumber; x++) {
+		buttonArray[x].draw();
+	}
 }
 
 
@@ -232,14 +404,13 @@ This is the function that activates when something is clicked in the option bar.
 function clickOptions(e) {
 	xPos = e.clientX;
 	yPos = e.clientY;
-    playerSettingsImage.clicked(xPos, yPos);
-	undoImage.clicked(xPos, yPos);
-	redoImage.clicked(xPos, yPos);
-	vvhistImage.clicked(xPos, yPos);
-	gameOpImage.clicked(xPos, yPos);
-	mvhistImage.clicked(xPos, yPos);
-	genOpImage.clicked(xPos, yPos);
-	homeImage.clicked(xPos, yPos);
+	
+	optionsNumber = buttonArray.length;
+	for (var x = 0; x < optionsNumber; x++) {
+		buttonArray[x].optionsClickCheck(xPos, yPos);
+	}
+    drawInterface();
+	drawOptionsBar();
 }
 
 /**
@@ -248,17 +419,22 @@ This is the function that activates when the interface is clicked. If the option
 function clickInterface(e) {
 	xPos = e.clientX - optionsWidth;
 	yPos = e.clientY;
-    if (optionsBoolean) {
-        if ((xPos < interfaceWidth * .9) & (yPos > (imageAdjustor * 3 / 4)) & (yPos < (imageAdjustor * 5 / 4 + imageHeight * 8))) {
-			
-		} else {
-			drawInterface();
-			drawOptionsBar();
-			optionsBoolean = false;
+	
+	optionsBoolean = false;
+	optionsNumber = buttonArray.length;
+	for (var x = 0; x < optionsNumber; x++) {
+		buttonArray[x].canvasClickCheck(xPos, yPos);
+		if (buttonArray[x].displayCheck) {
+			optionsBoolean = true;
 		}
+	}
+    if (optionsBoolean) {
+		
     } else {
         clickFunction(xPos, yPos);
     }
+    drawInterface();
+	drawOptionsBar();
 }
 
 /**
@@ -279,22 +455,44 @@ function mouseUpOptions(e) {
 This is the function that activates when the interface is pressed. If the options tab is open, then it works in the options area, but otherwise does normal press function as given by the actual game.
 */
 function mouseDownInterface(e) {
-	xPos = e.clientX;
+	xPos = e.clientX - optionsWidth;
 	yPos = e.clientY;
+	
+	optionsBoolean = false;
+	optionsNumber = buttonArray.length;
+	for (var x = 0; x < optionsNumber; x++) {
+		
+		if (buttonArray[x].displayCheck) {
+			optionsBoolean = true;
+		}
+	}
     if (optionsBoolean) {
 		
     } else {
         downFunction(xPos, yPos);
     }
+    drawInterface();
+	drawOptionsBar();
 }
 function mouseUpInterface(e) {
-	xPos = e.clientX;
+	xPos = e.clientX - optionsWidth;
 	yPos = e.clientY;
+	
+	optionsBoolean = false;
+	optionsNumber = buttonArray.length;
+	for (var x = 0; x < optionsNumber; x++) {
+		
+		if (buttonArray[x].displayCheck) {
+			optionsBoolean = true;
+		}
+	}
     if (optionsBoolean) {
         
     } else {
         upFunction(xPos, yPos);
     }
+    drawInterface();
+	drawOptionsBar();
 }
 
 /**
