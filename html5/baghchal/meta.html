@@ -327,6 +327,10 @@ var numGoats = 0;
 var tiger = {color :"#FF4500"};
 var goat = {color : "#0D56A6"};
 var phase = 1;
+var clickSound = new Audio('sfx.wav');
+var moveSound = new Audio('jump.wav');
+var deselectSound = new Audio('coin.wav');
+var selectSound = new Audio('select.wav');
 //starting sheep position
 console.log("resettin!");
 locations[0]=-1;
@@ -510,14 +514,16 @@ function drawInterface() {
 	
 	drawBoard();
 	
+
+
 	
     drawPieces();
     
-
     var vvv = false;
     if(vvv){
     drawValues();
 	}
+    
      
      console.log('redraw');
     // YOUR CODE ENDS HERE
@@ -541,6 +547,7 @@ This is the function you will use to register mouse pressed down and let go. The
 */
 function downFunction(xPos, yPos) {
 	//revision plans create clickable areas.2
+	
 	function turnSwap(){
 		PLAYER1 = !PLAYER1;
 		PLAYER2 = !PLAYER2;
@@ -549,12 +556,12 @@ function downFunction(xPos, yPos) {
 	function selectPiece(n){
 		selectedPiece = n;
 		selectedPieces[selectedPiece]=true;
+		selectSound.play();
 	}
 
-	function deselectPiece(n){
+	function deselectPiece(){
 		
 		selectedPieces[selectedPiece]=false;
-		locations[selectedPiece]=undefined;
 		selectedPiece=-1;
 	}
 
@@ -591,13 +598,14 @@ function downFunction(xPos, yPos) {
 	}
 
 
-	if(n!=-999){
+	if(n>=0){
 		if(PLAYER1){
 			if(phase==1){
 				console.log("adding -1 to "+n);
 				if(!locations[n]){
 					locations[n]=1;
 					numGoats++;
+					clickSound.play();
 					turnSwap();
 				}
 				
@@ -612,15 +620,23 @@ function downFunction(xPos, yPos) {
 			}else{
 				
 				if(!location[n]){
-					console.log("hey!"+selectedPiece+" "+n);
-					console.log(locations[selectedPiece]);
-					locations[n]=-1;
-					deselectPiece(n);
-					console.log(locations[selectedPiece]);
-					turnSwap();
+					if(!locations[n]){
+						locations[n]=-1;
+						locations[selectedPiece]=undefined;						
+						deselectPiece();
+						moveSound.play();
+						turnSwap();
+					}
 				}
 				
 			}
+		}
+	}else{
+		
+		if(selectedPiece>=0){
+			deselectPiece();
+
+			deselectSound.play();
 		}
 	}
 		
@@ -635,7 +651,6 @@ function upFunction(xPos, yPos) {
 
 }
 </script>
-<script type="text/javascript" src="gameSpecificMeta.js"></script>
 </head>
 <body onLoad="sizeUpdate()">
 </body>

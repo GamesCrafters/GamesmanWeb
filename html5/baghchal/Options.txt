@@ -1,0 +1,14 @@
+Player Settings:
+	Player Names - player1Name, player2Name
+	Computer, and computer capability - player1AI, player2AI, randomness1, randomness2
+Game variants:
+	Filled by game.
+	Have an on off switch for misere (lose is win)
+Move Values:
+	Show Prediction
+	Show Move Values
+	Show Delta Remoteness (?) Can only be on if move values is!
+Game Play Settings:
+	How long the computer player waits before making a move
+	How long the computer players wait between each other (2 computers)
+	Animation Speed
