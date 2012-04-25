@@ -319,13 +319,16 @@ var boardX = interfaceWidth/2 - boardWidth*.80;
 var boardY = interfaceHeight/2 - boardHeight/2;
 var locations = new Array(15);
 var selectedPiece = -1; // which node is selected;
+var selectedPieces = new Array(15);
 var pieceWidth = boardWidth/4;
 var pieceHeight = boardHeight/4;
 var phaseOne = true;
-var numGoats = 20;
+var numGoats = 0;
 var tiger = {color :"#FF4500"};
 var goat = {color : "#0D56A6"};
+var phase = 1;
 //starting sheep position
+console.log("resettin!");
 locations[0]=-1;
 locations[4]=-1;
 locations[24]=-1;
@@ -381,9 +384,17 @@ function drawPieces(){
 
 		for(i=0; i<locations.length; i++){
 			if(locations[i]==-1){
-				tiger.drawNow(i);
+				if(selectedPieces[i]){
+					tiger.drawNow(i,"brown");
+				}else{
+					tiger.drawNow(i);	
+				}
 			}else if(locations[i]==1){
-				goat.drawNow(i);
+				if(selectedPieces[i]){
+					goat.drawNow(i,"brown");
+				}else{
+					goat.drawNow(i);
+				}
 			}
 		}
 	}
@@ -508,6 +519,7 @@ function drawInterface() {
     drawValues();
 	}
      
+     console.log('redraw');
     // YOUR CODE ENDS HERE
 
    
@@ -529,47 +541,95 @@ This is the function you will use to register mouse pressed down and let go. The
 */
 function downFunction(xPos, yPos) {
 	//revision plans create clickable areas.2
+	function turnSwap(){
+		PLAYER1 = !PLAYER1;
+		PLAYER2 = !PLAYER2;
+	}
 
+	function selectPiece(n){
+		selectedPiece = n;
+		selectedPieces[selectedPiece]=true;
+	}
+
+	function deselectPiece(n){
+		
+		selectedPieces[selectedPiece]=false;
+		locations[selectedPiece]=undefined;
+		selectedPiece=-1;
+	}
+
+	function movePiece(start, end){
+		
+	}
+
+	n=-999;
 	var x = xPos;
 	var y = yPos;
-	//console.log('( '+x+' , '+y+' )');
-	//console.log('boardX: '+boardX);
-	var s =boardX+boardWidth;
-	//console.log('boardX+boardWidth: '+ s);
-
-	//console.log('boardWidth: '+boardWidth);
-
-	if((x>=boardX+optionsWidth && x<=boardX+boardWidth+optionsWidth) && (y>=boardY && y<=boardY+boardHeight)){
 	
-	console.log("WITHIN BOARD!");
-	console.log(x);
-	console.log(y);
 	
-	x+= pieceWidth/2;
-	y+= pieceHeight/2;
-	x-=boardX;
-	y-=boardY;
-	x/=pieceWidth;//remainder n%5
-	y/=pieceWidth;//quotirent n//5
-	var n = y*5+x;
-	 n-=4;
+	var clickWidth = pieceWidth;
+	var clickSpan = clickWidth/2;
 
-	n=Math.round(n);
-	console.log("adding -1 to "+n);
-	if(n<25 && n>=1){
-		if(phaseOne){
-		locations[n]=1;
-		numGoats-=1;
+	for(i=0;i<locations.length;i++){
+		var xNode = boardX + (i%5)*pieceWidth;
+		var yNode = boardY + Math.floor(i/5)*pieceHeight;
+
+		xNode = xNode + optionsWidth;
+
+		var leftBound = xNode - clickSpan;
+		var rightBound = xNode + clickSpan
+		var upBound =  yNode - clickSpan;
+		var downBound = yNode + clickSpan;
+
+		if(x>leftBound && x<rightBound){
+			if(y>upBound && y<downBound){
+				n=i;
+			}
+		}
+
+
+	}
+
+
+	if(n!=-999){
+		if(PLAYER1){
+			if(phase==1){
+				console.log("adding -1 to "+n);
+				if(!locations[n]){
+					locations[n]=1;
+					numGoats++;
+					turnSwap();
+				}
+				
+			}else if(phase==2){
+				
+			}
+		}else if (PLAYER2){
+			if(selectedPiece<0){
+				if(locations[n]==-1){
+					selectPiece(n);
+				}
+			}else{
+				
+				if(!location[n]){
+					console.log("hey!"+selectedPiece+" "+n);
+					console.log(locations[selectedPiece]);
+					locations[n]=-1;
+					deselectPiece(n);
+					console.log(locations[selectedPiece]);
+					turnSwap();
+				}
+				
+			}
 		}
 	}
+		
+		
+	
 	drawInterface();
 	
-	}else{
-		//do other stuff here like clear selection
-		console.log('outside board');
-	}
-
-	myTurn = !myTurn;
+	
+	
 }
 function upFunction(xPos, yPos) {
 
