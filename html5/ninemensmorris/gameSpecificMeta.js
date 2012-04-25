@@ -86,7 +86,7 @@ function indexOfPosition(posX, posY){
 }
 
 function topNeighborIndex(index){
-	if (index===17){
+	if (index===16 || index===null){
 		return null;
 	}
 	
@@ -105,7 +105,7 @@ function topNeighborIndex(index){
 }
 
 function bottomNeighborIndex(index){
-	if (index===7){
+	if (index===7 || index===null){
 		return null;
 	}
 	
@@ -124,7 +124,7 @@ function bottomNeighborIndex(index){
 }
 
 function rightNeighborIndex(index){
-	if (index===11){
+	if (index===11 || index===null){
 		return null;
 	}
 	
@@ -143,7 +143,7 @@ function rightNeighborIndex(index){
 }
 
 function leftNeighborIndex(index){
-	if (index===12){
+	if (index===12 || index===null){
 		return null;
 	}
 	
@@ -275,10 +275,52 @@ function findEmptyNeighbors(i){
 		return neighbors;
 }
 	
-
-function P1ThreeInARow(index){
-	
+function validTriple(tripleState){
+	return tripleState !== undefined && tripleState !== false;
 }
+	
+function makesThree(index, player){
+	var aboveOneIndex = topNeighborIndex(index);
+	var aboveTwoIndex = topNeighborIndex(aboveOneIndex);
+	var belowOneIndex = bottomNeighborIndex(index);
+	var belowTwoIndex = bottomNeighborIndex(belowOneIndex);
+	var rightOneIndex = rightNeighborIndex(index);
+	var rightTwoIndex = rightNeighborIndex(rightOneIndex);
+	var leftOneIndex = leftNeighborIndex(index);
+	var leftTwoIndex = leftNeighborIndex(leftOneIndex);
+	
+	switch (player){
+	case 1:
+		var aboveBelow = P1PieceLocations[aboveOneIndex] && P1PieceLocations[belowOneIndex];
+		var aboveTwice = P1PieceLocations[aboveOneIndex] && P1PieceLocations[aboveTwoIndex];
+		var belowTwice = P1PieceLocations[belowOneIndex] && P1PieceLocations[belowTwoIndex];
+		var makesVertTriple = validTriple(aboveBelow) || validTriple(aboveTwice) || validTriple(belowTwice);
+		
+		var rightLeft = P1PieceLocations[rightOneIndex] && P1PieceLocations[leftOneIndex];
+		var rightTwice = P1PieceLocations[rightOneIndex] && P1PieceLocations[rightTwoIndex];
+		var leftTwice = P1PieceLocations[leftOneIndex] && P1PieceLocations[leftTwoIndex];
+		var makesHorizTriple = validTriple(rightLeft) || validTriple(rightTwice) || validTriple(leftTwice);
+		
+		return makesVertTriple || makesHorizTriple;
+		break;
+	case 2:
+		var aboveBelow = P2PieceLocations[aboveOneIndex] && P2PieceLocations[belowOneIndex];
+		var aboveTwice = P2PieceLocations[aboveOneIndex] && P2PieceLocations[aboveTwoIndex];
+		var belowTwice = P2PieceLocations[belowOneIndex] && P2PieceLocations[belowTwoIndex];
+		var makesVertTriple = validTriple(aboveBelow) || validTriple(aboveTwice) || validTriple(belowTwice);
+		
+		var rightLeft = P2PieceLocations[rightOneIndex] && P2PieceLocations[leftOneIndex];
+		var rightTwice = P2PieceLocations[rightOneIndex] && P2PieceLocations[rightTwoIndex];
+		var leftTwice = P2PieceLocations[leftOneIndex] && P2PieceLocations[leftTwoIndex];
+		var makesHorizTriple = validTriple(rightLeft) || validTriple(rightTwice) || validTriple(leftTwice);
+		
+		return makesVertTriple || makesHorizTriple;
+		break;
+	default:
+		throw new Error("player must be either 1 or 2 for MakeThree")
+	}
+}
+	
 
 function drawP1Piece(x, y){
 
@@ -306,7 +348,18 @@ function drawPieceCounter(x, y){
 
 function drawDeleteIndicator(x, y){
 	interfacecxt.fillStyle = "black";
-	interfacecxt.fillText("Select a piece from the opposing player to remove from the board")
+	interfacecxt.fillText("Select a piece from the opposing", x, y);
+	interfacecxt.fillText("player to remove from the board", x, y+10);
+}
+
+function drawTurnCounter(x, y){
+	interfacecxt.fillStyle = "black";
+	if (playerTurn === PLAYER1){
+		interfacecxt.fillText("Player 1's Turn", x, y);
+	}
+	else if (playerTurn === PLAYER2){
+		interfacecxt.fillText("Player 2's Turn", x, y);
+	}
 }
 
 function animate(position, end) { // takes a starting point and end point
@@ -338,6 +391,21 @@ function animate(position, end) { // takes a starting point and end point
 	}
 }
 
+function flyPhase(start, end) { //need to call within  Animate
+	if (P1PiecesToPlace <= 3) {
+		if(P1PieceLocations[start] && possiblePositions[end] == false) {
+				P1PieceLocations[start] = false;
+				P1PieceLocations[end] = true;
+	    }
+			
+	} else if (P2PiecesToPlace <= 3){
+		if(P2PieceLocations[start] && possiblePositions[end] == false) {
+			P2PieceLocations[start] = false;
+			P2PieceLocations[end] = true;
+		}	
+	}
+}
+
 function drawArrow(start, end){
 	//Y-coordinates are the same (moving piece to empty space in the same row). 
 	if ( possiblePositions[start][1] == possiblePositions[end][1]){
@@ -361,13 +429,23 @@ function drawArrow(start, end){
 	}
 }
 
-function drawDot(x, y){
+function drawDot(x, y){ //UPDATES DRAWDOT method for Phase 3
 	var radius = interfaceDotRadius;
 	interfacecxt.beginPath();
 	interfacecxt.fillStyle = "black";
 	interfacecxt.arc(x,y,radius, 0, Math.PI*2, true);
 	interfacecxt.fill();
 	interfacecxt.stroke();
+	
+	if ((playerTurn === PLAYER1 && P1PiecesToPlace < 0 && P1PiecesOnBoard === 3) 
+	|| (playerTurn === PLAYER2 && P2PiecesToPlace < 0 && P2PiecesOnBoard === 3)) {
+		var radius = interfaceDotRadius;
+		interfacecxt.beginPath();
+		interfacecxt.fillStyle = "rgb(190,190,190)";
+		interfacecxt.arc(x,y,radius*2, 10, 0, Math.PI*2, true);
+		interfacecxt.fill();
+		interfacecxt.stroke();
+	} 
 }
 
 function drawBoardLines(){
@@ -404,6 +482,7 @@ function drawInterface() {
 	interfacecxt.clearRect(0, 0, interfaceWidth, interfaceHeight);
 	drawBoardLines();
 	drawPieceCounter(interfaceWidth-200, 150);
+	drawTurnCounter(interfaceWidth-200, 100);
 	
 	
 	// redraw pieces that are supposed to be on the board.  if nothing's there, draw a dot
@@ -420,13 +499,14 @@ function drawInterface() {
 			drawDot(possiblePositions[i][0], possiblePositions[i][1]);
 		}
 	}
+	
+	if (deletePhase){
+		drawDeleteIndicator(30, 30);
+	}
 }
 
-/**
-This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
-*/
-function clickFunction(xPos, yPos) {
-	
+function placingPhaseClickFunction(xPos, yPos){
+		
 	var radius = interfaceDotRadius;
 	
 	for (i = 0; i < possiblePositions.length; i++){
@@ -436,23 +516,73 @@ function clickFunction(xPos, yPos) {
 		
 		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
 		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
-			if(playerTurn == PLAYER1){
+			if(playerTurn === PLAYER1){
 				P1PieceLocations[i] = true;
 				P1PiecesToPlace -= 1;
 				P1PiecesOnBoard += 1;
-				//drawP1Piece(dotXPos, dotYPos);
+				if (makesThree(i, 1)){
+					deletePhase = true;
+				}
 			}
-			else{
+			else if(playerTurn === PLAYER2){
 				P2PieceLocations[i] = true;
 				P2PiecesToPlace -= 1;
 				P2PiecesOnBoard += 1;
-				//drawP2Piece(dotXPos, dotYPos);
+				if (makesThree(i, 2)){
+					deletePhase = true;
+				}
 			}
-		playerTurn = !playerTurn;
+			if (!deletePhase){
+				playerTurn = !playerTurn;
+			}
 		}
 	}
 	drawInterface()
+
+}
+
+function deletePhaseClickFunction(xPos, yPos){
+		
+	var radius = interfaceSideLength/20;
 	
+	for (i = 0; i < possiblePositions.length; i++){
+		dotXPos = possiblePositions[i][0];
+		dotYPos = possiblePositions[i][1];
+		OpposingPieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
+		if (playerTurn === PLAYER1){
+			OpposingPieceInPosition = P2PieceLocations[i];
+		}
+		else if (playerTurn === PLAYER2){
+			OpposingPieceInPosition = P1PieceLocations[i];
+		}
+		
+		if (xPos <= dotXPos + radius && xPos >= dotXPos - radius && yPos <= dotYPos + radius 
+		&& yPos >= dotYPos - radius && OpposingPieceInPosition){
+			if(playerTurn === PLAYER1){
+				P2PieceLocations[i] = false;
+				P2PiecesOnBoard -= 1;
+			}
+			else if(playerTurn === PLAYER2){
+				P1PieceLocations[i] = false;
+				P1PiecesOnBoard -= 1;
+			}
+			playerTurn = !playerTurn;
+			deletePhase = false;
+		}
+	}
+	drawInterface()
+}
+
+/**
+This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
+*/
+function clickFunction(xPos, yPos) {
+	if (deletePhase){
+		deletePhaseClickFunction(xPos, yPos);
+	}
+	else{
+		placingPhaseClickFunction(xPos, yPos);
+	}
 }
 
 /**
