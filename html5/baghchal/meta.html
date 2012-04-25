@@ -332,7 +332,6 @@ var moveSound = new Audio('jump.wav');
 var deselectSound = new Audio('coin.wav');
 var selectSound = new Audio('select.wav');
 //starting sheep position
-console.log("resettin!");
 locations[0]=-1;
 locations[4]=-1;
 locations[24]=-1;
@@ -525,7 +524,6 @@ function drawInterface() {
 	}
     
      
-     console.log('redraw');
     // YOUR CODE ENDS HERE
 
    
@@ -547,7 +545,9 @@ This is the function you will use to register mouse pressed down and let go. The
 */
 function downFunction(xPos, yPos) {
 	//revision plans create clickable areas.2
-	
+	if(numGoats>=20){
+		phase=2;
+	}
 	function turnSwap(){
 		PLAYER1 = !PLAYER1;
 		PLAYER2 = !PLAYER2;
@@ -610,7 +610,23 @@ function downFunction(xPos, yPos) {
 				}
 				
 			}else if(phase==2){
+				if(selectedPiece<0){
+					if(locations[n]==1){
+						selectPiece(n);
+					}
+				}else{
 				
+				if(!location[n]){
+					if(!locations[n]){
+						locations[n]=1;
+						locations[selectedPiece]=undefined;						
+						deselectPiece();
+						moveSound.play();
+						turnSwap();
+					}
+				}
+				
+			}
 			}
 		}else if (PLAYER2){
 			if(selectedPiece<0){
