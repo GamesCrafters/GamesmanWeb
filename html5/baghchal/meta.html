@@ -315,7 +315,7 @@ function popLastPosition() {
 //drawing functions start here
 var boardWidth = interfaceWidth/2;
 var boardHeight = interfaceWidth/2;
-var boardX = interfaceWidth/2 - boardWidth*.80;
+var boardX = interfaceWidth/2- boardWidth*.80;
 var boardY = interfaceHeight/2 - boardHeight/2;
 var locations = new Array(15);
 var selectedPiece = -1; // which node is selected;
@@ -431,7 +431,7 @@ function drawInterface() {
     // This should be at the front of your code!
     boardWidth = Math.min(interfaceHeight*.9,interfaceWidth/2);
 	boardHeight = Math.min(interfaceHeight*.9, interfaceWidth/2);
-	boardX = interfaceWidth/2 - boardWidth*.80;
+	boardX = interfaceWidth/2- boardWidth/2-optionsWidth/2;
 	boardY = interfaceHeight/2 - boardHeight/2;
 	pieceWidth = boardWidth/4;
 	pieceHeight = boardHeight/4;
