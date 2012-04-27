@@ -13,7 +13,16 @@ var P1PiecesToPlace = 9;
 var P2PiecesToPlace = 9;
 var P1PiecesOnBoard = 0;
 var P2PiecesOnBoard = 0;
-var deletePhase = false;
+var count = 0;
+var speed = 1;
+var arrowOutlineColor = "yellow";
+var arrowInnerColor = "white";
+
+var PLACINGPHASE = 1;
+var SLIDINGPHASE = 2;
+var FLYINGPHASE = 3;
+var DELETEPHASE = 4;
+var gamePhase = PLACINGPHASE;
 
 var P1PieceColor = "rgb(255, 0, 0)";
 var P2PieceColor = "rgb(0, 0, 255)";
@@ -162,117 +171,117 @@ function leftNeighborIndex(index){
 }
 
 function findEmptyNeighbors(i){
-		var neighbors = newArray();
-		var count = 0;
-		
-		//Create an array, containing the index of the locations to check for empty spots (based on current position)
-		if(i == 0){
-			var check = [1,9];
-		}
-		if(i == 1){
-			var check = [0,2,4];
-		}
-		
-		if(i == 2){
-			var check = [1,14];
-		}
-		
-		if(i == 3){
-			var check = [4,10];
-		}
-		
-		if(i == 4){
-			var check = [1,3,5,7];
-		}
-		
-		if(i == 5){
-			var check = [4,13];
-		}
-		
-		if(i == 6){
-			var check = [7,11];
-		}
-		
-		if(i == 7){
-			var check = [4,6,8];
-		}
-		
-		if(i == 8){
-			var check = [7,12];
-		}
-		
-		if(i == 9){
-			var check = [0,10];
-		}
-		
-		if(i == 10){
-			var check = [3,9,11,18];
-		}
-		
-		if(i == 11){
-			var check = [6,10,16];
-		}
-		
-		if(i == 12){
-			var check = [8,13,17];
-		}
-		
-		if(i == 13){
-			var check = [5,12,14,20];
-		}
-		
-		if(i == 14){
-			var check = [2,13,23];
-		}
-		
-		if(i == 15){
-			var check = [11,16];
-		}
-		
-		if(i == 16){
-			var check = [15,17,19];
-		}
-		
-		if(i == 17){
-			var check = [12,16];
-		}
-		
-		if(i == 18){
-			var check = [10,19];
-		}
-		
-		if(i == 19){
-			var check = [16,18,20,22];
-		}
-		
-		if(i == 20){
-			var check = [13,19];
-		}
-		
-		if(i == 21){
-			var check = [9,22];
-		}
-		
-		if(i == 22){
-			var check = [19,21,23];
-		}
-		
-		if(i == 23){
-			var check = [14,22];
-		}
-		
-		var j = 0;
-		var index = 0;
-		//Check if the respective spots are empty. If it is, put the index into neighbor array
-		for(j = 0; j < check.length; j++){
-			index = check[j];
-			if(P1PieceLocations[index] == false && P2PieceLocations[index] == false){
-			 	neighbors[count] = index;
-				count++;
-			}
-		}
-		
-		return neighbors;
+        var neighbors = new Array();
+        var count = 0;
+        
+        //Create an array, containing the index of the locations to check for empty spots (based on current position)
+        if(i == 0){
+            var check = [1,9];
+        }
+        if(i == 1){
+            var check = [0,2,4];
+        }
+        
+        if(i == 2){
+            var check = [1,14];
+        }
+        
+        if(i == 3){
+            var check = [4,10];
+        }
+        
+        if(i == 4){
+            var check = [1,3,5,7];
+        }
+        
+        if(i == 5){
+            var check = [4,13];
+        }
+        
+        if(i == 6){
+            var check = [7,11];
+        }
+        
+        if(i == 7){
+            var check = [4,6,8];
+        }
+        
+        if(i == 8){
+            var check = [7,12];
+        }
+        
+        if(i == 9){
+            var check = [0,10,21];
+        }
+        
+        if(i == 10){
+            var check = [3,9,11,18];
+        }
+        
+        if(i == 11){
+            var check = [6,10,15];
+        }
+        
+        if(i == 12){
+            var check = [8,13,17];
+        }
+        
+        if(i == 13){
+            var check = [5,12,14,20];
+        }
+        
+        if(i == 14){
+            var check = [2,13,23];
+        }
+        
+        if(i == 15){
+            var check = [11,16];
+        }
+        
+        if(i == 16){
+            var check = [15,17,19];
+        }
+        
+        if(i == 17){
+            var check = [12,16];
+        }
+        
+        if(i == 18){
+            var check = [10,19];
+        }
+        
+        if(i == 19){
+            var check = [16,18,20,22];
+        }
+        
+        if(i == 20){
+            var check = [13,19];
+        }
+        
+        if(i == 21){
+            var check = [9,22];
+        }
+        
+        if(i == 22){
+            var check = [19,21,23];
+        }
+        
+        if(i == 23){
+            var check = [14,22];
+        }
+        
+        var j = 0;
+        var index = 0;
+        //Check if the respective spots are empty. If it is, put the index into neighbor array
+        for(j = 0; j < check.length; j++){
+            index = check[j];
+            if(P1PieceLocations[index] == false && P2PieceLocations[index] == false){
+                 neighbors[count] = index;
+                count++;
+            }
+        }
+        
+        return neighbors;
 }
 	
 function validTriple(tripleState){
@@ -362,34 +371,135 @@ function drawTurnCounter(x, y){
 	}
 }
 
-function animate(position, end) { // takes a starting point and end point
-    var side = interfaceSideLength;
-
-    if (P1PieceLocations[position] && P1PieceLocations[end] === false){
-	//makes sure position is true and end is false
-		P1PieceLocations[position] = false; //sets position to false = beginning of animation
-        if (possiblePositions[position] === (P1PieceLocations[0] ||
-		P1PieceLocations[1] || P1PieceLocations[2] || P1PieceLocations[9] ||
-		P1PieceLocations[14] || P1PieceLocations[21] || P1PieceLocations[22]
-		|| P1PieceLocations[23])) { 
-            possiblePositions[position] = possiblePositions[end]/[offsetX+side*0/6 +1, offsetY+side*0/6] 
-			// !@#$!trying to animate by setting position to a multiple of end, because end can be in 4 different directions from position
-        } else if (P1PieceLocations[position] === (P1PieceLocations[3] ||
-		P1PieceLocations[4] || P1PieceLocations[5] || P1PieceLocations[10] ||
-		P1PieceLocations[13] || P1PieceLocations[18] || P1PieceLocations[20]))
-		{
-            //possiblePositions[]  = [offsetX+side*0/6 +1, offsetY+side*0/6]
-        } else if (P1PieceLocations[position] === (P1PieceLocations[6] ||
-		P1PieceLocations[7] || P1PieceLocations[8] || P1PieceLocations[11] ||
-		P1PieceLocations[12] || P1PieceLocations[15] || P1PieceLocations[16]
-		|| P1PieceLocations[17]))
-		{
-        // if statement separate positions by outside square, middle square, inside square
-        } else if (P2PieceLocations[i]){ // does the same thing above for p2pieces
-                       P2PieceLocations[i] = false;
-		}
-	}
+function animate (start, end) {
+    var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+    //var drawPiece = drawP1Piece / drawP2Piece ? Then just add in arguments -> darwPiece(x,y)? 
+    
+    if(P1PieceLocations[start]){ //Check if the animated piece is Player 1 or Player 2
+        //Remove the current piece from its original location
+        P1PieceLocations[start] = false;
+        //animate the piece to the right or the left, since y1 == y2
+        if(y1 == y2){
+            if(x1 < x2){
+                if(x1+count < x2){ //Sliding the piece to the right
+                    drawP1Piece(x1+count, y1);
+                    count += speed;             //redraws the circle at 1 pixel away from the normal position
+                    if(x1+count >= x2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P1PieceLocations[end] = true;
+                        }
+                }
+            }
+            else{
+                if(x1-count > x2){  //Sliding the piece to the left
+                    drawP1Piece(x1-count, y1);
+                    count += speed;             //redraws the circle at 1 pixel away from the normal position
+                    if(x1-count <= x2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P1PieceLocations[end] = true;
+                        }
+                }
+            }
+        }
+        //animate the piece up or down, since y1 == y2
+        if(x1 == x2){
+            if(y1 < y2){
+                if(y1+count < y2){  //Sliding the piece down
+                    drawP1Piece(x1, y1+count);
+                    count += speed;             //redraws the circle at 1 pixel away from the normal position
+                    if(y1+count >= y2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P1PieceLocations[end] = true;
+                        }
+                }
+            }
+            else{
+                if(y1-count < y2){  //Sliding the piece up
+                    drawP1Piece(x1, y1-count);
+                    count += speed;             //redraws the circle at 1 pixel away from the normal position
+                    if(y1-count <= y2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P1PieceLocations[end] = true;
+                        }
+                }
+            }
+        }
+    }
+    
+    //Repeat the same for P2
+    else if(P2PieceLocations[start]){ //Check if the animated piece is Player 1 or Player 2
+        //Remove the current piece from its original location
+        P2PieceLocations[start] = false;
+        //animate the piece to the right or the left, since y1 == y2
+        if(y1 == y2){
+            if(x1 < x2){
+                if(x1+count < x2){ //Sliding the piece to the right
+                    drawP2Piece(x1+count, y1);
+                    count++;             //redraws the circle at 1 pixel away from the normal position
+                    if(x1+count == x2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P2PieceLocations[end] = true;
+                        }
+                }
+            }
+            else{
+                if(x1-count > x2){  //Sliding the piece to the left
+                    drawP2Piece(x1-count, y1);
+                    count++;             //redraws the circle at 1 pixel away from the normal position
+                    if(x1-count == x2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P2PieceLocations[end] = true;
+                        }
+                }
+            }
+        }
+        //animate the piece up or down, since y1 == y2
+        if(x1 == x2){
+            if(y1 < y2){
+                if(y1+count < y2){  //Sliding the piece down
+                    drawP2Piece(x1, y1+count);
+                    count++;             //redraws the circle at 1 pixel away from the normal position
+                    if(y1+count == y2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P2PieceLocations[end] = true;
+                        }
+                }
+            }
+            else{
+                if(y1-count < y2){  //Sliding the piece up
+                    drawP2Piece(x1, y1-count);
+                    count++;             //redraws the circle at 1 pixel away from the normal position
+                    if(y1-count == y2){
+                        //Stop animation and reset the counter
+                        count = 0;
+                        //Set the new position of the piece
+                        P2PieceLocations[end] = true;
+                        }
+                }
+            }
+        }
+    }
+    
 }
+
+
 
 function flyPhase(start, end) { //need to call within  Animate
 	if (P1PiecesToPlace <= 3) {
@@ -407,26 +517,157 @@ function flyPhase(start, end) { //need to call within  Animate
 }
 
 function drawArrow(start, end){
-	//Y-coordinates are the same (moving piece to empty space in the same row). 
-	if ( possiblePositions[start][1] == possiblePositions[end][1]){
-		//If starting point's X-coordinate is less than ending point's X-coordinate, arrow points to right
-		if( possiblePositions[start][0] < possiblePositions[end][0]){
-			//Draw arrow pointing to the right
-		}
-		else{
-			//Draw arrow pointing to the left
-		}
-	}
-	
-	//Y-coordinates are different (moving piece to empty space in the same column)
-	else{
-		if( possiblePositions[start][1] < possiblePositions[end][1]){
-			//Draw arrow pointing down
-		}
-		else{
-			//Draw arrow pointing up
-		}
-	}
+    //Y-coordinates are the same (moving piece to empty space in the same row). 
+    if ( possiblePositions[start][1] == possiblePositions[end][1]){
+        //If starting point's X-coordinate is less than ending point's X-coordinate, arrow points to right
+        if( possiblePositions[start][0] < possiblePositions[end][0]){
+            //Draw arrow pointing to the right
+            drawRightArrow(start,end);
+        }
+        else{
+            //Draw arrow pointing to the left
+            drawLeftArrow(start,end);
+        }
+    }
+    
+    //Y-coordinates are different (moving piece to empty space in the same column)
+    else{
+        if( possiblePositions[start][1] < possiblePositions[end][1]){
+            //Draw arrow pointing down
+            drawDownArrow(start,end);
+        }
+        else{
+            //Draw arrow pointing up
+            drawUpArrow(start,end);
+        }
+    }
+}
+
+function drawUpArrow(start, end){
+    var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+    
+    interfacecxt.beginPath();
+    
+    interfacecxt.moveTo(x1-10,y1-30);
+    interfacecxt.lineTo(x1+10, y1-30);
+    interfacecxt.lineTo(x1+10,y1-40);
+    interfacecxt.lineTo(x1+15,y1-40);
+    interfacecxt.lineTo(x1,y1-50);
+    interfacecxt.lineTo(x1-15,y1-40);
+    interfacecxt.lineTo(x1-10,y1-40);
+    interfacecxt.lineTo(x1-10,y1-30);
+    
+    interfacecxt.fillStyle = arrowInnerColor;
+    interfacecxt.fill();
+    interfacecxt.strokeStyle = arrowOutlineColor;
+    interfacecxt.stroke();
+    interfacecxt.closePath();
+}
+
+function drawDownArrow(start, end){
+    var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+    
+    interfacecxt.beginPath();
+    
+    interfacecxt.moveTo(x1+10,y1+30);
+    interfacecxt.lineTo(x1-10, y1+30);
+    interfacecxt.lineTo(x1-10,y1+40);
+    interfacecxt.lineTo(x1-15,y1+40);
+    interfacecxt.lineTo(x1,y1+50);
+    interfacecxt.lineTo(x1+15,y1+40);
+    interfacecxt.lineTo(x1+10,y1+40);
+    interfacecxt.lineTo(x1+10,y1+30);
+    
+    interfacecxt.fillStyle = arrowInnerColor;
+    interfacecxt.fill();
+    interfacecxt.strokeStyle = arrowOutlineColor;
+    interfacecxt.stroke();
+    interfacecxt.closePath();
+}
+
+function drawRightArrow(start, end){
+    var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+    
+    interfacecxt.beginPath();
+    
+    interfacecxt.moveTo(x1+30,y1+10);
+    interfacecxt.lineTo(x1+30, y1-10);
+    interfacecxt.lineTo(x1+40,y1-10);
+    interfacecxt.lineTo(x1+40,y1-15);
+    interfacecxt.lineTo(x1+50,y1);
+    interfacecxt.lineTo(x1+40,y1+15);
+    interfacecxt.lineTo(x1+40,y1+10);
+    interfacecxt.lineTo(x1+30,y1+10);
+    
+    interfacecxt.fillStyle = arrowInnerColor;
+    interfacecxt.fill();
+    interfacecxt.strokeStyle = arrowOutlineColor;
+    interfacecxt.stroke();
+    interfacecxt.closePath();
+}
+
+function drawLeftArrow(start, end){
+    var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+    
+    interfacecxt.beginPath();
+    
+    interfacecxt.moveTo(x1-30,y1-10);
+    interfacecxt.lineTo(x1-30, y1+10);
+    interfacecxt.lineTo(x1-40,y1+10);
+    interfacecxt.lineTo(x1-40,y1+15);
+    interfacecxt.lineTo(x1-50,y1);
+    interfacecxt.lineTo(x1-40,y1-15);
+    interfacecxt.lineTo(x1-40,y1-10);
+    interfacecxt.lineTo(x1-30,y1-10);
+    
+    interfacecxt.fillStyle = arrowInnerColor;
+    interfacecxt.fill();
+    interfacecxt.strokeStyle = arrowOutlineColor;
+    interfacecxt.stroke();
+    interfacecxt.closePath();
+}
+
+
+function drawArrowsPhaseTwo(){
+    if(playerTurn ==PLAYER1){
+    for(i = 0; i < possiblePositions.length; i++){
+            if(P1PieceLocations[i]){
+                var n = findEmptyNeighbors(i);
+                if(n != null){
+                    for(j = 0; j < n.length; j++){
+                        drawArrow(i, n[j]);
+                        }
+                }
+            }
+        }
+    }
+    
+    else{
+    for(i = 0; i < possiblePositions.length; i++){
+            if(P2PieceLocations[i]){
+                var n = findEmptyNeighbors(i);
+                if(n != null){
+                    for(j = 0; j < n.length; j++){
+                        drawArrow(i, n[j]);
+
+
+                        }
+                }
+            }
+        }
+    }
 }
 
 function drawDot(x, y){ //UPDATES DRAWDOT method for Phase 3
@@ -500,7 +741,11 @@ function drawInterface() {
 		}
 	}
 	
-	if (deletePhase){
+	if (P1PiecesToPlace <= 0 && P2PiecesToPlace <= 0){
+		drawArrowsPhaseTwo();
+	}
+	
+	if (gamePhase===DELETEPHASE){
 		drawDeleteIndicator(30, 30);
 	}
 }
@@ -521,7 +766,7 @@ function placingPhaseClickFunction(xPos, yPos){
 				P1PiecesToPlace -= 1;
 				P1PiecesOnBoard += 1;
 				if (makesThree(i, 1)){
-					deletePhase = true;
+					gamePhase = DELETEPHASE;
 				}
 			}
 			else if(playerTurn === PLAYER2){
@@ -529,15 +774,87 @@ function placingPhaseClickFunction(xPos, yPos){
 				P2PiecesToPlace -= 1;
 				P2PiecesOnBoard += 1;
 				if (makesThree(i, 2)){
-					deletePhase = true;
+					gamePhase = DELETEPHASE
 				}
 			}
-			if (!deletePhase){
+			if (gamePhase !== DELETEPHASE){
 				playerTurn = !playerTurn;
 			}
 		}
 	}
 	drawInterface()
+
+}
+
+function slidingPhaseClickFunction(xPos, yPos){
+		
+	var radius = interfaceDotRadius;
+	
+	for (i = 0; i < possiblePositions.length; i++){
+		dotXPos = possiblePositions[i][0];
+		dotYPos = possiblePositions[i][1];
+		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
+		
+		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
+		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
+			if(playerTurn === PLAYER1){
+				P1PieceLocations[i] = true;
+				P1PiecesToPlace -= 1;
+				P1PiecesOnBoard += 1;
+				if (makesThree(i, 1)){
+					gamePhase = DELETEPHASE;
+				}
+			}
+			else if(playerTurn === PLAYER2){
+				P2PieceLocations[i] = true;
+				P2PiecesToPlace -= 1;
+				P2PiecesOnBoard += 1;
+				if (makesThree(i, 2)){
+					gamePhase = DELETEPHASE
+				}
+			}
+			if (gamePhase !== DELETEPHASE){
+				playerTurn = !playerTurn;
+			}
+		}
+	}
+	drawInterface()
+
+}
+
+function flyingPhaseClickFunction(xPos, yPos){
+		
+	var radius = interfaceDotRadius;
+	
+	for (i = 0; i < possiblePositions.length; i++){
+		dotXPos = possiblePositions[i][0];
+		dotYPos = possiblePositions[i][1];
+		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
+		
+		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
+		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
+			if(playerTurn === PLAYER1){
+				P1PieceLocations[i] = true;
+				P1PiecesToPlace -= 1;
+				P1PiecesOnBoard += 1;
+				if (makesThree(i, 1)){
+					gamePhase = DELETEPHASE;
+				}
+			}
+			else if(playerTurn === PLAYER2){
+				P2PieceLocations[i] = true;
+				P2PiecesToPlace -= 1;
+				P2PiecesOnBoard += 1;
+				if (makesThree(i, 2)){
+					gamePhase = DELETEPHASE
+				}
+			}
+			if (gamePhase !== DELETEPHASE){
+				playerTurn = !playerTurn;
+			}
+		}
+	}
+	drawInterface();
 
 }
 
@@ -567,21 +884,31 @@ function deletePhaseClickFunction(xPos, yPos){
 				P1PiecesOnBoard -= 1;
 			}
 			playerTurn = !playerTurn;
-			deletePhase = false;
+			gamePhase = PLACINGPHASE; // find out what the real phase is
 		}
 	}
-	drawInterface()
+	drawInterface();
 }
 
 /**
 This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
 */
 function clickFunction(xPos, yPos) {
-	if (deletePhase){
+	switch (gamePhase){
+	case DELETEPHASE:
 		deletePhaseClickFunction(xPos, yPos);
-	}
-	else{
+		break;
+	case PLACINGPHASE:
 		placingPhaseClickFunction(xPos, yPos);
+		break;
+	case SLIDINGPHASE:
+		slidingpPhaseClickFunction(xPos, yPos);
+		break;
+	case FLYINGPHASE:
+		flyingPhaseClickFunction(xPos, yPos);
+		break;
+	default:
+		throw new Error("game has entered unknown phase.  please restart")
 	}
 }
 
