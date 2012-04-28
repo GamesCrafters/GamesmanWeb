@@ -6,6 +6,7 @@ var offsetX = 40;
 var offsetY = 40;
 var interfaceSideLength = 1;
 var interfaceDotRadius = interfaceSideLength/75;
+
 var possiblePositions = new Array(); // Count from top left corner to bottom right corner
 var P1PieceLocations = new Array(); // Count from top left corner to bottom right corner
 var P2PieceLocations = new Array(); 
@@ -13,17 +14,19 @@ var P1PiecesToPlace = 9;
 var P2PiecesToPlace = 9;
 var P1PiecesOnBoard = 0;
 var P2PiecesOnBoard = 0;
-var count = 0;
-var speed = 1;
-var arrowOutlineColor = "yellow";
-var arrowInnerColor = "white";
+var selectedPieceIndex = null;
 
 var PLACINGPHASE = 1;
 var SLIDINGPHASE = 2;
 var FLYINGPHASE = 3;
 var DELETEPHASE = 4;
+var GAMEOVER = 5;
 var gamePhase = PLACINGPHASE;
 
+var count = 0;
+var speed = 1;
+var arrowOutlineColor = "yellow";
+var arrowInnerColor = "white";
 var P1PieceColor = "rgb(255, 0, 0)";
 var P2PieceColor = "rgb(0, 0, 255)";
 
@@ -168,6 +171,11 @@ function leftNeighborIndex(index){
 	if (left2 != -1) return left2;
 	if (left3 != -1) return left3;
 	return null;
+}
+
+function emptySpace(i){
+	// checks if the index specified is empty
+	return !(P1PieceLocations[i] || P2PieceLocations[i])
 }
 
 function findEmptyNeighbors(i){
@@ -544,6 +552,8 @@ function drawArrow(start, end){
 }
 
 function drawUpArrow(start, end){
+	var offset = interfaceSideLength/60;
+	
     var x1 = possiblePositions[start][0];
     var y1 = possiblePositions[start][1];
     var x2 = possiblePositions[end][0];
@@ -551,14 +561,14 @@ function drawUpArrow(start, end){
     
     interfacecxt.beginPath();
     
-    interfacecxt.moveTo(x1-10,y1-30);
-    interfacecxt.lineTo(x1+10, y1-30);
-    interfacecxt.lineTo(x1+10,y1-40);
-    interfacecxt.lineTo(x1+15,y1-40);
-    interfacecxt.lineTo(x1,y1-50);
-    interfacecxt.lineTo(x1-15,y1-40);
-    interfacecxt.lineTo(x1-10,y1-40);
-    interfacecxt.lineTo(x1-10,y1-30);
+    interfacecxt.moveTo(x1-offset,y1-3*offset);
+    interfacecxt.lineTo(x1+offset, y1-3*offset);
+    interfacecxt.lineTo(x1+offset,y1-4*offset);
+    interfacecxt.lineTo(x1+1.5*offset,y1-4*offset);
+    interfacecxt.lineTo(x1,y1-5*offset);
+    interfacecxt.lineTo(x1-1.5*offset,y1-4*offset);
+    interfacecxt.lineTo(x1-offset,y1-4*offset);
+    interfacecxt.lineTo(x1-offset,y1-3*offset);
     
     interfacecxt.fillStyle = arrowInnerColor;
     interfacecxt.fill();
@@ -568,6 +578,8 @@ function drawUpArrow(start, end){
 }
 
 function drawDownArrow(start, end){
+	var offset = interfaceSideLength/60;
+	
     var x1 = possiblePositions[start][0];
     var y1 = possiblePositions[start][1];
     var x2 = possiblePositions[end][0];
@@ -575,14 +587,14 @@ function drawDownArrow(start, end){
     
     interfacecxt.beginPath();
     
-    interfacecxt.moveTo(x1+10,y1+30);
-    interfacecxt.lineTo(x1-10, y1+30);
-    interfacecxt.lineTo(x1-10,y1+40);
-    interfacecxt.lineTo(x1-15,y1+40);
-    interfacecxt.lineTo(x1,y1+50);
-    interfacecxt.lineTo(x1+15,y1+40);
-    interfacecxt.lineTo(x1+10,y1+40);
-    interfacecxt.lineTo(x1+10,y1+30);
+    interfacecxt.moveTo(x1+1*offset,y1+3*offset);
+    interfacecxt.lineTo(x1-1*offset, y1+3*offset);
+    interfacecxt.lineTo(x1-1*offset,y1+4*offset);
+    interfacecxt.lineTo(x1-15,y1+4*offset);
+    interfacecxt.lineTo(x1,y1+5*offset);
+    interfacecxt.lineTo(x1+15,y1+4*offset);
+    interfacecxt.lineTo(x1+1*offset,y1+4*offset);
+    interfacecxt.lineTo(x1+1*offset,y1+3*offset);
     
     interfacecxt.fillStyle = arrowInnerColor;
     interfacecxt.fill();
@@ -592,6 +604,8 @@ function drawDownArrow(start, end){
 }
 
 function drawRightArrow(start, end){
+	var offset = interfaceSideLength/60;
+
     var x1 = possiblePositions[start][0];
     var y1 = possiblePositions[start][1];
     var x2 = possiblePositions[end][0];
@@ -599,14 +613,14 @@ function drawRightArrow(start, end){
     
     interfacecxt.beginPath();
     
-    interfacecxt.moveTo(x1+30,y1+10);
-    interfacecxt.lineTo(x1+30, y1-10);
-    interfacecxt.lineTo(x1+40,y1-10);
-    interfacecxt.lineTo(x1+40,y1-15);
-    interfacecxt.lineTo(x1+50,y1);
-    interfacecxt.lineTo(x1+40,y1+15);
-    interfacecxt.lineTo(x1+40,y1+10);
-    interfacecxt.lineTo(x1+30,y1+10);
+    interfacecxt.moveTo(x1+3*offset,y1+1*offset);
+    interfacecxt.lineTo(x1+3*offset, y1-1*offset);
+    interfacecxt.lineTo(x1+4*offset,y1-1*offset);
+    interfacecxt.lineTo(x1+4*offset,y1-15);
+    interfacecxt.lineTo(x1+5*offset,y1);
+    interfacecxt.lineTo(x1+4*offset,y1+15);
+    interfacecxt.lineTo(x1+4*offset,y1+1*offset);
+    interfacecxt.lineTo(x1+3*offset,y1+1*offset);
     
     interfacecxt.fillStyle = arrowInnerColor;
     interfacecxt.fill();
@@ -616,6 +630,8 @@ function drawRightArrow(start, end){
 }
 
 function drawLeftArrow(start, end){
+	var offset = interfaceSideLength/60;
+
     var x1 = possiblePositions[start][0];
     var y1 = possiblePositions[start][1];
     var x2 = possiblePositions[end][0];
@@ -623,14 +639,14 @@ function drawLeftArrow(start, end){
     
     interfacecxt.beginPath();
     
-    interfacecxt.moveTo(x1-30,y1-10);
-    interfacecxt.lineTo(x1-30, y1+10);
-    interfacecxt.lineTo(x1-40,y1+10);
-    interfacecxt.lineTo(x1-40,y1+15);
-    interfacecxt.lineTo(x1-50,y1);
-    interfacecxt.lineTo(x1-40,y1-15);
-    interfacecxt.lineTo(x1-40,y1-10);
-    interfacecxt.lineTo(x1-30,y1-10);
+    interfacecxt.moveTo(x1-3*offset,y1-1*offset);
+    interfacecxt.lineTo(x1-3*offset, y1+1*offset);
+    interfacecxt.lineTo(x1-4*offset,y1+1*offset);
+    interfacecxt.lineTo(x1-4*offset,y1+15);
+    interfacecxt.lineTo(x1-5*offset,y1);
+    interfacecxt.lineTo(x1-4*offset,y1-15);
+    interfacecxt.lineTo(x1-4*offset,y1-1*offset);
+    interfacecxt.lineTo(x1-3*offset,y1-1*offset);
     
     interfacecxt.fillStyle = arrowInnerColor;
     interfacecxt.fill();
@@ -644,11 +660,11 @@ function drawArrowsPhaseTwo(){
     if(playerTurn ==PLAYER1){
     for(i = 0; i < possiblePositions.length; i++){
             if(P1PieceLocations[i]){
-                var n = findEmptyNeighbors(i);
-                if(n != null){
-                    for(j = 0; j < n.length; j++){
-                        drawArrow(i, n[j]);
-                        }
+                var emptyNeighbors = findEmptyNeighbors(i);
+                if(emptyNeighbors != null){
+                    for(j = 0; j < emptyNeighbors.length; j++){
+                        drawArrow(i, emptyNeighbors[j]);
+                    }
                 }
             }
         }
@@ -657,13 +673,11 @@ function drawArrowsPhaseTwo(){
     else{
     for(i = 0; i < possiblePositions.length; i++){
             if(P2PieceLocations[i]){
-                var n = findEmptyNeighbors(i);
-                if(n != null){
-                    for(j = 0; j < n.length; j++){
-                        drawArrow(i, n[j]);
-
-
-                        }
+                var emptyNeighbors = findEmptyNeighbors(i);
+                if(emptyNeighbors != null){
+                    for(j = 0; j < emptyNeighbors.length; j++){
+                        drawArrow(i, emptyNeighbors[j]);
+                    }
                 }
             }
         }
@@ -741,13 +755,75 @@ function drawInterface() {
 		}
 	}
 	
-	if (P1PiecesToPlace <= 0 && P2PiecesToPlace <= 0){
-		drawArrowsPhaseTwo();
-	}
-	
 	if (gamePhase===DELETEPHASE){
 		drawDeleteIndicator(30, 30);
 	}
+	else if (gamePhase===SLIDINGPHASE){
+		drawArrowsPhaseTwo();
+	}
+}
+
+function nextPhase(){
+	// returns the game phase of the next turn based on the state of the board and pieces left
+	if (playerTurn === PLAYER1){
+		if (P1PiecesToPlace === 0) {
+			if (P1PiecesOnBoard === 3){
+				return FLYINGPHASE;
+			}
+			else if (P1PiecesOnBoard > 3){
+				return SLIDINGPHASE;
+			}
+			else if (P1PiecesOnBoard < 3){
+				return GAMEOVER;
+			}
+		}
+		else{
+			return PLACINGPHASE;
+		}
+	} 
+	else if (playerTurn === PLAYER2){
+		if (P2PiecesToPlace === 0) {
+			if (P2PiecesOnBoard === 3){
+				return FLYINGPHASE;
+			}
+			else if (P2PiecesOnBoard > 3){
+				return SLIDINGPHASE;
+			}
+			else if (P2PiecesOnBoard < 3){
+				return GAMEOVER;
+			}
+		}
+		else{
+			return PLACINGPHASE;
+		}
+	}
+}
+
+function clickedArrow(mouseX, mouseY, i, direction){
+	// checks if an arrow was clicked
+	// this function assumes that if an index and direction are specified,
+	// than the index has an arrow in that direction.
+	var offset = interfaceSideLength/55;
+	var x1 = possiblePositions[i][0];
+	var y1 = possiblePositions[i][1];
+	
+	switch(direction){
+	case "top":
+		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1-5*offset && mouseY < y1-3*offset);
+		break;
+	case "bottom":
+		return (mouseX > x1-offset && mouseX > x1+offset && mouseY > y1+3*offset && mouseY < y1+5*offset);
+		break;
+	case "right":
+		return (mouseX > x1+3*offset && mouseX < x1+5*offset && mouseY > y1-offset && mouseY < y1+offset);
+		break;
+	case "left":
+		return (mouseX > x1-5*offset && mouseX < x1-3*offset && mouseY > y1-offset && mouseY < y1+offset);
+		break;
+	default:
+		throw new Error("Direction must be top, bottom, right or left")
+	}
+	
 }
 
 function placingPhaseClickFunction(xPos, yPos){
@@ -779,6 +855,7 @@ function placingPhaseClickFunction(xPos, yPos){
 			}
 			if (gamePhase !== DELETEPHASE){
 				playerTurn = !playerTurn;
+				gamePhase = nextPhase();
 			}
 		}
 	}
@@ -789,34 +866,108 @@ function placingPhaseClickFunction(xPos, yPos){
 function slidingPhaseClickFunction(xPos, yPos){
 		
 	var radius = interfaceDotRadius;
+	var arrowOffset = interfaceSideLength/60;
+	var successfulClick = false;
 	
-	for (i = 0; i < possiblePositions.length; i++){
-		dotXPos = possiblePositions[i][0];
-		dotYPos = possiblePositions[i][1];
-		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
+	for (posIndex = 0; posIndex < possiblePositions.length; posIndex++){
+		// check all locations on the board
 		
-		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
-		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
-			if(playerTurn === PLAYER1){
-				P1PieceLocations[i] = true;
-				P1PiecesToPlace -= 1;
-				P1PiecesOnBoard += 1;
-				if (makesThree(i, 1)){
+		// ignore immediately if the space is empty or doesn't belong to the right player
+		if (emptySpace(posIndex)){
+			continue;
+		}
+		if (playerTurn === PLAYER1 && P2PieceLocations[posIndex]){
+			continue;
+		}
+		if (playerTurn === PLAYER2 && P1PieceLocations[posIndex]){
+			continue;
+		}
+	
+		// piece position information and neighbor information
+		dotXPos = possiblePositions[posIndex][0];
+		dotYPos = possiblePositions[posIndex][1];
+		topIndex = topNeighborIndex(posIndex);
+		bottomIndex = bottomNeighborIndex(posIndex);
+		rightIndex = rightNeighborIndex(posIndex);
+		leftIndex = leftNeighborIndex(posIndex);
+		
+		// split according to player
+		if (playerTurn === PLAYER1){
+			// check the four directions for arrows and whether they have been clicked
+			// if arrow has been clicked the piece will move in that direction
+			if (topIndex !== null && emptySpace(topIndex) && clickedArrow(xPos, yPos, posIndex, "top")){
+				P1PieceLocations[posIndex] = false;
+				P1PieceLocations[topIndex] = true;
+				if (makesThree(topIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
+				successfulClick = true;
 			}
-			else if(playerTurn === PLAYER2){
-				P2PieceLocations[i] = true;
-				P2PiecesToPlace -= 1;
-				P2PiecesOnBoard += 1;
-				if (makesThree(i, 2)){
-					gamePhase = DELETEPHASE
+			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
+				P1PieceLocations[posIndex] = false;
+				P1PieceLocations[bottomIndex] = true;
+				if (makesThree(bottomIndex, 1)){
+					gamePhase = DELETEPHASE;
 				}
+				successfulClick = true;
 			}
-			if (gamePhase !== DELETEPHASE){
-				playerTurn = !playerTurn;
+			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
+				P1PieceLocations[posIndex] = false;
+				P1PieceLocations[rightIndex] = true;
+				if (makesThree(rightIndex, 1)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
+			}
+			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
+				P1PieceLocations[posIndex] = false;
+				P1PieceLocations[leftIndex] = true;
+				if (makesThree(leftIndex, 1)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
 			}
 		}
+		else if(playerTurn === PLAYER2){
+			// check the four directions for arrows and whether they have been clicked
+			// if arrow has been clicked the piece will move in that direction
+			if (topIndex !== null && emptySpace(topIndex) && clickedArrow(xPos, yPos, posIndex, "top")){
+				P2PieceLocations[posIndex] = false;
+				P2PieceLocations[topIndex] = true;
+				if (makesThree(topIndex, 2)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
+			}
+			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
+				P2PieceLocations[posIndex] = false;
+				P2PieceLocations[bottomIndex] = true;
+				if (makesThree(bottomIndex, 2)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
+			}
+			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
+				P2PieceLocations[posIndex] = false;
+				P2PieceLocations[rightIndex] = true;
+				if (makesThree(rightIndex, 2)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
+			}
+			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
+				P2PieceLocations[posIndex] = false;
+				P2PieceLocations[leftIndex] = true;
+				if (makesThree(leftIndex, 2)){
+					gamePhase = DELETEPHASE;
+				}
+				successfulClick = true;
+			}
+		}
+	}
+	if (successfulClick && gamePhase !== DELETEPHASE){
+		playerTurn = !playerTurn;
+		gamePhase = nextPhase();
 	}
 	drawInterface()
 
@@ -851,6 +1002,7 @@ function flyingPhaseClickFunction(xPos, yPos){
 			}
 			if (gamePhase !== DELETEPHASE){
 				playerTurn = !playerTurn;
+				gamePhase = nextPhase();
 			}
 		}
 	}
@@ -883,8 +1035,8 @@ function deletePhaseClickFunction(xPos, yPos){
 				P1PieceLocations[i] = false;
 				P1PiecesOnBoard -= 1;
 			}
-			playerTurn = !playerTurn;
-			gamePhase = PLACINGPHASE; // find out what the real phase is
+		playerTurn = !playerTurn;
+		gamePhase = nextPhase(); 
 		}
 	}
 	drawInterface();
@@ -902,13 +1054,13 @@ function clickFunction(xPos, yPos) {
 		placingPhaseClickFunction(xPos, yPos);
 		break;
 	case SLIDINGPHASE:
-		slidingpPhaseClickFunction(xPos, yPos);
+		slidingPhaseClickFunction(xPos, yPos);
 		break;
 	case FLYINGPHASE:
 		flyingPhaseClickFunction(xPos, yPos);
 		break;
 	default:
-		throw new Error("game has entered unknown phase.  please restart")
+		throw new Error("game has entered unknown phase.  please restart");
 	}
 }
 
