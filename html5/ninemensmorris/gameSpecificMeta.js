@@ -803,7 +803,7 @@ function clickedArrow(mouseX, mouseY, i, direction){
 	// checks if an arrow was clicked
 	// this function assumes that if an index and direction are specified,
 	// than the index has an arrow in that direction.
-	var offset = interfaceSideLength/55;
+	var offset = interfaceSideLength/60;
 	var x1 = possiblePositions[i][0];
 	var y1 = possiblePositions[i][1];
 	
@@ -812,7 +812,7 @@ function clickedArrow(mouseX, mouseY, i, direction){
 		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1-5*offset && mouseY < y1-3*offset);
 		break;
 	case "bottom":
-		return (mouseX > x1-offset && mouseX > x1+offset && mouseY > y1+3*offset && mouseY < y1+5*offset);
+		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1+3*offset && mouseY < y1+5*offset);
 		break;
 	case "right":
 		return (mouseX > x1+3*offset && mouseX < x1+5*offset && mouseY > y1-offset && mouseY < y1+offset);
@@ -866,7 +866,6 @@ function placingPhaseClickFunction(xPos, yPos){
 function slidingPhaseClickFunction(xPos, yPos){
 		
 	var radius = interfaceDotRadius;
-	var arrowOffset = interfaceSideLength/60;
 	var successfulClick = false;
 	
 	for (posIndex = 0; posIndex < possiblePositions.length; posIndex++){
