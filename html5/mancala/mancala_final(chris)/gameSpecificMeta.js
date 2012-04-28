@@ -1,4 +1,4 @@
-//with animation
+1//with animation
 
 /*Variables from interface:
 var PLAYER1 = true;
@@ -244,20 +244,91 @@ function distributePebbles(x,y){
 	if(numOfPebbles == 0){
 		return;
 	}
-	
-	for(var i = 0; i < numOfPebbles;i++){
+	//global variable changes
+	numPebblesGlobal = numOfPebbles; //global
+	indexGlobal = 0;
+	srcPitIndexGlobal = srcPitIndex;
+	srcPitGlobal = srcPit;
+	distrPebbles();
+	/*
+	for(var i = 0; i < numOfPebbles; i++){
 		var pebble = srcPit.removePebble();
 		var destPitIndex = (srcPitIndex+i+1)%(2*PITS_PER_PLAYER+2);
 		pebble.x =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
 		pebble.y =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2); 		
-		//animateTransition(pebble,srcPitIndex,destPitIndex);
+		animateTransition(pebble,srcPitIndex,destPitIndex);
 		pits[destPitIndex].addPebble(pebble);
-		drawBoard();
+		//drawBoard();
 	}
+	
+	
 	
 	handleLastLanding(srcPitIndex,lastDestIndex);
 	//Handle change of turn later
 	drawBoard();
+	*/
+}
+
+
+var indexGlobal = 0;
+var numPebblesGlobal = 0;
+var srcPitIndexGlobal = 0;
+var destPitIndexGlobal = null;
+var srcPitGlobal = null;
+
+function distrPebbles() {
+	if (numPebblesGlobal != indexGlobal) {
+		var pebble = srcPitGlobal.removePebble();
+		var destPitIndex = (srcPitIndexGlobal+indexGlobal+1)%(2*PITS_PER_PLAYER+2);
+		//pebble.x =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
+		//pebble.y =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2); 	
+
+		goalx =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
+		goaly =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2);
+		angle = Math.atan2((goaly - pebble.y),(goalx - pebble.x));
+		movePebble = pebble;
+		distance = Math.sqrt((movePebble.x-goalx)*(movePebble.x-goalx) + (movePebble.y-goaly)*(movePebble.y-goaly));
+		
+		pits[destPitIndex].addPebble(pebble);
+		drawBoard();
+		indexGlobal++;
+		animateTransition();
+		setTimeout("distrPebbles()",700+distance);
+		
+	}
+	else {
+		var lastDestIndex = (srcPitIndexGlobal+srcPitGlobal.getNumOfPebbles())%(2*PITS_PER_PLAYER+2);
+		handleLastLanding(srcPitIndexGlobal,lastDestIndex);
+		drawBoard();
+		animateLock = false;
+	}
+	
+	
+}
+	var distance = 0;
+	var goalx = 0;
+	var goaly = 0;
+	var angle = 0;
+	var v = .15;
+	var movePebble = null;
+	var animateLock = false;
+function animateTransition(){
+		animateLock = true;
+		distance = Math.sqrt((movePebble.x-goalx)*(movePebble.x-goalx) + (movePebble.y-goaly)*(movePebble.y-goaly));
+		if (distance > 15) {
+			movePebble.x = movePebble.x + distance*v*Math.cos(angle);
+			movePebble.y = movePebble.y + distance*v*Math.sin(angle);
+			drawBoard();
+			setTimeout("animateTransition()", 100);
+		}
+		else {
+			animateLock = false;
+		}
+
+			drawBoardToBuffer();
+			drawPebblesToBuffer();
+			drawBufferToCanvas();
+	//setTimeout("animateTransition(null, null, null)",2000);
 }
 
 //This function that handles special events where the last pit is placed in a particular place ***NOT DONE***
@@ -315,21 +386,12 @@ function getRandomComponent() {
 }
 
 
-//var testPebble = new pebble(100,100, 30, 30, "red");
-var indexy = 0;
-var derpson = null;
+	var testPebble = new pebble(100,100, 70, 70, "red");
 //Animates the transition of a pebbles between two pits
-function animateTransition(movePebble,srcPitIndex,destPitIndex){
 
-	var testPebble = new pebble(pitIndexToCoor(indexy).x,pitIndexToCoor(indexy).y, 30, 30, "red");
-	drawBoard();
-	testPebble.update();
-	drawBufferToCanvas();
-	alert(indexy);
-	//testPebble.x = testPebble.x + 4;
-	indexy++;
-	//setTimeout("animateTransition(null, null, null)",5000);
-}
+
+
+
 
 
 function pitIndexToCoor(index){
@@ -378,9 +440,8 @@ function pitIndexToCoor(index){
 function mancalaDelay(millis) 
 {
 var date = new Date();
-var current = null;
-
-do { curDate = new Date(); } 
+var current = null;	
+do { current = new Date(); } 
 while(current-date < millis);
 } 
 
@@ -457,7 +518,7 @@ function drawInterface() {
 This is the function you will use to register clicks. The xPos and yPos are the coordinates of the mouse clicks, when the mouse is clicked.
 */
 function clickFunction(xPos, yPos) {
-	if(waitingForInput){
+	if(waitingForInput && !animateLock){
 		clickOp(xPos,yPos);
 	}
 }
