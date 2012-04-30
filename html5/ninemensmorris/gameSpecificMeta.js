@@ -369,6 +369,18 @@ function drawDeleteIndicator(x, y){
 	interfacecxt.fillText("player to remove from the board", x, y+10);
 }
 
+function drawGameOverIndicator(x, y){
+	interfacecxt.fillStyle = "black";
+	if (playerTurn === PLAYER1){
+		interfacecxt.fillText("AFTER A LONG AND HARD FOUGHT BATTLE, ", x, y);
+		interfacecxt.fillText(""+player2Name+" EMERGES VICTORIOUS!", x, y+10);
+	}
+	else if (playerTurn === PLAYER2){
+		interfacecxt.fillText("AFTER A LONG AND HARD FOUGHT BATTLE, ", x, y);
+		interfacecxt.fillText(""+player1Name+" EMERGES VICTORIOUS!", x, y+10);
+	}
+}
+
 function drawTurnCounter(x, y){
 	interfacecxt.fillStyle = "black";
 	if (playerTurn === PLAYER1){
@@ -761,6 +773,9 @@ function drawInterface() {
 	else if (gamePhase===SLIDINGPHASE){
 		drawArrowsPhaseTwo();
 	}
+	else if (gamePhase===GAMEOVER){
+		drawGameOverIndicator(30, 150);
+	}
 }
 
 function nextPhase(){
@@ -972,31 +987,59 @@ function slidingPhaseClickFunction(xPos, yPos){
 
 }
 
-function flyingPhaseClickFunction(xPos, yPos){
+function flyingPhaseClickFunction1(xPos, yPos){
 		
-	var radius = interfaceDotRadius;
+	var radius = interfaceSideLength/20;
+	
+	// set PieceLocations according the player's turn
+	var PieceLocations;
+	if (playerTurn === PLAYER1){
+		PieceLocations = P1PieceLocations;
+	}
+	else if (playerTurn === PLAYER2){
+		PieceLocations = P2PieceLocations;
+	}
+	
+	for (i = 0; i < possiblePositions.length; i++){
+		dotXPos = possiblePositions[i][0];
+		dotYPos = possiblePositions[i][1];
+		
+		if (xPos <= dotXPos + radius*1.5 && xPos >= dotXPos - radius*1.5 && yPos <= dotYPos + radius*1.5 
+		&& yPos >= dotYPos - radius*1.5 && PieceLocations[i]){
+			selectedPieceIndex = i; 
+			
+			// redraw the pieces to show that you selected it
+		}
+	}
+	drawInterface();
+
+}
+
+function flyingPhaseClickFunction2(xPos, yPos){
+		
+	var radius = interfaceSideLength/20;
 	
 	for (i = 0; i < possiblePositions.length; i++){
 		dotXPos = possiblePositions[i][0];
 		dotYPos = possiblePositions[i][1];
 		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
 		
-		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
-		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
+		if (xPos <= dotXPos + radius*1.5 && xPos >= dotXPos - radius*1.5 && yPos <= dotYPos + radius*1.5 
+		&& yPos >= dotYPos - radius*1.5 && !PieceInPosition){
 			if(playerTurn === PLAYER1){
 				P1PieceLocations[i] = true;
-				P1PiecesToPlace -= 1;
-				P1PiecesOnBoard += 1;
+				P1PieceLocations[selectedPieceIndex] = false;
+				selectedPieceIndex = null;
 				if (makesThree(i, 1)){
 					gamePhase = DELETEPHASE;
 				}
 			}
 			else if(playerTurn === PLAYER2){
 				P2PieceLocations[i] = true;
-				P2PiecesToPlace -= 1;
-				P2PiecesOnBoard += 1;
+				P2PieceLocations[selectedPieceIndex] = false;
+				selectedPieceIndex = null;
 				if (makesThree(i, 2)){
-					gamePhase = DELETEPHASE
+					gamePhase = DELETEPHASE;
 				}
 			}
 			if (gamePhase !== DELETEPHASE){
@@ -1056,7 +1099,11 @@ function clickFunction(xPos, yPos) {
 		slidingPhaseClickFunction(xPos, yPos);
 		break;
 	case FLYINGPHASE:
-		flyingPhaseClickFunction(xPos, yPos);
+		if (selectedPieceIndex === null){
+			flyingPhaseClickFunction1(xPos, yPos);
+		} else {
+			flyingPhaseClickFunction2(xPos, yPos);
+		}
 		break;
 	default:
 		throw new Error("game has entered unknown phase.  please restart");
