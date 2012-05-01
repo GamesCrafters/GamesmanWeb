@@ -2,10 +2,14 @@
 WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE! WRITE YOUR CODE HERE!
 */
 var gameName = "ttt"
+
+// sizes and tolerances
 var offsetX = 40;
 var offsetY = 40;
 var interfaceSideLength = 1;
 var interfaceDotRadius = interfaceSideLength/75;
+var clickDotTolerance = 3;
+var clickArrowTolerance = 2;
 
 var possiblePositions = new Array(); // Count from top left corner to bottom right corner
 var P1PieceLocations = new Array(); // Count from top left corner to bottom right corner
@@ -539,23 +543,6 @@ function animate (start, end) {
     
 }
 
-
-
-function flyPhase(start, end) { //need to call within  Animate
-	if (P1PiecesToPlace <= 3) {
-		if(P1PieceLocations[start] && possiblePositions[end] == false) {
-				P1PieceLocations[start] = false;
-				P1PieceLocations[end] = true;
-	    }
-			
-	} else if (P2PiecesToPlace <= 3){
-		if(P2PieceLocations[start] && possiblePositions[end] == false) {
-			P2PieceLocations[start] = false;
-			P2PieceLocations[end] = true;
-		}	
-	}
-}
-
 function drawArrow(start, end){
     //Y-coordinates are the same (moving piece to empty space in the same row). 
     if ( possiblePositions[start][1] == possiblePositions[end][1]){
@@ -719,15 +706,17 @@ function drawArrowsPhaseTwo(){
 function drawDot(x, y, highlight){ 
 	var radius = interfaceDotRadius;
 	interfacecxt.beginPath();
+	// regular
 	if (highlight === undefined){
 		interfacecxt.fillStyle = "black";
 		interfacecxt.strokeStyle = "black";
 		interfacecxt.lineWidth = 5;
 	}
+	// highlighted
 	else {
 		interfacecxt.fillStyle = neutralStateColor;
-		interfacecxt.strokeStyle = neutralStateColor;
-		interfacecxt.lineWidth = 7;
+		interfacecxt.strokeStyle = "black";
+		interfacecxt.lineWidth = 2;
 	}
 	interfacecxt.arc(x,y,radius, 0, Math.PI*2, true);
 	interfacecxt.fill();
@@ -776,9 +765,15 @@ function drawInterface() {
 		posX = possiblePositions[i][0];
 		posY = possiblePositions[i][1];
 		if (P1PieceLocations[i]){
-			if (gamePhase === FLYINGPHASE && playerTurn === PLAYER1 && selectedPieceIndex === null){
+			// highlight all your pieces if it's the opponent's delete phase
+			if (gamePhase === DELETEPHASE && playerTurn === PLAYER2){
 				drawP1Piece(posX, posY, "highlight");
 			}
+			// highlight all your pieces for the first part of flying phase
+			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER1 && selectedPieceIndex === null){
+				drawP1Piece(posX, posY, "highlight");
+			}
+			//highlight the selected piece for the second part of flying phase
 			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER1 && selectedPieceIndex === i){
 				drawP1Piece(posX, posY, "highlight");
 			}
@@ -787,9 +782,15 @@ function drawInterface() {
 			}
 		}
 		else if (P2PieceLocations[i]){
-			if (gamePhase === FLYINGPHASE && playerTurn === PLAYER2 && selectedPieceIndex === null){
+			// highlight all your pieces if it's the opponent's delete phase
+			if (gamePhase === DELETEPHASE && playerTurn === PLAYER1){
 				drawP2Piece(posX, posY, "highlight");
 			}
+			// highlight all your pieces for the first part of flying phase
+			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER2 && selectedPieceIndex === null){
+				drawP2Piece(posX, posY, "highlight");
+			}
+			//highlight the selected piece for the second part of flying phase
 			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER2 && selectedPieceIndex === i){
 				drawP2Piece(posX, posY, "highlight");
 			}
@@ -798,7 +799,7 @@ function drawInterface() {
 			}
 		}
 		else{
-			if (gamePhase === FLYINGPHASE && selectedPieceIndex !== null){
+			if ((gamePhase === FLYINGPHASE && selectedPieceIndex !== null)||gamePhase === PLACINGPHASE){
 				drawDot(possiblePositions[i][0], possiblePositions[i][1], "highlight");
 			}
 			else{
@@ -816,6 +817,26 @@ function drawInterface() {
 	else if (gamePhase===GAMEOVER){
 		drawGameOverIndicator(30, 150);
 	}
+}
+
+var testCounter = 0;
+var testStep;
+function testAnimate(){
+	testStep = (possiblePositions[1][0] - possiblePositions[0][0])/10
+	P1PieceLocations[0] = false;
+	drawInterface();
+	drawInterface();
+	drawP1Piece(possiblePositions[0][0]+testCounter*testStep, possiblePositions[0][1]);
+	
+	
+	if (testCounter < 10){
+		setTimeout(testAnimate, 50);
+	}
+	else{
+		P1PieceLocations[1] = true;
+	}
+	
+	testCounter++;
 }
 
 function nextPhase(){
@@ -859,21 +880,22 @@ function clickedArrow(mouseX, mouseY, i, direction){
 	// this function assumes that if an index and direction are specified,
 	// than the index has an arrow in that direction.
 	var offset = interfaceSideLength/60;
+	var t = clickArrowTolerance;
 	var x1 = possiblePositions[i][0];
 	var y1 = possiblePositions[i][1];
 	
 	switch(direction){
 	case "top":
-		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1-5*offset && mouseY < y1-3*offset);
+		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1-5*offset*t && mouseY < y1-3*offset);
 		break;
 	case "bottom":
-		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1+3*offset && mouseY < y1+5*offset);
+		return (mouseX > x1-offset && mouseX < x1+offset && mouseY > y1+3*offset && mouseY < y1+5*offset*t);
 		break;
 	case "right":
-		return (mouseX > x1+3*offset && mouseX < x1+5*offset && mouseY > y1-offset && mouseY < y1+offset);
+		return (mouseX > x1+3*offset && mouseX < x1+5*offset*t && mouseY > y1-offset && mouseY < y1+offset);
 		break;
 	case "left":
-		return (mouseX > x1-5*offset && mouseX < x1-3*offset && mouseY > y1-offset && mouseY < y1+offset);
+		return (mouseX > x1-5*offset*t && mouseX < x1-3*offset && mouseY > y1-offset && mouseY < y1+offset);
 		break;
 	default:
 		throw new Error("Direction must be top, bottom, right or left")
@@ -884,14 +906,15 @@ function clickedArrow(mouseX, mouseY, i, direction){
 function placingPhaseClickFunction(xPos, yPos){
 		
 	var radius = interfaceDotRadius;
+	var t = clickDotTolerance;
 	
 	for (i = 0; i < possiblePositions.length; i++){
 		dotXPos = possiblePositions[i][0];
 		dotYPos = possiblePositions[i][1];
 		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
 		
-		if (xPos <= dotXPos + radius*2 && xPos >= dotXPos - radius*2 && yPos <= dotYPos + radius*2 
-		&& yPos >= dotYPos - radius*2 && !PieceInPosition){
+		if (xPos <= dotXPos + radius*t && xPos >= dotXPos - radius*t && yPos <= dotYPos + radius*t 
+		&& yPos >= dotYPos - radius*t && !PieceInPosition){
 			if(playerTurn === PLAYER1){
 				P1PieceLocations[i] = true;
 				P1PiecesToPlace -= 1;
@@ -957,6 +980,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
 				P1PieceLocations[posIndex] = false;
@@ -965,6 +989,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
 				P1PieceLocations[posIndex] = false;
@@ -973,6 +998,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
 				P1PieceLocations[posIndex] = false;
@@ -981,6 +1007,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 		}
 		else if(playerTurn === PLAYER2){
@@ -993,6 +1020,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
 				P2PieceLocations[posIndex] = false;
@@ -1001,6 +1029,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
 				P2PieceLocations[posIndex] = false;
@@ -1009,6 +1038,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
 				P2PieceLocations[posIndex] = false;
@@ -1017,6 +1047,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 					gamePhase = DELETEPHASE;
 				}
 				successfulClick = true;
+				break;
 			}
 		}
 	}
@@ -1059,14 +1090,15 @@ function flyingPhaseClickFunction1(xPos, yPos){
 function flyingPhaseClickFunction2(xPos, yPos){
 		
 	var radius = interfaceSideLength/20;
+	var t = clickDotTolerance;
 	
 	for (i = 0; i < possiblePositions.length; i++){
 		dotXPos = possiblePositions[i][0];
 		dotYPos = possiblePositions[i][1];
 		PieceInPosition = P1PieceLocations[i] || P2PieceLocations[i];
 		
-		if (xPos <= dotXPos + radius*1.5 && xPos >= dotXPos - radius*1.5 && yPos <= dotYPos + radius*1.5 
-		&& yPos >= dotYPos - radius*1.5 && !PieceInPosition){
+		if (xPos <= dotXPos + radius*t && xPos >= dotXPos - radius*t && yPos <= dotYPos + radius*t
+		&& yPos >= dotYPos - radius*t && !PieceInPosition){
 			if(playerTurn === PLAYER1){
 				P1PieceLocations[i] = true;
 				P1PieceLocations[selectedPieceIndex] = false;
@@ -1149,6 +1181,7 @@ function clickFunction(xPos, yPos) {
 	default:
 		throw new Error("game has entered unknown phase.  please restart");
 	}
+	drawInterface();
 }
 
 /**
