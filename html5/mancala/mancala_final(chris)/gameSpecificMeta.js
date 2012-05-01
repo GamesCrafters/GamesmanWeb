@@ -254,8 +254,14 @@ function distributePebbles(x,y){
 	for(var i = 0; i < numOfPebbles; i++){
 		var pebble = srcPit.removePebble();
 		var destPitIndex = (srcPitIndex+i+1)%(2*PITS_PER_PLAYER+2);
-		pebble.x =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
-		pebble.y =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2); 		
+		var pebbleDestX = pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
+		var pebbleDestY = pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2);
+		var currentX = pebble.x;
+		var currentY = pebble.y;
+
+		
+		pebble.x =  pebbleDestX;
+		pebble.y =  pebbleDestY;		
 		animateTransition(pebble,srcPitIndex,destPitIndex);
 		pits[destPitIndex].addPebble(pebble);
 		//drawBoard();
