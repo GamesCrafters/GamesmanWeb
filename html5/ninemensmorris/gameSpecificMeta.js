@@ -30,7 +30,7 @@ var gamePhase = PLACINGPHASE;
 
 // aesthetics 
 var count = 0;
-var speed = 1;
+var speed;
 var normalStrokeWidth = 5;
 var largerStrokeWidth = 10;
 var normalPieceBorderColor = "black";
@@ -415,132 +415,178 @@ function drawTurnCounter(x, y){
 	}
 }
 
-function animate (start, end) {
-    var x1 = possiblePositions[start][0];
+
+function animateP1 (start,end){
+	var x1 = possiblePositions[start][0];
     var y1 = possiblePositions[start][1];
     var x2 = possiblePositions[end][0];
     var y2 = possiblePositions[end][1];
-    //var drawPiece = drawP1Piece / drawP2Piece ? Then just add in arguments -> darwPiece(x,y)? 
-    
-    if(P1PieceLocations[start]){ //Check if the animated piece is Player 1 or Player 2
-        //Remove the current piece from its original location
-        P1PieceLocations[start] = false;
-        //animate the piece to the right or the left, since y1 == y2
-        if(y1 == y2){
-            if(x1 < x2){
-                if(x1+count < x2){ //Sliding the piece to the right
-                    drawP1Piece(x1+count, y1);
-                    count += speed;             //redraws the circle at 1 pixel away from the normal position
-                    if(x1+count >= x2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P1PieceLocations[end] = true;
-                        }
-                }
-            }
-            else{
-                if(x1-count > x2){  //Sliding the piece to the left
-                    drawP1Piece(x1-count, y1);
-                    count += speed;             //redraws the circle at 1 pixel away from the normal position
-                    if(x1-count <= x2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P1PieceLocations[end] = true;
-                        }
-                }
-            }
-        }
-        //animate the piece up or down, since y1 == y2
-        if(x1 == x2){
-            if(y1 < y2){
-                if(y1+count < y2){  //Sliding the piece down
-                    drawP1Piece(x1, y1+count);
-                    count += speed;             //redraws the circle at 1 pixel away from the normal position
-                    if(y1+count >= y2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P1PieceLocations[end] = true;
-                        }
-                }
-            }
-            else{
-                if(y1-count < y2){  //Sliding the piece up
-                    drawP1Piece(x1, y1-count);
-                    count += speed;             //redraws the circle at 1 pixel away from the normal position
-                    if(y1-count <= y2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P1PieceLocations[end] = true;
-                        }
-                }
-            }
-        }
-    }
-    
-    //Repeat the same for P2
-    else if(P2PieceLocations[start]){ //Check if the animated piece is Player 1 or Player 2
-        //Remove the current piece from its original location
-        P2PieceLocations[start] = false;
-        //animate the piece to the right or the left, since y1 == y2
-        if(y1 == y2){
-            if(x1 < x2){
-                if(x1+count < x2){ //Sliding the piece to the right
-                    drawP2Piece(x1+count, y1);
-                    count++;             //redraws the circle at 1 pixel away from the normal position
-                    if(x1+count == x2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P2PieceLocations[end] = true;
-                        }
-                }
-            }
-            else{
-                if(x1-count > x2){  //Sliding the piece to the left
-                    drawP2Piece(x1-count, y1);
-                    count++;             //redraws the circle at 1 pixel away from the normal position
-                    if(x1-count == x2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P2PieceLocations[end] = true;
-                        }
-                }
-            }
-        }
-        //animate the piece up or down, since y1 == y2
-        if(x1 == x2){
-            if(y1 < y2){
-                if(y1+count < y2){  //Sliding the piece down
-                    drawP2Piece(x1, y1+count);
-                    count++;             //redraws the circle at 1 pixel away from the normal position
-                    if(y1+count == y2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P2PieceLocations[end] = true;
-                        }
-                }
-            }
-            else{
-                if(y1-count < y2){  //Sliding the piece up
-                    drawP2Piece(x1, y1-count);
-                    count++;             //redraws the circle at 1 pixel away from the normal position
-                    if(y1-count == y2){
-                        //Stop animation and reset the counter
-                        count = 0;
-                        //Set the new position of the piece
-                        P2PieceLocations[end] = true;
-                        }
-                }
-            }
-        }
-    }
-    
+	
+	
+	//Slide to the right
+	if(y1==y2 && x2 > x1){
+		speed = (x2-x1)/10;
+		P1PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP1Piece(x1+count*speed, y1);
+		
+		if(count < 10){
+			setTimeout(animateP1, 50, start, end);
+		}
+		else{
+			P1PieceLocations[end] = true;
+			count = 0;
+			drawInterface();
+		}
+		count++;
+	}
+	
+	//Slide to the left
+	if(y1==y2 && x2 < x1){
+		speed = (x1-x2)/10;
+		P1PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP1Piece(x1-count*speed, y1);
+		
+		if(count < 10){
+			setTimeout(animateP1, 50, start, end);
+		}
+		else{
+			P1PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+	
+	//Slide up
+	if(x1==x2 && y2 < y1){
+		speed = (y1-y2)/10;
+		P1PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP1Piece(x1, y1-count*speed);
+		
+		if(count < 10){
+			setTimeout(animateP1, 50, start, end);
+		}
+		else{
+			P1PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+
+	//Slide down
+	if(x1==x2 && y2 > y1){
+		speed = (y2-y1)/10;
+		P1PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP1Piece(x1, y1+count*speed);
+		
+		if(count < 10){
+			setTimeout(animateP1, 50, start, end);
+		}
+		else{
+			P1PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+
+
+}
+
+
+function animateP2 (start,end){
+	var x1 = possiblePositions[start][0];
+    var y1 = possiblePositions[start][1];
+    var x2 = possiblePositions[end][0];
+    var y2 = possiblePositions[end][1];
+	
+	
+	//Slide to the right
+	if(y1==y2 && x2 > x1){
+		speed = (x2-x1)/10;
+		P2PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP2Piece(x1+count*speed, y1);
+		
+		if(count < 10){
+			setTimeout(animateP2, 50, start, end);
+		}
+		else{
+			P2PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+	
+	//Slide to the left
+	if(y1==y2 && x2 < x1){
+		speed = (x1-x2)/10;
+		P2PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP2Piece(x1-count*speed, y1);
+		
+		if(count < 10){
+			setTimeout(animateP2, 50, start, end);
+		}
+		else{
+			P2PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+	
+	//Slide up
+	if(x1==x2 && y2 < y1){
+		speed = (y1-y2)/10;
+		P2PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP2Piece(x1, y1-count*speed);
+		
+		if(count < 10){
+			setTimeout(animateP2, 50, start, end);
+		}
+		else{
+			P2PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+
+	//Slide down
+	if(x1==x2 && y2 > y1){
+		speed = (y2-y1)/10;
+		P2PieceLocations[start] = false;
+		drawInterface();
+		drawInterface();
+		drawP2Piece(x1, y1+count*speed);
+		
+		if(count < 10){
+			setTimeout(animateP2, 50, start, end);
+		}
+		else{
+			P2PieceLocations[end] = true;
+			count=0;
+			drawInterface();
+		}
+		count++;
+	}
+
+
 }
 
 function drawArrow(start, end){
@@ -973,9 +1019,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 			// check the four directions for arrows and whether they have been clicked
 			// if arrow has been clicked the piece will move in that direction
 			if (topIndex !== null && emptySpace(topIndex) && clickedArrow(xPos, yPos, posIndex, "top")){
-				P1PieceLocations[posIndex] = false;
-				P1PieceLocations[topIndex] = true;
-				//animate(posIndex, topIndex);
+				//P1PieceLocations[posIndex] = false;
+				//P1PieceLocations[topIndex] = true;
+				animateP1(posIndex, topIndex);
 				if (makesThree(topIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
@@ -983,8 +1029,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
-				P1PieceLocations[posIndex] = false;
-				P1PieceLocations[bottomIndex] = true;
+				//P1PieceLocations[posIndex] = false;
+				//P1PieceLocations[bottomIndex] = true;
+				animateP1(posIndex, bottomIndex);
 				if (makesThree(bottomIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
@@ -992,8 +1039,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
-				P1PieceLocations[posIndex] = false;
-				P1PieceLocations[rightIndex] = true;
+				//P1PieceLocations[posIndex] = false;
+				//P1PieceLocations[rightIndex] = true;
+				animateP1(posIndex, rightIndex);
 				if (makesThree(rightIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
@@ -1001,8 +1049,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
-				P1PieceLocations[posIndex] = false;
-				P1PieceLocations[leftIndex] = true;
+				//P1PieceLocations[posIndex] = false;
+				//P1PieceLocations[leftIndex] = true;
+				animateP1(posIndex, leftIndex);
 				if (makesThree(leftIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
@@ -1014,8 +1063,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 			// check the four directions for arrows and whether they have been clicked
 			// if arrow has been clicked the piece will move in that direction
 			if (topIndex !== null && emptySpace(topIndex) && clickedArrow(xPos, yPos, posIndex, "top")){
-				P2PieceLocations[posIndex] = false;
-				P2PieceLocations[topIndex] = true;
+				//P2PieceLocations[posIndex] = false;
+				//P2PieceLocations[topIndex] = true;
+				animateP2(posIndex, topIndex);
 				if (makesThree(topIndex, 2)){
 					gamePhase = DELETEPHASE;
 				}
@@ -1023,8 +1073,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (bottomIndex !== null && emptySpace(bottomIndex) && clickedArrow(xPos, yPos, posIndex, "bottom")){
-				P2PieceLocations[posIndex] = false;
-				P2PieceLocations[bottomIndex] = true;
+				//P2PieceLocations[posIndex] = false;
+				//P2PieceLocations[bottomIndex] = true;
+				animateP2(posIndex, bottomIndex);
 				if (makesThree(bottomIndex, 2)){
 					gamePhase = DELETEPHASE;
 				}
@@ -1032,8 +1083,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (rightIndex !== null && emptySpace(rightIndex) && clickedArrow(xPos, yPos, posIndex, "right")){
-				P2PieceLocations[posIndex] = false;
-				P2PieceLocations[rightIndex] = true;
+				//P2PieceLocations[posIndex] = false;
+				//P2PieceLocations[rightIndex] = true;
+				animateP2(posIndex, rightIndex);
 				if (makesThree(rightIndex, 2)){
 					gamePhase = DELETEPHASE;
 				}
@@ -1041,8 +1093,9 @@ function slidingPhaseClickFunction(xPos, yPos){
 				break;
 			}
 			if (leftIndex !== null && emptySpace(leftIndex) && clickedArrow(xPos, yPos, posIndex, "left")){
-				P2PieceLocations[posIndex] = false;
-				P2PieceLocations[leftIndex] = true;
+				//P2PieceLocations[posIndex] = false;
+				//P2PieceLocations[leftIndex] = true;
+				animateP2(posIndex, leftIndex);
 				if (makesThree(leftIndex, 2)){
 					gamePhase = DELETEPHASE;
 				}
