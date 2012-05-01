@@ -289,8 +289,8 @@ function distrPebbles() {
 		//pebble.x =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
 		//pebble.y =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2); 	
 
-		goalx =  pitIndexToCoor(destPitIndex).x + getRandomComponent() + (WIDTH/2);
-		goaly =  pitIndexToCoor(destPitIndex).y + getRandomComponent() + (HEIGHT/2);
+		goalx =  pitIndexToCoor(destPitIndex).x + getRandomComponent(.5) + (WIDTH/2);
+		goaly =  pitIndexToCoor(destPitIndex).y + getRandomComponent(.3) + (HEIGHT/2);
 		angle = Math.atan2((goaly - pebble.y),(goalx - pebble.x));
 		movePebble = pebble;
 		distance = Math.sqrt((movePebble.x-goalx)*(movePebble.x-goalx) + (movePebble.y-goaly)*(movePebble.y-goaly));
@@ -299,7 +299,7 @@ function distrPebbles() {
 		drawBoard();
 		indexGlobal++;
 		animateTransition();
-		setTimeout("distrPebbles()",700+distance);
+		setTimeout("distrPebbles()",860+distance);
 		
 	}
 	else {
@@ -315,7 +315,7 @@ function distrPebbles() {
 	var goalx = 0;
 	var goaly = 0;
 	var angle = 0;
-	var v = .15;
+	var v = .13;
 	var movePebble = null;
 	var animateLock = false;
 	
@@ -378,7 +378,7 @@ function getRandomPebble(x, y){
 
 	var WIDTH = (1380)/(2+PITS_PER_PLAYER);
 	var HEIGHT = WIDTH;
-	return new pebble(x + getRandomComponent() + (WIDTH/2) , y + getRandomComponent() +(HEIGHT/2), 40, 40, getRandomColor() );
+	return new pebble(x + getRandomComponent(.5) + (WIDTH/2) , y + getRandomComponent(.3) +(HEIGHT/2), 30, 30, getRandomColor() );
 }
 
 function getRandomColor() {
@@ -387,10 +387,9 @@ function getRandomColor() {
 
 }
 
-function getRandomComponent() {
-
+function getRandomComponent(scale) {
 	var radius = Math.sqrt( WIDTH*WIDTH*.25 + HEIGHT*HEIGHT*.25);
-	return (Math.floor(Math.random()*radius*2) - radius)*.4;
+	return (Math.floor(Math.random()*radius*2) - radius)*scale;
 }
 
 
