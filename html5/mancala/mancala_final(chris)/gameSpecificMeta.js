@@ -315,7 +315,7 @@ function distrPebbles() {
 	var goalx = 0;
 	var goaly = 0;
 	var angle = 0;
-	var v = .13;
+	var v = .15;
 	var movePebble = null;
 	var animateLock = false;
 	
