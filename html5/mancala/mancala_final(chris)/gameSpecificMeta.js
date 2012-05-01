@@ -299,7 +299,7 @@ function distrPebbles() {
 		drawBoard();
 		indexGlobal++;
 		animateTransition();
-		setTimeout("distrPebbles()",860+distance);
+		setTimeout("distrPebbles()",700+distance);
 		
 	}
 	else {
@@ -315,7 +315,7 @@ function distrPebbles() {
 	var goalx = 0;
 	var goaly = 0;
 	var angle = 0;
-	var v = .15;
+	var v = .20;
 	var movePebble = null;
 	var animateLock = false;
 	
