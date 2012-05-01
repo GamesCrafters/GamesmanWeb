@@ -312,6 +312,9 @@ function distrPebbles() {
 	var v = .15;
 	var movePebble = null;
 	var animateLock = false;
+	
+	
+	//Animates the transition of a pebbles between two pits
 function animateTransition(){
 		animateLock = true;
 		distance = Math.sqrt((movePebble.x-goalx)*(movePebble.x-goalx) + (movePebble.y-goaly)*(movePebble.y-goaly));
@@ -328,7 +331,6 @@ function animateTransition(){
 			drawBoardToBuffer();
 			drawPebblesToBuffer();
 			drawBufferToCanvas();
-	//setTimeout("animateTransition(null, null, null)",2000);
 }
 
 //This function that handles special events where the last pit is placed in a particular place ***NOT DONE***
@@ -370,12 +372,12 @@ function getRandomPebble(x, y){
 
 	var WIDTH = (1380)/(2+PITS_PER_PLAYER);
 	var HEIGHT = WIDTH;
-	return new pebble(x + getRandomComponent() + (WIDTH/2) , y + getRandomComponent() +(HEIGHT/2), 25, 25, getRandomColor() );
+	return new pebble(x + getRandomComponent() + (WIDTH/2) , y + getRandomComponent() +(HEIGHT/2), 40, 40, getRandomColor() );
 }
 
 function getRandomColor() {
-	var colors = new Array( "red", "blue", "green", "purple");
-	return colors[Math.floor(Math.random()*4)];
+	var colors = new Array( "red", "blue", "silver", "yellow", "green");
+	return colors[Math.floor(Math.random()*5)];
 
 }
 
@@ -386,8 +388,7 @@ function getRandomComponent() {
 }
 
 
-	var testPebble = new pebble(100,100, 70, 70, "red");
-//Animates the transition of a pebbles between two pits
+
 
 
 
@@ -481,7 +482,7 @@ function pebble(x, y, width, height, color) {
 	this.width = width;
 	this.height = height;
 	this.p = new Image();
-	this.p.src = "pebble"+color + ".png";
+	this.p.src = color + ".png";
 	this.color = color;
 	this.update = function() {
 		bufferContext.drawImage(this.p, this.x - this.width/2, this.y - this.height/2, this.width, this.height)
