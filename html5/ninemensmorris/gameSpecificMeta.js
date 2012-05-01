@@ -16,6 +16,7 @@ var P1PiecesOnBoard = 0;
 var P2PiecesOnBoard = 0;
 var selectedPieceIndex = null;
 
+// phases
 var PLACINGPHASE = 1;
 var SLIDINGPHASE = 2;
 var FLYINGPHASE = 3;
@@ -23,9 +24,14 @@ var DELETEPHASE = 4;
 var GAMEOVER = 5;
 var gamePhase = PLACINGPHASE;
 
+// aesthetics 
 var count = 0;
 var speed = 1;
-var arrowOutlineColor = "yellow";
+var normalStrokeWidth = 5;
+var largerStrokeWidth = 10;
+var normalPieceBorderColor = "black";
+var neutralStateColor = "rgb(0, 255, 255)";
+var arrowOutlineColor = neutralStateColor;
 var arrowInnerColor = "white";
 var P1PieceColor = "rgb(255, 0, 0)";
 var P2PieceColor = "rgb(0, 0, 255)";
@@ -339,19 +345,33 @@ function makesThree(index, player){
 }
 	
 
-function drawP1Piece(x, y){
+function drawP1Piece(x, y, highlight){
 
 	interfacecxt.beginPath();
 	interfacecxt.fillStyle = P1PieceColor;  
+	if (highlight===undefined){
+		interfacecxt.strokeStyle = normalPieceBorderColor;
+		interfacecxt.lineWidth = normalStrokeWidth;
+	} else {
+		interfacecxt.strokeStyle = neutralStateColor;
+		interfacecxt.lineWidth = largerStrokeWidth;
+	}
 	interfacecxt.arc(x,y,interfaceSideLength/20, 0, Math.PI*2, true);
 	interfacecxt.fill();
 	interfacecxt.stroke();
 }
 
-function drawP2Piece(x, y){
+function drawP2Piece(x, y, highlight){
 
 	interfacecxt.beginPath();
 	interfacecxt.fillStyle = P2PieceColor;
+	if (highlight===undefined){
+		interfacecxt.strokeStyle = normalPieceBorderColor;
+		interfacecxt.lineWidth = normalStrokeWidth;
+	} else {
+		interfacecxt.strokeStyle = neutralStateColor;
+		interfacecxt.lineWidth = largerStrokeWidth;
+	}
 	interfacecxt.arc(x,y,interfaceSideLength/20, 0, Math.PI*2, true);
 	interfacecxt.fill();
 	interfacecxt.stroke();
@@ -696,23 +716,22 @@ function drawArrowsPhaseTwo(){
     }
 }
 
-function drawDot(x, y){ //UPDATES DRAWDOT method for Phase 3
+function drawDot(x, y, highlight){ 
 	var radius = interfaceDotRadius;
 	interfacecxt.beginPath();
-	interfacecxt.fillStyle = "black";
+	if (highlight === undefined){
+		interfacecxt.fillStyle = "black";
+		interfacecxt.strokeStyle = "black";
+		interfacecxt.lineWidth = 5;
+	}
+	else {
+		interfacecxt.fillStyle = neutralStateColor;
+		interfacecxt.strokeStyle = neutralStateColor;
+		interfacecxt.lineWidth = 7;
+	}
 	interfacecxt.arc(x,y,radius, 0, Math.PI*2, true);
 	interfacecxt.fill();
 	interfacecxt.stroke();
-	
-	if ((playerTurn === PLAYER1 && P1PiecesToPlace < 0 && P1PiecesOnBoard === 3) 
-	|| (playerTurn === PLAYER2 && P2PiecesToPlace < 0 && P2PiecesOnBoard === 3)) {
-		var radius = interfaceDotRadius;
-		interfacecxt.beginPath();
-		interfacecxt.fillStyle = "rgb(190,190,190)";
-		interfacecxt.arc(x,y,radius*2, 10, 0, Math.PI*2, true);
-		interfacecxt.fill();
-		interfacecxt.stroke();
-	} 
 }
 
 function drawBoardLines(){
@@ -757,13 +776,34 @@ function drawInterface() {
 		posX = possiblePositions[i][0];
 		posY = possiblePositions[i][1];
 		if (P1PieceLocations[i]){
-			drawP1Piece(posX, posY);
+			if (gamePhase === FLYINGPHASE && playerTurn === PLAYER1 && selectedPieceIndex === null){
+				drawP1Piece(posX, posY, "highlight");
+			}
+			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER1 && selectedPieceIndex === i){
+				drawP1Piece(posX, posY, "highlight");
+			}
+			else{
+				drawP1Piece(posX, posY);
+			}
 		}
 		else if (P2PieceLocations[i]){
-			drawP2Piece(posX, posY);
+			if (gamePhase === FLYINGPHASE && playerTurn === PLAYER2 && selectedPieceIndex === null){
+				drawP2Piece(posX, posY, "highlight");
+			}
+			else if (gamePhase === FLYINGPHASE && playerTurn === PLAYER2 && selectedPieceIndex === i){
+				drawP2Piece(posX, posY, "highlight");
+			}
+			else{
+				drawP2Piece(posX, posY);
+			}
 		}
 		else{
-			drawDot(possiblePositions[i][0], possiblePositions[i][1]);
+			if (gamePhase === FLYINGPHASE && selectedPieceIndex !== null){
+				drawDot(possiblePositions[i][0], possiblePositions[i][1], "highlight");
+			}
+			else{
+				drawDot(possiblePositions[i][0], possiblePositions[i][1]);
+			}
 		}
 	}
 	
@@ -912,6 +952,7 @@ function slidingPhaseClickFunction(xPos, yPos){
 			if (topIndex !== null && emptySpace(topIndex) && clickedArrow(xPos, yPos, posIndex, "top")){
 				P1PieceLocations[posIndex] = false;
 				P1PieceLocations[topIndex] = true;
+				//animate(posIndex, topIndex);
 				if (makesThree(topIndex, 1)){
 					gamePhase = DELETEPHASE;
 				}
