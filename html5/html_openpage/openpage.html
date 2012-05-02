@@ -1,18 +1,92 @@
 <html>
 <head>
-<style type="text/css">
-	body {
-		margin: 0;
+<script src="jquery-1.6.3.min.js"></script>
+<script>
+	$(function(){
+		$("#page-wrap").wrapInner("<table cellspacing='30'><tr>");
+		$(".game").wrap("<td>");
+	});
+</script>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	font-size: 62.5%;
+	font-family: 'Lucida Grande', Helvetica, sans-serif;
+	background-image:url('background.png');
+	background-size:100% 100%;
+	  width: window.innerWidth;
+	  height: window.innerHeight;
+	color: #999;
+	padding: 20px;
+}
+tr {
+	vertical-align: top;
+}
+.game {
+	width: 400px;
+}
+p {
+	font-size: 1.2em;
+	margin: 0 0 15px 0;
+}
+h1 {
+	position:fixed;
+	left:0px;
+	top:0px;
+	font-size:5em;
+	color:	#FFD700;
+	
+	}
+h2 {
+	font-family: Sans-serif;
+	font-size: 2.0em;
+	letter-spacing: -1px;
+	color: #ccc;
+}
+img {
+	width: 300;
+	height: 300;
 	}
 </style>
 </head>
 <body>
-	<script src="jquery-1.6.3.min.js" type="text/javascript" charset="utf-8"></script>
-	<!--<script type="text/javascript" src="drawingX.js"></script>-->
-	<script type="text/javascript" src="background.js"></script>
-	<canvas id="myCanvas" width="window.innerWidth" height="window.innerHeight" onClick="clickOptions(event)" onMouseDown="mouseDown(event)" onMouseUp="mouseUp(event)"></canvas>
-    
-    <div id="testpng" class="movable"><img src="testpng.png" /></div>
+	<h1>GamesCrafters</h1>
+	<br>
+	<br>
+	<br>
+	<div id="page-wrap">
+		<div class="game">
+		<h2>Tic-Tac-Toe</h2>
+		<p><img src="Tic-tac-toe.png"></p>
+	</div>
+	
+	<div class="game">
+		<h2>Connect 4</h2>
+		<p><img src="Connect4.png"></p>
+	</div>
+	
+	<div class="game">
+		<h2>Bagchal</h2>
+		<p><img src="Bagchal.png"></p>
+	</div>
+	
+	<div class="game">
+		<h2>Othello</h2>
+		<p><img src="Othello.png"></p>
+	</div>
+	
+	<div class="game">
+		<h2>Atari Go</h2>
+		<p><img src="AtariGo.png"></p>
+	</div>
+	
+	<div class="game">
+		<h2>Connections</h2>
+		<p><img src="Connections.png"></p>
+	</div>
 
 </body>
 </html>
