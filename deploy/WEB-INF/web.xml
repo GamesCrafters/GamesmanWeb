@@ -29,17 +29,19 @@
   </welcome-file-list>
 
   <!-- Load the tag libraries used by the JSPs. -->
-  <taglib>
-    <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
-    <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
-  </taglib>
-  <taglib>
-    <taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
-    <taglib-location>/WEB-INF/tld/c-rt.tld</taglib-location>
-  </taglib>
-  <!-- Remember the custom GamesCrafters Tag Library, too! -->
-  <taglib>
-    <taglib-uri>http://gamescrafters.berkeley.edu/gctl</taglib-uri>
-    <taglib-location>/WEB-INF/tld/gctl.tld</taglib-location>
-  </taglib>
+  <jsp-config>
+    <taglib>
+      <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+      <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
+    </taglib>
+    <taglib>
+      <taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
+      <taglib-location>/WEB-INF/tld/c-rt.tld</taglib-location>
+    </taglib>
+    <!-- Remember the custom GamesCrafters Tag Library, too! -->
+    <taglib>
+      <taglib-uri>http://gamescrafters.berkeley.edu/gctl</taglib-uri>
+      <taglib-location>/WEB-INF/tld/gctl.tld</taglib-location>
+    </taglib>
+  </jsp-config>
 </web-app>

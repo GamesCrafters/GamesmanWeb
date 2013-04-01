@@ -2,6 +2,7 @@
 <!DOCTYPE taglib PUBLIC
 	  "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
 	  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<jsp-config>
 <taglib>
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.2</jsp-version>
@@ -48,3 +49,4 @@
     </attribute>
   </tag>
 </taglib>
+</jsp-config>
