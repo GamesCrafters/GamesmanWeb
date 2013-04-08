@@ -307,31 +307,61 @@ ConnectFour.prototype.localGetNextMoveValues = function(board) {
   return nextMoves;
 };
 
+function addMoveValuesTransparency(move, move_array, dropArea,topGameRow,columnWidth){
+  var cssColumn = parseInt(move.move) + 1;
+  var cell = topGameRow.children("td:nth-child(" + cssColumn + ")");
+  //validMoveValues = ["win", "lose", "tie"];
+  // if the given move doesn't have a valid move.value
+  if (!move.value || !move_array){
+    return;
+  }
+  cell.addClass(move.value + "-marker-transparency-" + (move_array.indexOf(move.remoteness)).toString() + " block");
+  var blockHeight = dropArea.height() / 4;
+  var colorBlock = $('<div/>')
+      .addClass(move.value + "-marker-block marker-block block-transparency-" + (move_array.indexOf(move.remoteness)).toString())
+      .width(columnWidth).height(blockHeight)
+      .css({ marginLeft: (cssColumn - 1) * columnWidth,
+              marginTop: dropArea.height() - blockHeight }) 
+      .appendTo(dropArea);
+}
+
 ConnectFour.prototype.showMoveValues = function() {
   var dropArea = this.board.find("td[colspan]");
   dropArea.children(".marker-block").remove();
   var topGameRow = this.board.find("tr:nth-child(2)");
   topGameRow.children("td").removeClass();
   var columnWidth = Math.floor(this.board.width() / this.width);
+  // Sorting the move values for max value for win and least value for loss
+  // Win_array, loss_array are arrays of sorted move values
+  var win_array = new Array();
+  var lose_array = new Array();
+  var tie_array = new Array();
+  var array_dict = {"win": win_array, "lose": lose_array, "tie": tie_array}
+  for (var i = 0; i < this.nextMoves.length; i++) {
+    var move = this.nextMoves[i];
+    var curr_array = array_dict[move.value]
+    if (curr_array && curr_array.indexOf(move.remoteness) == -1){
+      curr_array.push(move.remoteness);
+    }
+  }
+  win_array.sort(function(a,b){return a - b});
+  lose_array.sort(function(a,b){return b - a});
+  tie_array.sort(function(a,b){return a - b});
+  // Shrink the size of the array to 4, where the last item is the
+  // one after which 10% transparency is applied
+  for (key in array_dict){
+    var curr_array = array_dict[key]
+    if (curr_array.length > 3){
+      curr_array.splice(3,curr_array.length - 3);
+    }
+  }
 
   for (var i = 0; i < this.nextMoves.length; i++) {
     var move = this.nextMoves[i];
     if ((move.value !== undefined) && (move.move !== undefined)) {
       // Add some color to the top cell of the column to which this move
       // corresponds.
-      var cssColumn = parseInt(move.move) + 1;
-      var cell = topGameRow.children("td:nth-child(" + cssColumn + ")");
-      cell.addClass(move.value + "-marker");
-
-      // In addition, add a block of color above the cell, in the row where the
-      // active piece slides back and forth.
-      var blockHeight = dropArea.height() / 4;
-      var colorBlock = $('<div/>')
-        .addClass(move.value + "-marker-block marker-block")
-        .width(columnWidth).height(blockHeight)
-        .css({ marginLeft: (cssColumn - 1) * columnWidth,
-               marginTop: dropArea.height() - blockHeight }) 
-        .appendTo(dropArea);
+      addMoveValuesTransparency(move, array_dict[move.value],dropArea,topGameRow, columnWidth);
     }
   }
 };
