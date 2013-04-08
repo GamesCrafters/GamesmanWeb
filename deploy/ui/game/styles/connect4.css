@@ -1,26 +1,56 @@
 .connect4-grid {
   border: 14px inset #5578c7; border-top-style: none; margin: 1em auto 0;
-  border-collapse: collapse; border-spacing: 0
+  border-collapse: collapse; border-spacing: 0; background-color: #7F7F7F
 }
 .connect4-grid td { margin: 0; padding: 0; line-height: 0 }
-.connect4-grid td[colspan] { vertical-align: top }
+.connect4-grid td[colspan] { vertical-align: top; background-color: #7F7F7F }
 .connect4-grid td img { z-index: 10; position: relative }
 .piece { z-index: 5; position: absolute }
 
-.connect4-grid .win-marker {
-  background: url("../images/connect4/win-marker.png") no-repeat top center
+.connect4-grid .win-marker-transparency-0 {
+  background: url("../images/connect4/win-marker-transparency-100.png") no-repeat top center
 }
-.connect4-grid .tie-marker {
-  background: url("../images/connect4/tie-marker.png") no-repeat top center
+.connect4-grid .win-marker-transparency-1 {
+  background: url("../images/connect4/win-marker-transparency-50.png") no-repeat top center
 }
-.connect4-grid .lose-marker {
-  background: url("../images/connect4/lose-marker.png") no-repeat top center
+.connect4-grid .win-marker-transparency-2 {
+  background: url("../images/connect4/win-marker-transparency-25.png") no-repeat top center
+}
+.connect4-grid .win-marker-transparency--1 {
+  background: url("../images/connect4/win-marker-transparency-10.png") no-repeat top center
+}
+.connect4-grid .tie-marker-transparency-0 {
+  background: url("../images/connect4/tie-marker-transparency-100.png") no-repeat top center
+}
+.connect4-grid .tie-marker-transparency-1 {
+  background: url("../images/connect4/tie-marker-transparency-50.png") no-repeat top center
+}
+.connect4-grid .tie-marker-transparency-2 {
+  background: url("../images/connect4/tie-marker-transparency-25.png") no-repeat top center
+}
+.connect4-grid .tie-marker-transparency--1 {
+  background: url("../images/connect4/tie-marker-transparency-10.png") no-repeat top center
+}
+.connect4-grid .lose-marker-transparency-0 {
+  background: url("../images/connect4/lose-marker-transparency-100.png") no-repeat top center
+}
+.connect4-grid .lose-marker-transparency-1 {
+  background: url("../images/connect4/lose-marker-transparency-50.png") no-repeat top center
+}
+.connect4-grid .lose-marker-transparency-2 {
+  background: url("../images/connect4/lose-marker-transparency-25.png") no-repeat top center
+}
+.connect4-grid .lose-marker-transparency--1 {
+  background: url("../images/connect4/lose-marker-transparency-10.png") no-repeat top center
 }
 
 .connect4-grid .marker-block { position: absolute; z-index: 1 }
 .connect4-grid .win-marker-block { background: url("../../images/win.png") }
 .connect4-grid .tie-marker-block { background: url("../../images/tie.png") }
-.connect4-grid .lose-marker-block { background: url("../../images/lose.png") }
+.connect4-grid .lose-marker-block { background: url("../../images/lose.png")}
+.connect4-grid .block-transparency-1 {opacity: 0.5}
+.connect4-grid .block-transparency-2 {opacity: 0.25}
+.connect4-grid .block-transparency--1 {opacity: 0.1}
 
 /* Configuration form */
 #connect4-options table { margin: 0 auto }
