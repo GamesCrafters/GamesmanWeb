@@ -1,0 +1,38 @@
+body { background-color:#FFFFFF; color:#333399; font-family:Arial,Helvetica; text-decoration:none; font-size:10pt;} 
+
+a:link { font-family:Arial,Helvetica; color:#333399; text-decoration:underline; }
+a:visited { font-family:Arial,Helvetica; color:#333399; text-decoration:underline; }
+a:active { font-family:Arial,Helvetica; color:#CC6666; text-decoration:underline; }
+ 
+h1 { font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none; font-size:14pt; }
+h2 { font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none; font-size:12pt; }
+
+.ind1 { position:relative; left:20px; }
+
+.back1 { background-color:#FFC3C3;}
+.back2 { background-color:#F3CCCC;}
+ 
+a.sel:link {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.unsel:link {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.sel:visited {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.unsel:visited{font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.sel:active {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.unsel:active {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none;}
+a.games:link {font-family:Arial,Helvetica; color:#FF0000; font-weight:bold; text-decoration:none;}
+a.games:active {font-family:Arial,Helvetica; color:#FF0000; font-weight:bold; text-decoration:none;}
+a.games:visited {font-family:Arial,Helvetica; color:#FF0000; font-weight:bold; text-decoration:none;}
+ 
+img {border-style:none; }
+
+li.top {font-family:Arial,Helvetica; color:#333399; font-weight:bold; text-decoration:none; font-size:12pt;}
+li.topred {font-family:Arial,Helvetica; color:#FF0000; font-weight:bold; text-decoration:none; font-size:12pt;}
+
+hr { color:#333399; }
+
+td { background-color:#FFFFFF; color:#333399; font-family:Arial,Helvetica; text-decoration:none; font-size:10pt; }
+td.sel { background-color:#9999FF; color:#333399; font-family:Arial,Helvetica; text-decoration:none; font-size:10pt; }
+td.unsel { background-color:#CCCCFF; color:#333399; font-family:Arial,Helvetica; text-decoration:none; font-size:10pt; }
+
+td.konhead { background-color:#6666CC; color:#FFFFFF; font-family:Arial,Helvetica; font-weight:bold; text-decoration:none; font-size:10pt; }
+td.konbody { background-color:#CCCCCC; color:#333399; font-family:Arial,Helvetica; text-decoration:none; font-size:10pt; }
+
