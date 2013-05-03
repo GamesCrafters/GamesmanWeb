@@ -125,6 +125,7 @@ function RequestObject_SendRequest(hook,action) {
 	if (this.queue.length == 0) {
 		try {
 			this.queue.push(u);
+            //console.log(u);
             this.http.open("GET", u, true);
             this.http.onreadystatechange = eval(this.responsehandlername);
             this.http.send(null);
@@ -597,8 +598,10 @@ Board.prototype.GetDivElement = Board_GetDivElement;
 function Board_SetPieceAt(s,p) {
 	if (this.currentpieces[s] == p) return;
 	//document.getElementById(this.boardid+"_"+s).innerhtml = "<img src=\""+piecegraphics[p]+"\" style = \"width: " + sqsize + "px\">" 
-    document.getElementById(this.boardid+"_"+s).innerHTML = "<img src=\""+piecegraphics[p]+"\" style = \"width: " + sqsize + "px\" >";
+    //document.getElementById(this.boardid+"_"+s).innerHTML = "<img src=\""+piecegraphics[p]+"\" style = \"width: " + sqsize + "px\" >";
 	this.currentpieces[s] = p;
+    this.endgametable.unStampBoard();
+    this.endgametable.stampBoard();
 }
 Board.prototype.SetPieceAt = Board_SetPieceAt;
 
@@ -689,7 +692,9 @@ function Board_Mousedown(ev, ob) {
 	var eldr = o.boardid+"_dr";
 
 	o.SetPieceAt(sq,0);
-	document.getElementById(eldr).innerHTML = "<img src=\""+piecegraphics[o.liftedpiece]+"\" style = \"width: " + sqsize + "px\">"
+
+	document.getElementById(eldr).innerHTML = "<img src=\""+piecegraphics[o.liftedpiece]+"\" style = \"width: " + sqsize + "px\">";
+
  
  	var x = ev.clientX - document.getElementById(o.boardid).offsetLeft + scrollOffsetX();
 	var y = ev.clientY - document.getElementById(o.boardid).offsetTop + scrollOffsetY();
@@ -777,7 +782,7 @@ function Board_Mouseout(ev,ob) {
     if(o.endgametable.coloring){
         var sq = ob.id.split('_')[1];
         var moveList = o.endgametable.sqVVH[sq]
-        if(moveList == undefined){
+        if(moveList == undefined || o.liftedpiece){
             return;
         }
         
@@ -811,7 +816,7 @@ function Board_Mouseup(ev, ob) {
 	var o = Objectmap.Get(ob.id.split('_')[0]);
 	if (!o.inputenabled||o.position==null) return;
 	if (o.liftedpiece == 0) return;
-	o.UnmarkAll();
+	//o.UnmarkAll();
 
 	document.getElementById(o.boardid+"_dr").style.visibility = 'hidden';
 
@@ -956,6 +961,8 @@ function Board_PositionChanged(pos) {
 	for (var i = 0; i < 64; i++) {
 		this.UnmarkSquare(i);
 	}
+    this.endgametable.unStampBoard();
+    this.endgametable.stampBoard();
 }
 
 Board.prototype.PositionChanged = Board_PositionChanged;
@@ -983,6 +990,8 @@ function Board_Flip() {
 	document.getElementById(this.boardid+"_numbersrightinv").style.visibility = this.whiteonbottom ? 'hidden' : 'visible';
     this.endgametable.eraseArrows();
     this.endgametable.drawAllArrows();
+    this.endgametable.unStampBoard();
+    this.endgametable.stampBoard();
 }
 Board.prototype.Flip = Board_Flip;
 
@@ -1340,7 +1349,7 @@ EndgameTable.prototype.ParseRequestResult = EndgameTable_ParseRequestResult;
 function EndgameTable_Endingover(ev, ob) {
 	ob.style.background = '#A0B9E5';
 	var tab = Objectmap.Get(ob.id.split('_')[0]);
-	if (tab.observer != null) {	
+	if (tab.observer != null && tab.observer.liftedpiece == 0) {	
         var row = ob.id.split('_')[1];
         var board = tab.observer;
 
@@ -1366,7 +1375,7 @@ EndgameTable.Endingover = EndgameTable_Endingover;
 function EndgameTable_Endingout(ev, ob) {
 	ob.style.background = 'rgb(255,255,255)';
 	var tab = Objectmap.Get(ob.id.split('_')[0]);
-	if (tab.observer != null) {	
+	if (tab.observer != null && tab.observer.liftedpiece == 0 ) {	
 		var row = ob.id.split('_')[1];
 
         // Unmarks square with piece to default VVH color
@@ -2394,13 +2403,7 @@ function EndgameTable_drawAllArrows(){
             }
         }
     }
-    for(i = 0; i < board.currentpieces.length; i++){
-        if(board.currentpieces[i] != 0){
-            pic = document.getElementById(board.boardid + '_' + i).innerHTML;
-            document.getElementById(board.boardid + '_' + i).innerHTML = "";
-            document.getElementById(board.boardid + "_" + i).innerHTML = pic;
-        }
-    }
+    //this.stampBoard();
 }
 
 EndgameTable.prototype.drawAllArrows = EndgameTable_drawAllArrows;
@@ -2409,7 +2412,7 @@ EndgameTable.prototype.drawAllArrows = EndgameTable_drawAllArrows;
  * Erases all arrows.
  * Does this by completely resetting the canvas. 
  */
-EndgameTable.prototype.eraseArrows = function(){
+EndgameTable.prototype.eraseArrows = function() {
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
     ctx.save();
@@ -2417,3 +2420,32 @@ EndgameTable.prototype.eraseArrows = function(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
 };
+
+EndgameTable.prototype.stampBoard = function() {
+    var canvas = document.getElementById("picvas"),
+        ctx = canvas.getContext('2d'),
+        board = this.observer,
+        i = 0,
+        coords,
+        img,
+        pos;
+
+    for(i = 0; i < board.currentpieces.length; i++){
+        if(board.currentpieces[i]){
+            img = new Image();
+            img.src = piecegraphics[board.currentpieces[i]];
+            coords = board.getCoordsOf(i);
+            pos = board.getTopLeft(i);
+            ctx.drawImage(img, pos[0] - coords[0] , pos[1] - coords[1], sqsize, sqsize);
+        }
+    }
+}
+
+EndgameTable.prototype.unStampBoard = function() {
+    var canvas = document.getElementById("picvas");
+    var ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+}
