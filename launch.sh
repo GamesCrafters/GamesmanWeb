@@ -1,10 +1,11 @@
 #!/bin/bash
 
-TOMCAT_HOME=/opt/apache-tomcat
+TOMCAT_HOME=/var/lib/tomcat8
+
 ant war && (
-$TOMCAT_HOME/bin/shutdown.sh
+systemctl stop tomcat8
 rm -f $TOMCAT_HOME/webapps/gcweb.war
 rm -fR $TOMCAT_HOME/webapps/gcweb
 mv gcweb.war $TOMCAT_HOME/webapps/
-$TOMCAT_HOME/bin/startup.sh
+systemctl start tomcat8
 )
