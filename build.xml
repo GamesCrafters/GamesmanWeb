@@ -30,7 +30,7 @@
     <mkdir dir="${build}"/>
     <javac classpath="${lib}/asm-3.1.jar:${lib}/jersey-core-1.0.jar:${lib}/jersey-server-1.0.jar:${lib}/json.jar:${lib}/jsr311-api-1.0.jar:${lib}/servlet-api.jar:${lib}/jsp-api.jar:${lib}/libthrift.jar:${lib}/slf4j-api-1.5.8.jar:${lib}/slf4j-nop-1.5.8.jar"
            sourcepath="" srcdir="${src}" destdir="${build}"
-           source="1.5" target="1.5" excludes="src build.xml">
+           source="1.6" target="1.6" excludes="src build.xml">
       <include name="edu/berkeley/gcweb/**/*.java"/>
       <exclude name="**/tests/*.java"/>
       <exclude name="**/gui/**/*.java"/>
@@ -48,7 +48,7 @@
   </target>
 
   <target name="compile-applets" description="Compiles Java applets">
-    <javac source="1.5" target="1.5" srcdir="${src}/edu/berkeley/gcweb/gui/"
+    <javac source="1.6" target="1.6" srcdir="${src}/edu/berkeley/gcweb/gui/"
            classpath="${src}/edu/berkeley/gcweb/gui/gamescubeman/plugin.jar:${src}/"
            debug="true" debuglevel="lines,vars,source">
 <compilerarg value="-Xlint:unchecked"/></javac>
