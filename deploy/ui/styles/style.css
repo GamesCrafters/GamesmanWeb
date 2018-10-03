@@ -30,7 +30,7 @@ body > .header h1 {
   font: 1em "Trebuchet MS", Calibri, "Lucida Sans", "Bitstream Vera Sans", sans-serif
 }
 
-.win-move { background-color: #0f0 }
+.win-move { background-color: #008000 }
 .tie-move { background-color: #ff0 }
 .lose-move { background-color: #8a0000 }
 
