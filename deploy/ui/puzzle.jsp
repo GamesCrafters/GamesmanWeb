@@ -97,7 +97,7 @@ String uifile = gameDictionary.getUI(internalName);
         <p id="timer">&nbsp;</p>
         <p id="nr-moves">&nbsp;</p>
     <div class="header">
-    <a href="/">
+    <a href="/gcweb">
       <img src="images/gamescrafters-logo.png" alt="GamesCrafters">
       <h1>GamesmanWeb</h1> 
     </a>
