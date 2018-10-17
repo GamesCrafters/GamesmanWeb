@@ -34,7 +34,7 @@ $(function() {
 <div id="connect4-options">
 <%
   // Inspect GamesmanJava to see which games have been solved.
-  File solvedDirectory = new File("/home/gamers/GamesmanJava/solved");
+  File solvedDirectory = new File("/home/gamescrafters/GamesmanJava/solved");
   final String regex = "connect4_width_(\\d+)_height_(\\d+)_pieces_(\\d+)\\.db";
   File[] solved = solvedDirectory.listFiles(new FilenameFilter() {
     public boolean accept(File dir, String name) {
