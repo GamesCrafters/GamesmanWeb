@@ -87,8 +87,8 @@ $(function() {
   <table>
     <tr><th>Columns</th><th>Rows</th><th>In a Row</th></tr>
     <tr>
-      <td><input name="width" size="3" value="6"></td>
-      <td><input name="height" size="3" value="5"></td>
+      <td><input name="width" size="3" value="7"></td>
+      <td><input name="height" size="3" value="6"></td>
       <td><input name="pieces" size="3" value="4"></td>
     </tr>
   </table>
