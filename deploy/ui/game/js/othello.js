@@ -1104,7 +1104,7 @@ function MoveGenerator(/*gameOption*/) {
 		WHITE_PIECE = "O"; 
 		BLACK_PLAYER = "X";
 		WHITE_PLAYER = "O"; 
-		URL_BASE = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/othello/getNextMoveValues";
+		URL_BASE = "http://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/othello/getNextMoveValues";
 		URL_BOARD = ";board=";
 		URL_OPTION = ";width=4;height=4";
 	}

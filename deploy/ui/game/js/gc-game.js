@@ -194,7 +194,7 @@ GCWeb.Game = function(name, width, height, config) {
   this.prediction = new GCWeb.Prediction(this);
 }
 /** The URL of the server that is the gateway to the Gamesman provider. */
-GCWeb.Game.serviceUrl = "http://nyc.cs.berkeley.edu:8080/gcweb/service/gamesman/puzzles/";
+GCWeb.Game.serviceUrl = "http://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/";
 
 /** Generates a unique ID for a game instance. */
 GCWeb.Game.generateId = function() {

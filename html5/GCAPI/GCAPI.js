@@ -5,7 +5,7 @@ function Game(name, parameters, notifierClass, board){
   this.previousBoards = Array();
   this.nextBoards = Array();
   this.currentBoard = board;
-  this.baseUrl = "http://nyc.cs.berkeley.edu:8080/gcweb/service/" + 
+  this.baseUrl = "http://nyc.cs.berkeley.edu/gcweb/service/" +
                  "gamesman/puzzles/";
 }
 
