@@ -1,87 +1,87 @@
 <game-dictionary>
-  <game internal-name="1210puzzle" canonical-name="1,2,...,10 (Puzzle version)"
-        puzzle="puzzle"/>
-  <game internal-name="connect4" canonical-name="Connect 4" ui="connect4"
-        visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="quickcross" canonical-name="Quickcross" ui="quickcross"
-        visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="onetwoten" canonical-name="1, 2, ..., 10">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
-    <server host="localhost" port="24444" />
-  </game>
-  <game internal-name="othello" canonical-name="Othello" visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-<!--  <game internal-name="reversi" canonical-name="Othello" ui="othello"
-        visible="visible">
-    <server host="localhost" port="4242" />
-  </game> -->
-  <game internal-name="y" canonical-name="The Game of Y" visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <!-- <game internal-name="connections" canonical-name="Connections"
-        visible="visible">
-    <server host="localhost" port="4242"/>
-  </game> -->
-  <game internal-name="dino" canonical-name="Dino Dodg'Em" visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="atarigo" canonical-name="Atari Go" ui="grid"
-        visible="visible" puzzle="puzzle">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid"
-        visible="visible" puzzle="puzzle">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
-  <game internal-name="achi" canonical-name="Achi">
-    <server host="localhost" port="24444"/>
-  </game>
-  <game internal-name="mago" canonical-name="Mago">
-    <server host="localhost" port="3460" />
-  </game>
-  <game internal-name="pegsolitaire" canonical-name="Peg Solitaire"
-	puzzle="puzzle">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)"
-	puzzle="puzzle">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="quarto" canonical-name="Quarto" visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="connections" canonical-name="Connections" visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle"
-	visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="lightsout" canonical-name="Lights Out" puzzle="puzzle"
-	visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="oskarscube" canonical-name="Oskar's Cube"
-	puzzle="puzzle" visible="visible">
-    <server host="localhost" port="1915" />
-  </game>
-  <game internal-name="rubik" canonical-name="Rubik's Cube" puzzle="puzzle"
-	visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="pyraminx" canonical-name="Pyraminx" puzzle="puzzle"
-	visible="visible">
-    <server host="localhost" port="4242" />
-  </game>
-  <game internal-name="onetwoten" canonical-name="12..10">
-        <server host="localhost" port="4242" />
-  </game>
+    <game internal-name="1210puzzle" canonical-name="1,2,...,10 (Puzzle version)"
+          puzzle="puzzle"/>
+    <game internal-name="connect4" canonical-name="Connect 4" ui="connect4"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="quickcross" canonical-name="Quickcross" ui="quickcross"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="onetwoten" canonical-name="1, 2, ..., 10">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="dinododgem" canonical-name="Dino Dodg'Em">
+        <server host="localhost" port="24444"/>
+    </game>
+    <game internal-name="othello" canonical-name="Othello" visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <!--<game internal-name="reversi" canonical-name="Othello" ui="othello"-->
+          <!--visible="visible">-->
+        <!--<server host="localhost" port="4242"/>-->
+    <!--</game>-->
+    <game internal-name="y" canonical-name="The Game of Y" visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <!--<game internal-name="connections" canonical-name="Connections"-->
+          <!--visible="visible">-->
+        <!--<server host="localhost" port="4242"/>-->
+    <!--</game>-->
+    <game internal-name="dino" canonical-name="Dino Dodg'Em" visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="atarigo" canonical-name="Atari Go" ui="grid"
+          visible="visible" puzzle="puzzle">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="ttt" canonical-name="Tic-Tac-Toe" ui="grid"
+          visible="visible" puzzle="puzzle">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="9mm" canonical-name="Nine Men's Morris"/>
+    <game internal-name="achi" canonical-name="Achi">
+        <server host="localhost" port="24444"/>
+    </game>
+    <game internal-name="mago" canonical-name="Mago">
+        <server host="localhost" port="3460"/>
+    </game>
+    <game internal-name="pegsolitaire" canonical-name="Peg Solitaire"
+          puzzle="puzzle">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="fcg" canonical-name="Fox-Chicken-Grain (and Boat)"
+          puzzle="puzzle">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="quarto" canonical-name="Quarto" visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="connections" canonical-name="Connections" visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="tcross" canonical-name="Triple-Cross" puzzle="puzzle"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="lightsout" canonical-name="Lights Out" puzzle="puzzle"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="oskarscube" canonical-name="Oskar's Cube"
+          puzzle="puzzle" visible="visible">
+        <server host="localhost" port="1915"/>
+    </game>
+    <game internal-name="rubik" canonical-name="Rubik's Cube" puzzle="puzzle"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="pyraminx" canonical-name="Pyraminx" puzzle="puzzle"
+          visible="visible">
+        <server host="localhost" port="4242"/>
+    </game>
+    <game internal-name="onetwoten" canonical-name="12..10">
+        <server host="localhost" port="4242"/>
+    </game>
 </game-dictionary>
