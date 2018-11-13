@@ -60,10 +60,12 @@ public class GameDictionary {
             return new Socket(getInetAddress(), getPort());
         }
     }
+
     public class GameInfo {
         private String canonicalName;
         public String uifile;
         public boolean puzzle;
+        public boolean visible;
         private ArrayList<HostInfo> hosts;
         private Random rand;
         
@@ -92,7 +94,8 @@ public class GameDictionary {
         public String getCanonicalName() {
             return canonicalName;
         }
-    };
+    }
+
     private Map<String, GameInfo> gameInfo;
     private Map<String, String> canonicalToInternal;
     private DocumentBuilder domBuilder;
@@ -199,13 +202,15 @@ public class GameDictionary {
                 Node internalNode = attributes.getNamedItem("internal-name");
                 Node canonicalNode = attributes.getNamedItem("canonical-name");
                 Node puzzleNode = attributes.getNamedItem("puzzle");
+                Node visibleNode = attributes.getNamedItem("visible");
                 Node urlNode = attributes.getNamedItem("ui");
                 if (internalNode != null && canonicalNode != null) {
                     String internalName = internalNode.getNodeValue();
                     GameInfo myInfo = new GameInfo(canonicalNode.getNodeValue());
-                    myInfo.puzzle = (puzzleNode != null);
+                    myInfo.puzzle = puzzleNode != null;
                     myInfo.uifile = (urlNode != null) ? urlNode.getNodeValue() : null;
-                    
+                    myInfo.visible = visibleNode != null;
+
                     addMapping(internalName, myInfo);
                     addServers(myInfo, game.getChildNodes());
                 }
@@ -275,7 +280,7 @@ public class GameDictionary {
         boolean isvisible = false;
         if (gameInfo.containsKey(internalName)) {
             // I commented this out because GameInfo didn't have a 'visible' field.
-            isvisible = true;//gameInfo.get(internalName).visible;
+            isvisible = gameInfo.get(internalName).visible;
         }
         return isvisible;
     }    
