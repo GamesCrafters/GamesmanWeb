@@ -7,8 +7,10 @@ h1, h2, h3, h4, h5, h6 { }
 body > .footer :link, body > .footer :visited { color: #4bf }
 
 body > .header {
-  background: #006 url(header-gradient.png) repeat-y; font-weight: bold;
-  padding: 0.5em 0 0em 1em; color: #fc3; border-bottom: 2px #0f4d92 solid
+  background: #006;
+  font-weight: bold;
+  padding: 0.5em 0 0em 1em; color: #fc3;
+  border-bottom: 2px #0f4d92 solid
 }
 body > .header h1 {
   display: inline-block; font: bold 2.5em Calibri, Helvetica, Arial, sans-serif;
