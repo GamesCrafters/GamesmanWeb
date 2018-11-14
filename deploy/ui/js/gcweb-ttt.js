@@ -131,7 +131,7 @@ GCWeb = {
 					}					
 	                if($('#option-move-value-history').is(':checked')) {
 	                    // Draw graph
-	                    main("Player 1","Player 2",r,w,p,m);
+                        vvh_main("Player 1","Player 2",r,w,p,m);
 	                    // Scroll to bottom
 	                    $("#history-graph-container").scrollTop(10000);
 	                }
