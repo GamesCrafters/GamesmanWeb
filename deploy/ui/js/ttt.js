@@ -7,6 +7,21 @@ var height = 3;
 var meanings = ['','Lose','Draw','Win'];
 var moveValueColors = ['', '#8a0000', '#ff0', '#0f0'];
 var moveValueClasses = ['', 'lose-move', 'tie-move', 'win-move'];
+var coordinatelist = 
+[[0,0], [0,1], [0,2],
+[1,0], [1,1], [1,2],
+[2,0], [1,2], [2,2]];
+var winningtriples = 
+[[[0,0], [0,1], [0,2]],
+[[1,0], [1,1], [1,2]],
+[[2,0], [1,2], [2,2]],
+[[0,0], [1,0], [2,0]],
+[[0,1], [1,1], [1,2]],
+[[0,2], [1,2], [2,2]],
+[[0,0], [1,1], [2,2]],
+[[0,2], [1,1], [2,0]]]
+var winnerStatus = ["X wins" , "O wins","No winner yet", "It's a tie"];
+var winnerStatusnum = 2;
 
 $(document).ready(function(){
     var game = GCWeb.newGame("ttt", width, height, {});
@@ -19,6 +34,31 @@ $(document).ready(function(){
                     if(currentBoard[row][col] == EMPTY){
                         currentBoard[row][col] = pieces[currentPlayer];
                         currentPlayer = (currentPlayer+1)%2;
+                        for (var i = 0; i < winningtriples.length; i += 1){
+                            var triple = winningtriples[i];
+                            var win = 0;
+                            for (var j = 0; j < triple.length; j += 1){
+                                var row = triple[j][0];
+                                var col = triple[j][1];
+                                if (currentBoard[row][col] == pieces[currentPlayer]){
+                                    win += 1;
+                                }
+                            }
+                            if (win == 3){
+                                winnerStatusnum = currentPlayer;
+                            }
+                        }
+                        var tiecount = 0;
+                        for (var k = 0; k < coordinatelist.length; k += 1){
+                            var row = coordinatelist[k][0];
+                            var col = coordinatelist[k][1];
+                            if (currentBoard[row][col] == EMPTY){
+                                tiecount += 1;
+                            }
+                        }
+                        if (tiecount == 0){
+                            winnerStatusnum = 3;
+                        }
                         updateBoard(game, currentBoard);
                     }
                 }
@@ -51,6 +91,7 @@ function updateBoard(game, newBoard) {
         }
     });
     $('#turn').text("It's "+pieces[currentPlayer]+"'s turn!");
+    $('#winner').text(winnerStatus[winnerStatusnum])
 }
 
 function getBoardString(board){

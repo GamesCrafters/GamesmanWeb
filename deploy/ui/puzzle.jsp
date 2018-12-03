@@ -129,7 +129,8 @@ String uifile = gameDictionary.getUI(internalName);
         <div id="game">
           <% dynamicInclude(out, uifile); %>
         </div>
-        <div id="turn" <%= (puzzle ? " style=\"display: none\"" : "") %> ></div>
+        <div id="turn" <%= (puzzle ? " style=\"display: compact\"" : "") %> ></div>
+        <div id="winner" <%= (puzzle ? " style=\"display: compact\"" : "") %> ></div>
         <p id="waitingnotice" style="visibility: hidden">Please wait...</p>
       </div> 
       <!-- sidebar --> 
