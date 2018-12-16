@@ -1,0 +1,63 @@
+<div class="nav-container">
+</div>
+
+<div class="main-container">
+    <section class="contact-6-1543568519105">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="feature bordered">
+                        <h1 class="large uppercase mb64 mb-xs-24">Create a Board</h1>
+                        <form class="form" data-success="Thanks for your booking, we will be in touch to confirm shortly."
+                            data-error="Please fill all fields correctly." id="submit-form" onsubmit="event.preventDefault();">
+
+                            <input type="text" class="validate-required" name="NAME" placeholder="Your Name" id="name">
+                            <input type="text" class="validate-required" name="GAME" placeholder="Name for Game" id="game">
+                            <div class="select-option col-md-6 p0">
+                                <i class="ti-angle-down"></i>
+                                <select name="rows" class="validate-required" id="rows">
+                                    <option selected="selected" value="8">Number of Rows</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+
+                            <div class="select-option col-md-6 p0">
+                                <i class="ti-angle-down"></i>
+                                <select name="columns" class="validate-required" id="columns">
+                                    <option selected="selected" value="8">Number of Columns</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+
+                            {{!-- Tile board? <div class="checkbox-option pull-right">
+                                <div class="inner"></div>
+                                <input type="checkbox" name="checkbox" value="Checkbox">
+                            </div> --}}
+                            <button type="submit">Create Board</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+</div>

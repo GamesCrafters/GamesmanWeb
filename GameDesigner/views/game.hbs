@@ -1,0 +1,49 @@
+<div class="board" id="board">
+<section id="game-header" class="page-title page-title-3 title-5-1543851044796">
+		        <div id="game-header-text" class="container">
+		            <div class="row">
+		                <div class="col-sm-12 text-center">
+		                    <h3 class="uppercase mb0">{{title}}</h3>
+		                </div>
+		            </div>
+
+		        </div>
+
+		        <ol id="game-header-btn" class="breadcrumb breadcrumb-2">
+		            <li>
+                        <a data-options='{"touch" : false}' data-fancybox="" data-type="inline" data-src="#share" class="grow " href="javascript:;">
+                            Get Shareable Link
+                        </a>
+                                <div class="fancy-highlightable " id="share" style="display: none;">
+                                    <h4>Share this link:</h4>
+                                    <h6><a href={{share_url}}>{{share_url}}</a></h6>
+                                </div>
+		            </li>
+		        </ol>
+
+
+		    </section>
+    <table>
+        <tr>
+            {{#each columnLabels}}
+                <th id="{{this}}"></th>
+            {{/each}}
+        </tr>
+        {{#each rowLabels as |value key|}}
+        <tr class="stylize" id="{{value}}">
+            {{#each ../columnLabels as |col key|}}
+            <td id="td-{{this}}{{value}}" align="center" ondrop="drop(event)" ondragover="allowDrop(event)" pos="{{this}}{{value}}">
+                <div id="id-{{this}}{{value}}" pos="{{this}}{{value}}" draggable="true" ondragstart="drag(event)">
+                    {{!-- <p>{{col}}{{value}}</p> --}}
+                    {{#with ../../currentLayout as |currentLayout|}}
+                    {{#processPiece currentLayout }}
+                    {{col}}{{value}}
+                    {{/processPiece}}
+                    {{/with}}
+                </div>
+            </td>
+            {{/each}}
+        </tr>
+        {{/each}}
+    </table>
+</div>

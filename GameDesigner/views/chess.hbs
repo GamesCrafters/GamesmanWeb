@@ -1,0 +1,25 @@
+<div class="board" id="board">
+    <table>
+        <tr>
+            {{#each columnLabels}}
+                <th id="{{this}}"></th>
+            {{/each}}
+        </tr>
+        {{#each rowLabels as |value key|}}
+        <tr class="stylize" id="{{value}}">
+            {{#each ../columnLabels as |col key|}}
+            <td id="td-{{this}}{{value}}" align="center" ondrop="drop(event)" ondragover="allowDrop(event)" pos="{{this}}{{value}}">
+                <div id="id-{{this}}{{value}}" pos="{{this}}{{value}}" draggable="true" ondragstart="drag(event)">
+                    {{!-- <p>{{col}}{{value}}</p> --}}
+                    {{#with ../../currentLayout as |currentLayout|}}
+                    {{#processPiece currentLayout }}
+                    {{col}}{{value}}
+                    {{/processPiece}}
+                    {{/with}}
+                </div>
+            </td>
+            {{/each}}
+        </tr>
+        {{/each}}
+    </table>
+</div>

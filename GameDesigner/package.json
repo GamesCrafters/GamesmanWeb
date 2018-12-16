@@ -1,0 +1,19 @@
+{
+  "name": "game-builder",
+  "version": "1.0.0",
+  "description": "Morphable game manager to instatiate different types of games",
+  "main": "app.js",
+  "author": "Abhijay Bhatnagar <iam@abhijay.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.12",
+    "handlebars-helpers": "^0.10.0",
+    "nodemon": "^1.18.7",
+    "path": "^0.12.7",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.1.1"
+  }
+}
