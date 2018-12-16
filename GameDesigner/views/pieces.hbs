@@ -1,0 +1,67 @@
+<div class="nav-container">
+</div>
+
+<div class="main-container">
+    <section class="contact-6-1543568519105">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="feature bordered">
+                        <h1 class="large uppercase mb32 mb-xs-24 text-center">Build a Game</h1>
+                        <div class="board" id="board">
+                            <table id="displayBoard" game="{{guid}}">
+                                <tr>
+                                    {{#each columnLabels}}
+                                        <th id="{{this}}"></th>
+                                    {{/each}}
+                                </tr>
+                                {{#each rowLabels as |value key|}}
+                                <tr class="stylize" id="{{value}}">
+                                    {{#each ../columnLabels as |col key|}}
+                                    <td id="td-{{this}}{{value}}" align="center" ondrop="dropPiece(event)" ondragover="allowDrop(event)" pos="{{this}}{{value}}">
+                                        <div id="id-{{this}}{{value}}" pos="{{this}}{{value}}">
+                                            {{!-- <p>{{col}}{{value}}</p> --}}
+                                            {{#with ../../currentLayout as |currentLayout|}}
+                                            {{#processPiece currentLayout }}
+                                            {{col}}{{value}}
+                                            {{/processPiece}}
+                                            {{/with}}
+                                        </div>
+                                    </td>
+                                    {{/each}}
+                                </tr>
+                                {{/each}}
+                            </table>
+                        </div>
+                        <form class="form" data-success=""
+                            data-error="" id="submit-form" onsubmit="event.preventDefault();">
+                            <button type="submit">Create Board</button>
+                        </form>
+                        <hr />
+                        </div>
+                </div>
+                <div class="col-xl-6">
+                <div class="feature bordered">
+
+                <h3 class="large uppercase text-center">Drag Pieces Above</h3>
+                <table>
+                        {{#each availablePieces}}
+                        <tr class="stylize">
+                            {{#each this}}
+                            <td id="td-{{this.fileId}}" align="center">
+                                <div id="drag-{{this.fileId}}-piece" draggable="true" piece="{{this.name}}-{{this.color}}-{{this.pieceId}}" ondragstart="drag(event)">
+                                    <img src="static/images/games/pieces/{{this.fileId}}.svg" draggable="false" class="{{this.class}} drag-icon" id="piece-{{this.fileId}}" piece="{{this.name}}-{{this.color}}-{{this.pieceId}}">
+                                </div>
+                            </td>
+                            {{/each}}
+                        </tr>
+                        {{/each}}
+                    </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+</div>
