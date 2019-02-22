@@ -44,7 +44,7 @@ public void jspInit() {
             <img src="http://nyc.cs.berkeley.edu/gui/web_hi_res_512.png" alt="Play 4to0" width="128">
             <span>
               <img src="ui/images/online.png" alt="Online">
-              4 to 0
+              10 to 0
             </span>
           </a>
         </div>
