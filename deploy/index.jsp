@@ -40,6 +40,13 @@ public void jspInit() {
           <gc:game canonicalName="<%= canonicalName %>"
 	           dictionary="<%= gameDictionary %>"/>
 <% } %>
+          <a href="http://nyc.cs.berkeley.edu/gui/4to0.html">
+            <img src="http://nyc.cs.berkeley.edu/gui/web_hi_res_512.png" alt="Play 4to0" width="128">
+            <span>
+              <img src="ui/images/online.png" alt="Online">
+              4 to 0
+            </span>
+          </a>
         </div>
       </div>
     </div>
