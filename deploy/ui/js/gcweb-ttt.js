@@ -212,7 +212,7 @@ GCWeb = {
                 // position: string
                 // onValueReceived: function(json)
                 getPositionValue: function (position, onValueReceived) {
-                    url = 'http://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/'+gameName+'/getMoveValue;board='+escape(position);
+                    url = 'https://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/'+gameName+'/getMoveValue;board='+escape(position);
                     for (var key in args) {
                         if(key == "board" || key == "width" || key == "height")
                             url += ";"+key+"="+args[key];
@@ -241,7 +241,7 @@ GCWeb = {
                 // position: string
                 // onMoveValuesReceived: function(json)
                 getNextMoveValues: function (position, onMoveValuesReceived) {
-                    url = 'http://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/'+gameName+'/getNextMoveValues;board='+escape(position);
+                    url = 'https://nyc.cs.berkeley.edu/gcweb/service/gamesman/puzzles/'+gameName+'/getNextMoveValues;board='+escape(position);
                     for (var key in args) {
                         if(key == "board" || key == "width" || key == "height")
                             url += ";"+key+"="+args[key];
@@ -374,7 +374,7 @@ GCWeb = {
         return function(gameName, args){
             return {
                 getPositionValue: function (position, callback) {
-                    url = 'http://nyc.cs.berkeley.edu/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+escape(position);
+                    url = 'https://nyc.cs.berkeley.edu/gcweb/service/gamesman/'+gameName+'/getMoveValue;position='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }
@@ -385,7 +385,7 @@ GCWeb = {
                     });
                 },
                 getNextMoveValues: function (position, callback) {
-                    url = 'http://nyc.cs.berkeley.edu/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+escape(position);
+                    url = 'https://nyc.cs.berkeley.edu/gcweb/service/gamesman/'+gameName+'/getNextMoveValues;position='+escape(position);
                     for (var key in args) {
                         url += ";"+key+"="+args[key];
                     }

@@ -23,7 +23,7 @@ var nextMoves = [];
 
 var ttthack=true;
 
-var urlParams = "http://nyc.cs.berkeley.edu:8080/ui/puzzle.jsp?puzzle=ttt".split("#")[0].split("?")[1].split("&");
+var urlParams = "https://nyc.cs.berkeley.edu:8080/ui/puzzle.jsp?puzzle=ttt".split("#")[0].split("?")[1].split("&");
 $(document).ready(function(){
 for (var i = 0; i < urlParams.length; i++) {
     var key = unescape(urlParams[i].split("=")[0]);
