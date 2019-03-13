@@ -77,7 +77,7 @@ String uifile = gameDictionary.getUI(internalName);
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/<%= uifile %>.css">
     <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.js"></script>
         <% if (uifile.equals("grid")) { %>
     <script type="text/javascript" src="js/gcweb-ttt.js"></script>
